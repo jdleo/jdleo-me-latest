@@ -53,7 +53,7 @@ export default function Home() {
             </header>
 
             <main className='flex-1 flex flex-col gap-8 sm:gap-12 items-center justify-center px-4 -mt-12'>
-                <div className='w-[200px] h-[200px] sm:w-[200px] sm:h-[200px] relative animate-rotate'>
+                <div className='w-[150px] h-[150px] sm:w-[200px] sm:h-[200px] relative animate-rotate'>
                     <div
                         className='absolute inset-0 rounded-[60%_40%_30%_70%/60%_30%_70%_40%] animate-morph shadow-xl'
                         style={{
@@ -67,10 +67,10 @@ export default function Home() {
                     />
                 </div>
                 <div className='flex flex-col items-center gap-3 sm:gap-4'>
-                    <h1 className='text-white font-nunito font-semibold text-4xl sm:text-6xl text-center'>
+                    <h1 className='text-white font-nunito font-semibold text-3xl sm:text-6xl text-center'>
                         {strings.NAME}
                     </h1>
-                    <p className='text-white/80 font-nunito font-normal text-base sm:text-lg max-w-[90%] sm:max-w-[600px] text-center leading-relaxed'>
+                    <p className='text-white/80 font-nunito font-normal text-sm sm:text-lg max-w-[90%] sm:max-w-[600px] text-center leading-relaxed'>
                         {strings.SUBTITLE}
                     </p>
                 </div>
@@ -88,7 +88,7 @@ export default function Home() {
                         go to apps
                     </a>
                 </div>
-                <p className='text-white font-nunito text-sm absolute bottom-4'>
+                <p className='text-white/50 font-nunito text-sm absolute bottom-6 sm:bottom-4'>
                     👀 This page has been viewed {pageViewCount.toLocaleString()} times.
                 </p>
             </main>
