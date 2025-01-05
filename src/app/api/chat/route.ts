@@ -19,6 +19,7 @@ export async function POST(req: Request) {
         });
 
         return NextResponse.json({
+            // @ts-ignore
             message: response.content[0].text,
         });
     } catch (error) {
