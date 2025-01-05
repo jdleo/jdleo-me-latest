@@ -21,7 +21,7 @@ export default function Home() {
     }, []);
 
     return (
-        <div className='flex min-h-screen bg-[#1d1d1d]'>
+        <div className='flex min-h-screen bg-[#1d1d1d] overflow-hidden'>
             <header className='absolute top-0 right-0 p-4 sm:p-6'>
                 <nav className='flex gap-4 sm:gap-6 text-white/70 font-nunito text-sm sm:text-base'>
                     <a
