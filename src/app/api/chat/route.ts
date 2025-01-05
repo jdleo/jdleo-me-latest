@@ -19,7 +19,7 @@ export async function POST(req: Request) {
         });
 
         return NextResponse.json({
-            // @ts-ignore
+            // @ts-expect-error anthropic types are wrong
             message: response.content[0].text,
         });
     } catch (error) {
