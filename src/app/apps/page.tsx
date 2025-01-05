@@ -1,14 +1,13 @@
 'use client';
 
 import { useEffect } from 'react';
-
+import Link from 'next/link';
 import { strings } from '../constants/strings';
 import { apps } from '../constants/apps';
 
 export default function Apps() {
     useEffect(() => {
         if (window.matchMedia('(hover: none)').matches) {
-            // only on touch devices
             const observer = new IntersectionObserver(
                 entries => {
                     entries.forEach(entry => {
@@ -20,7 +19,7 @@ export default function Apps() {
                     });
                 },
                 { threshold: 0.7 }
-            ); // 70% visible to trigger
+            );
 
             document.querySelectorAll('.app-card').forEach(card => {
                 observer.observe(card);
@@ -34,9 +33,9 @@ export default function Apps() {
         <div className='flex min-h-screen bg-[#1d1d1d] overflow-hidden'>
             <header className='absolute top-0 right-0 p-4 sm:p-6'>
                 <nav className='flex gap-4 sm:gap-6 text-white/70 font-nunito text-sm sm:text-base'>
-                    <a href='/' className='hover:text-white transition-colors'>
+                    <Link href='/' className='hover:text-white transition-colors'>
                         Home
-                    </a>
+                    </Link>
                     <a href={`mailto:${strings.EMAIL}`} className='hover:text-white transition-colors'>
                         Email
                     </a>
@@ -61,23 +60,19 @@ export default function Apps() {
 
             <main className='flex-1 flex flex-col items-center px-4 pt-24 pb-12 sm:pt-32 sm:pb-16'>
                 <p className='text-white/80 font-nunito font-normal text-sm sm:text-lg max-w-[90%] sm:max-w-[700px] text-center leading-relaxed mb-12'>
-                    Here are some mini apps I built directly into this website for fun. They're all open source. Enjoy!
+                    Here are some mini apps I built directly into this website for fun. They&apos;re all open source.
+                    Enjoy!
                 </p>
 
                 <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-[1200px] w-full px-4 sm:px-6'>
                     {apps.map(app => (
-                        <a
+                        <Link
                             key={app.title}
                             href={app.href}
                             className='app-card group relative p-6 rounded-xl overflow-hidden transition-all duration-300 transform hover:-translate-y-1'
                         >
-                            {/* Gradient background that shows on hover */}
                             <div className='absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-br from-purple-500/20 via-pink-500/20 to-blue-500/20 blur-xl' />
-
-                            {/* Glass effect background */}
                             <div className='absolute inset-0 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl' />
-
-                            {/* Content */}
                             <div className='relative flex items-start gap-4'>
                                 <span className='text-4xl group-hover:scale-110 transition-transform duration-300'>
                                     {app.emoji}
@@ -89,7 +84,7 @@ export default function Apps() {
                                     <p className='text-white/70 font-nunito text-sm leading-relaxed'>{app.subtitle}</p>
                                 </div>
                             </div>
-                        </a>
+                        </Link>
                     ))}
                 </div>
             </main>

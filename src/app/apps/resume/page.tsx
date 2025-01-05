@@ -10,7 +10,10 @@ type Message = {
 
 export default function Resume() {
     const [messages, setMessages] = useState<Message[]>([
-        { content: "hey! i'm John's personal AI. ask me anything about his experience, skills, or background!", isUser: false },
+        {
+            content: "hey! i'm John's personal AI. ask me anything about his experience, skills, or background!",
+            isUser: false,
+        },
     ]);
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -41,6 +44,7 @@ export default function Resume() {
             const data = await response.json();
             setMessages(prev => [...prev, { content: data.message, isUser: false }]);
         } catch (error) {
+            console.error(error);
             setMessages(prev => [
                 ...prev,
                 { content: "Sorry, I'm having trouble connecting right now.", isUser: false },
@@ -114,7 +118,7 @@ export default function Resume() {
                             type='text'
                             value={input}
                             onChange={e => setInput(e.target.value)}
-                            placeholder="Ask me anything..."
+                            placeholder='Ask me anything...'
                             className='w-full p-3 sm:p-4 pr-20 sm:pr-24 rounded-lg sm:rounded-xl 
                                      bg-white/5 backdrop-blur-sm border border-white/10 
                                      text-sm sm:text-base text-white font-nunito 
