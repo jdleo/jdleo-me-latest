@@ -5,5 +5,29 @@
 @tailwind utilities;
 
 body {
-  background-color: #151515;
+    background-color: #151515;
+}
+
+.blob {
+    background: linear-gradient(128deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.1) 100%);
+    border-radius: 50%;
+    backdrop-filter: blur(5px);
+    box-shadow: 10px 10px 30px rgba(0, 0, 0, 0.3);
+    transform-style: preserve-3d;
+}
+
+@keyframes blob {
+    0% {
+        transform: rotate(0deg) scale(1);
+    }
+    50% {
+        transform: rotate(180deg) scale(1.1);
+    }
+    100% {
+        transform: rotate(360deg) scale(1);
+    }
+}
+
+.animate-blob {
+    animation: blob 8s infinite ease-in-out;
 }
