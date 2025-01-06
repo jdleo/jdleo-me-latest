@@ -36,4 +36,10 @@ export const apps: MiniApp[] = [
         emoji: '🔐',
         href: '/apps/hash',
     },
+    {
+        title: 'Privacy Scanner',
+        subtitle: 'See what websites can learn about you through browser fingerprinting.',
+        emoji: '🕵️',
+        href: '/apps/privacy',
+    },
 ] as const;
