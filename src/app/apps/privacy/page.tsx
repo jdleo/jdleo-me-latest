@@ -103,7 +103,7 @@ export default function Privacy() {
         },
         {
             title: 'Device Memory',
-            // @ts-ignore
+            // @ts-expect-error deviceMemory is not in the navigator types
             value: 'deviceMemory' in navigator ? `${(navigator as any).deviceMemory}GB` : 'Not Available',
             icon: '💾',
         },
