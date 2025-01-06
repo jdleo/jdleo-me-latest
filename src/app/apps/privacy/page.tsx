@@ -42,6 +42,14 @@ const InfoCardComponent = ({ title, value, icon }: InfoCard) => (
 export default function Privacy() {
     const [fingerprint, setFingerprint] = useState<string | null>(null);
     const [ipInfo, setIpInfo] = useState<IPInfo | null>(null);
+    const [browserInfo, setBrowserInfo] = useState({
+        screen: { width: 0, height: 0, colorDepth: 0 },
+        platform: '',
+        userAgent: '',
+        language: '',
+        timezone: '',
+        memory: 'Not Available',
+    });
 
     useEffect(() => {
         // get fingerprint
@@ -49,10 +57,24 @@ export default function Privacy() {
             .then(fp => fp.get())
             .then(result => setFingerprint(result.visitorId));
 
-        // get ip info from your api
+        // get ip info
         fetch('/api/ip')
             .then(res => res.json())
             .then(setIpInfo);
+
+        // set browser info safely
+        setBrowserInfo({
+            screen: {
+                width: window.screen.width,
+                height: window.screen.height,
+                colorDepth: window.screen.colorDepth,
+            },
+            platform: navigator.platform,
+            userAgent: navigator.userAgent,
+            language: navigator.language,
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            memory: 'deviceMemory' in navigator ? `${(navigator as any).deviceMemory}GB` : 'Not Available',
+        });
     }, []);
 
     const infoCards: InfoCard[] = [
@@ -73,37 +95,37 @@ export default function Privacy() {
         },
         {
             title: 'Screen Resolution',
-            value: `${window.screen.width}x${window.screen.height}`,
+            value: browserInfo.screen.width ? `${browserInfo.screen.width}x${browserInfo.screen.height}` : 'Loading...',
             icon: '📱',
         },
         {
             title: 'Color Depth',
-            value: `${window.screen.colorDepth}-bit`,
+            value: browserInfo.screen.colorDepth ? `${browserInfo.screen.colorDepth}-bit` : 'Loading...',
             icon: '🎨',
         },
         {
             title: 'Platform',
-            value: navigator.platform,
+            value: browserInfo.platform,
             icon: '💻',
         },
         {
             title: 'User Agent',
-            value: navigator.userAgent,
+            value: browserInfo.userAgent,
             icon: '🔎',
         },
         {
             title: 'Language',
-            value: navigator.language,
+            value: browserInfo.language,
             icon: '🗣️',
         },
         {
             title: 'Timezone',
-            value: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            value: browserInfo.timezone,
             icon: '🕒',
         },
         {
             title: 'Device Memory',
-            value: 'deviceMemory' in navigator ? `${(navigator as any).deviceMemory}GB` : 'Not Available',
+            value: browserInfo.memory,
             icon: '💾',
         },
     ];
