@@ -13,6 +13,12 @@ export const apps: MiniApp[] = [
         href: '/apps/resume',
     },
     {
+        title: 'Resume Parser',
+        subtitle: 'Upload a resume and extract structured data with AI parsing.',
+        emoji: '📄',
+        href: '/apps/parser',
+    },
+    {
         title: 'Color Gamble',
         subtitle: 'Test your luck with this simple but addictive color betting game.',
         emoji: '🎲',
