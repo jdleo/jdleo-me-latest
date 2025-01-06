@@ -21,6 +21,7 @@ export async function GET(request: Request) {
             org: data.org,
         });
     } catch (error) {
+        console.error(error);
         return NextResponse.json({ error: 'Failed to fetch IP info' }, { status: 500 });
     }
 }

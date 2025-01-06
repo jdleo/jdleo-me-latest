@@ -7,8 +7,20 @@ import FingerprintJS from '@fingerprintjs/fingerprintjs';
 
 type InfoCard = {
     title: string;
-    value: string | number | null;
+    value: string | number | null | undefined;
     icon: string;
+};
+
+type IPInfo = {
+    ip: string;
+    city: string;
+    country: string;
+    region: string;
+    postal: string;
+    latitude: number;
+    longitude: number;
+    timezone: string;
+    org: string;
 };
 
 const InfoCardComponent = ({ title, value, icon }: InfoCard) => (
@@ -29,7 +41,7 @@ const InfoCardComponent = ({ title, value, icon }: InfoCard) => (
 
 export default function Privacy() {
     const [fingerprint, setFingerprint] = useState<string | null>(null);
-    const [ipInfo, setIpInfo] = useState<any>(null);
+    const [ipInfo, setIpInfo] = useState<IPInfo | null>(null);
 
     useEffect(() => {
         // get fingerprint
@@ -91,7 +103,8 @@ export default function Privacy() {
         },
         {
             title: 'Device Memory',
-            value: (navigator as any).deviceMemory ? `${(navigator as any).deviceMemory}GB` : 'Not Available',
+            // @ts-ignore
+            value: 'deviceMemory' in navigator ? `${(navigator as any).deviceMemory}GB` : 'Not Available',
             icon: '💾',
         },
     ];
