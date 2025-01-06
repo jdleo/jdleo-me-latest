@@ -138,7 +138,7 @@ export default function Blockchain() {
     const mineBlock = async (index: number) => {
         setMining(index);
         setError(null);
-        let startTime = Date.now();
+        const startTime = Date.now();
         let hashCount = 0;
 
         const block = blocks[index];
