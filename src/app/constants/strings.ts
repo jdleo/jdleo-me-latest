@@ -27,6 +27,19 @@ export const strings = {
         title: 'John Leonardo | Senior Software Engineer',
         description: 'Building scalable distributed systems and AI services at Amazon. Previously IBM.',
         url: 'https://jdleo.me',
+        images: [
+            {
+                url: '/og-image.png',
+                width: 1200,
+                height: 630,
+            },
+        ],
+        twitter: {
+            card: 'summary_large_image',
+            title: 'John Leonardo',
+            description: 'Software Engineer & Builder',
+            images: ['/og-image.png'],
+        },
     },
     LINKEDIN_URL: 'https://linkedin.com/in/jdleo',
     GITHUB_URL: 'https://github.com/jdleo',
