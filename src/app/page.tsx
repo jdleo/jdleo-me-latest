@@ -24,9 +24,9 @@ export default function Home() {
     return (
         <div className='min-h-screen bg-[color:var(--background)] overflow-hidden orbital-grid'>
             {/* Background gradient effects */}
-            <div className='fixed inset-0 bg-[color:var(--background)] z-[-2]' />
+            <div className='fixed inset-0 bg-[color:var(--background)] z-[-2] pointer-events-none' />
             <div
-                className='fixed top-[-50%] left-[-20%] w-[140%] h-[140%] z-[-1] opacity-30 animate-spin-slow'
+                className='fixed top-[-50%] left-[-20%] w-[140%] h-[140%] z-[-1] opacity-30 animate-spin-slow pointer-events-none'
                 style={{
                     background: 'radial-gradient(ellipse at center, rgba(94, 106, 210, 0.1) 0%, transparent 70%)',
                     transformOrigin: 'center center',
@@ -35,18 +35,28 @@ export default function Home() {
             />
 
             {/* Header */}
-            <header className='absolute top-0 right-0 p-4 sm:p-6'>
+            <header className='absolute top-0 right-0 p-4 sm:p-6 z-10 w-full flex justify-end'>
                 <nav className='flex gap-4 sm:gap-6 text-[color:var(--foreground)] text-opacity-70 text-sm sm:text-base'>
-                    <a href='/apps' className='gradient-text hover:opacity-80 transition-opacity'>
+                    <a href='/apps' className='gradient-text hover:opacity-80 transition-opacity relative z-10'>
                         Mini Apps
                     </a>
-                    <a href={`mailto:${strings.EMAIL}`} className='linear-link'>
+                    <a href={`mailto:${strings.EMAIL}`} className='linear-link relative z-10'>
                         Email
                     </a>
-                    <a href={strings.LINKEDIN_URL} target='_blank' rel='noopener noreferrer' className='linear-link'>
+                    <a
+                        href={strings.LINKEDIN_URL}
+                        target='_blank'
+                        rel='noopener noreferrer'
+                        className='linear-link relative z-10'
+                    >
                         LinkedIn
                     </a>
-                    <a href={strings.GITHUB_URL} target='_blank' rel='noopener noreferrer' className='linear-link'>
+                    <a
+                        href={strings.GITHUB_URL}
+                        target='_blank'
+                        rel='noopener noreferrer'
+                        className='linear-link relative z-10'
+                    >
                         GitHub
                     </a>
                 </nav>
@@ -61,34 +71,37 @@ export default function Home() {
                 >
                     <div className='relative w-[220px] h-[220px] sm:w-[300px] sm:h-[300px]'>
                         {/* Central Core */}
-                        <div className='absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[60px] h-[60px] sm:w-[80px] sm:h-[80px] rounded-full bg-gradient-to-br from-[color:var(--primary)] to-blue-400 shadow-orbital-glow z-10 animate-pulse-slow'></div>
+                        <div className='absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[60px] h-[60px] sm:w-[80px] sm:h-[80px] rounded-full bg-gradient-to-br from-[color:var(--primary)] to-blue-400 shadow-orbital-glow z-10 animate-pulse-slow pointer-events-none'></div>
 
                         {/* Orbital Ring 1 */}
-                        <div className='absolute inset-0 animate-spin-slow' style={{ animationDuration: '20s' }}>
-                            <div className='absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[30px] h-[30px] sm:w-[40px] sm:h-[40px] rounded-full bg-gradient-to-r from-pink-500 to-purple-500 shadow-orbital-glow-sm'></div>
-                            <div className='absolute inset-0 rounded-full border border-white border-opacity-10 animate-pulse-slow'></div>
+                        <div
+                            className='absolute inset-0 animate-spin-slow pointer-events-none'
+                            style={{ animationDuration: '20s' }}
+                        >
+                            <div className='absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[30px] h-[30px] sm:w-[40px] sm:h-[40px] rounded-full bg-gradient-to-r from-pink-500 to-purple-500 shadow-orbital-glow-sm pointer-events-none'></div>
+                            <div className='absolute inset-0 rounded-full border border-white border-opacity-10 animate-pulse-slow pointer-events-none'></div>
                         </div>
 
                         {/* Orbital Ring 2 */}
                         <div
-                            className='absolute inset-[-40px] sm:inset-[-60px] animate-spin-reverse'
+                            className='absolute inset-[-40px] sm:inset-[-60px] animate-spin-reverse pointer-events-none'
                             style={{ animationDuration: '25s' }}
                         >
-                            <div className='absolute right-[25%] top-1/2 -translate-y-1/2 w-[25px] h-[25px] sm:w-[35px] sm:h-[35px] rounded-full bg-gradient-to-r from-blue-400 to-cyan-400 shadow-orbital-glow-sm'></div>
+                            <div className='absolute right-[25%] top-1/2 -translate-y-1/2 w-[25px] h-[25px] sm:w-[35px] sm:h-[35px] rounded-full bg-gradient-to-r from-blue-400 to-cyan-400 shadow-orbital-glow-sm pointer-events-none'></div>
                             <div
-                                className='absolute inset-0 rounded-full border border-white border-opacity-10 rotate-45 animate-pulse-slow'
+                                className='absolute inset-0 rounded-full border border-white border-opacity-10 rotate-45 animate-pulse-slow pointer-events-none'
                                 style={{ animationDelay: '1s' }}
                             ></div>
                         </div>
 
                         {/* Orbital Ring 3 */}
                         <div
-                            className='absolute inset-[-80px] sm:inset-[-120px] animate-spin-slow'
+                            className='absolute inset-[-80px] sm:inset-[-120px] animate-spin-slow pointer-events-none'
                             style={{ animationDuration: '30s' }}
                         >
-                            <div className='absolute bottom-[25%] left-1/2 -translate-x-1/2 w-[20px] h-[20px] sm:w-[30px] sm:h-[30px] rounded-full bg-gradient-to-r from-emerald-400 to-teal-400 shadow-orbital-glow-sm'></div>
+                            <div className='absolute bottom-[25%] left-1/2 -translate-x-1/2 w-[20px] h-[20px] sm:w-[30px] sm:h-[30px] rounded-full bg-gradient-to-r from-emerald-400 to-teal-400 shadow-orbital-glow-sm pointer-events-none'></div>
                             <div
-                                className='absolute inset-0 rounded-full border border-white border-opacity-10 rotate-[30deg] animate-pulse-slow'
+                                className='absolute inset-0 rounded-full border border-white border-opacity-10 rotate-[30deg] animate-pulse-slow pointer-events-none'
                                 style={{ animationDelay: '2s' }}
                             ></div>
                         </div>
@@ -97,7 +110,7 @@ export default function Home() {
                         {[...Array(15)].map((_, i) => (
                             <div
                                 key={i}
-                                className='absolute rounded-full animate-float'
+                                className='absolute rounded-full animate-float pointer-events-none'
                                 style={{
                                     width: `${Math.random() * 4 + 2}px`,
                                     height: `${Math.random() * 4 + 2}px`,
@@ -117,7 +130,7 @@ export default function Home() {
 
                         {/* Glow Effect */}
                         <div
-                            className='absolute inset-0 rounded-full opacity-30 animate-glow'
+                            className='absolute inset-0 rounded-full opacity-30 animate-glow pointer-events-none'
                             style={{
                                 background:
                                     'radial-gradient(circle, rgba(94, 106, 210, 0.4) 0%, rgba(125, 211, 252, 0.2) 50%, transparent 70%)',

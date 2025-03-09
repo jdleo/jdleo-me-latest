@@ -225,3 +225,20 @@
   fill: var(--foreground) !important;
   color: var(--foreground) !important;
 }
+
+/* Mobile touch improvements */
+@media (max-width: 768px) {
+  .linear-link {
+    padding: 0.5rem 0;
+    margin: 0 0.25rem;
+  }
+  
+  header {
+    touch-action: manipulation;
+  }
+  
+  a, button {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
