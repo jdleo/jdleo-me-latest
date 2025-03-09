@@ -154,9 +154,9 @@ export default function DiagramGenerator() {
             <MermaidStyles />
 
             {/* Background gradient effects */}
-            <div className='fixed inset-0 bg-[color:var(--background)] z-[-2]' />
+            <div className='fixed inset-0 bg-[color:var(--background)] z-[-2] pointer-events-none' />
             <div
-                className='fixed top-[-50%] left-[-20%] w-[140%] h-[140%] z-[-1] opacity-30 animate-spin-slow'
+                className='fixed top-[-50%] left-[-20%] w-[140%] h-[140%] z-[-1] opacity-30 animate-spin-slow pointer-events-none'
                 style={{
                     background: 'radial-gradient(ellipse at center, rgba(94, 106, 210, 0.1) 0%, transparent 70%)',
                     transformOrigin: 'center center',
@@ -165,28 +165,38 @@ export default function DiagramGenerator() {
             />
 
             {/* Header */}
-            <header className='absolute top-0 right-0 p-4 sm:p-6'>
+            <header className='absolute top-0 right-0 p-4 sm:p-6 z-10 w-full flex justify-end'>
                 <nav className='flex gap-4 sm:gap-6 text-[color:var(--foreground)] text-opacity-70 text-sm sm:text-base'>
-                    <Link href='/apps' className='linear-link'>
+                    <Link href='/apps' className='linear-link relative z-10'>
                         Apps
                     </Link>
-                    <Link href='/' className='linear-link'>
+                    <Link href='/' className='linear-link relative z-10'>
                         Home
                     </Link>
-                    <a href={`mailto:${strings.EMAIL}`} className='linear-link'>
+                    <a href={`mailto:${strings.EMAIL}`} className='linear-link relative z-10'>
                         Email
                     </a>
-                    <a href={strings.LINKEDIN_URL} target='_blank' rel='noopener noreferrer' className='linear-link'>
+                    <a
+                        href={strings.LINKEDIN_URL}
+                        target='_blank'
+                        rel='noopener noreferrer'
+                        className='linear-link relative z-10'
+                    >
                         LinkedIn
                     </a>
-                    <a href={strings.GITHUB_URL} target='_blank' rel='noopener noreferrer' className='linear-link'>
+                    <a
+                        href={strings.GITHUB_URL}
+                        target='_blank'
+                        rel='noopener noreferrer'
+                        className='linear-link relative z-10'
+                    >
                         GitHub
                     </a>
                 </nav>
             </header>
 
             <main
-                className={`flex-1 flex flex-col items-center pt-24 px-4 pb-12 transition-opacity duration-700 ${
+                className={`flex-1 flex flex-col items-center pt-24 sm:pt-28 px-4 pb-12 transition-opacity duration-700 relative z-1 ${
                     isLoaded ? 'opacity-100' : 'opacity-0'
                 }`}
             >
@@ -258,11 +268,11 @@ export default function DiagramGenerator() {
                 )}
 
                 {/* Floating particles for orbital effect */}
-                <div className='fixed inset-0 pointer-events-none'>
+                <div className='fixed inset-0 pointer-events-none z-0'>
                     {particles.map(particle => (
                         <div
                             key={particle.id}
-                            className='absolute rounded-full animate-float'
+                            className='absolute rounded-full animate-float pointer-events-none'
                             style={{
                                 width: particle.width,
                                 height: particle.height,
