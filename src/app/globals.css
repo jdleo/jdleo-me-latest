@@ -157,3 +157,71 @@
 ::-webkit-scrollbar-thumb:hover {
   background: var(--muted);
 }
+
+/* Mermaid diagram styling */
+.mermaid {
+  background-color: transparent !important;
+}
+
+.mermaid text {
+  fill: var(--foreground) !important;
+  color: var(--foreground) !important;
+  font-family: 'Inter', sans-serif !important;
+  font-size: 16px !important;
+}
+
+.mermaid .node rect, 
+.mermaid .node circle, 
+.mermaid .node ellipse, 
+.mermaid .node polygon, 
+.mermaid .node path {
+  stroke: var(--primary) !important;
+  fill: transparent !important;
+  stroke-width: 2px !important;
+}
+
+.mermaid .edgePath .path {
+  stroke: var(--foreground) !important;
+  stroke-width: 2px !important;
+}
+
+.mermaid .edgeLabel {
+  background-color: var(--secondary) !important;
+  color: var(--foreground) !important;
+  font-family: 'Inter', sans-serif !important;
+}
+
+.mermaid .cluster rect {
+  fill: transparent !important;
+  stroke: var(--primary) !important;
+}
+
+.mermaid .label {
+  color: var(--foreground) !important;
+}
+
+.mermaid .labelBox {
+  stroke: var(--primary) !important;
+  fill: transparent !important;
+}
+
+.mermaid .labelText {
+  fill: var(--foreground) !important;
+  color: var(--foreground) !important;
+}
+
+.mermaid .loopText, 
+.mermaid .loopLine {
+  fill: var(--foreground) !important;
+  stroke: var(--primary) !important;
+}
+
+.mermaid .note {
+  stroke: var(--primary) !important;
+  fill: transparent !important;
+}
+
+.mermaid .noteText {
+  fill: var(--foreground) !important;
+  color: var(--foreground) !important;
+}
