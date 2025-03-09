@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
 import Anthropic from '@anthropic-ai/sdk';
 
-const anthropic = new Anthropic();
+const anthropic = new Anthropic({
+    apiKey: process.env.ANTHROPIC_API_KEY,
+});
 
 const SYSTEM_PROMPT =
     process.env.RESUME_SYSTEM_PROMPT +
@@ -9,13 +11,19 @@ const SYSTEM_PROMPT =
 
 export async function POST(req: Request) {
     try {
-        const { message } = await req.json();
+        const { messages } = await req.json();
+
+        // Convert messages to Anthropic format
+        const anthropicMessages = messages.map((msg: { content: string; isUser: boolean }) => ({
+            role: msg.isUser ? 'user' : 'assistant',
+            content: msg.content,
+        }));
 
         const response = await anthropic.messages.create({
             model: 'claude-3-5-sonnet-20241022',
-            max_tokens: 1024,
+            max_tokens: 8192,
             system: SYSTEM_PROMPT,
-            messages: [{ role: 'user', content: message }],
+            messages: anthropicMessages,
         });
 
         return NextResponse.json({
