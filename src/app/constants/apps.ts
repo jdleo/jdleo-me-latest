@@ -13,6 +13,12 @@ export const apps: MiniApp[] = [
         href: '/apps/resume',
     },
     {
+        title: 'AI Diagram Generator',
+        subtitle: 'Use human language, and a perfect diagram will be generated for you.',
+        emoji: '🪄',
+        href: '/apps/diagram',
+    },
+    {
         title: 'Resume Parser',
         subtitle: 'Upload a resume and extract structured data with AI parsing.',
         emoji: '📄',
