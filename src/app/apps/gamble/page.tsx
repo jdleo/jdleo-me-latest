@@ -2,12 +2,24 @@
 
 import Link from 'next/link';
 import { strings } from '../../constants/strings';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 type Color = {
     id: string;
     name: string;
     gradient: string;
+};
+
+type Particle = {
+    id: number;
+    width: string;
+    height: string;
+    backgroundColor: string;
+    boxShadow: string;
+    left: string;
+    top: string;
+    animationDuration: string;
+    animationDelay: string;
 };
 
 const COLORS: Color[] = [
@@ -26,6 +38,33 @@ export default function Gamble() {
     const [isSpinning, setIsSpinning] = useState(false);
     const [result, setResult] = useState<{ won: boolean; amount: number; color: string } | null>(null);
     const [error, setError] = useState<string | null>(null);
+    const [isLoaded, setIsLoaded] = useState(false);
+    const [particles, setParticles] = useState<Particle[]>([]);
+
+    useEffect(() => {
+        setIsLoaded(true);
+
+        // Generate particles once on component mount
+        const newParticles = Array.from({ length: 8 }, (_, i) => {
+            return {
+                id: i,
+                width: `${Math.random() * 4 + 2}px`,
+                height: `${Math.random() * 4 + 2}px`,
+                backgroundColor: `rgba(${150 + Math.random() * 100}, ${150 + Math.random() * 100}, ${
+                    200 + Math.random() * 55
+                }, ${0.3 + Math.random() * 0.3})`,
+                boxShadow: `0 0 ${Math.random() * 10 + 5}px rgba(${150 + Math.random() * 100}, ${
+                    150 + Math.random() * 100
+                }, ${200 + Math.random() * 55}, 0.3)`,
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                animationDuration: `${Math.random() * 10 + 10}s`,
+                animationDelay: `${Math.random() * 5}s`,
+            };
+        });
+
+        setParticles(newParticles);
+    }, []);
 
     const multiplier = selectedColors.length ? 6 / selectedColors.length : 0;
     const potentialWin = betAmount * multiplier;
@@ -90,37 +129,54 @@ export default function Gamble() {
     };
 
     return (
-        <div className='flex min-h-screen bg-[#1d1d1d] overflow-hidden'>
+        <div className='min-h-screen bg-[color:var(--background)] overflow-hidden orbital-grid'>
+            {/* Background gradient effects */}
+            <div className='fixed inset-0 bg-[color:var(--background)] z-[-2]' />
+            <div
+                className='fixed top-[-50%] left-[-20%] w-[140%] h-[140%] z-[-1] opacity-30 animate-spin-slow'
+                style={{
+                    background: 'radial-gradient(ellipse at center, rgba(94, 106, 210, 0.1) 0%, transparent 70%)',
+                    transformOrigin: 'center center',
+                    animationDuration: '120s',
+                }}
+            />
+
+            {/* Header */}
             <header className='absolute top-0 right-0 p-4 sm:p-6'>
-                <nav className='flex gap-4 sm:gap-6 text-white/70 font-nunito text-sm sm:text-base'>
-                    <Link href='/apps' className='hover:text-white transition-colors'>
+                <nav className='flex gap-4 sm:gap-6 text-[color:var(--foreground)] text-opacity-70 text-sm sm:text-base'>
+                    <Link href='/apps' className='linear-link'>
                         Apps
                     </Link>
-                    <a href={`mailto:${strings.EMAIL}`} className='hover:text-white transition-colors'>
+                    <Link href='/' className='linear-link'>
+                        Home
+                    </Link>
+                    <a href={`mailto:${strings.EMAIL}`} className='linear-link'>
                         Email
                     </a>
-                    <a
-                        href={strings.LINKEDIN_URL}
-                        target='_blank'
-                        rel='noopener noreferrer'
-                        className='hover:text-white transition-colors'
-                    >
+                    <a href={strings.LINKEDIN_URL} target='_blank' rel='noopener noreferrer' className='linear-link'>
                         LinkedIn
                     </a>
-                    <a
-                        href={strings.GITHUB_URL}
-                        target='_blank'
-                        rel='noopener noreferrer'
-                        className='hover:text-white transition-colors'
-                    >
+                    <a href={strings.GITHUB_URL} target='_blank' rel='noopener noreferrer' className='linear-link'>
                         GitHub
                     </a>
                 </nav>
             </header>
 
-            <main className='flex-1 flex flex-col items-center justify-center gap-6 sm:gap-8 p-4'>
-                <div className='text-white font-nunito text-lg sm:text-xl'>
-                    Balance: {balance.toLocaleString()} coins
+            <main
+                className={`flex-1 flex flex-col items-center justify-center gap-6 sm:gap-8 p-4 pt-24 transition-opacity duration-700 ${
+                    isLoaded ? 'opacity-100' : 'opacity-0'
+                }`}
+            >
+                <div className='mb-4 text-center'>
+                    <h1 className='text-2xl sm:text-3xl font-bold mb-2'>
+                        <span className='gradient-text'>Color Gamble</span>
+                    </h1>
+                </div>
+
+                <div className='glass-card px-6 py-3 rounded-full mb-2'>
+                    <span className='text-[color:var(--foreground)] font-semibold'>
+                        Balance: {balance.toLocaleString()} coins
+                    </span>
                 </div>
 
                 <div className='grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4 max-w-2xl w-full'>
@@ -132,8 +188,8 @@ export default function Gamble() {
                                 relative p-4 sm:p-6 rounded-xl overflow-hidden transition-all duration-300
                                 ${
                                     selectedColors.includes(color.id)
-                                        ? 'scale-105 animate-[selectedGlow_2s_ease-in-out_infinite]'
-                                        : 'scale-100 hover:scale-102'
+                                        ? 'scale-105 shadow-orbital-glow-sm'
+                                        : 'scale-100 hover:scale-[1.02]'
                                 }
                             `}
                         >
@@ -142,15 +198,15 @@ export default function Gamble() {
                                     absolute inset-0 bg-gradient-to-br ${color.gradient}
                                     ${
                                         selectedColors.includes(color.id)
-                                            ? 'opacity-40 border-2 border-white/30'
-                                            : 'opacity-20 border border-white/10'
+                                            ? 'opacity-60 border-2 border-white/30'
+                                            : 'opacity-30 border border-white/10'
                                     }
                                     backdrop-blur-md
                                 `}
                             />
                             <div
                                 className={`
-                                    relative text-white font-nunito font-bold
+                                    relative text-white font-bold
                                     ${
                                         selectedColors.includes(color.id)
                                             ? 'text-base sm:text-lg'
@@ -170,42 +226,43 @@ export default function Gamble() {
                         value={betAmount || ''}
                         onChange={e => handleBetChange(e.target.value)}
                         placeholder='Enter bet amount'
-                        className='w-full p-2 sm:p-3 rounded-lg bg-white/5 backdrop-blur-sm border border-white/10 
-                                 text-sm sm:text-base text-white font-nunito placeholder:text-white/50 
-                                 focus:outline-none focus:border-white/20'
+                        className='w-full p-3 sm:p-4 rounded-lg bg-[color:var(--secondary)] border border-[color:var(--border)]
+                                 text-sm sm:text-base text-[color:var(--foreground)] placeholder:text-[color:var(--foreground)] placeholder:text-opacity-50 
+                                 focus:outline-none focus:border-[color:var(--primary)] focus:border-opacity-50
+                                 transition-all duration-300'
                     />
 
-                    {error && <div className='text-red-400 font-nunito text-xs sm:text-sm'>{error}</div>}
+                    {error && (
+                        <div className='text-red-400 bg-red-400 bg-opacity-10 px-4 py-2 rounded-lg border border-red-400 border-opacity-20 text-sm w-full'>
+                            {error}
+                        </div>
+                    )}
 
-                    <div className='text-white/70 font-nunito text-xs sm:text-sm'>
-                        Potential win: {potentialWin.toLocaleString()} coins ({multiplier}x)
+                    <div className='text-[color:var(--foreground)] text-opacity-70 text-xs sm:text-sm'>
+                        Potential win: {potentialWin.toLocaleString()} coins ({multiplier.toFixed(2)}x)
                     </div>
 
                     <button
                         onClick={handleGamble}
                         disabled={isSpinning}
-                        className={`
-                            w-full p-3 sm:p-4 rounded-lg font-nunito font-bold text-white text-sm sm:text-base
-                            bg-gradient-to-r from-purple-400/80 via-pink-400/80 to-blue-400/80
-                            backdrop-blur-sm shadow-lg
-                            hover:opacity-90 transition-all duration-300
-                            disabled:opacity-50
-                        `}
+                        className='relative px-6 py-3 rounded-lg bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 text-white font-bold overflow-hidden group transition-all w-full hover:shadow-orbital-glow hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100 disabled:hover:shadow-none'
                     >
-                        {isSpinning ? 'Spinning...' : 'GAMBLE'}
+                        <span className='absolute inset-0 w-full h-full bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300'></span>
+                        <span className='absolute inset-0 w-0 bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 opacity-50 group-hover:w-full transition-all duration-500 blur-lg'></span>
+                        <span className='relative z-10'>{isSpinning ? 'Spinning...' : 'GAMBLE'}</span>
                     </button>
                 </div>
 
                 {result && (
-                    <div
-                        className={`
-                            text-xl sm:text-2xl md:text-3xl font-nunito font-bold text-center
-                            animate-fade-in transition-all duration-300
-                            ${result.won ? 'text-green-400' : 'text-red-400'}
-                        `}
-                    >
-                        <div className={`text-${result.color}-400`}>{result.color.toUpperCase()} was chosen</div>
-                        <div className='mt-2'>
+                    <div className='glass-card p-6 rounded-xl transition-all duration-300 animate-pulse-slow text-center'>
+                        <div className={`text-xl sm:text-2xl font-bold mb-2 text-${result.color}-400`}>
+                            {result.color.toUpperCase()} was chosen
+                        </div>
+                        <div
+                            className={`text-xl sm:text-2xl font-bold ${
+                                result.won ? 'text-green-400' : 'text-red-400'
+                            }`}
+                        >
                             {result.won ? (
                                 <>🎉 You won {result.amount.toLocaleString()} coins! 🎉</>
                             ) : (
@@ -214,6 +271,26 @@ export default function Gamble() {
                         </div>
                     </div>
                 )}
+
+                {/* Floating particles for orbital effect */}
+                <div className='fixed inset-0 pointer-events-none'>
+                    {particles.map(particle => (
+                        <div
+                            key={particle.id}
+                            className='absolute rounded-full animate-float'
+                            style={{
+                                width: particle.width,
+                                height: particle.height,
+                                backgroundColor: particle.backgroundColor,
+                                boxShadow: particle.boxShadow,
+                                left: particle.left,
+                                top: particle.top,
+                                animationDuration: particle.animationDuration,
+                                animationDelay: particle.animationDelay,
+                            }}
+                        />
+                    ))}
+                </div>
             </main>
         </div>
     );

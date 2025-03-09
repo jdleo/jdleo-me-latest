@@ -3,7 +3,7 @@ export const strings = {
     DESCRIPTION:
         'Senior Software Engineer specializing in distributed systems, high-scale architectures, and AI services. Experience at Amazon (Search Science) and IBM (iX). Expert in Java, Python, TypeScript, Rust, Go, and AWS.',
     SUBTITLE:
-        '👋 Hey there! I build distributed systems @ Amazon (search science). Previously IBM. I can build pretty much anything - from high scale APIs to AI services to blockchain stuff. Fluent in Java, Python, TypeScript, Rust, Go, Elixir and everything AWS. Feel free to email me below or check out some fun mini apps.',
+        "Hey! I'm currently at Amazon Search working on query understanding, previously Amazon Last Mile working on event-driven anomaly detection. Before that, I was at IBM working on infra modernization.",
     KEYWORDS: [
         'software engineer',
         'distributed systems',
