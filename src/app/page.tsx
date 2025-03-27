@@ -37,7 +37,7 @@ export default function Home() {
             {/* Header */}
             <header className='absolute top-0 right-0 p-4 sm:p-6 z-10 w-full flex justify-end'>
                 <nav className='flex gap-4 sm:gap-6 text-[color:var(--foreground)] text-opacity-70 text-sm sm:text-base'>
-                    <a href='/apps' className='gradient-text hover:opacity-80 transition-opacity relative z-10'>
+                    <a href='/apps' className='gradient-text hover:opacity-80 transition-opacity relative z-10 infline-flex items-center'>
                         Mini Apps
                     </a>
                     <a href={`mailto:${strings.EMAIL}`} className='linear-link relative z-10'>
