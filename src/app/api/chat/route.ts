@@ -20,7 +20,7 @@ export async function POST(req: Request) {
         }));
 
         const response = await anthropic.messages.create({
-            model: 'google/gemini-2.5-pro-preview',
+            model: 'openai/o4-mini',
             max_tokens: 8192,
             system: SYSTEM_PROMPT,
             messages: anthropicMessages,
