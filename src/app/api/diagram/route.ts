@@ -37,7 +37,7 @@ export async function POST(req: Request) {
         const { description } = await req.json();
 
         const response = await anthropic.messages.create({
-            model: 'claude-3-7-sonnet-latest',
+            model: 'anthropic/claude-sonnet-4',
             max_tokens: 2048,
             system: SYSTEM_PROMPT,
             messages: [
