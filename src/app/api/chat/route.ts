@@ -20,7 +20,7 @@ export async function POST(req: Request) {
         }));
 
         const response = await anthropic.messages.create({
-            model: 'openai/o4-mini',
+            model: 'claude-sonnet-4-20250514',
             max_tokens: 8192,
             system: SYSTEM_PROMPT,
             messages: anthropicMessages,
