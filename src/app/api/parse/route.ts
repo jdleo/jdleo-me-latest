@@ -56,7 +56,7 @@ export async function POST(req: Request) {
         const { text } = await req.json();
 
         const response = await anthropic.messages.create({
-            model: 'openai/gpt-4.1-mini',
+            model: 'claude-3-5-haiku-latest',
             max_tokens: 2048,
             system: SYSTEM_PROMPT,
             messages: [
