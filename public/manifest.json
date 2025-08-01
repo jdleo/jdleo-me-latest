@@ -1,0 +1,60 @@
+{
+    "name": "John Leonardo - Senior Software Engineer",
+    "short_name": "JDLeo",
+    "description": "Senior Software Engineer specializing in distributed systems, high-scale architectures, and AI services.",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#F5F5F5",
+    "theme_color": "#5e6ad2",
+    "orientation": "portrait-primary",
+    "scope": "/",
+    "lang": "en",
+    "categories": ["portfolio", "developer", "productivity"],
+    "icons": [
+        {
+            "src": "/og-image.png",
+            "sizes": "1200x630",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "/favicon.ico",
+            "sizes": "48x48",
+            "type": "image/x-icon"
+        }
+    ],
+    "screenshots": [
+        {
+            "src": "/og-image.png",
+            "sizes": "1200x630",
+            "type": "image/png",
+            "form_factor": "wide"
+        }
+    ],
+    "shortcuts": [
+        {
+            "name": "Mini Apps",
+            "short_name": "Apps",
+            "description": "Explore interactive mini applications",
+            "url": "/apps",
+            "icons": [
+                {
+                    "src": "/favicon.ico",
+                    "sizes": "48x48"
+                }
+            ]
+        },
+        {
+            "name": "Chat with John",
+            "short_name": "Chat",
+            "description": "AI assistant that knows about John's resume",
+            "url": "/apps/resume",
+            "icons": [
+                {
+                    "src": "/favicon.ico",
+                    "sizes": "48x48"
+                }
+            ]
+        }
+    ]
+}

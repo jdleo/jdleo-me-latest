@@ -4,6 +4,16 @@ import Link from 'next/link';
 import { strings } from '../../constants/strings';
 import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
+import { generateMetadata as createMetadata } from '@/lib/metadata';
+import { Breadcrumbs } from '@/components/SEO/Breadcrumbs';
+
+export const metadata = createMetadata({
+    title: 'AI Diagram Generator - Create Perfect Diagrams with Natural Language',
+    description:
+        'Transform your ideas into beautiful diagrams using AI. Simply describe what you want in plain English and get professionally designed flowcharts, system diagrams, and more.',
+    url: '/apps/diagram',
+    type: 'article',
+});
 
 // Dynamically import Mermaid component to avoid SSR issues
 const Mermaid = dynamic(() => import('../../../components/Mermaid'), {

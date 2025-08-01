@@ -5,6 +5,16 @@ import { strings } from '../../constants/strings';
 import { useState, useEffect } from 'react';
 import ReactConfetti from 'react-confetti';
 import crypto from 'crypto';
+import { generateMetadata as createMetadata } from '@/lib/metadata';
+import { Breadcrumbs } from '@/components/SEO/Breadcrumbs';
+
+export const metadata = createMetadata({
+    title: 'Blockchain 101 - Interactive Blockchain Demo',
+    description:
+        'Learn how blockchain technology works with this interactive demonstration. Explore mining, hashing, and distributed ledger concepts in a hands-on way.',
+    url: '/apps/blockchain',
+    type: 'article',
+});
 
 type Block = {
     data: string;

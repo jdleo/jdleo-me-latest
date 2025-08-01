@@ -1,25 +1,32 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
+import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import './globals.css';
-import { strings } from './constants/strings';
-import { Author } from 'next/dist/lib/metadata/types/metadata-types';
+import { generateMetadata as createMetadata, personStructuredData, websiteStructuredData } from '@/lib/metadata';
 
 const geistSans = Geist({
     variable: '--font-geist-sans',
     subsets: ['latin'],
+    display: 'swap',
+    preload: true,
 });
 
 const geistMono = Geist_Mono({
     variable: '--font-geist-mono',
     subsets: ['latin'],
+    display: 'swap',
+    preload: false,
 });
 
-export const metadata: Metadata = {
-    title: strings.NAME,
-    description: strings.DESCRIPTION,
-    keywords: strings.KEYWORDS as unknown as string[],
-    authors: strings.AUTHORS as unknown as Author[],
-    openGraph: strings.OPEN_GRAPH as unknown as Metadata['openGraph'],
+export const metadata: Metadata = createMetadata();
+
+export const viewport: Viewport = {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 5,
+    themeColor: '#5e6ad2',
+    colorScheme: 'light',
 };
 
 export default function RootLayout({
@@ -29,7 +36,24 @@ export default function RootLayout({
 }>) {
     return (
         <html lang='en'>
-            <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>{children}</body>
+            <head>
+                <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: personStructuredData }} />
+                <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: websiteStructuredData }} />
+                <link rel='preconnect' href='https://fonts.googleapis.com' />
+                <link rel='preconnect' href='https://fonts.gstatic.com' crossOrigin='anonymous' />
+                <link rel='dns-prefetch' href='https://vercel.com' />
+                <link rel='dns-prefetch' href='https://vitals.vercel-analytics.com' />
+                <link rel='manifest' href='/manifest.json' />
+                <link rel='apple-touch-icon' href='/og-image.png' />
+                <meta name='apple-mobile-web-app-capable' content='yes' />
+                <meta name='apple-mobile-web-app-status-bar-style' content='default' />
+                <meta name='mobile-web-app-capable' content='yes' />
+            </head>
+            <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+                {children}
+                <Analytics />
+                <SpeedInsights />
+            </body>
         </html>
     );
 }

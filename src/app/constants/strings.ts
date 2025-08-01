@@ -1,7 +1,7 @@
 export const strings = {
     NAME: 'John Leonardo',
     DESCRIPTION:
-        'Senior Software Engineer specializing in distributed systems, high-scale architectures, and AI services. Experience at Amazon (Search Science) and IBM (iX). Expert in Java, Python, TypeScript, Rust, Go, and AWS.',
+        'Senior Software Engineer specializing in distributed systems, high-scale architectures, and AI services. Experience at Roblox (OS), Amazon (Search Science) and IBM (iX). Expert in Java, Python, TypeScript, Rust, Go, and AWS.',
     SUBTITLE:
         "Hey! I'm currently a Senior Engineer at Roblox working on people/AI systems. Before that, I was at Amazon working in Search AI and anomaly detection in logistics. Before that, I was working at IBM on infra modernization.",
     KEYWORDS: [
