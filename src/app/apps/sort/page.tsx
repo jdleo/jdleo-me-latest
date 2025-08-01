@@ -6,18 +6,6 @@ import { useState, useEffect } from 'react';
 
 type Algorithm = 'bubble' | 'quick' | 'insertion' | 'selection';
 
-type Particle = {
-    id: number;
-    width: string;
-    height: string;
-    backgroundColor: string;
-    boxShadow: string;
-    left: string;
-    top: string;
-    animationDuration: string;
-    animationDelay: string;
-};
-
 const ARRAY_SIZE = 30;
 const ANIMATION_SPEED = 30;
 
@@ -28,7 +16,6 @@ export default function Sort() {
     const [comparing, setComparing] = useState<[number, number] | null>(null);
     const [swapping, setSwapping] = useState<[number, number] | null>(null);
     const [isLoaded, setIsLoaded] = useState(false);
-    const [particles, setParticles] = useState<Particle[]>([]);
 
     const generateArray = () => {
         const newArray = Array.from({ length: ARRAY_SIZE }, () => Math.floor(Math.random() * 100) + 1);
@@ -39,28 +26,9 @@ export default function Sort() {
 
     useEffect(() => {
         generateArray();
-        setIsLoaded(true);
-
-        // Generate particles once on component mount
-        const newParticles = Array.from({ length: 8 }, (_, i) => {
-            return {
-                id: i,
-                width: `${Math.random() * 4 + 2}px`,
-                height: `${Math.random() * 4 + 2}px`,
-                backgroundColor: `rgba(${150 + Math.random() * 100}, ${150 + Math.random() * 100}, ${
-                    200 + Math.random() * 55
-                }, ${0.3 + Math.random() * 0.3})`,
-                boxShadow: `0 0 ${Math.random() * 10 + 5}px rgba(${150 + Math.random() * 100}, ${
-                    150 + Math.random() * 100
-                }, ${200 + Math.random() * 55}, 0.3)`,
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-                animationDuration: `${Math.random() * 10 + 10}s`,
-                animationDelay: `${Math.random() * 5}s`,
-            };
-        });
-
-        setParticles(newParticles);
+        // Small delay for smoother loading animation
+        const timer = setTimeout(() => setIsLoaded(true), 100);
+        return () => clearTimeout(timer);
     }, []);
 
     const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -188,170 +156,201 @@ export default function Sort() {
     };
 
     return (
-        <div className='min-h-screen bg-[color:var(--background)] overflow-hidden orbital-grid'>
-            {/* Background gradient effects */}
-            <div className='fixed inset-0 bg-[color:var(--background)] z-[-2]' />
+        <div className='min-h-screen bg-[var(--color-bg-light)] relative'>
+            {/* Subtle background gradients */}
             <div
-                className='fixed top-[-50%] left-[-20%] w-[140%] h-[140%] z-[-1] opacity-30 animate-spin-slow'
+                className='fixed inset-0 opacity-40 pointer-events-none'
                 style={{
-                    background: 'radial-gradient(ellipse at center, rgba(94, 106, 210, 0.1) 0%, transparent 70%)',
-                    transformOrigin: 'center center',
-                    animationDuration: '120s',
+                    background:
+                        'radial-gradient(ellipse at 30% 20%, rgba(94, 106, 210, 0.08) 0%, transparent 50%), radial-gradient(ellipse at 70% 80%, rgba(139, 92, 246, 0.06) 0%, transparent 60%)',
                 }}
             />
 
-            {/* Header */}
-            <header className='absolute top-0 right-0 p-4 sm:p-6'>
-                <nav className='flex gap-4 sm:gap-6 text-[color:var(--foreground)] text-opacity-70 text-sm sm:text-base'>
-                    <Link href='/apps' className='linear-link'>
-                        Apps
+            {/* Strong Navigation Bar */}
+            <nav className='nav-container'>
+                <div className='nav-content'>
+                    <Link href='/' className='nav-logo'>
+                        JL
                     </Link>
-                    <Link href='/' className='linear-link'>
-                        Home
-                    </Link>
-                    <a href={`mailto:${strings.EMAIL}`} className='linear-link'>
-                        Email
-                    </a>
-                    <a href={strings.LINKEDIN_URL} target='_blank' rel='noopener noreferrer' className='linear-link'>
-                        LinkedIn
-                    </a>
-                    <a href={strings.GITHUB_URL} target='_blank' rel='noopener noreferrer' className='linear-link'>
-                        GitHub
-                    </a>
-                </nav>
-            </header>
-
-            <main
-                className={`flex-1 flex flex-col items-center justify-center gap-6 sm:gap-8 px-4 pt-24 transition-opacity duration-700 ${
-                    isLoaded ? 'opacity-100' : 'opacity-0'
-                }`}
-            >
-                <div className='mb-4 text-center'>
-                    <h1 className='text-2xl sm:text-3xl font-bold mb-2'>
-                        <span className='gradient-text'>Sort Visualization</span>
-                    </h1>
-                    <p className='text-[color:var(--foreground)] text-opacity-70 max-w-md'>
-                        Watch and learn how different sorting algorithms work in real-time.
-                    </p>
-                </div>
-
-                <div className='relative w-[250px] h-[250px] sm:w-[400px] sm:h-[400px] glass-card rounded-full flex items-center justify-center'>
-                    <div className='absolute inset-0 rounded-full'></div>
-                    {array.map((value, index) => {
-                        const angle = (index / array.length) * 2 * Math.PI;
-                        const radius = getRadius();
-                        // Calculate position from center of container
-                        const x = Math.cos(angle) * radius;
-                        const y = Math.sin(angle) * radius;
-
-                        return (
-                            <div
-                                key={index}
-                                className={`
-                                    absolute w-2 h-2 sm:w-4 sm:h-4 rounded-full
-                                    transition-all duration-300
-                                    ${
-                                        comparing?.includes(index)
-                                            ? 'bg-yellow-400 shadow-[0_0_15px_rgba(250,204,21,0.7)] scale-150'
-                                            : swapping?.includes(index)
-                                            ? 'bg-[color:var(--primary)] shadow-orbital-glow-sm scale-150'
-                                            : 'bg-[color:var(--foreground)] bg-opacity-80'
-                                    }
-                                `}
-                                style={{
-                                    transform: `translate(${x}px, ${y}px) scale(${value / 50 + 0.5})`,
-                                }}
-                            />
-                        );
-                    })}
-                </div>
-
-                <div className='flex flex-col items-center gap-4 w-full max-w-md'>
-                    <div className='flex flex-col sm:flex-row gap-2 sm:gap-4 w-full'>
-                        <select
-                            value={algorithm}
-                            onChange={e => setAlgorithm(e.target.value as Algorithm)}
-                            className='px-4 py-2 rounded-lg bg-[color:var(--secondary)] border border-[color:var(--border)]
-                                     text-[color:var(--foreground)] text-sm focus:outline-none focus:border-[color:var(--primary)]
-                                     transition-all duration-300 disabled:opacity-50'
-                            disabled={sorting}
-                        >
-                            <option value='bubble'>Bubble Sort</option>
-                            <option value='quick'>Quick Sort</option>
-                            <option value='insertion'>Insertion Sort</option>
-                            <option value='selection'>Selection Sort</option>
-                        </select>
-                        <button
-                            onClick={generateArray}
-                            disabled={sorting}
-                            className='px-4 py-2 rounded-lg bg-[color:var(--secondary)] border border-[color:var(--border)]
-                                     text-[color:var(--foreground)] text-sm hover:bg-opacity-80 
-                                     transition-all duration-300 disabled:opacity-50'
-                        >
-                            Generate New Array
-                        </button>
-                        <button
-                            onClick={() => {
-                                switch (algorithm) {
-                                    case 'bubble':
-                                        bubbleSort();
-                                        break;
-                                    case 'quick':
-                                        quickSort();
-                                        break;
-                                    case 'insertion':
-                                        insertionSort();
-                                        break;
-                                    case 'selection':
-                                        selectionSort();
-                                        break;
-                                }
-                            }}
-                            disabled={sorting}
-                            className='relative px-4 py-2 rounded-lg bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500
-                                     text-white text-sm overflow-hidden group transition-all hover:shadow-orbital-glow-sm
-                                     disabled:opacity-50 disabled:hover:shadow-none'
-                        >
-                            <span className='absolute inset-0 w-0 bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 opacity-50 group-hover:w-full transition-all duration-500 blur-lg'></span>
-                            <span className='relative z-10'>{sorting ? 'Sorting...' : 'Start Sorting'}</span>
-                        </button>
+                    <div className='nav-links'>
+                        <Link href='/apps' className='nav-link'>
+                            Apps
+                        </Link>
+                        <Link href='/' className='nav-link'>
+                            Home
+                        </Link>
+                        <a href={strings.LINKEDIN_URL} target='_blank' rel='noopener noreferrer' className='nav-link'>
+                            LinkedIn
+                        </a>
+                        <a href={strings.GITHUB_URL} target='_blank' rel='noopener noreferrer' className='nav-link'>
+                            GitHub
+                        </a>
                     </div>
                 </div>
+            </nav>
 
-                {/* Legend */}
-                <div className='glass-card p-4 rounded-lg flex flex-wrap gap-4 justify-center'>
-                    <div className='flex items-center gap-2'>
-                        <div className='w-3 h-3 rounded-full bg-[color:var(--foreground)] bg-opacity-80'></div>
-                        <span className='text-[color:var(--foreground)] text-opacity-70 text-sm'>Normal</span>
-                    </div>
-                    <div className='flex items-center gap-2'>
-                        <div className='w-3 h-3 rounded-full bg-yellow-400 shadow-[0_0_10px_rgba(250,204,21,0.5)]'></div>
-                        <span className='text-[color:var(--foreground)] text-opacity-70 text-sm'>Comparing</span>
-                    </div>
-                    <div className='flex items-center gap-2'>
-                        <div className='w-3 h-3 rounded-full bg-[color:var(--primary)] shadow-orbital-glow-sm'></div>
-                        <span className='text-[color:var(--foreground)] text-opacity-70 text-sm'>Swapping</span>
-                    </div>
-                </div>
+            <main className='main-content'>
+                <div className='container-responsive max-w-6xl'>
+                    {/* Hero Section */}
+                    <section className={`text-center mb-8 animate-reveal ${isLoaded ? '' : 'opacity-0'}`}>
+                        <h1 className='text-h1 gradient-text mb-4'>Sort Visualization</h1>
+                        <p className='text-body opacity-80 max-w-2xl mx-auto'>
+                            Watch and learn how different sorting algorithms work in real-time with beautiful circular
+                            visualization.
+                        </p>
+                    </section>
 
-                {/* Floating particles for orbital effect */}
-                <div className='fixed inset-0 pointer-events-none'>
-                    {particles.map(particle => (
-                        <div
-                            key={particle.id}
-                            className='absolute rounded-full animate-float'
-                            style={{
-                                width: particle.width,
-                                height: particle.height,
-                                backgroundColor: particle.backgroundColor,
-                                boxShadow: particle.boxShadow,
-                                left: particle.left,
-                                top: particle.top,
-                                animationDuration: particle.animationDuration,
-                                animationDelay: particle.animationDelay,
-                            }}
-                        />
-                    ))}
+                    {/* Visualization Section */}
+                    <section className={`mb-8 animate-reveal animate-reveal-delay-1 ${isLoaded ? '' : 'opacity-0'}`}>
+                        <div className='glass-card-enhanced p-8 rounded-3xl'>
+                            <div className='flex justify-center mb-8'>
+                                <div className='relative w-[280px] h-[280px] md:w-[400px] md:h-[400px] flex items-center justify-center'>
+                                    {/* Circular visualization */}
+                                    {array.map((value, index) => {
+                                        const angle = (index / array.length) * 2 * Math.PI;
+                                        const radius = getRadius();
+                                        const x = Math.cos(angle) * radius;
+                                        const y = Math.sin(angle) * radius;
+
+                                        return (
+                                            <div
+                                                key={index}
+                                                className={`
+                                                    absolute w-3 h-3 md:w-4 md:h-4 rounded-full
+                                                    transition-all duration-300 ease-out
+                                                    ${
+                                                        comparing?.includes(index)
+                                                            ? 'bg-yellow-400 shadow-[0_0_20px_rgba(250,204,21,0.8)] scale-150 z-10'
+                                                            : swapping?.includes(index)
+                                                            ? 'bg-blue-500 shadow-[0_0_20px_rgba(59,130,246,0.8)] scale-150 z-10'
+                                                            : 'bg-gray-600 shadow-sm'
+                                                    }
+                                                `}
+                                                style={{
+                                                    transform: `translate(${x}px, ${y}px) scale(${value / 50 + 0.5})`,
+                                                }}
+                                            />
+                                        );
+                                    })}
+                                </div>
+                            </div>
+
+                            {/* Controls */}
+                            <div className='flex flex-col gap-4 max-w-2xl mx-auto'>
+                                <div className='grid grid-cols-1 md:grid-cols-3 gap-3'>
+                                    {/* Algorithm Selector */}
+                                    <select
+                                        value={algorithm}
+                                        onChange={e => setAlgorithm(e.target.value as Algorithm)}
+                                        className='glass-card-subtle border border-gray-200 px-4 py-3 rounded-xl text-body focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 transition-all duration-200'
+                                        disabled={sorting}
+                                    >
+                                        <option value='bubble'>Bubble Sort</option>
+                                        <option value='quick'>Quick Sort</option>
+                                        <option value='insertion'>Insertion Sort</option>
+                                        <option value='selection'>Selection Sort</option>
+                                    </select>
+
+                                    {/* Generate Array Button */}
+                                    <button
+                                        onClick={generateArray}
+                                        disabled={sorting}
+                                        className='button-secondary disabled:opacity-50 disabled:cursor-not-allowed'
+                                    >
+                                        <span>Generate New Array</span>
+                                        <svg
+                                            width='16'
+                                            height='16'
+                                            viewBox='0 0 24 24'
+                                            fill='none'
+                                            stroke='currentColor'
+                                            strokeWidth='2'
+                                            strokeLinecap='round'
+                                            strokeLinejoin='round'
+                                        >
+                                            <path d='M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8' />
+                                            <path d='M21 3v5h-5' />
+                                            <path d='M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16' />
+                                            <path d='M3 21v-5h5' />
+                                        </svg>
+                                    </button>
+
+                                    {/* Start Sorting Button */}
+                                    <button
+                                        onClick={() => {
+                                            switch (algorithm) {
+                                                case 'bubble':
+                                                    bubbleSort();
+                                                    break;
+                                                case 'quick':
+                                                    quickSort();
+                                                    break;
+                                                case 'insertion':
+                                                    insertionSort();
+                                                    break;
+                                                case 'selection':
+                                                    selectionSort();
+                                                    break;
+                                            }
+                                        }}
+                                        disabled={sorting}
+                                        className='button-primary disabled:opacity-50 disabled:cursor-not-allowed'
+                                    >
+                                        <span>{sorting ? 'Sorting...' : 'Start Sorting'}</span>
+                                        <svg
+                                            width='16'
+                                            height='16'
+                                            viewBox='0 0 24 24'
+                                            fill='none'
+                                            stroke='currentColor'
+                                            strokeWidth='2'
+                                            strokeLinecap='round'
+                                            strokeLinejoin='round'
+                                        >
+                                            <polygon points='5,3 19,12 5,21' />
+                                        </svg>
+                                    </button>
+                                </div>
+
+                                {/* Legend */}
+                                <div className='glass-card border border-gray-200 p-4 rounded-xl'>
+                                    <div className='flex flex-wrap gap-6 justify-center'>
+                                        <div className='flex items-center gap-2'>
+                                            <div className='w-3 h-3 rounded-full bg-gray-600'></div>
+                                            <span className='text-small opacity-70'>Normal</span>
+                                        </div>
+                                        <div className='flex items-center gap-2'>
+                                            <div className='w-3 h-3 rounded-full bg-yellow-400 shadow-[0_0_10px_rgba(250,204,21,0.5)]'></div>
+                                            <span className='text-small opacity-70'>Comparing</span>
+                                        </div>
+                                        <div className='flex items-center gap-2'>
+                                            <div className='w-3 h-3 rounded-full bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]'></div>
+                                            <span className='text-small opacity-70'>Swapping</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Algorithm Info */}
+                    <section className={`animate-reveal animate-reveal-delay-2 ${isLoaded ? '' : 'opacity-0'}`}>
+                        <div className='glass-card p-6 rounded-xl text-center'>
+                            <h3 className='text-h3 mb-2'>
+                                {algorithm.charAt(0).toUpperCase() + algorithm.slice(1)} Sort
+                            </h3>
+                            <p className='text-body opacity-70'>
+                                {algorithm === 'bubble' &&
+                                    'Compares adjacent elements and swaps them if they are in the wrong order. Simple but inefficient.'}
+                                {algorithm === 'quick' &&
+                                    'Divides the array around a pivot element and recursively sorts the subarrays. Very efficient on average.'}
+                                {algorithm === 'insertion' &&
+                                    'Builds the final sorted array one item at a time. Efficient for small datasets.'}
+                                {algorithm === 'selection' &&
+                                    'Finds the minimum element and places it at the beginning. Simple but not very efficient.'}
+                            </p>
+                        </div>
+                    </section>
                 </div>
             </main>
         </div>

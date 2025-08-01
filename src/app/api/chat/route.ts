@@ -7,7 +7,7 @@ const anthropic = new Anthropic({
 
 const SYSTEM_PROMPT =
     process.env.RESUME_SYSTEM_PROMPT +
-    `\n-The current date is ${new Date().toLocaleDateString()}\n-(IMPORTANT!) The chat UI displaying this does not support markdown/newlines. Keep that in mind when sending responses.`;
+    `\n-The current date is ${new Date().toLocaleDateString()}\n-(IMPORTANT!) Keep responses concise and conversational. The chat UI supports markdown formatting.`;
 
 export async function POST(req: Request) {
     try {
@@ -19,16 +19,56 @@ export async function POST(req: Request) {
             content: msg.content,
         }));
 
-        const response = await anthropic.messages.create({
-            model: 'claude-sonnet-4-20250514',
-            max_tokens: 8192,
-            system: SYSTEM_PROMPT,
-            messages: anthropicMessages,
+        // Create a streaming response
+        const stream = new ReadableStream({
+            async start(controller) {
+                try {
+                    const messageStream = await anthropic.messages.create({
+                        model: 'claude-sonnet-4-20250514',
+                        max_tokens: 8192,
+                        system: SYSTEM_PROMPT,
+                        messages: anthropicMessages,
+                        stream: true,
+                    });
+
+                    for await (const event of messageStream) {
+                        // Handle text delta events to stream the response
+                        if (event.type === 'content_block_delta' && event.delta.type === 'text_delta') {
+                            const chunk = `data: ${JSON.stringify({
+                                type: 'content',
+                                content: event.delta.text,
+                            })}\n\n`;
+                            controller.enqueue(new TextEncoder().encode(chunk));
+                        }
+
+                        // Handle message completion
+                        if (event.type === 'message_stop') {
+                            const chunk = `data: ${JSON.stringify({
+                                type: 'done',
+                            })}\n\n`;
+                            controller.enqueue(new TextEncoder().encode(chunk));
+                            controller.close();
+                            return;
+                        }
+                    }
+                } catch (error) {
+                    console.error('Streaming error:', error);
+                    const errorChunk = `data: ${JSON.stringify({
+                        type: 'error',
+                        error: 'Failed to get response',
+                    })}\n\n`;
+                    controller.enqueue(new TextEncoder().encode(errorChunk));
+                    controller.close();
+                }
+            },
         });
 
-        return NextResponse.json({
-            // @ts-expect-error anthropic types are wrong
-            message: response.content[0].text,
+        return new Response(stream, {
+            headers: {
+                'Content-Type': 'text/plain; charset=utf-8',
+                'Cache-Control': 'no-cache',
+                Connection: 'keep-alive',
+            },
         });
     } catch (error) {
         console.error('Chat error:', error);
