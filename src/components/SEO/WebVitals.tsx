@@ -19,15 +19,8 @@ export function WebVitals() {
             });
         }
 
-        // Send to Vercel Analytics if available
-        if (typeof window !== 'undefined' && window.va) {
-            window.va('track', 'Web Vital', {
-                name: metric.name,
-                value: metric.value,
-                delta: metric.delta,
-                id: metric.id,
-            });
-        }
+        // Note: Vercel Analytics tracking is handled by the official @vercel/analytics component
+        // imported in the root layout, so no manual tracking needed here
     });
 
     return null;
@@ -37,6 +30,5 @@ export function WebVitals() {
 declare global {
     interface Window {
         gtag?: (...args: any[]) => void;
-        va?: (...args: any[]) => void;
     }
 }

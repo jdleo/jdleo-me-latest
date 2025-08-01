@@ -3,16 +3,7 @@
 import { strings } from '../../constants/strings';
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
-import { generateMetadata as createMetadata } from '@/lib/metadata';
 import { Breadcrumbs } from '@/components/SEO/Breadcrumbs';
-
-export const metadata = createMetadata({
-    title: 'Chat with John - AI Resume Assistant',
-    description:
-        "Interactive AI chatbot that knows everything about John Leonardo's professional experience. Ask questions about his background, skills, and career journey.",
-    url: '/apps/resume',
-    type: 'article',
-});
 
 type Message = {
     content: string;
