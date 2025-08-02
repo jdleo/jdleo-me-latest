@@ -21,6 +21,13 @@ export const blogRegistry: BlogPost[] = [
         tags: ['transformers', 'limitation', 'reasoning', 'llm'],
         description: 'Transformer Architecture Is Fundamentally Limited for True Reasoning',
     },
+    {
+        slug: 'new-grad-swe-search',
+        title: 'SWE Job Search for New Grads',
+        date: '2025-08-02',
+        tags: [],
+        description: '',
+    },
 ];
 
 export function getBlogPost(slug: string): BlogPost | undefined {
