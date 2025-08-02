@@ -1,54 +1,56 @@
+'use client';
+
+import { useState, useEffect } from 'react';
 import { notFound } from 'next/navigation';
-import { Metadata } from 'next';
 import ReactMarkdown from 'react-markdown';
-import { readFile } from 'fs/promises';
-import { join } from 'path';
-import { getBlogPost, getAllBlogPosts } from '@/blog/registry';
-import { generateMetadata as createMetadata } from '@/lib/metadata';
+import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw';
+import { strings } from '../../constants/strings';
 
 interface BlogPostPageProps {
     params: Promise<{ slug: string }>;
 }
 
-// Generate metadata for each blog post
-export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
-    const { slug } = await params;
-    const post = getBlogPost(slug);
+// Note: Metadata generation moved to layout since this is now a client component
 
-    if (!post) {
-        return createMetadata({
-            title: 'Post Not Found',
-            description: 'The requested blog post could not be found.',
-            noIndex: true,
-        });
-    }
+export default function BlogPostPage({ params }: BlogPostPageProps) {
+    const [slug, setSlug] = useState<string>('');
+    const [post, setPost] = useState<any>(null);
+    const [content, setContent] = useState<string>('');
+    const [isLoaded, setIsLoaded] = useState(false);
 
-    return createMetadata({
-        title: post.title,
-        description: post.description || `Read about ${post.title} - ${post.tags.join(', ')}`,
-        url: `/blog/${slug}`,
-        type: 'article',
-        publishedTime: post.date,
-        tags: post.tags,
-    });
-}
+    useEffect(() => {
+        async function loadPost() {
+            const resolvedParams = await params;
+            const currentSlug = resolvedParams.slug;
+            setSlug(currentSlug);
 
-export default async function BlogPostPage({ params }: BlogPostPageProps) {
-    const { slug } = await params;
-    const post = getBlogPost(slug);
+            try {
+                // Fetch post data from API
+                const response = await fetch(`/api/blog/${currentSlug}`);
+                if (!response.ok) {
+                    notFound();
+                    return;
+                }
 
-    if (!post) {
-        notFound();
-    }
+                const data = await response.json();
+                setPost(data.post);
+                setContent(data.content);
 
-    // Read the markdown file
-    const filePath = join(process.cwd(), 'src', 'blog', 'posts', `${slug}.md`);
-    let content: string;
+                // Small delay for smoother loading animation
+                setTimeout(() => setIsLoaded(true), 100);
+            } catch (error) {
+                console.error('Error loading post:', error);
+                notFound();
+                return;
+            }
+        }
 
-    try {
-        content = await readFile(filePath, 'utf-8');
-    } catch (error) {
-        notFound();
+        loadPost();
+    }, [params]);
+
+    if (!post || !content) {
+        return null;
     }
 
     // Generate structured data for the blog post
@@ -81,50 +83,174 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     return (
         <>
             <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
-            <div className='max-w-4xl mx-auto px-4 py-8'>
-                <article itemScope itemType='https://schema.org/BlogPosting'>
-                    <header className='mb-8'>
-                        <h1 className='text-4xl font-bold mb-4' itemProp='headline'>
-                            {post.title}
-                        </h1>
-                        <div className='flex items-center gap-4 text-sm text-gray-500 mb-4'>
-                            <time dateTime={post.date} itemProp='datePublished'>
-                                {new Date(post.date).toLocaleDateString('en-US', {
-                                    year: 'numeric',
-                                    month: 'long',
-                                    day: 'numeric',
-                                })}
-                            </time>
-                            <div className='flex gap-2'>
-                                {post.tags.map(tag => (
-                                    <span
-                                        key={tag}
-                                        className='px-2 py-1 bg-gray-100 rounded-md text-xs'
-                                        itemProp='keywords'
-                                    >
-                                        {tag}
-                                    </span>
-                                ))}
-                            </div>
-                        </div>
-                        <div itemProp='author' itemScope itemType='https://schema.org/Person' className='hidden'>
-                            <span itemProp='name'>John Leonardo</span>
-                        </div>
-                    </header>
 
-                    <div className='prose prose-lg max-w-none' itemProp='articleBody'>
-                        <ReactMarkdown>{content}</ReactMarkdown>
+            <div className='min-h-screen bg-[var(--color-bg-light)] relative'>
+                {/* Subtle background gradients */}
+                <div
+                    className='fixed inset-0 opacity-40 pointer-events-none'
+                    style={{
+                        background:
+                            'radial-gradient(ellipse at 30% 20%, rgba(94, 106, 210, 0.08) 0%, transparent 50%), radial-gradient(ellipse at 70% 80%, rgba(139, 92, 246, 0.06) 0%, transparent 60%)',
+                    }}
+                />
+
+                {/* Strong Navigation Bar */}
+                <nav className='nav-container'>
+                    <div className='nav-content'>
+                        <a href='/' className='nav-logo'>
+                            JL
+                        </a>
+                        <div className='nav-links'>
+                            <a href='/apps' className='nav-link'>
+                                Apps
+                            </a>
+                            <a href='/blog' className='nav-link'>
+                                Blog
+                            </a>
+                            <a href='/apps/resume' className='nav-link'>
+                                Resume
+                            </a>
+                            <a
+                                href={strings.LINKEDIN_URL}
+                                target='_blank'
+                                rel='noopener noreferrer'
+                                className='nav-link'
+                            >
+                                LinkedIn
+                            </a>
+                            <a href={strings.GITHUB_URL} target='_blank' rel='noopener noreferrer' className='nav-link'>
+                                GitHub
+                            </a>
+                        </div>
                     </div>
-                </article>
+                </nav>
+
+                <main className='main-content' style={{ paddingTop: 'clamp(3rem, 5vw, 5rem)' }}>
+                    <div className='container-responsive'>
+                        {/* Back to Blog */}
+                        <div className={`max-w-4xl mx-auto mb-6 animate-reveal ${isLoaded ? '' : 'opacity-0'}`}>
+                            <a
+                                href='/blog'
+                                className='inline-flex items-center gap-2 text-small opacity-70 hover:opacity-100 transition-all duration-300 group'
+                            >
+                                <svg
+                                    width='14'
+                                    height='14'
+                                    viewBox='0 0 24 24'
+                                    fill='none'
+                                    stroke='currentColor'
+                                    strokeWidth='2'
+                                    strokeLinecap='round'
+                                    strokeLinejoin='round'
+                                    className='transition-transform group-hover:-translate-x-1'
+                                >
+                                    <path d='M19 12H5' />
+                                    <path d='M12 19l-7-7 7-7' />
+                                </svg>
+                                Back to Blog
+                            </a>
+                        </div>
+
+                        <article
+                            className={`max-w-4xl mx-auto animate-reveal animate-reveal-delay-1 ${
+                                isLoaded ? '' : 'opacity-0'
+                            }`}
+                            itemScope
+                            itemType='https://schema.org/BlogPosting'
+                        >
+                            {/* Article Header */}
+                            <header className='glass-card-enhanced p-8 md:p-12 mb-4 text-center'>
+                                <h1 className='text-display gradient-text mb-6 leading-tight' itemProp='headline'>
+                                    {post.title}
+                                </h1>
+
+                                <div className='flex flex-col sm:flex-row sm:items-center sm:justify-center gap-4 mb-2'>
+                                    <time
+                                        dateTime={post.date}
+                                        itemProp='datePublished'
+                                        className='text-small opacity-70 flex items-center justify-center gap-2'
+                                    >
+                                        <svg
+                                            width='14'
+                                            height='14'
+                                            viewBox='0 0 24 24'
+                                            fill='none'
+                                            stroke='currentColor'
+                                            strokeWidth='2'
+                                            strokeLinecap='round'
+                                            strokeLinejoin='round'
+                                            className='opacity-60'
+                                        >
+                                            <path d='M8 2v4' />
+                                            <path d='M16 2v4' />
+                                            <rect width='18' height='18' x='3' y='4' rx='2' />
+                                            <path d='M3 10h18' />
+                                        </svg>
+                                        {new Date(post.date).toLocaleDateString('en-US', {
+                                            year: 'numeric',
+                                            month: 'long',
+                                            day: 'numeric',
+                                        })}
+                                    </time>
+
+                                    <div className='flex flex-wrap gap-2 justify-center'>
+                                        {post.tags.map((tag: string) => (
+                                            <span key={tag} className='tech-tag' itemProp='keywords'>
+                                                {tag}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <div
+                                    itemProp='author'
+                                    itemScope
+                                    itemType='https://schema.org/Person'
+                                    className='hidden'
+                                >
+                                    <span itemProp='name'>John Leonardo</span>
+                                </div>
+                            </header>
+
+                            {/* Article Content */}
+                            <div className='blog-content max-w-none' itemProp='articleBody'>
+                                <ReactMarkdown
+                                    remarkPlugins={[remarkGfm]}
+                                    rehypePlugins={[rehypeRaw]}
+                                    remarkRehypeOptions={{ passThrough: ['link'] }}
+                                >
+                                    {content}
+                                </ReactMarkdown>
+                            </div>
+
+                            {/* Article Footer */}
+                            <footer className='glass-card-subtle p-6 mt-8 text-center'>
+                                <p className='text-small opacity-70 mb-4'>
+                                    Thanks for reading! Feel free to reach out if you have any questions or feedback.
+                                </p>
+                                <div className='flex flex-wrap gap-4 justify-center'>
+                                    <a
+                                        href={`mailto:${strings.EMAIL}`}
+                                        className='button-secondary text-small py-2 px-4 min-h-0'
+                                    >
+                                        Email Me
+                                    </a>
+                                    <a
+                                        href={strings.LINKEDIN_URL}
+                                        target='_blank'
+                                        rel='noopener noreferrer'
+                                        className='button-secondary text-small py-2 px-4 min-h-0'
+                                    >
+                                        LinkedIn
+                                    </a>
+                                </div>
+                            </footer>
+                        </article>
+                    </div>
+                </main>
             </div>
         </>
     );
 }
 
-// Generate static params for all blog posts
-export async function generateStaticParams() {
-    const posts = getAllBlogPosts();
-    return posts.map(post => ({
-        slug: post.slug,
-    }));
-}
+// Note: generateStaticParams moved to layout since this is now a client component

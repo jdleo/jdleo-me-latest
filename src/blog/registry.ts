@@ -8,11 +8,11 @@ export interface BlogPost {
 
 export const blogRegistry: BlogPost[] = [
     {
-        slug: 'getting-started',
-        title: 'Getting Started with My Blog',
-        date: '2024-12-17',
-        tags: ['welcome', 'blog'],
-        description: 'Welcome to my blog! This is the first post to get things started.',
+        slug: 'first-post',
+        title: 'Welcome to My Blog',
+        date: '2025-08-02',
+        tags: ['welcome', 'blog', 'jdleo'],
+        description: 'Welcome to my blog!',
     },
 ];
 
