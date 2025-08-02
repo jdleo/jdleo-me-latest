@@ -33,6 +33,12 @@ Here is my career timeline:
 -   [GitHub](https://github.com/jdleo)
 -   [Email](mailto:j@jdleo.me)
 
+Code block:
+
+```python
+print("Hello, World!")
+```
+
 ---
 
 _Posted on August 2, 2025_

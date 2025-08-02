@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
+import CodeBlock from '@/components/CodeBlock';
 import { strings } from '../../constants/strings';
 
 interface BlogPostPageProps {
@@ -218,6 +219,9 @@ export default function BlogPostPage({ params }: BlogPostPageProps) {
                                     remarkPlugins={[remarkGfm]}
                                     rehypePlugins={[rehypeRaw]}
                                     remarkRehypeOptions={{ passThrough: ['link'] }}
+                                    components={{
+                                        code: CodeBlock,
+                                    }}
                                 >
                                     {content}
                                 </ReactMarkdown>
