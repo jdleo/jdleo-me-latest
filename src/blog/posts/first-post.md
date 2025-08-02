@@ -33,10 +33,18 @@ Here is my career timeline:
 -   [GitHub](https://github.com/jdleo)
 -   [Email](mailto:j@jdleo.me)
 
-Code block:
+And here's a random piece of code that I love:
 
-```python
-print("Hello, World!")
+```elixir
+defmodule Fibonacci do
+    defp f(0), do: [0 | 0]
+    defp f(1), do: [1 | 0]
+    defp f(n) do
+        [h | t] = f(n-1)
+        [h+t | h]
+    end
+    def calculate(n), do: hd(f(n))
+end
 ```
 
 ---
