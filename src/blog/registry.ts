@@ -23,10 +23,11 @@ export const blogRegistry: BlogPost[] = [
     },
     {
         slug: 'new-grad-swe-search',
-        title: 'SWE Job Search for New Grads',
+        title: 'New Grad Job Search for Software Engineers',
         date: '2025-08-02',
-        tags: [],
-        description: '',
+        tags: ['career', 'job search', 'new grad', 'software engineering', 'tech industry'],
+        description:
+            'A quick guide for new grads looking to break into the software engineering industry, including networking tips, technical preparation advice, and insights into why the current job market is more challenging.',
     },
 ];
 
