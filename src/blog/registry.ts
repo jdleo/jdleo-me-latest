@@ -10,9 +10,16 @@ export const blogRegistry: BlogPost[] = [
     {
         slug: 'first-post',
         title: 'Welcome to My Blog',
-        date: '2025-08-02',
+        date: '2025-06-09',
         tags: ['welcome', 'blog', 'jdleo'],
         description: 'Welcome to my blog!',
+    },
+    {
+        slug: 'transformers-are-limited',
+        title: 'Transformers Are Limited',
+        date: '2025-08-01',
+        tags: ['transformers', 'limitation', 'reasoning', 'llm'],
+        description: 'Transformer Architecture Is Fundamentally Limited for True Reasoning',
     },
 ];
 

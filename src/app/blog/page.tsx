@@ -108,11 +108,19 @@ export default function BlogPage() {
                                                     <rect width='18' height='18' x='3' y='4' rx='2' />
                                                     <path d='M3 10h18' />
                                                 </svg>
-                                                {new Date(post.date).toLocaleDateString('en-US', {
-                                                    year: 'numeric',
-                                                    month: 'long',
-                                                    day: 'numeric',
-                                                })}
+                                                {(() => {
+                                                    const [year, month, day] = post.date.split('-');
+                                                    const date = new Date(
+                                                        parseInt(year),
+                                                        parseInt(month) - 1,
+                                                        parseInt(day)
+                                                    );
+                                                    return date.toLocaleDateString('en-US', {
+                                                        year: 'numeric',
+                                                        month: 'long',
+                                                        day: 'numeric',
+                                                    });
+                                                })()}
                                             </time>
 
                                             <div className='flex flex-wrap gap-2'>
