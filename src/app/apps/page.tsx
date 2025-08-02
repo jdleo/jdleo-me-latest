@@ -35,8 +35,11 @@ export default function Apps() {
                         JL
                     </Link>
                     <div className='nav-links'>
-                        <Link href='/' className='nav-link'>
-                            Home
+                        <Link href='/apps' className='nav-link'>
+                            Apps
+                        </Link>
+                        <Link href='/blog' className='nav-link'>
+                            Blog
                         </Link>
                         <a href='/apps/resume' className='nav-link'>
                             Resume

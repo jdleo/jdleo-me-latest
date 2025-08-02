@@ -58,6 +58,9 @@ export default function Home() {
                             <a href='/apps' className='nav-link'>
                                 Apps
                             </a>
+                            <a href='/blog' className='nav-link'>
+                                Blog
+                            </a>
                             <a href='/apps/resume' className='nav-link'>
                                 Resume
                             </a>

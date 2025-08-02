@@ -1,5 +1,6 @@
 import { MetadataRoute } from 'next';
 import { apps } from './constants/apps';
+import { getAllBlogPosts } from '../blog/registry';
 
 export default function sitemap(): MetadataRoute.Sitemap {
     const baseUrl = 'https://jdleo.me';
@@ -19,6 +20,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
             changeFrequency: 'weekly' as const,
             priority: 0.9,
         },
+        {
+            url: `${baseUrl}/blog`,
+            lastModified: currentDate,
+            changeFrequency: 'weekly' as const,
+            priority: 0.9,
+        },
     ];
 
     // Dynamic app routes
@@ -29,5 +36,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
         priority: 0.8,
     }));
 
-    return [...routes, ...appRoutes];
+    // Blog post routes
+    const blogPosts = getAllBlogPosts();
+    const blogRoutes = blogPosts.map(post => ({
+        url: `${baseUrl}/blog/${post.slug}`,
+        lastModified: post.date,
+        changeFrequency: 'monthly' as const,
+        priority: 0.7,
+    }));
+
+    return [...routes, ...appRoutes, ...blogRoutes];
 }

@@ -54,6 +54,7 @@ const config: Config = {
         },
     },
     plugins: [
+        require('@tailwindcss/typography'),
         plugin(function ({ addBase, theme }) {
             addBase({
                 ':root': {
