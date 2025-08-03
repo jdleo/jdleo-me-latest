@@ -4,10 +4,16 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { getAllBlogPosts } from '@/blog/registry';
 import { strings } from '../constants/strings';
+import { Breadcrumbs } from '@/components/SEO/Breadcrumbs';
 
 export default function BlogPage() {
     const posts = getAllBlogPosts();
     const [isLoaded, setIsLoaded] = useState(false);
+
+    const breadcrumbItems = [
+        { label: 'Home', href: '/' },
+        { label: 'Blog', href: '/blog' },
+    ];
 
     useEffect(() => {
         // Small delay for smoother loading animation
@@ -54,17 +60,13 @@ export default function BlogPage() {
 
             <main className='main-content'>
                 <div className='container-responsive'>
+                    <Breadcrumbs items={breadcrumbItems} />
+
                     {/* Header Section */}
                     <section
                         className={`text-center max-w-4xl mx-auto mb-12 animate-reveal ${isLoaded ? '' : 'opacity-0'}`}
                     >
                         <h1 className='text-display gradient-text mb-6'>Blog</h1>
-                        <div className='glass-card-enhanced p-6 md:p-8'>
-                            <p className='text-body leading-relaxed opacity-90'>
-                                Technical insights, tutorials, and thoughts on software development from a Senior
-                                Software Engineer.
-                            </p>
-                        </div>
                     </section>
 
                     {/* Blog Posts Grid */}

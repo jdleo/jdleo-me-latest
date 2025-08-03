@@ -1,58 +1,45 @@
-'use client';
-
-import { useState, useEffect } from 'react';
 import { notFound } from 'next/navigation';
+import { readFile } from 'fs/promises';
+import { join } from 'path';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 import CodeBlock from '@/components/CodeBlock';
+import { getBlogPost } from '@/blog/registry';
 import { strings } from '../../constants/strings';
+import { Breadcrumbs } from '@/components/SEO/Breadcrumbs';
 
 interface BlogPostPageProps {
     params: Promise<{ slug: string }>;
 }
 
-// Note: Metadata generation moved to layout since this is now a client component
+// Enable ISR - revalidate every hour
+export const revalidate = 3600;
 
-export default function BlogPostPage({ params }: BlogPostPageProps) {
-    const [slug, setSlug] = useState<string>('');
-    const [post, setPost] = useState<any>(null);
-    const [content, setContent] = useState<string>('');
-    const [isLoaded, setIsLoaded] = useState(false);
+export default async function BlogPostPage({ params }: BlogPostPageProps) {
+    const { slug } = await params;
+    const post = getBlogPost(slug);
 
-    useEffect(() => {
-        async function loadPost() {
-            const resolvedParams = await params;
-            const currentSlug = resolvedParams.slug;
-            setSlug(currentSlug);
-
-            try {
-                // Fetch post data from API
-                const response = await fetch(`/api/blog/${currentSlug}`);
-                if (!response.ok) {
-                    notFound();
-                    return;
-                }
-
-                const data = await response.json();
-                setPost(data.post);
-                setContent(data.content);
-
-                // Small delay for smoother loading animation
-                setTimeout(() => setIsLoaded(true), 100);
-            } catch (error) {
-                console.error('Error loading post:', error);
-                notFound();
-                return;
-            }
-        }
-
-        loadPost();
-    }, [params]);
-
-    if (!post || !content) {
-        return null;
+    if (!post) {
+        notFound();
     }
+
+    // Read the markdown file directly (server-side)
+    let content: string;
+    try {
+        const filePath = join(process.cwd(), 'src', 'blog', 'posts', `${slug}.md`);
+        content = await readFile(filePath, 'utf-8');
+    } catch (error) {
+        console.error('Error reading blog post:', error);
+        notFound();
+    }
+
+    // Generate breadcrumb items
+    const breadcrumbItems = [
+        { label: 'Home', href: '/' },
+        { label: 'Blog', href: '/blog' },
+        { label: post.title, href: `/blog/${slug}` },
+    ];
 
     // Generate structured data for the blog post
     const structuredData = {
@@ -128,34 +115,12 @@ export default function BlogPostPage({ params }: BlogPostPageProps) {
 
                 <main className='main-content' style={{ paddingTop: 'clamp(3rem, 5vw, 5rem)' }}>
                     <div className='container-responsive'>
-                        {/* Back to Blog */}
-                        <div className={`max-w-4xl mx-auto mb-6 animate-reveal ${isLoaded ? '' : 'opacity-0'}`}>
-                            <a
-                                href='/blog'
-                                className='inline-flex items-center gap-2 text-small opacity-70 hover:opacity-100 transition-all duration-300 group'
-                            >
-                                <svg
-                                    width='14'
-                                    height='14'
-                                    viewBox='0 0 24 24'
-                                    fill='none'
-                                    stroke='currentColor'
-                                    strokeWidth='2'
-                                    strokeLinecap='round'
-                                    strokeLinejoin='round'
-                                    className='transition-transform group-hover:-translate-x-1'
-                                >
-                                    <path d='M19 12H5' />
-                                    <path d='M12 19l-7-7 7-7' />
-                                </svg>
-                                Back to Blog
-                            </a>
+                        <div className='max-w-4xl mx-auto'>
+                            <Breadcrumbs items={breadcrumbItems} />
                         </div>
 
                         <article
-                            className={`max-w-4xl mx-auto animate-reveal animate-reveal-delay-1 ${
-                                isLoaded ? '' : 'opacity-0'
-                            }`}
+                            className='max-w-4xl mx-auto animate-reveal animate-reveal-delay-1'
                             itemScope
                             itemType='https://schema.org/BlogPosting'
                         >

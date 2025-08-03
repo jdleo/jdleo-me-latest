@@ -3,7 +3,8 @@ import { generateMetadata as createMetadata } from '@/lib/metadata';
 
 export const metadata: Metadata = createMetadata({
     title: 'Blog',
-    description: 'Technical insights, tutorials, and thoughts on software development from a Senior Software Engineer.',
+    description:
+        'Technical insights, tutorials, and thoughts on software development from a Senior Software Engineer at Roblox.',
     url: '/blog',
     type: 'website',
 });
