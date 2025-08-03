@@ -101,13 +101,13 @@ Drum roll please...
 
 | Model                        | Wins | Errors | Total Cost |
 | ---------------------------- | ---- | ------ | ---------- |
-| xAI Grok-3-mini              | 12   | 0      | $0.094451  |
-| Google Gemini 2.5 Flash Lite | 9    | 0      | $0.002722  |
-| Anthropic Claude 3.5 Haiku   | 7    | 0      | $0.023327  |
-| Amazon Nova Micro v1         | 5    | 0      | $0.001344  |
-| Meta Llama-4-scout           | 4    | 0      | $0.003540  |
-| Mistral Small 3.2 24B        | 4    | 0      | $0.001699  |
-| OpenAI GPT-4o-mini           | 0    | 0      | $0.000123  |
+| xAI Grok-3-mini              | 12   | 0      | $0.245026  |
+| Google Gemini 2.5 Flash Lite | 9    | 0      | $0.007061  |
+| Anthropic Claude 3.5 Haiku   | 7    | 0      | $0.060515  |
+| Amazon Nova Micro v1         | 5    | 0      | $0.003487  |
+| Meta Llama-4-scout           | 4    | 0      | $0.009184  |
+| Mistral Small 3.2 24B        | 4    | 0      | $0.004408  |
+| OpenAI GPT-4o-mini           | 0    | 0      | $0.000319  |
 
 **Grok-3-mini takes the crown!** This was honestly surprising to me. xAI's budget model dominated with 12 wins, which is pretty impressive for a relatively new player.
 
@@ -137,17 +137,17 @@ But what happens when we throw the budget constraint out the window? I ran the s
 
 | Model                     | Wins | Errors | Total Cost |
 | ------------------------- | ---- | ------ | ---------- |
-| OpenAI ChatGPT-4o-latest  | 7    | 0      | $0.003908  |
-| DeepSeek R1               | 6    | 0      | $0.096280  |
-| Anthropic Claude Sonnet 4 | 5    | 0      | $0.097879  |
-| Qwen 3 235B               | 4    | 0      | $0.054429  |
-| Amazon Nova Pro v1        | 4    | 0      | $0.028830  |
-| Google Gemini 2.5 Pro     | 3    | 0      | $0.354295  |
-| Moonshot Kimi K2          | 3    | 0      | $0.005004  |
-| Meta Llama-4 Maverick     | 2    | 0      | $0.008554  |
-| xAI Grok-4                | 1    | 0      | $0.640237  |
-| Mistral Large 2411        | 1    | 0      | $0.044542  |
-| OpenAI GPT-4.1            | 0    | 0      | $0.003620  |
+| OpenAI ChatGPT-4o-latest  | 7    | 0      | $0.012417  |
+| DeepSeek R1               | 6    | 0      | $0.305919  |
+| Anthropic Claude Sonnet 4 | 5    | 0      | $0.310999  |
+| Qwen 3 235B               | 4    | 0      | $0.172942  |
+| Amazon Nova Pro v1        | 4    | 0      | $0.091604  |
+| Google Gemini 2.5 Pro     | 3    | 0      | $1.125732  |
+| Moonshot Kimi K2          | 3    | 0      | $0.015900  |
+| Meta Llama-4 Maverick     | 2    | 0      | $0.027179  |
+| xAI Grok-4                | 1    | 0      | $2.034279  |
+| Mistral Large 2411        | 1    | 0      | $0.141527  |
+| OpenAI GPT-4.1            | 0    | 0      | $0.011502  |
 
 **ChatGPT-4o-latest takes the crown!** OpenAI reclaims the throne in the flagship category with 7 wins. DeepSeek R1 comes in strong second with 6 wins - impressive performance for their reasoning model. Claude Sonnet 4 rounds out the top 3.
 
