@@ -3,11 +3,13 @@
 import Link from 'next/link';
 import { strings } from '../../constants/strings';
 import { useState, useEffect } from 'react';
+import ReactConfetti from 'react-confetti';
 
 type Color = {
     id: string;
     name: string;
     gradient: string;
+    textColor: string;
 };
 
 type Particle = {
@@ -22,30 +24,52 @@ type Particle = {
     animationDelay: string;
 };
 
+type GameResult = {
+    won: boolean;
+    amount: number;
+    color: string;
+    multiplier: number;
+};
+
+type GameHistory = {
+    id: number;
+    bet: number;
+    selectedColors: string[];
+    winningColor: string;
+    result: 'win' | 'loss';
+    amount: number;
+    timestamp: number;
+};
+
 const COLORS: Color[] = [
-    { id: 'red', name: 'Red', gradient: 'from-red-400 to-red-600' },
-    { id: 'blue', name: 'Blue', gradient: 'from-blue-400 to-blue-600' },
-    { id: 'green', name: 'Green', gradient: 'from-green-400 to-green-600' },
-    { id: 'purple', name: 'Purple', gradient: 'from-purple-400 to-purple-600' },
-    { id: 'orange', name: 'Orange', gradient: 'from-orange-400 to-orange-600' },
-    { id: 'pink', name: 'Pink', gradient: 'from-pink-400 to-pink-600' },
+    { id: 'red', name: 'Red', gradient: 'from-red-400 to-red-600', textColor: 'text-red-400' },
+    { id: 'blue', name: 'Blue', gradient: 'from-blue-400 to-blue-600', textColor: 'text-blue-400' },
+    { id: 'green', name: 'Green', gradient: 'from-green-400 to-green-600', textColor: 'text-green-400' },
+    { id: 'purple', name: 'Purple', gradient: 'from-purple-400 to-purple-600', textColor: 'text-purple-400' },
+    { id: 'orange', name: 'Orange', gradient: 'from-orange-400 to-orange-600', textColor: 'text-orange-400' },
+    { id: 'pink', name: 'Pink', gradient: 'from-pink-400 to-pink-600', textColor: 'text-pink-400' },
 ];
 
+const PRESET_BETS = [10, 50, 100, 250, 500];
+
 export default function Gamble() {
-    const [balance, setBalance] = useState(1000); // start with 1000 coins
+    const [balance, setBalance] = useState(1000);
     const [selectedColors, setSelectedColors] = useState<string[]>([]);
     const [betAmount, setBetAmount] = useState<number>(0);
     const [isSpinning, setIsSpinning] = useState(false);
-    const [result, setResult] = useState<{ won: boolean; amount: number; color: string } | null>(null);
+    const [result, setResult] = useState<GameResult | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [isLoaded, setIsLoaded] = useState(false);
     const [particles, setParticles] = useState<Particle[]>([]);
+    const [showConfetti, setShowConfetti] = useState(false);
+    const [gameHistory, setGameHistory] = useState<GameHistory[]>([]);
+    const [showHistory, setShowHistory] = useState(false);
 
     useEffect(() => {
         setIsLoaded(true);
 
         // Generate particles once on component mount
-        const newParticles = Array.from({ length: 8 }, (_, i) => {
+        const newParticles = Array.from({ length: 12 }, (_, i) => {
             return {
                 id: i,
                 width: `${Math.random() * 4 + 2}px`,
@@ -58,8 +82,8 @@ export default function Gamble() {
                 }, ${200 + Math.random() * 55}, 0.3)`,
                 left: `${Math.random() * 100}%`,
                 top: `${Math.random() * 100}%`,
-                animationDuration: `${Math.random() * 10 + 10}s`,
-                animationDelay: `${Math.random() * 5}s`,
+                animationDuration: `${Math.random() * 15 + 10}s`,
+                animationDelay: `${Math.random() * 8}s`,
             };
         });
 
@@ -71,10 +95,11 @@ export default function Gamble() {
 
     const handleColorSelect = (colorId: string) => {
         setError(null);
+        setResult(null);
         if (selectedColors.includes(colorId)) {
             setSelectedColors(prev => prev.filter(id => id !== colorId));
         } else if (selectedColors.length >= 5) {
-            setError("You can't select more than 5 colors");
+            setError('Maximum 5 colors allowed');
             return;
         } else {
             setSelectedColors(prev => [...prev, colorId]);
@@ -83,13 +108,24 @@ export default function Gamble() {
 
     const handleBetChange = (value: string) => {
         setError(null);
+        setResult(null);
         const amount = Number(value);
         if (amount > balance) {
-            setError("You don't have enough balance");
+            setError('Insufficient balance');
             setBetAmount(0);
         } else {
             setBetAmount(amount);
         }
+    };
+
+    const handlePresetBet = (amount: number) => {
+        setError(null);
+        setResult(null);
+        if (amount > balance) {
+            setError('Insufficient balance');
+            return;
+        }
+        setBetAmount(amount);
     };
 
     const handleGamble = async () => {
@@ -109,27 +145,67 @@ export default function Gamble() {
 
         setIsSpinning(true);
         setError(null);
+        setResult(null);
 
-        // Simulate spin
-        await new Promise(resolve => setTimeout(resolve, 500));
+        // Extended spin animation
+        await new Promise(resolve => setTimeout(resolve, 1500));
 
-        const winningColor = COLORS[Math.floor(Math.random() * COLORS.length)].id;
-        const won = selectedColors.includes(winningColor);
+        const winningColor = COLORS[Math.floor(Math.random() * COLORS.length)];
+        const won = selectedColors.includes(winningColor.id);
+
+        const gameResult: GameResult = {
+            won,
+            amount: won ? betAmount * multiplier - betAmount : betAmount,
+            color: winningColor.id,
+            multiplier,
+        };
+
+        // Add to history
+        const historyEntry: GameHistory = {
+            id: Date.now(),
+            bet: betAmount,
+            selectedColors: [...selectedColors],
+            winningColor: winningColor.id,
+            result: won ? 'win' : 'loss',
+            amount: gameResult.amount,
+            timestamp: Date.now(),
+        };
+
+        setGameHistory(prev => [historyEntry, ...prev.slice(0, 9)]); // Keep last 10 games
 
         if (won) {
-            const winAmount = betAmount * multiplier - betAmount;
-            setBalance(prev => prev + winAmount);
-            setResult({ won: true, amount: winAmount, color: winningColor });
+            setBalance(prev => prev + gameResult.amount);
+            setShowConfetti(true);
+            setTimeout(() => setShowConfetti(false), 4000);
         } else {
-            setBalance(prev => prev - betAmount);
-            setResult({ won: false, amount: betAmount, color: winningColor });
+            setBalance(prev => prev - gameResult.amount);
         }
 
+        setResult(gameResult);
         setIsSpinning(false);
+
+        // Reset selections after game
+        setTimeout(() => {
+            setSelectedColors([]);
+            setBetAmount(0);
+        }, 3000);
     };
+
+    const resetGame = () => {
+        setBalance(1000);
+        setSelectedColors([]);
+        setBetAmount(0);
+        setResult(null);
+        setError(null);
+        setGameHistory([]);
+    };
+
+    const getColorObject = (colorId: string) => COLORS.find(c => c.id === colorId) || COLORS[0];
 
     return (
         <div className='min-h-screen bg-[color:var(--background)] overflow-hidden orbital-grid'>
+            {showConfetti && <ReactConfetti />}
+
             {/* Background gradient effects */}
             <div className='fixed inset-0 bg-[color:var(--background)] z-[-2]' />
             <div
@@ -142,7 +218,7 @@ export default function Gamble() {
             />
 
             {/* Header */}
-            <header className='absolute top-0 right-0 p-4 sm:p-6'>
+            <header className='absolute top-0 right-0 p-4 sm:p-6 z-10'>
                 <nav className='flex gap-4 sm:gap-6 text-[color:var(--foreground)] text-opacity-70 text-sm sm:text-base'>
                     <Link href='/apps' className='linear-link'>
                         Apps
@@ -163,111 +239,230 @@ export default function Gamble() {
             </header>
 
             <main
-                className={`flex-1 flex flex-col items-center justify-center gap-6 sm:gap-8 p-4 pt-24 transition-opacity duration-700 ${
+                className={`flex-1 flex flex-col items-center justify-center gap-6 sm:gap-8 p-4 pt-24 pb-8 transition-opacity duration-700 ${
                     isLoaded ? 'opacity-100' : 'opacity-0'
                 }`}
             >
-                <div className='mb-4 text-center'>
-                    <h1 className='text-2xl sm:text-3xl font-bold mb-2'>
+                {/* Title and Balance */}
+                <div className='text-center'>
+                    <h1 className='text-2xl sm:text-3xl font-bold mb-4'>
                         <span className='gradient-text'>Color Gamble</span>
                     </h1>
+                    <div className='glass-card px-6 py-3 rounded-full'>
+                        <span className='text-[color:var(--foreground)] font-semibold text-lg'>
+                            💰 {balance.toLocaleString()} coins
+                        </span>
+                    </div>
                 </div>
 
-                <div className='glass-card px-6 py-3 rounded-full mb-2'>
-                    <span className='text-[color:var(--foreground)] font-semibold'>
-                        Balance: {balance.toLocaleString()} coins
-                    </span>
-                </div>
-
-                <div className='grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4 max-w-2xl w-full'>
-                    {COLORS.map(color => (
-                        <button
-                            key={color.id}
-                            onClick={() => handleColorSelect(color.id)}
-                            className={`
-                                relative p-4 sm:p-6 rounded-xl overflow-hidden transition-all duration-300
-                                ${
-                                    selectedColors.includes(color.id)
-                                        ? 'scale-105 shadow-orbital-glow-sm'
-                                        : 'scale-100 hover:scale-[1.02]'
-                                }
-                            `}
-                        >
-                            <div
+                {/* Color Selection */}
+                <div className='w-full max-w-2xl'>
+                    <h2 className='text-[color:var(--foreground)] text-opacity-80 text-center mb-4 font-semibold'>
+                        Choose your colors ({selectedColors.length}/5)
+                    </h2>
+                    <div className='grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4'>
+                        {COLORS.map(color => (
+                            <button
+                                key={color.id}
+                                onClick={() => handleColorSelect(color.id)}
                                 className={`
-                                    absolute inset-0 bg-gradient-to-br ${color.gradient}
+                                    relative p-4 sm:p-6 rounded-xl overflow-hidden transition-all duration-300
                                     ${
                                         selectedColors.includes(color.id)
-                                            ? 'opacity-60 border-2 border-white/30'
-                                            : 'opacity-30 border border-white/10'
+                                            ? 'scale-105 shadow-orbital-glow-sm ring-2 ring-white/50'
+                                            : 'scale-100 hover:scale-[1.02] hover:shadow-lg'
                                     }
-                                    backdrop-blur-md
+                                    ${isSpinning ? 'pointer-events-none' : ''}
                                 `}
-                            />
-                            <div
-                                className={`
-                                    relative text-white font-bold
-                                    ${
-                                        selectedColors.includes(color.id)
-                                            ? 'text-base sm:text-lg'
-                                            : 'text-sm sm:text-base'
-                                    }
-                                `}
+                                disabled={isSpinning}
                             >
-                                {color.name}
-                            </div>
-                        </button>
-                    ))}
+                                <div
+                                    className={`
+                                        absolute inset-0 bg-gradient-to-br ${color.gradient}
+                                        ${selectedColors.includes(color.id) ? 'opacity-80' : 'opacity-40'}
+                                        backdrop-blur-md transition-opacity duration-300
+                                    `}
+                                />
+                                <div className='relative text-white font-bold text-sm sm:text-base flex items-center justify-center'>
+                                    {selectedColors.includes(color.id) && '✓ '}
+                                    {color.name}
+                                </div>
+                            </button>
+                        ))}
+                    </div>
                 </div>
 
-                <div className='flex flex-col items-center gap-3 sm:gap-4 w-full max-w-md'>
-                    <input
-                        type='number'
-                        value={betAmount || ''}
-                        onChange={e => handleBetChange(e.target.value)}
-                        placeholder='Enter bet amount'
-                        className='w-full p-3 sm:p-4 rounded-lg bg-[color:var(--secondary)] border border-[color:var(--border)]
-                                 text-sm sm:text-base text-[color:var(--foreground)] placeholder:text-[color:var(--foreground)] placeholder:text-opacity-50 
-                                 focus:outline-none focus:border-[color:var(--primary)] focus:border-opacity-50
-                                 transition-all duration-300'
-                    />
+                {/* Betting Interface */}
+                <div className='w-full max-w-md space-y-4'>
+                    <div>
+                        <h3 className='text-[color:var(--foreground)] text-opacity-80 text-center mb-3 font-semibold'>
+                            Place your bet
+                        </h3>
 
-                    {error && (
-                        <div className='text-red-400 bg-red-400 bg-opacity-10 px-4 py-2 rounded-lg border border-red-400 border-opacity-20 text-sm w-full'>
-                            {error}
+                        {/* Preset bet buttons */}
+                        <div className='flex gap-2 mb-3 justify-center flex-wrap'>
+                            {PRESET_BETS.map(amount => (
+                                <button
+                                    key={amount}
+                                    onClick={() => handlePresetBet(amount)}
+                                    disabled={isSpinning || amount > balance}
+                                    className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all duration-200 ${
+                                        betAmount === amount
+                                            ? 'bg-[color:var(--primary)] text-white'
+                                            : amount > balance
+                                            ? 'bg-gray-300 text-gray-500 cursor-not-allowed opacity-50'
+                                            : 'glass-card hover:bg-[color:var(--primary)] hover:bg-opacity-20'
+                                    }`}
+                                >
+                                    {amount}
+                                </button>
+                            ))}
+                        </div>
+
+                        <input
+                            type='number'
+                            value={betAmount || ''}
+                            onChange={e => handleBetChange(e.target.value)}
+                            placeholder='Enter custom amount'
+                            disabled={isSpinning}
+                            className='w-full p-3 sm:p-4 rounded-lg bg-[color:var(--secondary)] border border-[color:var(--border)]
+                                     text-sm sm:text-base text-[color:var(--foreground)] placeholder:text-[color:var(--foreground)] placeholder:text-opacity-50 
+                                     focus:outline-none focus:border-[color:var(--primary)] focus:border-opacity-50
+                                     transition-all duration-300 disabled:opacity-50'
+                        />
+                    </div>
+
+                    {/* Game Stats */}
+                    {selectedColors.length > 0 && betAmount > 0 && (
+                        <div className='glass-card p-4 rounded-xl text-center space-y-2'>
+                            <div className='text-[color:var(--foreground)] text-opacity-70 text-sm'>
+                                <div>
+                                    Selected: {selectedColors.length} color{selectedColors.length !== 1 ? 's' : ''}
+                                </div>
+                                <div>
+                                    Multiplier:{' '}
+                                    <span className='font-bold text-[color:var(--primary)]'>
+                                        {multiplier.toFixed(2)}x
+                                    </span>
+                                </div>
+                                <div>
+                                    Potential win:{' '}
+                                    <span className='font-bold text-green-500'>
+                                        +{(potentialWin - betAmount).toLocaleString()}
+                                    </span>{' '}
+                                    coins
+                                </div>
+                            </div>
                         </div>
                     )}
 
-                    <div className='text-[color:var(--foreground)] text-opacity-70 text-xs sm:text-sm'>
-                        Potential win: {potentialWin.toLocaleString()} coins ({multiplier.toFixed(2)}x)
-                    </div>
+                    {error && (
+                        <div className='text-red-500 bg-red-50 px-4 py-2 rounded-lg border border-red-200 text-sm text-center animate-pulse'>
+                            ⚠️ {error}
+                        </div>
+                    )}
 
+                    {/* Gamble Button */}
                     <button
                         onClick={handleGamble}
-                        disabled={isSpinning}
-                        className='relative px-6 py-3 rounded-lg bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 text-white font-bold overflow-hidden group transition-all w-full hover:shadow-orbital-glow hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100 disabled:hover:shadow-none'
+                        disabled={isSpinning || !selectedColors.length || betAmount <= 0}
+                        className={`button-primary disabled:opacity-50 disabled:cursor-not-allowed w-full group text-sm sm:text-base justify-center ${
+                            isSpinning ? 'animate-pulse' : ''
+                        }`}
                     >
-                        <span className='absolute inset-0 w-full h-full bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300'></span>
-                        <span className='absolute inset-0 w-0 bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 opacity-50 group-hover:w-full transition-all duration-500 blur-lg'></span>
-                        <span className='relative z-10'>{isSpinning ? 'Spinning...' : 'GAMBLE'}</span>
+                        <span className='font-bold'>{isSpinning ? 'SPINNING...' : '🎲 ROLL THE DICE'}</span>
+                        <svg
+                            width='20'
+                            height='20'
+                            viewBox='0 0 24 24'
+                            fill='none'
+                            stroke='currentColor'
+                            strokeWidth='2'
+                            strokeLinecap='round'
+                            strokeLinejoin='round'
+                            className={isSpinning ? 'animate-spin' : 'group-hover:scale-110 transition-transform'}
+                        >
+                            <rect x='3' y='3' width='18' height='18' rx='2' ry='2' />
+                            <circle cx='9' cy='9' r='1' />
+                            <circle cx='15' cy='15' r='1' />
+                        </svg>
                     </button>
                 </div>
 
+                {/* Result Display */}
                 {result && (
-                    <div className='glass-card p-6 rounded-xl transition-all duration-300 animate-pulse-slow text-center'>
-                        <div className={`text-xl sm:text-2xl font-bold mb-2 text-${result.color}-400`}>
-                            {result.color.toUpperCase()} was chosen
+                    <div
+                        className={`glass-card p-6 rounded-xl text-center space-y-3 transition-all duration-500 animate-pulse-slow ${
+                            result.won ? 'ring-2 ring-green-400' : 'ring-2 ring-red-400'
+                        }`}
+                    >
+                        <div className='text-lg font-semibold text-[color:var(--foreground)] text-opacity-80'>
+                            🎯 Winning Color:{' '}
+                            <span className={`font-bold ${getColorObject(result.color).textColor}`}>
+                                {getColorObject(result.color).name.toUpperCase()}
+                            </span>
                         </div>
                         <div
                             className={`text-xl sm:text-2xl font-bold ${
-                                result.won ? 'text-green-400' : 'text-red-400'
+                                result.won ? 'text-green-500' : 'text-red-500'
                             }`}
                         >
                             {result.won ? (
-                                <>🎉 You won {result.amount.toLocaleString()} coins! 🎉</>
+                                <>🎉 YOU WON {result.amount.toLocaleString()} COINS! 🎉</>
                             ) : (
-                                <>😢 You lost {result.amount.toLocaleString()} coins 😢</>
+                                <>💸 You lost {result.amount.toLocaleString()} coins 💸</>
                             )}
+                        </div>
+                        {result.won && (
+                            <div className='text-sm text-[color:var(--foreground)] text-opacity-70'>
+                                Multiplier: {result.multiplier.toFixed(2)}x
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {/* Game Controls */}
+                <div className='flex gap-4 justify-center'>
+                    <button
+                        onClick={() => setShowHistory(!showHistory)}
+                        className='button-secondary text-sm'
+                        disabled={isSpinning}
+                    >
+                        <span>📊 History</span>
+                    </button>
+                    <button onClick={resetGame} className='button-secondary text-sm' disabled={isSpinning}>
+                        <span>🔄 Reset Game</span>
+                    </button>
+                </div>
+
+                {/* Game History */}
+                {showHistory && gameHistory.length > 0 && (
+                    <div className='w-full max-w-md glass-card p-4 rounded-xl'>
+                        <h3 className='font-semibold text-[color:var(--foreground)] mb-3 text-center'>Recent Games</h3>
+                        <div className='space-y-2 max-h-40 overflow-y-auto'>
+                            {gameHistory.map(game => (
+                                <div
+                                    key={game.id}
+                                    className='flex justify-between items-center text-sm py-2 border-b border-[color:var(--border)]'
+                                >
+                                    <div className='flex items-center gap-2'>
+                                        <span
+                                            className={`font-bold ${
+                                                game.result === 'win' ? 'text-green-500' : 'text-red-500'
+                                            }`}
+                                        >
+                                            {game.result === 'win' ? '+' : '-'}
+                                            {game.amount}
+                                        </span>
+                                        <span className={`text-xs ${getColorObject(game.winningColor).textColor}`}>
+                                            {getColorObject(game.winningColor).name}
+                                        </span>
+                                    </div>
+                                    <div className='text-[color:var(--foreground)] text-opacity-50 text-xs'>
+                                        Bet: {game.bet}
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     </div>
                 )}
