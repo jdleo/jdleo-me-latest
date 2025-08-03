@@ -29,6 +29,14 @@ export const blogRegistry: BlogPost[] = [
         description:
             'A quick guide for new grads looking to break into the software engineering industry, including networking tips, technical preparation advice, and insights into why the current job market is more challenging.',
     },
+    {
+        slug: 'llm-vote-battle',
+        title: 'Which LLM is Best? I Let Them Vote',
+        date: '2025-08-03',
+        tags: ['llm', 'ai', 'evaluation', 'grok', 'claude', 'gpt', 'gemini', 'comparison'],
+        description:
+            'Running a democratic experiment where LLMs vote on each other to determine which model performs best. Budget winner: Grok-3-mini. Flagship winner: ChatGPT-4o-latest.',
+    },
 ];
 
 export function getBlogPost(slug: string): BlogPost | undefined {
