@@ -111,7 +111,7 @@ Drum roll please...
 
 **Grok-3-mini takes the crown!** This was honestly surprising to me. xAI's budget model dominated with 12 wins, which is pretty impressive for a relatively new player.
 
-Gemini 2.5 Flash Lite came in second with 9 wins and was stupidly cheap at less than half a penny. Claude 3.5 Haiku rounded out the top 3 with 7 wins.
+Gemini 2.5 Flash Lite came in second with 9 wins and was stupidly cheap at less than a penny. Claude 3.5 Haiku rounded out the top 3 with 7 wins.
 
 The biggest shocker? **GPT-4o-mini got zero wins.** Not a single victory. For a model that's supposedly the gold standard for cheap AI, that's... rough. Though to be fair, it was also the cheapest to run.
 
@@ -153,7 +153,7 @@ But what happens when we throw the budget constraint out the window? I ran the s
 
 Interestingly, **xAI had opposite results across tiers** - Grok-3-mini dominated the budget category but Grok-4 only managed 1 win in the flagship tier. Maybe xAI's strength is in the efficiency game?
 
-This flagship experiment cost: **$4.25** - over 12x more expensive than the budget round, with Grok-4 and Gemini 2.5 Pro being the main cost drivers.
+This flagship experiment cost: **$4.25** - over 12x more expensive than the budget round, with Grok-4 being by far the most expensive at over $2, followed by Gemini 2.5 Pro at over $1.
 
 ## Combined Cost Breakdown
 
