@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {
+    let model = 'unknown'; // Initialize for error logging
+    
     try {
-        const { model, prompt } = await req.json();
+        const requestData = await req.json();
+        model = requestData.model;
+        const prompt = requestData.prompt;
 
         if (!model || !prompt) {
             return NextResponse.json({ error: 'Model and prompt are required' }, { status: 400 });
