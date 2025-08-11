@@ -37,6 +37,7 @@ export default function LLMLeaderboard() {
         { label: 'LLM Leaderboard', href: '/apps/llm-leaderboard' },
     ];
     const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
+    const [leaderboardLoading, setLeaderboardLoading] = useState(false);
     const [battleModels, setBattleModels] = useState<BattleModels | null>(null);
     const [prompt, setPrompt] = useState('');
     const [responseA, setResponseA] = useState<Response>({ content: '', loading: false });
@@ -61,12 +62,15 @@ export default function LLMLeaderboard() {
     }, [activeTab]);
 
     const fetchLeaderboard = async () => {
+        setLeaderboardLoading(true);
         try {
             const response = await fetch('/api/llm-leaderboard');
             const data = await response.json();
             setLeaderboard(data);
         } catch (error) {
             console.error('Failed to fetch leaderboard:', error);
+        } finally {
+            setLeaderboardLoading(false);
         }
     };
 
@@ -104,8 +108,8 @@ export default function LLMLeaderboard() {
         if (!prompt.trim() || !battleModels) return;
 
         // Validate input length
-        if (prompt.length > 600) {
-            setInputError('Prompt must be 600 characters or less');
+        if (prompt.length > 2000) {
+            setInputError('Prompt must be 2000 characters or less');
             return;
         }
 
@@ -139,8 +143,8 @@ export default function LLMLeaderboard() {
         const value = e.target.value;
         setPrompt(value);
 
-        if (value.length > 600) {
-            setInputError('Prompt must be 600 characters or less');
+        if (value.length > 2000) {
+            setInputError('Prompt must be 2000 characters or less');
         } else {
             setInputError('');
         }
@@ -307,15 +311,15 @@ export default function LLMLeaderboard() {
                                                     onChange={handlePromptChange}
                                                     placeholder='Ask something interesting...'
                                                     className='w-full p-4 rounded-xl border border-gray-200 resize-none h-32 text-body focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
-                                                    maxLength={600}
+                                                    maxLength={2000}
                                                 />
                                                 <div className='flex justify-between items-center mt-2'>
                                                     <span
                                                         className={`text-small ${
-                                                            prompt.length > 600 ? 'text-red-500' : 'text-gray-500'
+                                                            prompt.length > 2000 ? 'text-red-500' : 'text-gray-500'
                                                         }`}
                                                     >
-                                                        {prompt.length}/600 characters
+                                                        {prompt.length}/2000 characters
                                                     </span>
                                                     {inputError && (
                                                         <span className='text-small text-red-500'>{inputError}</span>
@@ -457,6 +461,34 @@ export default function LLMLeaderboard() {
                                                 <p className='text-body font-semibold'>
                                                     Vote recorded! Thanks for participating.
                                                 </p>
+
+                                                {/* Show model names after voting */}
+                                                {revealedModels && battleModels && (
+                                                    <div className='glass-card-subtle border border-gray-200 p-4 rounded-xl max-w-md mx-auto'>
+                                                        <p className='text-small font-semibold mb-3 text-gray-700'>
+                                                            Battle Results:
+                                                        </p>
+                                                        <div className='flex justify-center gap-8'>
+                                                            <div className='text-center'>
+                                                                <div className='text-small font-semibold text-blue-600'>
+                                                                    Model A
+                                                                </div>
+                                                                <div className='text-small opacity-70'>
+                                                                    {battleModels.modelA}
+                                                                </div>
+                                                            </div>
+                                                            <div className='text-center'>
+                                                                <div className='text-small font-semibold text-green-600'>
+                                                                    Model B
+                                                                </div>
+                                                                <div className='text-small opacity-70'>
+                                                                    {battleModels.modelB}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                )}
+
                                                 <button onClick={startNewBattle} className='button-primary'>
                                                     Vote Again
                                                 </button>
@@ -469,7 +501,14 @@ export default function LLMLeaderboard() {
                             /* Leaderboard */
                             <div className='glass-card p-6 rounded-2xl'>
                                 <h2 className='text-h3 gradient-text mb-6 text-center'>Model Rankings</h2>
-                                {leaderboard.length > 0 ? (
+                                {leaderboardLoading ? (
+                                    <div className='flex items-center justify-center py-12'>
+                                        <div className='text-center space-y-4'>
+                                            <div className='animate-spin w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full mx-auto'></div>
+                                            <p className='text-body text-gray-600'>Loading leaderboard...</p>
+                                        </div>
+                                    </div>
+                                ) : leaderboard.length > 0 ? (
                                     <div className='overflow-x-auto'>
                                         <table className='w-full'>
                                             <thead>

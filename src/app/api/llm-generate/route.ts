@@ -12,8 +12,8 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'Model and prompt are required' }, { status: 400 });
         }
 
-        if (prompt.length > 600) {
-            return NextResponse.json({ error: 'Prompt must be 600 characters or less' }, { status: 400 });
+        if (prompt.length > 2000) {
+            return NextResponse.json({ error: 'Prompt must be 2000 characters or less' }, { status: 400 });
         }
 
         console.log(`Generating response for model: ${model}`);
@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
                     },
                 ],
                 temperature: 0.2,
-                max_tokens: 1048,
+                max_tokens: 2048,
             }),
             signal: controller.signal,
         });
