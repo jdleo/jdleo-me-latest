@@ -79,7 +79,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ content });
     } catch (error) {
         console.error(`Generation error for ${model}:`, error);
-        if (error.name === 'AbortError') {
+        if (error instanceof Error && error.name === 'AbortError') {
             return NextResponse.json({ error: `Model ${model} timed out (60s limit)` }, { status: 408 });
         }
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
