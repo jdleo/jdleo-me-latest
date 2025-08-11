@@ -13,6 +13,12 @@ export const apps: MiniApp[] = [
         href: '/apps/resume',
     },
     {
+        title: 'LLM Leaderboard',
+        subtitle: 'Vote on head-to-head LLM battles and see which models reign supreme.',
+        emoji: '🏆',
+        href: '/apps/llm-leaderboard',
+    },
+    {
         title: 'AI Diagram Generator',
         subtitle: 'Use human language, and a perfect diagram will be generated for you.',
         emoji: '🪄',

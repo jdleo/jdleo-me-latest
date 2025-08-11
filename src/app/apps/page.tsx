@@ -58,20 +58,6 @@ export default function Apps() {
                 <div className='container-responsive'>
                     <Breadcrumbs items={breadcrumbItems} />
 
-                    {/* Hero Section */}
-                    <section className='text-center max-w-4xl mx-auto mb-12'>
-                        <div className='mb-12 animate-reveal'>
-                            <h1 className='text-display gradient-text mb-6'>Mini Apps</h1>
-                            <div className='glass-card-enhanced p-6 md:p-8'>
-                                <p className='text-body leading-relaxed'>
-                                    Discover interactive mini applications I've built to showcase different
-                                    technologies, from AI-powered tools to blockchain demos. Each app demonstrates
-                                    modern web development techniques and creative problem-solving.
-                                </p>
-                            </div>
-                        </div>
-                    </section>
-
                     {/* Apps Grid */}
                     <section className='max-w-6xl mx-auto animate-reveal animate-reveal-delay-1'>
                         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
