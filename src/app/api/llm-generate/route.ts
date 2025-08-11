@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest) {
     let model = 'unknown'; // Initialize for error logging
-    
+
     try {
         const requestData = await req.json();
         model = requestData.model;
@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
                     },
                 ],
                 temperature: 0.2,
-                max_tokens: 2048,
+                max_tokens: 10000,
             }),
             signal: controller.signal,
         });
