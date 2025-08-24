@@ -7,6 +7,12 @@ type MiniApp = {
 
 export const apps: MiniApp[] = [
     {
+        title: 'AI Chat',
+        subtitle: 'Chat with cutting-edge AI models including GPT-5, Claude Sonnet 4, Grok 4, and more.',
+        emoji: '💬',
+        href: '/apps/chat',
+    },
+    {
         title: 'Chat w/ John',
         subtitle: "This is an AI/LLM that knows everything about John's resume.",
         emoji: '🤖',
