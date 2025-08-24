@@ -378,11 +378,10 @@ export default function Chat() {
                                                 </div>
                                                 <div className='glass-card-subtle border border-gray-200 p-3 md:p-4 rounded-2xl text-body leading-relaxed'>
                                                     <p>
-                                                        Welcome to my AI chat! Choose from multiple AI models and start
-                                                        chatting. Pro tip: GPT 120B is the fastest, and still
-                                                        intelligent. Claude 4 is my personal favorite for complex tasks.
-                                                        This is completely free, and responses/chats are NEVER
-                                                        saved/logged whatsoever.
+                                                        Welcome! Choose from multiple AI models. Pro tip:{' '}
+                                                        <b>GPT 120B</b> is the fastest, and still intelligent.{' '}
+                                                        <b>Claude 4</b> is my personal favorite for complex tasks. Chats
+                                                        are NEVER saved or logged.
                                                     </p>
                                                 </div>
                                             </div>

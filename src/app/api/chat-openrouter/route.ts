@@ -26,7 +26,7 @@ export async function POST(req: Request) {
                             Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
                             'Content-Type': 'application/json',
                             'HTTP-Referer': process.env.NEXT_PUBLIC_SITE_URL || 'https://jdleo.me',
-                            'X-Title': 'JD Leo AI Chat',
+                            'X-Title': 'jdleo.me',
                         },
                         body: JSON.stringify({
                             model: model,
