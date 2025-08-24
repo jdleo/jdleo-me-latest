@@ -9,7 +9,9 @@ export async function POST(req: Request) {
         }
 
         // Convert messages to OpenAI format (OpenRouter uses OpenAI-compatible API)
-        const openRouterMessages = messages.map((msg: { content: string; isUser: boolean }) => ({
+        // Also enforce 10 message limit on API side for extra protection
+        const limitedMessages = messages.slice(-10);
+        const openRouterMessages = limitedMessages.map((msg: { content: string; isUser: boolean }) => ({
             role: msg.isUser ? 'user' : 'assistant',
             content: msg.content,
         }));
