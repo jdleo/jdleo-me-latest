@@ -86,13 +86,16 @@ export default function Chat() {
         setStreamingMessage('');
 
         try {
+            // Keep only last 10 messages for API context (to manage token usage)
+            const apiMessages = updatedMessages.slice(-10);
+
             const response = await fetch('/api/chat-openrouter', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    messages: updatedMessages,
+                    messages: apiMessages,
                     model: selectedModel,
                 }),
             });
