@@ -162,41 +162,94 @@ export default function Chat() {
     const availableModels = [
         {
             id: 'openai/gpt-oss-120b',
-            name: 'GPT-OSS 120B',
+            name: 'OpenAI GPT-OSS 120B',
             description: "OpenAI's small but powerful model",
             icon: '/chatgpt.png',
         },
 
         {
             id: 'anthropic/claude-sonnet-4',
-            name: 'Claude Sonnet 4',
+            name: 'Anthropic Claude Sonnet 4',
             description: "Anthropic's latest flagship model",
             icon: '/claude.png',
         },
         {
+            id: 'anthropic/claude-3.5-haiku',
+            name: 'Anthropic Claude 3.5 Haiku',
+            description: 'Fast model optimized for real-time applications and coding',
+            icon: '/claude.png',
+        },
+        {
             id: 'openai/gpt-5-chat',
-            name: 'GPT-5 Chat',
+            name: 'OpenAI GPT-5 Chat',
             description: "OpenAI's newest generation",
             icon: '/chatgpt.png',
         },
-        { id: 'x-ai/grok-4', name: 'Grok 4', description: "xAI's advanced reasoning model", icon: '/grok.png' },
+        {
+            id: 'openai/o4-mini',
+            name: 'OpenAI O4-Mini',
+            description: 'Compact reasoning model with fast, cost-efficient performance',
+            icon: '/chatgpt.png',
+        },
+        {
+            id: 'x-ai/grok-4',
+            name: 'xAI Grok 4',
+            description: "xAI's advanced reasoning model",
+            icon: '/grok.png',
+        },
         {
             id: 'google/gemini-2.5-pro',
-            name: 'Gemini 2.5 Pro',
+            name: 'Google Gemini 2.5 Pro',
             description: "Google's enhanced multimodal AI",
             icon: '/gemini.png',
         },
         {
+            id: 'google/gemini-2.5-flash',
+            name: 'Gemini 2.5 Flash',
+            description: "Google's fast and efficient model",
+            icon: '/gemini.png',
+        },
+        {
             id: 'meta-llama/llama-4-maverick',
-            name: 'Llama 4 Maverick',
+            name: 'Meta Llama 4 Maverick',
             description: "Meta's cutting-edge model",
             icon: '/meta.png',
         },
         {
+            id: 'meta-llama/llama-4-scout',
+            name: 'Meta Llama 4 Scout',
+            description: 'Multimodal MoE model with 10M token context',
+            icon: '/meta.png',
+        },
+        {
             id: 'amazon/nova-pro-v1',
-            name: 'Nova Pro V1',
+            name: 'Amazon Nova Pro V1',
             description: "Amazon's professional AI model",
             icon: '/amazon_nova.png',
+        },
+        {
+            id: 'mistralai/mistral-large-2411',
+            name: 'Mistral Large 2411',
+            description: 'Enhanced long context understanding with improved function calling',
+            icon: '/mistral.png',
+        },
+        {
+            id: 'moonshotai/kimi-k2',
+            name: 'Moonshot Kimi K2',
+            description: 'MoE model optimized for agentic capabilities and tool use',
+            icon: '/kimi.png',
+        },
+        {
+            id: 'z-ai/glm-4.5',
+            name: 'zAI GLM-4.5',
+            description: 'Agent-focused MoE model with thinking and non-thinking modes',
+            icon: '/zai.png',
+        },
+        {
+            id: 'inception/mercury',
+            name: 'Inception Mercury',
+            description: 'First diffusion LLM - 5-10x faster than speed-optimized models',
+            icon: '/inception.png',
         },
     ];
 
@@ -273,7 +326,7 @@ export default function Chat() {
                                         onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                                         className='w-full glass-card-subtle border border-gray-200 hover:border-gray-300 p-3 rounded-xl text-left transition-all duration-200 flex items-center justify-between'
                                     >
-                                        <div className='flex items-center gap-3'>
+                                        <div className='flex items-center gap-3 flex-1'>
                                             <Image
                                                 src={
                                                     availableModels.find(m => m.id === selectedModel)?.icon ||
