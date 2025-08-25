@@ -782,3 +782,45 @@
     font-size: 0.85rem;
   }
 }
+
+/* Markdown table styling for chat */
+.prose table {
+  border-spacing: 0 !important;
+  border-collapse: collapse !important;
+  border-color: inherit !important;
+  display: table !important;
+  margin: 1rem auto !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow: auto !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 0.5rem !important;
+}
+
+.prose tbody,
+.prose td,
+.prose tfoot,
+.prose th,
+.prose thead,
+.prose tr {
+  border-color: var(--border) !important;
+  border-style: solid !important;
+  border-width: 1px !important;
+  padding: 0.75rem !important;
+}
+
+.prose th {
+  background-color: var(--secondary) !important;
+  font-weight: 600 !important;
+  text-align: left !important;
+  font-size: 0.875rem !important;
+}
+
+.prose td {
+  background-color: var(--card) !important;
+  font-size: 0.875rem !important;
+}
+
+.prose tr:nth-child(even) td {
+  background-color: var(--secondary) !important;
+}

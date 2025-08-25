@@ -5,12 +5,58 @@ import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { oneDark } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 import { Breadcrumbs } from '@/components/SEO/Breadcrumbs';
 
 type Message = {
     content: string;
     isUser: boolean;
     model?: string;
+};
+
+// Custom code component with syntax highlighting and language labels
+const CodeBlock = ({ node, inline, className, children, ...props }: any) => {
+    const match = /language-(\w+)/.exec(className || '');
+    const language = match ? match[1] : '';
+
+    return !inline && match ? (
+        <div className='relative rounded-lg overflow-hidden bg-gray-900 my-4'>
+            {/* Language label */}
+            {language && (
+                <div className='flex items-center justify-between px-4 py-2 bg-gray-800 border-b border-gray-700'>
+                    <span className='text-xs font-mono text-gray-300 uppercase tracking-wide'>{language}</span>
+                    <button
+                        onClick={() => navigator.clipboard.writeText(String(children).replace(/\n$/, ''))}
+                        className='text-xs text-gray-400 hover:text-gray-200 transition-colors duration-200 px-2 py-1 rounded hover:bg-gray-700'
+                        title='Copy code'
+                    >
+                        📋 Copy
+                    </button>
+                </div>
+            )}
+            <SyntaxHighlighter
+                style={oneDark}
+                language={language}
+                PreTag='div'
+                customStyle={{
+                    margin: 0,
+                    borderRadius: language ? '0 0 0.5rem 0.5rem' : '0.5rem',
+                    fontSize: '0.875rem',
+                    lineHeight: '1.5',
+                }}
+                {...props}
+            >
+                {String(children).replace(/\n$/, '')}
+            </SyntaxHighlighter>
+        </div>
+    ) : (
+        <code className='bg-gray-100 text-gray-800 px-1.5 py-0.5 rounded text-sm font-mono' {...props}>
+            {children}
+        </code>
+    );
 };
 
 export default function Chat() {
@@ -485,7 +531,16 @@ export default function Chat() {
                                                         <p>{message.content}</p>
                                                     ) : (
                                                         <div className='prose prose-sm max-w-none'>
-                                                            <ReactMarkdown>{message.content}</ReactMarkdown>
+                                                            <ReactMarkdown
+                                                                remarkPlugins={[remarkGfm as any]}
+                                                                rehypePlugins={[rehypeRaw as any]}
+                                                                remarkRehypeOptions={{ passThrough: ['link'] }}
+                                                                components={{
+                                                                    code: CodeBlock,
+                                                                }}
+                                                            >
+                                                                {message.content}
+                                                            </ReactMarkdown>
                                                         </div>
                                                     )}
                                                 </div>
@@ -578,7 +633,16 @@ export default function Chat() {
                                                 </div>
                                                 <div className='glass-card-subtle border border-gray-200 p-3 md:p-4 rounded-2xl'>
                                                     <div className='prose prose-sm max-w-none text-body leading-relaxed'>
-                                                        <ReactMarkdown>{streamingMessage}</ReactMarkdown>
+                                                        <ReactMarkdown
+                                                            remarkPlugins={[remarkGfm as any]}
+                                                            rehypePlugins={[rehypeRaw as any]}
+                                                            remarkRehypeOptions={{ passThrough: ['link'] }}
+                                                            components={{
+                                                                code: CodeBlock,
+                                                            }}
+                                                        >
+                                                            {streamingMessage}
+                                                        </ReactMarkdown>
                                                         <span className='inline-block w-2 h-5 bg-blue-500 ml-1 animate-pulse'></span>
                                                     </div>
                                                 </div>
