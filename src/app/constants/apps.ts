@@ -66,4 +66,10 @@ export const apps: MiniApp[] = [
         emoji: '🕵️',
         href: '/apps/privacy',
     },
+    {
+        title: 'California Tax Calculator',
+        subtitle: 'Calculate your CA state income tax, federal tax, and take-home pay with detailed breakdown.',
+        emoji: '🧮',
+        href: '/apps/california-tax-calculator',
+    },
 ] as const;
