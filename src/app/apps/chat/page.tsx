@@ -166,17 +166,10 @@ export default function Chat() {
             description: "OpenAI's small but powerful model",
             icon: '/chatgpt.png',
         },
-
         {
             id: 'anthropic/claude-sonnet-4',
             name: 'Anthropic Claude Sonnet 4',
             description: "Anthropic's latest flagship model",
-            icon: '/claude.png',
-        },
-        {
-            id: 'anthropic/claude-3.5-haiku',
-            name: 'Anthropic Claude 3.5 Haiku',
-            description: 'Fast model optimized for real-time applications and coding',
             icon: '/claude.png',
         },
         {
@@ -202,6 +195,24 @@ export default function Chat() {
             name: 'Google Gemini 2.5 Pro',
             description: "Google's enhanced multimodal AI",
             icon: '/gemini.png',
+        },
+        {
+            id: 'anthropic/claude-3.5-haiku',
+            name: 'Anthropic Claude 3.5 Haiku',
+            description: 'Fast model optimized for real-time applications and coding',
+            icon: '/claude.png',
+        },
+        {
+            id: 'moonshotai/kimi-k2',
+            name: 'Moonshot Kimi K2',
+            description: 'MoE model optimized for agentic capabilities and tool use',
+            icon: '/kimi.png',
+        },
+        {
+            id: 'z-ai/glm-4.5',
+            name: 'zAI GLM-4.5',
+            description: 'Agent-focused MoE model with thinking and non-thinking modes',
+            icon: '/zai.png',
         },
         {
             id: 'google/gemini-2.5-flash',
@@ -232,18 +243,6 @@ export default function Chat() {
             name: 'Mistral Large 2411',
             description: 'Enhanced long context understanding with improved function calling',
             icon: '/mistral.png',
-        },
-        {
-            id: 'moonshotai/kimi-k2',
-            name: 'Moonshot Kimi K2',
-            description: 'MoE model optimized for agentic capabilities and tool use',
-            icon: '/kimi.png',
-        },
-        {
-            id: 'z-ai/glm-4.5',
-            name: 'zAI GLM-4.5',
-            description: 'Agent-focused MoE model with thinking and non-thinking modes',
-            icon: '/zai.png',
         },
         {
             id: 'inception/mercury',
