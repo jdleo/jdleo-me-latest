@@ -16,6 +16,21 @@ export async function POST(req: Request) {
             content: msg.content,
         }));
 
+        // Add system prompt with current date for context
+        const currentDate = new Date().toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+        });
+        const systemMessage = {
+            role: 'system',
+            content: `You are a helpful AI assistant. Today's date is ${currentDate}.`,
+        };
+
+        // Prepend system message to the conversation
+        const messagesWithSystem = [systemMessage, ...openRouterMessages];
+
         // Create a streaming response
         const stream = new ReadableStream({
             async start(controller) {
@@ -30,10 +45,11 @@ export async function POST(req: Request) {
                         },
                         body: JSON.stringify({
                             model: model,
-                            messages: openRouterMessages,
+                            messages: messagesWithSystem,
                             stream: true,
                             max_tokens: 4096,
                             temperature: 0.7,
+                            reasoning: { exclude: true }, // Disable reasoning tokens for faster responses
                         }),
                     });
 
