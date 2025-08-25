@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
     try {
-        const { messages, model } = await req.json();
+        const { messages, model, systemPrompt } = await req.json();
 
         if (!process.env.OPENROUTER_API_KEY) {
             return NextResponse.json({ error: 'OpenRouter API key not configured' }, { status: 500 });
@@ -23,9 +23,12 @@ export async function POST(req: Request) {
             month: 'long',
             day: 'numeric',
         });
+
+        const systemContent = systemPrompt || `You are a helpful AI assistant. Today's date is ${currentDate}.`;
+
         const systemMessage = {
             role: 'system',
-            content: `You are a helpful AI assistant. Today's date is ${currentDate}.`,
+            content: systemContent,
         };
 
         // Prepend system message to the conversation
