@@ -40,47 +40,47 @@ The results were fascinating and revealed some surprising patterns:
 
 ### The Full Leaderboard (3 runs per model, lower = better)
 
-| Rank | Model                              | Mean±Std     | Best  | Runs |
-| ---- | ---------------------------------- | ------------ | ----- | ---- |
-| 1    | openai/gpt-oss-120b                | 0.097±0.000  | 0.097 | 3/3  |
-| 2    | openai/o4-mini                     | 0.103±0.017  | 0.084 | 3/3  |
-| 3    | meta-llama/llama-4-maverick        | 0.110±0.000  | 0.110 | 3/3  |
-| 4    | openai/gpt-5-nano                  | 0.110±0.009  | 0.102 | 3/3  |
-| 5    | qwen/qwen3-235b-a22b-thinking-2507 | 0.112±0.007  | 0.107 | 3/3  |
-| 6    | openai/gpt-oss-20b                 | 0.114±0.004  | 0.110 | 3/3  |
-| 7    | deepseek/deepseek-r1-0528          | 0.115±0.000  | 0.114 | 3/3  |
-| 8    | x-ai/grok-3                        | 0.115±0.002  | 0.113 | 3/3  |
-| 9    | mistralai/mistral-large-2411       | 0.116±0.011  | 0.102 | 3/3  |
-| 10   | google/gemini-2.5-pro              | 0.117±0.006  | 0.108 | 3/3  |
-| 11   | openai/gpt-5-chat                  | 0.122±0.018  | 0.098 | 3/3  |
-| 12   | openai/chatgpt-4o-latest           | 0.124±0.016  | 0.111 | 3/3  |
-| 13   | moonshotai/kimi-k2                 | 0.124±0.013  | 0.106 | 3/3  |
-| 14   | anthropic/claude-3.7-sonnet        | 0.127±0.010  | 0.114 | 3/3  |
-| 15   | anthropic/claude-opus-4.1          | 0.130±0.012  | 0.121 | 3/3  |
-| 16   | openai/gpt-4o                      | 0.131±0.010  | 0.123 | 3/3  |
-| 17   | anthropic/claude-sonnet-4          | 0.131±0.007  | 0.122 | 3/3  |
-| 18   | anthropic/claude-3.5-haiku         | 0.132±0.015  | 0.115 | 3/3  |
-| 19   | openai/gpt-4.1                     | 0.133±0.010  | 0.125 | 3/3  |
-| 20   | openai/gpt-4.1-mini                | 0.138±0.014  | 0.119 | 3/3  |
-| 21   | x-ai/grok-4                        | 0.139±0.021  | 0.110 | 3/3  |
-| 22   | amazon/nova-lite-v1                | 0.149±0.000  | 0.149 | 3/3  |
-| 23   | amazon/nova-micro-v1               | 0.150±0.000  | 0.150 | 3/3  |
-| 24   | qwen/qwen3-30b-a3b                 | 0.153±0.012  | 0.142 | 3/3  |
-| 25   | google/gemini-2.5-flash            | 0.165±0.001  | 0.163 | 3/3  |
-| 26   | amazon/nova-pro-v1                 | 0.165±0.012  | 0.149 | 3/3  |
-| 27   | qwen/qwen3-235b-a22b-2507          | 0.167±0.000  | 0.167 | 3/3  |
-| 28   | x-ai/grok-3-mini                   | 0.178±0.006  | 0.170 | 3/3  |
-| 29   | z-ai/glm-4.5                       | 0.196±0.005  | 0.192 | 3/3  |
-| 30   | meta-llama/llama-4-scout           | 0.635±0.000  | 0.635 | 3/3  |
-| 31   | deepseek/deepseek-chat-v3-0324     | 0.653±0.010  | 0.640 | 3/3  |
-| 32   | openai/gpt-4o-2024-11-20           | 0.658±0.006  | 0.651 | 3/3  |
-| 33   | openai/gpt-3.5-turbo               | 0.711±0.006  | 0.704 | 3/3  |
-| 34   | mistralai/mistral-nemo             | DISQUALIFIED | DQ    | 0/3  |
-| 35   | inception/mercury                  | DISQUALIFIED | DQ    | 0/3  |
+| Rank | Model                              | Mean±Std     | Best  |
+| ---- | ---------------------------------- | ------------ | ----- |
+| 1    | openai/gpt-oss-120b                | 0.097±0.000  | 0.097 |
+| 2    | openai/o4-mini                     | 0.103±0.017  | 0.084 |
+| 3    | meta-llama/llama-4-maverick        | 0.110±0.000  | 0.110 |
+| 4    | openai/gpt-5-nano                  | 0.110±0.009  | 0.102 |
+| 5    | qwen/qwen3-235b-a22b-thinking-2507 | 0.112±0.007  | 0.107 |
+| 6    | openai/gpt-oss-20b                 | 0.114±0.004  | 0.110 |
+| 7    | deepseek/deepseek-r1-0528          | 0.115±0.000  | 0.114 |
+| 8    | x-ai/grok-3                        | 0.115±0.002  | 0.113 |
+| 9    | mistralai/mistral-large-2411       | 0.116±0.011  | 0.102 |
+| 10   | google/gemini-2.5-pro              | 0.117±0.006  | 0.108 |
+| 11   | openai/gpt-5-chat                  | 0.122±0.018  | 0.098 |
+| 12   | openai/chatgpt-4o-latest           | 0.124±0.016  | 0.111 |
+| 13   | moonshotai/kimi-k2                 | 0.124±0.013  | 0.106 |
+| 14   | anthropic/claude-3.7-sonnet        | 0.127±0.010  | 0.114 |
+| 15   | anthropic/claude-opus-4.1          | 0.130±0.012  | 0.121 |
+| 16   | openai/gpt-4o                      | 0.131±0.010  | 0.123 |
+| 17   | anthropic/claude-sonnet-4          | 0.131±0.007  | 0.122 |
+| 18   | anthropic/claude-3.5-haiku         | 0.132±0.015  | 0.115 |
+| 19   | openai/gpt-4.1                     | 0.133±0.010  | 0.125 |
+| 20   | openai/gpt-4.1-mini                | 0.138±0.014  | 0.119 |
+| 21   | x-ai/grok-4                        | 0.139±0.021  | 0.110 |
+| 22   | amazon/nova-lite-v1                | 0.149±0.000  | 0.149 |
+| 23   | amazon/nova-micro-v1               | 0.150±0.000  | 0.150 |
+| 24   | qwen/qwen3-30b-a3b                 | 0.153±0.012  | 0.142 |
+| 25   | google/gemini-2.5-flash            | 0.165±0.001  | 0.163 |
+| 26   | amazon/nova-pro-v1                 | 0.165±0.012  | 0.149 |
+| 27   | qwen/qwen3-235b-a22b-2507          | 0.167±0.000  | 0.167 |
+| 28   | x-ai/grok-3-mini                   | 0.178±0.006  | 0.170 |
+| 29   | z-ai/glm-4.5                       | 0.196±0.005  | 0.192 |
+| 30   | meta-llama/llama-4-scout           | 0.635±0.000  | 0.635 |
+| 31   | deepseek/deepseek-chat-v3-0324     | 0.653±0.010  | 0.640 |
+| 32   | openai/gpt-4o-2024-11-20           | 0.658±0.006  | 0.651 |
+| 33   | openai/gpt-3.5-turbo               | 0.711±0.006  | 0.704 |
+| 34   | mistralai/mistral-nemo             | DISQUALIFIED | DQ    |
+| 35   | inception/mercury                  | DISQUALIFIED | DQ    |
 
 ### Notable Observations
 
-**The clear winners** were models that seemed to understand the task required systematic thinking about semantic space. The top models generated words from completely different domains - abstract concepts, concrete objects, emotions, actions, technical terms.
+**The clear winners** were models that seemed to understand the task required systematic thinking about semantic space. The top performer, `openai/gpt-oss-120b`, achieved perfect consistency with its winning word list: _hammer, hesitate, sorrow, luminous, algorithm, zebra, encompass, abruptly, orbit, quantum, azure, drizzle, paradox, nirvana, sneeze, sonnet, basalt, zephyr, scarf, twelve_. As you can see, these words span completely different domains.
 
 **The surprising failures** included some big names. `anthropic/claude-sonnet-4` ranked 20th with a score of 0.138, and `openai/gpt-4o-2024-11-20` was way down at 31st with 0.658. Even more shocking - `openai/gpt-3.5-turbo` scored 0.709, making it one of the worst performers.
 
