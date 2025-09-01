@@ -4,10 +4,12 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { strings } from './constants/strings';
 import { WebVitals } from '@/components/SEO/WebVitals';
+import { getAllBlogPosts, BlogPost } from '@/blog/registry';
 
 export default function Home() {
     const [pageViewCount, setPageViewCount] = useState(0);
     const [isLoaded, setIsLoaded] = useState(false);
+    const [latestPost, setLatestPost] = useState<BlogPost | null>(null);
 
     // Helper function to format numbers with commas
     const formatNumber = (num: number | string) => {
@@ -19,6 +21,7 @@ export default function Home() {
         // Small delay for smoother loading animation
         const timer = setTimeout(() => setIsLoaded(true), 100);
 
+        // Fetch page view count
         axios
             .get('/api/view')
             .then(res => {
@@ -31,6 +34,12 @@ export default function Home() {
                 console.error('Failed to fetch view count:', error);
                 setPageViewCount(0);
             });
+
+        // Fetch latest blog post
+        const posts = getAllBlogPosts();
+        if (posts.length > 0) {
+            setLatestPost(posts[0]); // Posts are already sorted by date in getAllBlogPosts
+        }
 
         return () => clearTimeout(timer);
     }, []);
@@ -116,7 +125,7 @@ export default function Home() {
                                             Always open to
                                         </span>
                                     </div>
-                                    <div className='flex flex-wrap gap-3 justify-center'>
+                                    <div className='flex flex-wrap gap-3 justify-center mb-4'>
                                         <span className='glass-card-subtle px-4 py-2 text-small font-medium'>
                                             ✨ Mentorship
                                         </span>
@@ -127,6 +136,29 @@ export default function Home() {
                                             🎯 General guidance
                                         </span>
                                     </div>
+
+                                    {/* Subtle latest blog mention */}
+                                    {latestPost && (
+                                        <div className='border-t border-white border-opacity-10 pt-4'>
+                                            <div className='text-center text-small opacity-80'>
+                                                <span>My latest blog post is </span>
+                                                <a
+                                                    href={`/blog/${latestPost.slug}`}
+                                                    className='text-blue-600 hover:text-blue-500 transition-colors duration-300 font-medium'
+                                                >
+                                                    {latestPost.title}
+                                                </a>
+                                                <span>. Or, check out </span>
+                                                <a
+                                                    href='/blog'
+                                                    className='text-blue-600 hover:text-blue-500 transition-colors duration-300'
+                                                >
+                                                    all posts
+                                                </a>
+                                                <span>.</span>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
 
