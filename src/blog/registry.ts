@@ -30,12 +30,12 @@ export const blogRegistry: BlogPost[] = [
             'A quick guide for new grads looking to break into the software engineering industry, including networking tips, technical preparation advice, and insights into why the current job market is more challenging.',
     },
     {
-        slug: 'llm-vote-battle',
-        title: 'Which LLM is Best? I Let Them Vote',
-        date: '2025-08-03',
-        tags: ['llm', 'ai', 'evaluation', 'grok', 'claude', 'gpt', 'gemini', 'comparison'],
+        slug: 'semantic-diversity-benchmark',
+        title: 'The Semantic Diversity Benchmark: A New Way to Test AI Language Models',
+        date: '2025-08-31',
+        tags: ['ai', 'llm', 'benchmark', 'semantic diversity', 'language models', 'experiment'],
         description:
-            'Running a democratic experiment where LLMs vote on each other to determine which model performs best. Budget winner: Grok-3-mini. Flagship winner: ChatGPT-4o-latest.',
+            'A simple but powerful benchmark for testing AI language models by asking them to generate maximally semantically unrelated words, revealing surprising insights about model capabilities.',
     },
 ];
 
