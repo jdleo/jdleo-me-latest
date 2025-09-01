@@ -92,11 +92,11 @@ The results were fascinating and revealed some surprising patterns:
 
 ### Notable Observations
 
-**The clear winner** is `google/gemini-2.5-pro`, which dominated the leaderboard with a score of 0.210±0.006 and excellent consistency. This represents a dramatic shift from previous results and suggests Google's latest model has exceptional semantic understanding.
+**The clear winner** is `google/gemini-2.5-pro`, which dominated the leaderboard with a score of 0.210±0.006 and excellent consistency. This suggests Google's latest model has exceptional semantic understanding. Its best run generated: _kettle, justice, gargle, sonorous, quark, nostalgia, asphalt, meander, ambiguous, integer, spleen, etiquette, jettison, horizon, fungus, yesterday, theory, dwindle, velvet, coupon_
 
 **Strong performers** include several Chinese models: `moonshotai/kimi-k2` (2nd place) and both Qwen variants in the top 6. These models demonstrated sophisticated understanding of semantic diversity, with `deepseek/deepseek-chat-v3-0324` also performing well at 7th place.
 
-**The surprising mid-tier performance** of many flagship models is interesting. `anthropic/claude-sonnet-4` ranked 8th with a score of 0.244, while `openai/gpt-4o` landed at 16th with 0.247. Even more notable, the previously top-performing `openai/gpt-oss-120b` dropped to 18th place with a score of 0.252.
+**The surprising mid-tier performance** of many flagship models is interesting. `anthropic/claude-sonnet-4` ranked 8th with a score of 0.244, while `openai/gpt-4o` landed at 16th with 0.247.
 
 **The catastrophic failures** remain similar: `meta-llama/llama-4-scout` (0.336), and `openai/gpt-3.5-turbo` (0.369) still struggled significantly with the task.
 
@@ -149,6 +149,14 @@ This benchmark could be expanded in several interesting ways:
 -   Develop more comprehensive scoring systems that account for different types of semantic relationships
 -   Create multilingual versions to test cross-language semantic understanding
 -   Investigate whether performance correlates with other reasoning benchmarks
+
+## Comparison with General Performance Rankings
+
+Interestingly, the semantic diversity results show both alignment and divergence with general performance rankings from [LMArena's leaderboard](https://lmarena.ai/leaderboard/text). Some key observations:
+
+**Strong correlations**: Google's `gemini-2.5-pro` ranks #1 on both benchmarks, suggesting its semantic understanding translates to general performance excellence. Similarly, several top performers like `kimi-k2`, `deepseek-r1-0528`, and various Qwen models rank highly on both lists.
+
+**Specialized vs. general intelligence**: This suggests that semantic diversity represents a specific cognitive skill that doesn't always correlate with overall model capability. Some models excel at general tasks but struggle with the precise semantic reasoning required for this benchmark.
 
 ## A Note on Embedding Models
 
