@@ -92,13 +92,13 @@ The results were fascinating and revealed some surprising patterns:
 
 ### Notable Observations
 
-**The clear winner** is `google/gemini-2.5-pro`, which dominated the leaderboard with a score of 0.210±0.006 and excellent consistency. This suggests Google's latest model has exceptional semantic understanding. Its best run generated: _kettle, justice, gargle, sonorous, quark, nostalgia, asphalt, meander, ambiguous, integer, spleen, etiquette, jettison, horizon, fungus, yesterday, theory, dwindle, velvet, coupon_
+**The clear winner** is `google/gemini-2.5-pro`, which dominated the leaderboard with a score of 0.210±0.006 and excellent consistency. Google's latest model demonstrates exceptional semantic understanding. Its best run generated: _kettle, justice, gargle, sonorous, quark, nostalgia, asphalt, meander, ambiguous, integer, spleen, etiquette, jettison, horizon, fungus, yesterday, theory, dwindle, velvet, coupon_
 
 **Strong performers** include several Chinese models: `moonshotai/kimi-k2` (2nd place) and both Qwen variants in the top 6. These models demonstrated sophisticated understanding of semantic diversity, with `deepseek/deepseek-chat-v3-0324` also performing well at 7th place.
 
 **The surprising mid-tier performance** of many flagship models is interesting. `anthropic/claude-sonnet-4` ranked 8th with a score of 0.244, while `openai/gpt-4o` landed at 16th with 0.247.
 
-**The catastrophic failures** remain similar: `meta-llama/llama-4-scout` (0.336), and `openai/gpt-3.5-turbo` (0.369) still struggled significantly with the task.
+**The catastrophic failures** include `meta-llama/llama-4-scout` (0.336) and `openai/gpt-3.5-turbo` (0.369), which struggled significantly with the task.
 
 **Three models disqualified**: `mistralai/mistral-nemo`, `amazon/nova-micro-v1`, and `inception/mercury` all failed to generate exactly 20 words across all 3 runs, failing to follow the basic instruction consistently.
 
@@ -144,7 +144,7 @@ I should acknowledge this benchmark's limitations:
 This benchmark could be expanded in several interesting ways:
 
 -   Test with different embedding models (spaCy, Sentence-BERT, etc.) to validate results against OpenAI embeddings
--   Try different prompt variations to see if performance rankings remain consistent
+-   Try different prompt variations to see if performance rankings are consistent
 -   Extend to semantic diversity in paragraph-length text generation
 -   Develop more comprehensive scoring systems that account for different types of semantic relationships
 -   Create multilingual versions to test cross-language semantic understanding
@@ -160,7 +160,7 @@ Interestingly, the semantic diversity results show both alignment and divergence
 
 ## A Note on Embedding Models
 
-It's worth noting that these results are dramatically different from my initial experiments using spaCy's word embeddings. The ranking completely reshuffled when I switched to OpenAI's `text-embedding-3-large`, highlighting how the choice of embedding model fundamentally affects evaluation outcomes. This suggests that:
+The choice of embedding model fundamentally affects evaluation outcomes. Using OpenAI's `text-embedding-3-large` provides more sophisticated semantic understanding compared to simpler approaches. This suggests that:
 
 1. **Embedding quality matters**: More sophisticated embedding models may provide more nuanced semantic understanding
 2. **Evaluation robustness**: Any benchmark should be tested across multiple embedding approaches to ensure consistent insights
@@ -172,4 +172,4 @@ This experiment reinforces something I've been thinking about a lot: **we need b
 
 Traditional benchmarks often measure performance on human-designed tasks, but they don't always reveal the underlying capabilities or limitations of the models. Simple experiments like this semantic diversity test can reveal surprising insights about how different models process and understand language.
 
-The fact that a sub-dollar experiment (running 3 trials across 35 models) could reveal such clear performance differences and consistency patterns suggests we're still in the early days of understanding what these systems can and can't do.
+The fact that a sub-dollar experiment (running 3 trials across 35 models) could reveal such clear performance differences and consistency patterns suggests we're in the early days of understanding what these systems can and can't do.
