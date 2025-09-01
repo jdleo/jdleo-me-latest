@@ -120,6 +120,24 @@ The models that performed well likely have better internal representations of se
 
 With multiple runs per model, we can now see both performance consistency and reliability. Some models like `openai/gpt-oss-120b` and `meta-llama/llama-4-maverick` showed perfect consistency (±0.000), while others like `x-ai/grok-4` had high variance (±0.021) despite occasionally achieving good scores. The best models maintained semantic diversity not just within their word lists, but across multiple attempts.
 
+## Related Work
+
+The concept of semantic diversity in language generation has been explored before, particularly in dialogue systems. Han et al. (2022) introduced important work on ["Measuring and Improving Semantic Diversity of Dialogue Generation"](https://arxiv.org/abs/2210.05725), where they developed automatic evaluation metrics for semantic diversity in conversational responses and proposed training methods to improve it.
+
+Their work focused on dialogue generation systems and measured semantic diversity within conversational contexts - essentially asking "how semantically diverse are the responses a dialogue model generates?" They used semantic embeddings to evaluate response diversity and developed training techniques to weight samples based on semantic distribution.
+
+My benchmark takes a different approach in several key ways:
+
+1. **Direct capability testing**: Rather than evaluating diversity in generated dialogue, I test the model's direct ability to understand and navigate semantic space by explicitly asking for maximally unrelated words.
+
+2. **Deliberate semantic reasoning**: This benchmark tests whether models can deliberately reason about semantic relationships and avoid them, rather than measuring diversity as an emergent property of generation.
+
+3. **Cross-model comparison**: The focus is on comparative evaluation across different language models rather than improving a single model's training process.
+
+4. **Simplicity and cost-effectiveness**: The benchmark can be run for under $1 and provides clear, interpretable results about semantic understanding capabilities.
+
+While Han et al.'s work addresses semantic diversity in the context of making dialogue systems more engaging and varied, this benchmark probes the fundamental question of whether models truly understand semantic relationships at all.
+
 ## Why This Benchmark Matters
 
 Traditional benchmarks often test knowledge retrieval, reasoning, or specific skills. But semantic diversity tests something more fundamental: **does the model truly understand the structure of meaning itself?**
