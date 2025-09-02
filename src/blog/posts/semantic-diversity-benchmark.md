@@ -116,6 +116,8 @@ Some smaller or less well-known models outperformed flagship models from major c
 
 The models that performed well likely have better internal representations of semantic relationships and can reason about them more effectively. Models that can actually reason about the task perform better than those that just pattern match.
 
+This connects to broader questions about the fundamental capabilities of current AI architectures. As I've written about elsewhere, there are [significant limitations in how transformers handle reasoning tasks](/blog/transformers-are-limited), which may explain why some models struggle with the deliberate semantic reasoning required for this benchmark.
+
 ### 4. **Consistency Matters**
 
 With multiple runs per model, we can now see both performance consistency and reliability. Some models like `openai/gpt-oss-120b` and `meta-llama/llama-4-maverick` showed perfect consistency (±0.000), while others like `x-ai/grok-4` had high variance (±0.021) despite occasionally achieving good scores. The best models maintained semantic diversity not just within their word lists, but across multiple attempts.
