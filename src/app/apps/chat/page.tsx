@@ -15,6 +15,14 @@ type Message = {
     content: string;
     isUser: boolean;
     model?: string;
+    usage?: {
+        prompt_tokens: number;
+        completion_tokens: number;
+        total_tokens: number;
+        tokens_per_second?: number;
+        estimated_cost?: number;
+        response_time_ms?: number;
+    };
 };
 
 // Custom code component with syntax highlighting and language labels
@@ -148,6 +156,9 @@ export default function Chat() {
         setIsLoading(true);
         setStreamingMessage('');
 
+        // Track timing for tokens per second calculation
+        const startTime = Date.now();
+
         try {
             // Keep only last 10 messages for API context (to manage token usage)
             const apiMessages = updatedMessages.slice(-10);
@@ -180,6 +191,7 @@ export default function Chat() {
             const reader = response.body?.getReader();
             const decoder = new TextDecoder();
             let accumulatedContent = '';
+            let usageData: any = null;
 
             if (reader) {
                 while (true) {
@@ -197,7 +209,29 @@ export default function Chat() {
                                 if (data.type === 'content') {
                                     accumulatedContent += data.content;
                                     setStreamingMessage(accumulatedContent);
+                                } else if (data.type === 'usage') {
+                                    // Capture usage data from OpenRouter
+                                    usageData = data.usage;
                                 } else if (data.type === 'done') {
+                                    // Calculate metrics
+                                    const endTime = Date.now();
+                                    const responseTimeMs = endTime - startTime;
+
+                                    let processedUsage = null;
+                                    if (usageData) {
+                                        const tokensPerSecond = usageData.completion_tokens / (responseTimeMs / 1000);
+                                        // Rough cost estimation (varies by model, this is approximate)
+                                        const estimatedCost =
+                                            usageData.prompt_tokens * 0.000001 + usageData.completion_tokens * 0.000002;
+
+                                        processedUsage = {
+                                            ...usageData,
+                                            tokens_per_second: Math.round(tokensPerSecond * 10) / 10,
+                                            estimated_cost: Math.round(estimatedCost * 100000) / 100000,
+                                            response_time_ms: responseTimeMs,
+                                        };
+                                    }
+
                                     // Finalize the message
                                     setMessages([
                                         ...updatedMessages,
@@ -205,6 +239,7 @@ export default function Chat() {
                                             content: accumulatedContent,
                                             isUser: false,
                                             model: availableModels.find(m => m.id === selectedModel)?.name,
+                                            usage: processedUsage,
                                         },
                                     ]);
                                     setStreamingMessage('');
@@ -620,10 +655,34 @@ export default function Chat() {
                                                         </div>
                                                     )}
                                                 </div>
-                                                {message.isUser && (
+                                                {message.isUser ? (
                                                     <div className='flex justify-end mt-1'>
                                                         <span className='text-small opacity-60'>You</span>
                                                     </div>
+                                                ) : (
+                                                    // Usage metrics for AI responses
+                                                    message.usage && (
+                                                        <div className='flex justify-start mt-2'>
+                                                            <div className='text-xs opacity-60 bg-gray-50 px-2 py-1 rounded-lg border'>
+                                                                <div className='flex items-center gap-3'>
+                                                                    <span>
+                                                                        ⚡ {message.usage.tokens_per_second} t/s
+                                                                    </span>
+                                                                    <span>🎯 {message.usage.total_tokens} tokens</span>
+                                                                    <span>
+                                                                        💰 ~${message.usage.estimated_cost?.toFixed(5)}
+                                                                    </span>
+                                                                    <span>
+                                                                        ⏱️{' '}
+                                                                        {(
+                                                                            message.usage.response_time_ms! / 1000
+                                                                        ).toFixed(1)}
+                                                                        s
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    )
                                                 )}
                                             </div>
                                         </div>

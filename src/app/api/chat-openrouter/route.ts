@@ -90,6 +90,7 @@ export async function POST(req: Request) {
                                 try {
                                     const parsed = JSON.parse(data);
                                     const content = parsed.choices?.[0]?.delta?.content;
+                                    const usage = parsed.usage;
 
                                     if (content) {
                                         const contentChunk = `data: ${JSON.stringify({
@@ -97,6 +98,15 @@ export async function POST(req: Request) {
                                             content: content,
                                         })}\n\n`;
                                         controller.enqueue(new TextEncoder().encode(contentChunk));
+                                    }
+
+                                    // Send usage data if available (typically at the end of stream)
+                                    if (usage) {
+                                        const usageChunk = `data: ${JSON.stringify({
+                                            type: 'usage',
+                                            usage: usage,
+                                        })}\n\n`;
+                                        controller.enqueue(new TextEncoder().encode(usageChunk));
                                     }
                                 } catch (parseError) {
                                     // Ignore parsing errors for malformed chunks
