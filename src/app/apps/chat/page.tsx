@@ -68,6 +68,10 @@ export default function Chat() {
     const [selectedModel, setSelectedModel] = useState('openai/gpt-oss-120b');
     const [streamingMessage, setStreamingMessage] = useState('');
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [systemPrompt, setSystemPrompt] = useState(
+        "You are a helpful AI assistant. Today's date is {{currentDate}}."
+    );
+    const [showSystemPrompt, setShowSystemPrompt] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -90,6 +94,19 @@ export default function Chat() {
         const timer = setTimeout(() => setIsLoaded(true), 100);
         return () => clearTimeout(timer);
     }, []);
+
+    // Load system prompt from localStorage on mount
+    useEffect(() => {
+        const savedSystemPrompt = localStorage.getItem('chatSystemPrompt');
+        if (savedSystemPrompt) {
+            setSystemPrompt(savedSystemPrompt);
+        }
+    }, []);
+
+    // Save system prompt to localStorage whenever it changes
+    useEffect(() => {
+        localStorage.setItem('chatSystemPrompt', systemPrompt);
+    }, [systemPrompt]);
 
     useEffect(() => {
         // Close dropdown when clicking outside
@@ -135,6 +152,15 @@ export default function Chat() {
             // Keep only last 10 messages for API context (to manage token usage)
             const apiMessages = updatedMessages.slice(-10);
 
+            // Replace {{currentDate}} variable with actual date
+            const currentDate = new Date().toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+            });
+            const processedSystemPrompt = systemPrompt.replace(/\{\{currentDate\}\}/g, currentDate);
+
             const response = await fetch('/api/chat-openrouter', {
                 method: 'POST',
                 headers: {
@@ -143,6 +169,7 @@ export default function Chat() {
                 body: JSON.stringify({
                     messages: apiMessages,
                     model: selectedModel,
+                    systemPrompt: processedSystemPrompt,
                 }),
             });
 
@@ -357,14 +384,63 @@ export default function Chat() {
                             <div className='p-4 md:p-6 pb-4 border-b border-gray-200 flex-shrink-0'>
                                 <div className='flex items-center justify-between mb-3'>
                                     <h3 className='text-sm font-semibold text-[var(--color-text-dark)]'>AI Model</h3>
-                                    <button
-                                        onClick={clearMessages}
-                                        className='text-xs px-3 py-1.5 rounded-lg glass-card-subtle border border-gray-200 hover:border-gray-300 transition-all duration-200 text-gray-600 hover:text-gray-800'
-                                        disabled={isLoading}
-                                    >
-                                        🗑️ Clear Chat
-                                    </button>
+                                    <div className='flex items-center gap-2'>
+                                        <button
+                                            onClick={() => setShowSystemPrompt(!showSystemPrompt)}
+                                            className='text-xs px-3 py-1.5 rounded-lg glass-card-subtle border border-gray-200 hover:border-gray-300 transition-all duration-200 text-gray-600 hover:text-gray-800'
+                                        >
+                                            {showSystemPrompt ? '🔽' : '🔧'} System Prompt
+                                        </button>
+                                        <button
+                                            onClick={clearMessages}
+                                            className='text-xs px-3 py-1.5 rounded-lg bg-red-500 hover:bg-red-600 transition-all duration-200 text-white border-0'
+                                            disabled={isLoading}
+                                        >
+                                            🗑️ Clear Chat
+                                        </button>
+                                    </div>
                                 </div>
+
+                                {/* System Prompt Configuration */}
+                                {showSystemPrompt && (
+                                    <div className='mb-4 p-3 glass-card-subtle border border-gray-200 rounded-xl'>
+                                        <label className='block text-xs font-medium text-gray-700 mb-2'>
+                                            System Prompt
+                                        </label>
+                                        <textarea
+                                            value={systemPrompt}
+                                            onChange={e => setSystemPrompt(e.target.value)}
+                                            placeholder='Enter your system prompt here...'
+                                            className='w-full p-2 text-sm rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none'
+                                            rows={3}
+                                        />
+                                        <div className='flex justify-between items-center mt-2'>
+                                            <p className='text-xs text-gray-500'>
+                                                Preview:{' '}
+                                                {systemPrompt.replace(
+                                                    /\{\{currentDate\}\}/g,
+                                                    new Date().toLocaleDateString('en-US', {
+                                                        weekday: 'long',
+                                                        year: 'numeric',
+                                                        month: 'long',
+                                                        day: 'numeric',
+                                                    })
+                                                )}
+                                            </p>
+                                            <button
+                                                onClick={() =>
+                                                    setSystemPrompt(
+                                                        "You are a helpful AI assistant. Today's date is {{currentDate}}."
+                                                    )
+                                                }
+                                                className='text-xs px-2 py-1 rounded-md text-blue-600 hover:text-blue-700 hover:bg-blue-50 transition-all duration-200'
+                                            >
+                                                Reset to Default
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+
                                 <div className='relative' ref={dropdownRef}>
                                     {/* Dropdown Button */}
                                     <button
