@@ -76,6 +76,16 @@ const nextConfig: NextConfig = {
         ];
     },
 
+    // Rewrites for link shortener routes
+    async rewrites() {
+        return [
+            {
+                source: '/x/:id',
+                destination: '/api/x/:id',
+            },
+        ];
+    },
+
     // Generate static pages for better SEO
     generateBuildId: async () => {
         return `build-${Date.now()}`;

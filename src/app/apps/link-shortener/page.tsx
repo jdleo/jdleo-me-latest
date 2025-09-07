@@ -30,6 +30,9 @@ export default function LinkShortener() {
     const [analyticsPasswordInput, setAnalyticsPasswordInput] = useState('');
     const [analyticsLoading, setAnalyticsLoading] = useState(false);
     const [analyticsData, setAnalyticsData] = useState<any[]>([]);
+    const [analyticsError, setAnalyticsError] = useState<string | null>(null);
+    const [analyticsAuthenticated, setAnalyticsAuthenticated] = useState(false);
+    const [analyticsOriginalUrl, setAnalyticsOriginalUrl] = useState<string | null>(null);
 
     const breadcrumbItems = [
         { label: 'Home', href: '/' },
@@ -43,24 +46,6 @@ export default function LinkShortener() {
         return () => clearTimeout(timer);
     }, []);
 
-    const generateShortCode = () => {
-        const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-        let result = '';
-        for (let i = 0; i < 6; i++) {
-            result += chars.charAt(Math.floor(Math.random() * chars.length));
-        }
-        return result;
-    };
-
-    const generateAnalyticsPassword = () => {
-        const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*';
-        let result = '';
-        for (let i = 0; i < 12; i++) {
-            result += chars.charAt(Math.floor(Math.random() * chars.length));
-        }
-        return result;
-    };
-
     const handleShorten = async () => {
         if (!url.trim()) return;
 
@@ -68,14 +53,29 @@ export default function LinkShortener() {
         setShortenedUrl(null);
         setAnalyticsPassword(null);
 
-        // Mock API delay
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        try {
+            const response = await fetch('/api/link-shortener', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ url: url.trim() }),
+            });
 
-        const shortCode = generateShortCode();
-        const password = generateAnalyticsPassword();
-        setShortenedUrl(`jdleo.me/x/${shortCode}`);
-        setAnalyticsPassword(password);
-        setIsShortening(false);
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to shorten link');
+            }
+
+            setShortenedUrl(data.shortenedUrl);
+            setAnalyticsPassword(data.password);
+        } catch (error) {
+            console.error('Shortening error:', error);
+            // For now, show error in console. You might want to add error state
+        } finally {
+            setIsShortening(false);
+        }
     };
 
     const handleCopy = async () => {
@@ -102,45 +102,36 @@ export default function LinkShortener() {
         }
     };
 
-    const generateFakeAnalyticsData = () => {
-        const data = [];
-        const today = new Date();
-
-        for (let i = 29; i >= 0; i--) {
-            const date = new Date(today);
-            date.setDate(date.getDate() - i);
-
-            // Generate random clicks between 0-50 with some realistic patterns
-            let clicks = Math.floor(Math.random() * 50);
-            // Add some weekly patterns (more clicks on weekends)
-            if (date.getDay() === 0 || date.getDay() === 6) {
-                clicks = Math.floor(clicks * 1.3);
-            }
-            // Add some trending upward
-            clicks = Math.floor(clicks * (1 + (29 - i) * 0.02));
-
-            data.push({
-                date: date.toISOString().split('T')[0],
-                clicks: Math.max(0, clicks),
-                day: date.toLocaleDateString('en-US', { weekday: 'short' }),
-            });
-        }
-
-        return data;
-    };
-
     const handleViewAnalytics = async () => {
         if (!analyticsPasswordInput.trim()) return;
 
         setAnalyticsLoading(true);
+        setAnalyticsError(null);
 
-        // Mock API delay for analytics loading
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        try {
+            const response = await fetch('/api/link-shortener', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ password: analyticsPasswordInput.trim() }),
+            });
 
-        // Generate fake analytics data
-        const fakeData = generateFakeAnalyticsData();
-        setAnalyticsData(fakeData);
-        setAnalyticsLoading(false);
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to load analytics');
+            }
+
+            setAnalyticsData(data.visitData || []);
+            setAnalyticsOriginalUrl(data.url || null);
+            setAnalyticsAuthenticated(true);
+        } catch (error) {
+            console.error('Analytics loading error:', error);
+            setAnalyticsError(error instanceof Error ? error.message : 'Failed to load analytics');
+        } finally {
+            setAnalyticsLoading(false);
+        }
     };
 
     const handleCloseAnalytics = () => {
@@ -148,9 +139,35 @@ export default function LinkShortener() {
         setAnalyticsPasswordInput('');
         setAnalyticsData([]);
         setAnalyticsLoading(false);
+        setAnalyticsError(null);
+        setAnalyticsAuthenticated(false);
+        setAnalyticsOriginalUrl(null);
     };
 
     const getChartData = (data: any[]) => {
+        // If no data, return empty chart
+        if (!data || data.length === 0) {
+            return {
+                labels: [],
+                datasets: [
+                    {
+                        label: 'Clicks',
+                        data: [],
+                        borderColor: 'rgb(59, 130, 246)',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: 'rgb(59, 130, 246)',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                    },
+                ],
+            };
+        }
+
         return {
             labels: data.map((day: any) => {
                 const date = new Date(day.date);
@@ -196,7 +213,14 @@ export default function LinkShortener() {
                     title: function (context: any) {
                         const dataIndex = context[0].dataIndex;
                         const day = analyticsData[dataIndex];
-                        return day ? `${day.date} (${day.day})` : '';
+                        if (!day) return '';
+                        const date = new Date(day.date);
+                        return `${date.toLocaleDateString('en-US', {
+                            weekday: 'long',
+                            month: 'long',
+                            day: 'numeric',
+                            year: 'numeric',
+                        })}`;
                     },
                     label: function (context: any) {
                         return `Clicks: ${context.parsed.y}`;
@@ -598,7 +622,46 @@ export default function LinkShortener() {
                                     </div>
                                 )}
 
-                                {!analyticsData.length ? (
+                                {/* Original URL Display (only after authentication) */}
+                                {analyticsAuthenticated && analyticsOriginalUrl && (
+                                    <div className='mb-6'>
+                                        <label className='block text-body text-sm font-medium mb-2'>Original URL</label>
+                                        <div className='flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg'>
+                                            <input
+                                                type='text'
+                                                value={analyticsOriginalUrl}
+                                                readOnly
+                                                className='flex-1 bg-transparent text-body font-mono text-sm border-none outline-none text-green-900'
+                                            />
+                                            <button
+                                                onClick={() => {
+                                                    navigator.clipboard.writeText(analyticsOriginalUrl);
+                                                }}
+                                                className='button-primary text-xs px-3 py-2 flex items-center gap-1'
+                                            >
+                                                <svg
+                                                    className='w-3 h-3'
+                                                    fill='none'
+                                                    stroke='currentColor'
+                                                    viewBox='0 0 24 24'
+                                                >
+                                                    <path
+                                                        strokeLinecap='round'
+                                                        strokeLinejoin='round'
+                                                        strokeWidth={2}
+                                                        d='M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2 2v8a2 2 0 002 2z'
+                                                    />
+                                                </svg>
+                                                Copy
+                                            </button>
+                                        </div>
+                                        <p className='text-small opacity-60 mt-2'>
+                                            The original URL this shortened link redirects to
+                                        </p>
+                                    </div>
+                                )}
+
+                                {!analyticsAuthenticated ? (
                                     <div className='space-y-6'>
                                         {/* Password Input */}
                                         <div>
@@ -617,6 +680,28 @@ export default function LinkShortener() {
                                                 className='w-full p-3 rounded-xl bg-white border border-gray-200 text-body placeholder:opacity-60 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200'
                                             />
                                         </div>
+
+                                        {/* Error Display */}
+                                        {analyticsError && (
+                                            <div className='bg-red-50 border border-red-200 rounded-lg p-3'>
+                                                <div className='flex items-start gap-2'>
+                                                    <svg
+                                                        className='w-4 h-4 text-red-600 mt-0.5 flex-shrink-0'
+                                                        fill='none'
+                                                        stroke='currentColor'
+                                                        viewBox='0 0 24 24'
+                                                    >
+                                                        <path
+                                                            strokeLinecap='round'
+                                                            strokeLinejoin='round'
+                                                            strokeWidth={2}
+                                                            d='M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
+                                                        />
+                                                    </svg>
+                                                    <div className='text-red-800 text-sm'>{analyticsError}</div>
+                                                </div>
+                                            </div>
+                                        )}
 
                                         {/* Submit Button */}
                                         <button
@@ -658,27 +743,33 @@ export default function LinkShortener() {
                                         <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
                                             <div className='glass-card p-4 text-center'>
                                                 <div className='text-h4 text-blue-600'>
-                                                    {analyticsData.reduce(
-                                                        (sum: number, day: any) => sum + day.clicks,
-                                                        0
-                                                    )}
+                                                    {analyticsData.length > 0
+                                                        ? analyticsData.reduce(
+                                                              (sum: number, day: any) => sum + day.clicks,
+                                                              0
+                                                          )
+                                                        : 0}
                                                 </div>
                                                 <div className='text-small opacity-60'>Total Clicks (30d)</div>
                                             </div>
                                             <div className='glass-card p-4 text-center'>
                                                 <div className='text-h4 text-green-600'>
-                                                    {Math.round(
-                                                        analyticsData.reduce(
-                                                            (sum: number, day: any) => sum + day.clicks,
-                                                            0
-                                                        ) / 30
-                                                    )}
+                                                    {analyticsData.length > 0
+                                                        ? Math.round(
+                                                              analyticsData.reduce(
+                                                                  (sum: number, day: any) => sum + day.clicks,
+                                                                  0
+                                                              ) / 30
+                                                          )
+                                                        : 0}
                                                 </div>
                                                 <div className='text-small opacity-60'>Daily Average</div>
                                             </div>
                                             <div className='glass-card p-4 text-center'>
                                                 <div className='text-h4 text-purple-600'>
-                                                    {Math.max(...analyticsData.map((day: any) => day.clicks))}
+                                                    {analyticsData.length > 0
+                                                        ? Math.max(...analyticsData.map((day: any) => day.clicks))
+                                                        : 0}
                                                 </div>
                                                 <div className='text-small opacity-60'>Peak Day</div>
                                             </div>
@@ -688,7 +779,17 @@ export default function LinkShortener() {
                                         <div className='glass-card-enhanced p-6'>
                                             <h3 className='text-h4 mb-4'>Clicks Over Last 30 Days</h3>
                                             <div className='bg-white rounded-lg p-4'>
-                                                <Line data={getChartData(analyticsData)} options={chartOptions} />
+                                                {analyticsData.length > 0 ? (
+                                                    <Line data={getChartData(analyticsData)} options={chartOptions} />
+                                                ) : (
+                                                    <div className='text-center py-12'>
+                                                        <div className='text-4xl mb-4'>📈</div>
+                                                        <p className='text-body opacity-60 mb-2'>No click data yet</p>
+                                                        <p className='text-small opacity-50'>
+                                                            Share your shortened link to start tracking visits
+                                                        </p>
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
 
@@ -696,26 +797,54 @@ export default function LinkShortener() {
                                         <div className='glass-card-enhanced p-6'>
                                             <h3 className='text-h4 mb-4'>Recent Activity</h3>
                                             <div className='space-y-3'>
-                                                {analyticsData
-                                                    .slice(-7)
-                                                    .reverse()
-                                                    .map((day: any, index: number) => (
-                                                        <div
-                                                            key={index}
-                                                            className='flex items-center justify-between p-3 glass-card-subtle rounded-lg'
-                                                        >
-                                                            <div className='flex items-center gap-3'>
-                                                                <div className='w-2 h-2 bg-blue-500 rounded-full'></div>
-                                                                <span className='text-body text-sm'>{day.date}</span>
-                                                                <span className='text-small opacity-60'>
-                                                                    ({day.day})
+                                                {analyticsData.length > 0 ? (
+                                                    analyticsData
+                                                        .slice(-7)
+                                                        .reverse()
+                                                        .map((day: any, index: number) => (
+                                                            <div
+                                                                key={index}
+                                                                className='flex items-center justify-between p-3 glass-card-subtle rounded-lg'
+                                                            >
+                                                                <div className='flex items-center gap-3'>
+                                                                    <div className='w-2 h-2 bg-blue-500 rounded-full'></div>
+                                                                    <span className='text-body text-sm'>
+                                                                        {new Date(day.date).toLocaleDateString(
+                                                                            'en-US',
+                                                                            {
+                                                                                weekday: 'short',
+                                                                                month: 'short',
+                                                                                day: 'numeric',
+                                                                            }
+                                                                        )}
+                                                                    </span>
+                                                                    <span className='text-small opacity-60'>
+                                                                        (
+                                                                        {new Date(day.date).toLocaleDateString(
+                                                                            'en-US',
+                                                                            {
+                                                                                month: 'numeric',
+                                                                                day: 'numeric',
+                                                                                year: 'numeric',
+                                                                            }
+                                                                        )}
+                                                                        )
+                                                                    </span>
+                                                                </div>
+                                                                <span className='text-body font-medium'>
+                                                                    {day.clicks} clicks
                                                                 </span>
                                                             </div>
-                                                            <span className='text-body font-medium'>
-                                                                {day.clicks} clicks
-                                                            </span>
-                                                        </div>
-                                                    ))}
+                                                        ))
+                                                ) : (
+                                                    <div className='text-center py-8'>
+                                                        <div className='text-3xl mb-3'>📅</div>
+                                                        <p className='text-body opacity-60 mb-1'>No recent activity</p>
+                                                        <p className='text-small opacity-50'>
+                                                            Activity will appear here once your link gets clicks
+                                                        </p>
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
                                     </div>
