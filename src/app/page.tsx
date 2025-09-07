@@ -25,9 +25,7 @@ export default function Home() {
         axios
             .get('/api/view')
             .then(res => {
-                console.log('Raw response:', res.data.views, typeof res.data.views);
                 const views = Number(res.data.views) || 0;
-                console.log('Converted views:', views, typeof views);
                 setPageViewCount(views);
             })
             .catch(error => {

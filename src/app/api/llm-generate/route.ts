@@ -16,8 +16,6 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'Prompt must be 2000 characters or less' }, { status: 400 });
         }
 
-        console.log(`Generating response for model: ${model}`);
-
         // Add timeout for reasoning models that might take longer
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 second timeout
@@ -57,7 +55,6 @@ export async function POST(req: NextRequest) {
         }
 
         const data = await response.json();
-        console.log(`Response data for ${model}:`, JSON.stringify(data, null, 2));
 
         // Handle reasoning models that put response in 'reasoning' field
         const message = data.choices?.[0]?.message;
@@ -66,15 +63,12 @@ export async function POST(req: NextRequest) {
         // If content is empty but reasoning exists, use reasoning instead
         if (!content && message?.reasoning) {
             content = message.reasoning;
-            console.log(`Using reasoning field for ${model}`);
         }
 
         // Fallback if still no content
         if (!content) {
             content = 'No response generated';
         }
-
-        console.log(`Final content for ${model}:`, content.substring(0, 200) + '...');
 
         return NextResponse.json({ content });
     } catch (error) {
