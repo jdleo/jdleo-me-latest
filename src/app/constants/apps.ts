@@ -25,6 +25,12 @@ export const apps: MiniApp[] = [
         href: '/apps/llm-leaderboard',
     },
     {
+        title: 'Link Shortener',
+        subtitle: 'Create short links for your URLs with free analytics.',
+        emoji: '🔗',
+        href: '/apps/link-shortener',
+    },
+    {
         title: 'AI Diagram Generator',
         subtitle: 'Use human language, and a perfect diagram will be generated for you.',
         emoji: '🪄',
