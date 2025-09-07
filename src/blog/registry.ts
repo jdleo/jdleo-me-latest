@@ -37,6 +37,14 @@ export const blogRegistry: BlogPost[] = [
         description:
             'A simple but powerful benchmark for testing AI language models by asking them to generate maximally semantically unrelated words, revealing surprising insights about model capabilities.',
     },
+    {
+        slug: 'nutrition-benchmark',
+        title: 'The Nutrition Prediction Benchmark: Testing LLMs on Google Cafeteria Menus',
+        date: '2025-09-07',
+        tags: ['ai', 'llm', 'benchmark', 'nutrition', 'google', 'experiment'],
+        description:
+            "Testing large language models on their ability to predict accurate nutritional information from Google cafeteria dishes, revealing surprising insights about AI's understanding of food science.",
+    },
 ];
 
 export function getBlogPost(slug: string): BlogPost | undefined {
