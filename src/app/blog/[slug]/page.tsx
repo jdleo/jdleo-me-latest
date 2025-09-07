@@ -8,6 +8,54 @@ import CodeBlock from '@/components/CodeBlock';
 import { getBlogPost } from '@/blog/registry';
 import { strings } from '../../constants/strings';
 import { Breadcrumbs } from '@/components/SEO/Breadcrumbs';
+import ViewTracker from '@/components/ViewTracker';
+
+// Fetch view count for a blog post
+async function getBlogViewCount(slug: string): Promise<number> {
+    try {
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/blog-views?slug=${slug}`,
+            {
+                cache: 'no-store', // Always fetch fresh data
+            }
+        );
+
+        if (!response.ok) {
+            console.error('Failed to fetch view count:', response.statusText);
+            return 0;
+        }
+
+        const data = await response.json();
+        return data.viewCount || 0;
+    } catch (error) {
+        console.error('Error fetching view count:', error);
+        return 0;
+    }
+}
+
+// Increment view count for a blog post
+async function incrementBlogViewCount(slug: string): Promise<number> {
+    try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/blog-views`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ slug }),
+        });
+
+        if (!response.ok) {
+            console.error('Failed to increment view count:', response.statusText);
+            return 0;
+        }
+
+        const data = await response.json();
+        return data.viewCount || 0;
+    } catch (error) {
+        console.error('Error incrementing view count:', error);
+        return 0;
+    }
+}
 
 interface BlogPostPageProps {
     params: Promise<{ slug: string }>;
@@ -23,6 +71,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     if (!post) {
         notFound();
     }
+
+    // Fetch the current view count
+    const viewCount = await getBlogViewCount(slug);
 
     // Read the markdown file directly (server-side)
     let content: string;
@@ -70,6 +121,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
     return (
         <>
+            <ViewTracker slug={slug} />
             <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
 
             <div className='min-h-screen bg-[var(--color-bg-light)] relative'>
@@ -125,7 +177,26 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                             itemType='https://schema.org/BlogPosting'
                         >
                             {/* Article Header */}
-                            <header className='glass-card-enhanced p-8 md:p-12 mb-4 text-center'>
+                            <header className='glass-card-enhanced p-8 md:p-12 mb-4 text-center relative'>
+                                {/* View Count - Top Right */}
+                                <div className='absolute top-4 right-4 md:top-6 md:right-6 flex items-center gap-2 text-small opacity-70'>
+                                    <svg
+                                        width='16'
+                                        height='16'
+                                        viewBox='0 0 24 24'
+                                        fill='none'
+                                        stroke='currentColor'
+                                        strokeWidth='2'
+                                        strokeLinecap='round'
+                                        strokeLinejoin='round'
+                                        className='opacity-60'
+                                    >
+                                        <path d='M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z' />
+                                        <path d='M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z' />
+                                    </svg>
+                                    <span className='font-medium'>{viewCount.toLocaleString()} views</span>
+                                </div>
+
                                 <h1 className='text-display gradient-text mb-6 leading-tight' itemProp='headline'>
                                     {post.title}
                                 </h1>
