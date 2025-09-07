@@ -8,21 +8,18 @@ interface ViewTrackerProps {
 
 export default function ViewTracker({ slug }: ViewTrackerProps) {
     useEffect(() => {
-        // Increment view count when component mounts (page loads)
+        // Increment view count asynchronously when component mounts (page loads)
         const incrementView = async () => {
             try {
-                const response = await fetch('/api/blog-views', {
+                await fetch('/api/blog-views', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({ slug }),
                 });
-
-                if (!response.ok) {
-                    console.error('Failed to increment view count:', response.statusText);
-                }
             } catch (error) {
+                // Silently fail - don't log errors for view tracking
                 console.error('Error incrementing view count:', error);
             }
         };

@@ -9,50 +9,18 @@ import { getBlogPost } from '@/blog/registry';
 import { strings } from '../../constants/strings';
 import { Breadcrumbs } from '@/components/SEO/Breadcrumbs';
 import ViewTracker from '@/components/ViewTracker';
+import { sql } from '@vercel/postgres';
 
-// Fetch view count for a blog post
+// Fetch view count for a blog post directly from database
 async function getBlogViewCount(slug: string): Promise<number> {
     try {
-        const response = await fetch(
-            `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/blog-views?slug=${slug}`,
-            {
-                cache: 'no-store', // Always fetch fresh data
-            }
-        );
+        const result = await sql`
+            SELECT view_count FROM blog_views WHERE slug = ${slug}
+        `;
 
-        if (!response.ok) {
-            console.error('Failed to fetch view count:', response.statusText);
-            return 0;
-        }
-
-        const data = await response.json();
-        return data.viewCount || 0;
+        return result.rows.length > 0 ? result.rows[0].view_count : 0;
     } catch (error) {
         console.error('Error fetching view count:', error);
-        return 0;
-    }
-}
-
-// Increment view count for a blog post
-async function incrementBlogViewCount(slug: string): Promise<number> {
-    try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/blog-views`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ slug }),
-        });
-
-        if (!response.ok) {
-            console.error('Failed to increment view count:', response.statusText);
-            return 0;
-        }
-
-        const data = await response.json();
-        return data.viewCount || 0;
-    } catch (error) {
-        console.error('Error incrementing view count:', error);
         return 0;
     }
 }
@@ -72,8 +40,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         notFound();
     }
 
-    // Fetch the current view count
-    const viewCount = await getBlogViewCount(slug);
+    // Fetch the current view count and add 1 for display (since we'll increment on load)
+    const currentViewCount = await getBlogViewCount(slug);
+    const displayViewCount = currentViewCount + 1;
 
     // Read the markdown file directly (server-side)
     let content: string;
@@ -194,7 +163,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                                         <path d='M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z' />
                                         <path d='M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z' />
                                     </svg>
-                                    <span className='font-medium'>{viewCount.toLocaleString()} views</span>
+                                    <span className='font-medium'>{displayViewCount.toLocaleString()} views</span>
                                 </div>
 
                                 <h1 className='text-display gradient-text mb-6 leading-tight' itemProp='headline'>
