@@ -42,6 +42,8 @@ export default function LLMLeaderboard() {
     const [prompt, setPrompt] = useState('');
     const [responseA, setResponseA] = useState<Response>({ content: '', loading: false });
     const [responseB, setResponseB] = useState<Response>({ content: '', loading: false });
+    const [streamingMessageA, setStreamingMessageA] = useState('');
+    const [streamingMessageB, setStreamingMessageB] = useState('');
     const [showVoting, setShowVoting] = useState(false);
     const [isVoting, setIsVoting] = useState(false);
     const [votingComplete, setVotingComplete] = useState(false);
@@ -89,19 +91,63 @@ export default function LLMLeaderboard() {
         }
     };
 
-    const generateResponse = async (model: string): Promise<string> => {
-        const response = await fetch('/api/llm-generate', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ model, prompt }),
-        });
+    const streamResponse = async (
+        model: string,
+        setStreamingMessage: (msg: string) => void,
+        setResponse: (response: Response) => void
+    ) => {
+        try {
+            const response = await fetch('/api/llm-generate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ model, prompt }),
+            });
 
-        if (!response.ok) {
-            throw new Error('Failed to generate response');
+            if (!response.ok) {
+                throw new Error('Failed to generate response');
+            }
+
+            const reader = response.body?.getReader();
+            const decoder = new TextDecoder();
+            let accumulatedContent = '';
+
+            if (reader) {
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+
+                    const chunk = decoder.decode(value, { stream: true });
+                    const lines = chunk.split('\n');
+
+                    for (const line of lines) {
+                        if (line.startsWith('data: ')) {
+                            try {
+                                const data = JSON.parse(line.slice(6));
+
+                                if (data.type === 'content') {
+                                    accumulatedContent += data.content;
+                                    setStreamingMessage(accumulatedContent);
+                                } else if (data.type === 'done') {
+                                    setResponse({ content: accumulatedContent, loading: false });
+                                    setStreamingMessage('');
+                                    return;
+                                } else if (data.type === 'error') {
+                                    setResponse({ content: data.error || 'Error generating response', loading: false });
+                                    setStreamingMessage('');
+                                    return;
+                                }
+                            } catch (parseError) {
+                                console.error('Error parsing chunk:', parseError);
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (error) {
+            console.error(`Streaming error for ${model}:`, error);
+            setResponse({ content: 'Error generating response', loading: false });
+            setStreamingMessage('');
         }
-
-        const data = await response.json();
-        return data.content;
     };
 
     const handleGenerate = async () => {
@@ -116,27 +162,20 @@ export default function LLMLeaderboard() {
         setInputError('');
         setResponseA({ content: '', loading: true });
         setResponseB({ content: '', loading: true });
+        setStreamingMessageA('');
+        setStreamingMessageB('');
         setShowVoting(false);
         setRevealedModels(false);
 
-        // Generate both responses independently
-        Promise.allSettled([generateResponse(battleModels.modelA), generateResponse(battleModels.modelB)]).then(
-            results => {
-                const [resultA, resultB] = results;
+        // Start streaming both responses in parallel
+        const streamA = streamResponse(battleModels.modelA, setStreamingMessageA, setResponseA);
+        const streamB = streamResponse(battleModels.modelB, setStreamingMessageB, setResponseB);
 
-                setResponseA({
-                    content: resultA.status === 'fulfilled' ? resultA.value : 'Error generating response',
-                    loading: false,
-                });
+        // Wait for both streams to complete
+        await Promise.all([streamA, streamB]);
 
-                setResponseB({
-                    content: resultB.status === 'fulfilled' ? resultB.value : 'Error generating response',
-                    loading: false,
-                });
-
-                setShowVoting(true);
-            }
-        );
+        // Show voting once both are complete
+        setShowVoting(true);
     };
 
     const handlePromptChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -332,7 +371,9 @@ export default function LLMLeaderboard() {
                                                 className='button-primary disabled:opacity-50 disabled:cursor-not-allowed'
                                             >
                                                 {responseA.loading || responseB.loading
-                                                    ? 'Generating...'
+                                                    ? streamingMessageA || streamingMessageB
+                                                        ? 'Streaming responses...'
+                                                        : 'Generating...'
                                                     : 'Generate Battle'}
                                             </button>
                                         </div>
@@ -360,12 +401,19 @@ export default function LLMLeaderboard() {
                                                 </div>
                                                 <div className='text-small leading-relaxed'>
                                                     {responseA.loading ? (
-                                                        <div className='flex items-center justify-center h-32 text-gray-500'>
-                                                            <div className='text-center space-y-2'>
-                                                                <div className='animate-spin w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full mx-auto'></div>
-                                                                <p>Generating response...</p>
+                                                        streamingMessageA ? (
+                                                            <div className='prose prose-sm max-w-none text-body leading-relaxed'>
+                                                                <ReactMarkdown>{streamingMessageA}</ReactMarkdown>
+                                                                <span className='inline-block w-2 h-5 bg-blue-500 ml-1 animate-pulse'></span>
                                                             </div>
-                                                        </div>
+                                                        ) : (
+                                                            <div className='flex items-center justify-center h-32 text-gray-500'>
+                                                                <div className='text-center space-y-2'>
+                                                                    <div className='animate-spin w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full mx-auto'></div>
+                                                                    <p>Generating response...</p>
+                                                                </div>
+                                                            </div>
+                                                        )
                                                     ) : (
                                                         <div className='prose prose-sm max-w-none'>
                                                             <ReactMarkdown>{responseA.content}</ReactMarkdown>
@@ -386,12 +434,19 @@ export default function LLMLeaderboard() {
                                                 </div>
                                                 <div className='text-small leading-relaxed'>
                                                     {responseB.loading ? (
-                                                        <div className='flex items-center justify-center h-32 text-gray-500'>
-                                                            <div className='text-center space-y-2'>
-                                                                <div className='animate-spin w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full mx-auto'></div>
-                                                                <p>Generating response...</p>
+                                                        streamingMessageB ? (
+                                                            <div className='prose prose-sm max-w-none text-body leading-relaxed'>
+                                                                <ReactMarkdown>{streamingMessageB}</ReactMarkdown>
+                                                                <span className='inline-block w-2 h-5 bg-blue-500 ml-1 animate-pulse'></span>
                                                             </div>
-                                                        </div>
+                                                        ) : (
+                                                            <div className='flex items-center justify-center h-32 text-gray-500'>
+                                                                <div className='text-center space-y-2'>
+                                                                    <div className='animate-spin w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full mx-auto'></div>
+                                                                    <p>Generating response...</p>
+                                                                </div>
+                                                            </div>
+                                                        )
                                                     ) : (
                                                         <div className='prose prose-sm max-w-none'>
                                                             <ReactMarkdown>{responseB.content}</ReactMarkdown>

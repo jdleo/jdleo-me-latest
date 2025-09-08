@@ -42,6 +42,12 @@ export async function POST(req: NextRequest) {
                 ],
                 temperature: 0.2,
                 max_tokens: 10000,
+                stream: true,
+                reasoning: {
+                    enabled: true,
+                    effort: 'low',
+                    exclude: true,
+                },
             }),
             signal: controller.signal,
         });
@@ -51,31 +57,136 @@ export async function POST(req: NextRequest) {
         if (!response.ok) {
             const errorText = await response.text();
             console.error(`OpenRouter API error for ${model}:`, errorText);
-            return NextResponse.json({ error: `Failed to generate response for ${model}` }, { status: 500 });
+
+            // For streaming, we need to return a stream even for errors
+            const errorStream = new ReadableStream({
+                start(controller) {
+                    const errorChunk = `data: ${JSON.stringify({
+                        type: 'error',
+                        error: `Failed to generate response for ${model}`,
+                    })}\n\n`;
+                    controller.enqueue(new TextEncoder().encode(errorChunk));
+                    controller.close();
+                },
+            });
+
+            return new Response(errorStream, {
+                headers: {
+                    'Content-Type': 'text/plain; charset=utf-8',
+                    'Cache-Control': 'no-cache',
+                    Connection: 'keep-alive',
+                },
+            });
         }
 
-        const data = await response.json();
+        // Create streaming response
+        const stream = new ReadableStream({
+            async start(controller) {
+                try {
+                    const reader = response.body?.getReader();
+                    const decoder = new TextDecoder();
 
-        // Handle reasoning models that put response in 'reasoning' field
-        const message = data.choices?.[0]?.message;
-        let content = message?.content || '';
+                    if (!reader) {
+                        throw new Error('No response body');
+                    }
 
-        // If content is empty but reasoning exists, use reasoning instead
-        if (!content && message?.reasoning) {
-            content = message.reasoning;
-        }
+                    let accumulatedContent = '';
 
-        // Fallback if still no content
-        if (!content) {
-            content = 'No response generated';
-        }
+                    while (true) {
+                        const { done, value } = await reader.read();
+                        if (done) break;
 
-        return NextResponse.json({ content });
+                        const chunk = decoder.decode(value, { stream: true });
+                        const lines = chunk.split('\n');
+
+                        for (const line of lines) {
+                            if (line.startsWith('data: ')) {
+                                const data = line.slice(6);
+
+                                if (data === '[DONE]') {
+                                    const doneChunk = `data: ${JSON.stringify({
+                                        type: 'done',
+                                        content: accumulatedContent,
+                                    })}\n\n`;
+                                    controller.enqueue(new TextEncoder().encode(doneChunk));
+                                    controller.close();
+                                    return;
+                                }
+
+                                try {
+                                    const parsed = JSON.parse(data);
+                                    const content = parsed.choices?.[0]?.delta?.content;
+                                    const usage = parsed.usage;
+
+                                    if (content) {
+                                        accumulatedContent += content;
+                                        const contentChunk = `data: ${JSON.stringify({
+                                            type: 'content',
+                                            content: content,
+                                        })}\n\n`;
+                                        controller.enqueue(new TextEncoder().encode(contentChunk));
+                                    }
+
+                                    // Send usage data if available (typically at the end of stream)
+                                    if (usage) {
+                                        const usageChunk = `data: ${JSON.stringify({
+                                            type: 'usage',
+                                            usage: usage,
+                                        })}\n\n`;
+                                        controller.enqueue(new TextEncoder().encode(usageChunk));
+                                    }
+                                } catch (parseError) {
+                                    // Ignore parsing errors for malformed chunks
+                                    continue;
+                                }
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.error(`Streaming error for ${model}:`, error);
+                    const errorChunk = `data: ${JSON.stringify({
+                        type: 'error',
+                        error: 'Failed to stream response',
+                    })}\n\n`;
+                    controller.enqueue(new TextEncoder().encode(errorChunk));
+                    controller.close();
+                }
+            },
+        });
+
+        return new Response(stream, {
+            headers: {
+                'Content-Type': 'text/plain; charset=utf-8',
+                'Cache-Control': 'no-cache',
+                Connection: 'keep-alive',
+            },
+        });
     } catch (error) {
         console.error(`Generation error for ${model}:`, error);
-        if (error instanceof Error && error.name === 'AbortError') {
-            return NextResponse.json({ error: `Model ${model} timed out (60s limit)` }, { status: 408 });
-        }
-        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+
+        // For streaming, return error as a stream
+        const errorStream = new ReadableStream({
+            start(controller) {
+                let errorMessage = 'Internal server error';
+                if (error instanceof Error && error.name === 'AbortError') {
+                    errorMessage = `Model ${model} timed out (60s limit)`;
+                }
+
+                const errorChunk = `data: ${JSON.stringify({
+                    type: 'error',
+                    error: errorMessage,
+                })}\n\n`;
+                controller.enqueue(new TextEncoder().encode(errorChunk));
+                controller.close();
+            },
+        });
+
+        return new Response(errorStream, {
+            headers: {
+                'Content-Type': 'text/plain; charset=utf-8',
+                'Cache-Control': 'no-cache',
+                Connection: 'keep-alive',
+            },
+        });
     }
 }
