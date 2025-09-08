@@ -311,7 +311,8 @@ export default function LinkShortener() {
                         {/* Link Shortener Section */}
                         <div className={`animate-reveal animate-reveal-delay-1 ${isLoaded ? '' : 'opacity-0'}`}>
                             <div className='glass-card-enhanced p-6 md:p-8 mb-8 relative'>
-                                <div className='absolute top-6 right-6'>
+                                {/* Analytics Button - Hidden on mobile, absolute positioned on larger screens */}
+                                <div className='hidden md:block absolute top-6 right-6'>
                                     <button
                                         onClick={() => setShowAnalyticsView(true)}
                                         className='text-sm px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 transition-colors duration-200 flex items-center gap-2'
@@ -319,7 +320,21 @@ export default function LinkShortener() {
                                         📊 View Analytics
                                     </button>
                                 </div>
-                                <h2 className='text-h3 mb-6'>Shorten Your Link</h2>
+
+                                {/* Header with mobile analytics button */}
+                                <div className='flex flex-col md:flex-row md:items-center justify-between mb-6'>
+                                    <h2 className='text-h3 mb-4 md:mb-0'>Shorten Your Link</h2>
+
+                                    {/* Mobile Analytics Button */}
+                                    <div className='md:hidden'>
+                                        <button
+                                            onClick={() => setShowAnalyticsView(true)}
+                                            className='text-sm px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 transition-colors duration-200 flex items-center gap-2 w-full justify-center'
+                                        >
+                                            📊 View Analytics
+                                        </button>
+                                    </div>
+                                </div>
 
                                 <div className='space-y-6'>
                                     {/* URL Input */}

@@ -9,8 +9,8 @@ import Prism from 'prismjs';
 import 'prismjs/themes/prism-tomorrow.css'; // dark theme
 import 'prismjs/components/prism-json'; // json support
 
-// THIS works in browser
-pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.worker.min.mjs';
+// Use local worker to avoid version mismatches
+pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
 
 type Particle = {
     id: number;
