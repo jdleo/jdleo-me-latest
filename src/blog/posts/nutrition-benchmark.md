@@ -160,7 +160,7 @@ Models that performed well showed consistent accuracy across all nutrition field
 ### Strengths:
 
 1. **Real-world applicability**: Uses actual Google cafeteria dishes with measured nutritional values
-2. **Cost-effective**: Entire benchmark runs for under 3 cents
+2. **Cost-effective**: Entire benchmark runs for under 3 dollars
 3. **Comprehensive evaluation**: Tests multiple nutrition dimensions and includes correlation analysis
 4. **Reproducible**: Fixed seed ensures consistent dish selection across models
 
