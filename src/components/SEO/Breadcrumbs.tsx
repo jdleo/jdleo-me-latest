@@ -31,7 +31,7 @@ export function Breadcrumbs({ items, className = '' }: BreadcrumbsProps) {
             <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: breadcrumbStructuredData }} />
             <nav
                 aria-label='Breadcrumb'
-                className={`flex items-center space-x-2 text-sm text-gray-600 mb-6 ${className}`}
+                className={`flex items-center space-x-2 text-sm text-gray-600 font-serif mb-6 ${className}`}
             >
                 {items.map((item, index) => (
                     <div key={item.href} className='flex items-center'>
@@ -50,11 +50,11 @@ export function Breadcrumbs({ items, className = '' }: BreadcrumbsProps) {
                             </svg>
                         )}
                         {index === items.length - 1 ? (
-                            <span className='text-gray-900 font-medium' aria-current='page'>
+                            <span className='text-gray-900 font-medium font-serif' aria-current='page'>
                                 {item.label}
                             </span>
                         ) : (
-                            <Link href={item.href} className='hover:text-blue-600 transition-colors'>
+                            <Link href={item.href} className='hover:text-blue-600 transition-colors font-serif'>
                                 {item.label}
                             </Link>
                         )}

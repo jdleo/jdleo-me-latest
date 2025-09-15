@@ -33,14 +33,7 @@ If I could train a model to predict winners with better-than-random accuracy (>5
 
 First, I needed battle data. Lots of it. Fortunately, Supercell provides an excellent [Clash Royale API](https://developer.clashroyale.com/#/documentation) that lets you pull real battle logs from players. Huge shoutout to Supercell for making this data accessible to researchers and developers.
 
-The data collection strategy was a breadth-first search through the player network:
-
-1. Start with a seed player tag
-2. Get their recent battles
-3. For each battle, add the opponent to a queue of new players to explore
-4. Repeat until I have enough battles
-
-Here's the core data collection logic:
+The data collection strategy was a breadth-first search through the player network. Here's the core data collection logic:
 
 ```python
 from requests import get

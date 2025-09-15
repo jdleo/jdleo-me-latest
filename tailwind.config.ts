@@ -27,6 +27,7 @@ const config: Config = {
             },
             fontFamily: {
                 sans: ['Inter', 'sans-serif'],
+                serif: ['IowanOldSt BT', 'Georgia', 'serif'],
                 mono: ['var(--font-geist-mono)', 'monospace'],
             },
             animation: {
