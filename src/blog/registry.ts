@@ -16,7 +16,7 @@ export const blogRegistry: BlogPost[] = [
     },
     {
         slug: 'transformers-are-limited',
-        title: 'Transformers Are Limited',
+        title: 'Transformers are Limited',
         date: '2025-08-01',
         tags: ['transformers', 'limitation', 'reasoning', 'llm'],
         description: 'The transformer architecture is fundamentally limited for true reasoning.',
