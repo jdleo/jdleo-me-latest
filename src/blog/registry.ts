@@ -19,7 +19,7 @@ export const blogRegistry: BlogPost[] = [
         title: 'Transformers Are Limited',
         date: '2025-08-01',
         tags: ['transformers', 'limitation', 'reasoning', 'llm'],
-        description: 'Transformer Architecture Is Fundamentally Limited for True Reasoning',
+        description: 'The transformer architecture is fundamentally limited for true reasoning.',
     },
     {
         slug: 'new-grad-swe-search',
