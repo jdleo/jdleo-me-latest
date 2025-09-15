@@ -734,6 +734,30 @@
     margin: 0.5rem 0;
   }
 
+  /* Comet Particle Effects - Inspired by vertical streak style */
+  .comets-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 150vw;
+    height: 150vh;
+    transform-origin: center;
+    transform: translate3D(-25vw, -25vh, 1px) rotate(125deg) scale(0.9);
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+  }
+  
+  .comet {
+    position: absolute;
+    width: 2px;
+    height: 75vh;
+    background: linear-gradient(rgba(25, 27, 24, 0.8), transparent);
+    animation: cometFall 3s ease-in-out forwards;
+    opacity: 0;
+    will-change: transform, opacity;
+  }
+
   /* Responsive adjustments for mobile */
   @media (max-width: 768px) {
     .blog-content {
@@ -821,6 +845,24 @@
   }
 }
 
+@keyframes cometFall {
+  0% {
+    opacity: 0;
+    transform: translateY(200%) scaleY(0);
+  }
+  15% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(0) scaleY(1);
+  }
+}
+
+
 .animate-pulse-glow {
   animation: pulse-glow 3s ease-in-out infinite;
 }
@@ -834,6 +876,19 @@
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
+  }
+  
+  .comets-container {
+    display: none !important;
+  }
+}
+
+/* Mobile optimizations for comet particles */
+@media (max-width: 768px) {
+  .comet {
+    width: 1.5px;
+    height: 50vh;
+    background: linear-gradient(rgba(25, 27, 24, 0.4), transparent);
   }
 }
 
