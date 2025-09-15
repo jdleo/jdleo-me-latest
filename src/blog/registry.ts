@@ -45,6 +45,24 @@ export const blogRegistry: BlogPost[] = [
         description:
             "Testing large language models on their ability to predict accurate nutritional information from Google cafeteria dishes, revealing surprising insights about AI's understanding of food science.",
     },
+    {
+        slug: 'clash-royale-ai-deck-prediction',
+        title: 'I Trained AI on 70k Clash Royale Battles to Settle the Ultimate Debate: Does Your Deck Actually Matter?',
+        date: '2025-09-14',
+        tags: [
+            'ai',
+            'machine learning',
+            'clash royale',
+            'game analysis',
+            'data science',
+            'lightgbm',
+            'pytorch',
+            'decks',
+            'experiment',
+        ],
+        description:
+            "Using machine learning on 70,000+ real battles from the Clash Royale API to definitively answer whether deck composition actually predicts victory, or if it's just skill and luck.",
+    },
 ];
 
 export function getBlogPost(slug: string): BlogPost | undefined {
