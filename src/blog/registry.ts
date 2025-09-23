@@ -63,6 +63,13 @@ export const blogRegistry: BlogPost[] = [
         description:
             "Using machine learning on 70,000+ real battles from the Clash Royale API to definitively answer whether deck composition actually predicts victory, or if it's just skill and luck.",
     },
+    {
+        slug: 'are-computer-science-majors-cooked',
+        title: 'Are Computer Science Majors "Cooked" because of AI?',
+        date: '2025-09-22',
+        tags: [],
+        description: 'A speculative deep dive on whether AI will augment or replace new software engineers.',
+    },
 ];
 
 export function getBlogPost(slug: string): BlogPost | undefined {
