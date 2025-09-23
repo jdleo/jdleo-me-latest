@@ -65,9 +65,17 @@ export const blogRegistry: BlogPost[] = [
     },
     {
         slug: 'are-computer-science-majors-cooked',
-        title: 'Are Computer Science Majors "Cooked" because of AI?',
+        title: 'Are Computer Science Majors "Cooked" because of AI?',
         date: '2025-09-22',
-        tags: [],
+        tags: [
+            'ai',
+            'computer science',
+            'job market',
+            'tech industry',
+            'software engineering',
+            'unemployment',
+            'career',
+        ],
         description: 'A speculative deep dive on whether AI will augment or replace new software engineers.',
     },
 ];
