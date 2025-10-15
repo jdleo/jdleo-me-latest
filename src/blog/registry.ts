@@ -78,13 +78,6 @@ export const blogRegistry: BlogPost[] = [
         ],
         description: 'A speculative deep dive on whether AI will augment or replace new software engineers.',
     },
-    {
-        slug: '4-startups-14-days',
-        title: '4 Startups in 14 Days',
-        date: '2025-10-12',
-        tags: ['startups', 'ios', 'ai', 'entrepreneurship', 'building'],
-        description: "I'm building 4 startups in 14 days, here's what I'm doing.",
-    },
 ];
 
 export function getBlogPost(slug: string): BlogPost | undefined {
