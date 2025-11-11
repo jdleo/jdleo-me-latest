@@ -5,7 +5,6 @@ import axios from 'axios';
 import { strings } from './constants/strings';
 import { WebVitals } from '@/components/SEO/WebVitals';
 import { getAllBlogPosts, BlogPost } from '@/blog/registry';
-import { CometParticles } from '@/components/CometParticles';
 
 export default function Home() {
     const [pageViewCount, setPageViewCount] = useState(0);
@@ -55,9 +54,6 @@ export default function Home() {
                             'radial-gradient(ellipse at 30% 20%, rgba(94, 106, 210, 0.08) 0%, transparent 50%), radial-gradient(ellipse at 70% 80%, rgba(139, 92, 246, 0.06) 0%, transparent 60%)',
                     }}
                 />
-
-                {/* Animated Comet Particles */}
-                <CometParticles />
 
                 {/* Strong Navigation Bar */}
                 <nav className='nav-container'>
