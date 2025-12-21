@@ -1,144 +1,148 @@
+'use client';
+
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { generateMetadata as createMetadata } from '@/lib/metadata';
 import { strings } from '../constants/strings';
 import { apps } from '../constants/apps';
-import { Breadcrumbs } from '@/components/SEO/Breadcrumbs';
-
-export const metadata = createMetadata({
-    title: 'Mini Apps & Projects',
-    description:
-        'Explore interactive mini applications built by John Leonardo. AI tools, blockchain demos, data visualization, and more web development projects.',
-    url: '/apps',
-});
+import { WebVitals } from '@/components/SEO/WebVitals';
 
 export default function Apps() {
-    const breadcrumbItems = [
-        { label: 'Home', href: '/' },
-        { label: 'Apps', href: '/apps' },
-    ];
+    const [isLoaded, setIsLoaded] = useState(false);
+
+    useEffect(() => {
+        const timer = setTimeout(() => setIsLoaded(true), 100);
+        return () => clearTimeout(timer);
+    }, []);
 
     return (
-        <div className='min-h-screen bg-[var(--color-bg-light)] relative'>
-            {/* Subtle background gradients */}
-            <div
-                className='fixed inset-0 opacity-40 pointer-events-none'
-                style={{
-                    background:
-                        'radial-gradient(ellipse at 30% 20%, rgba(94, 106, 210, 0.08) 0%, transparent 50%), radial-gradient(ellipse at 70% 80%, rgba(139, 92, 246, 0.06) 0%, transparent 60%)',
-                }}
-            />
+        <>
+            <WebVitals />
+            <main className='min-h-screen bg-[var(--color-bg)] flex items-center justify-center p-4 md:p-8 selection:bg-[var(--color-accent)] selection:text-[var(--color-bg)]'>
+                {/* Background Grid/Glow */}
+                <div className='fixed inset-0 overflow-hidden pointer-events-none'>
+                    <div className='absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(62,175,124,0.03),transparent_60%)]' />
+                    <div className='absolute inset-0' style={{
+                        backgroundImage: 'radial-gradient(rgba(255,255,255,0.02) 1px, transparent 1px)',
+                        backgroundSize: '32px 32px'
+                    }} />
+                </div>
 
-            {/* Strong Navigation Bar */}
-            <nav className='nav-container'>
-                <div className='nav-content'>
-                    <Link href='/' className='nav-logo'>
-                        JL
-                    </Link>
-                    <div className='nav-links'>
-                        <Link href='/apps' className='nav-link'>
-                            Apps
-                        </Link>
-                        <Link href='/blog' className='nav-link'>
-                            Blog
-                        </Link>
-                        <a href='/apps/resume' className='nav-link'>
-                            Resume
-                        </a>
-                        <a href={strings.LINKEDIN_URL} target='_blank' rel='noopener noreferrer' className='nav-link'>
-                            LinkedIn
-                        </a>
-                        <a href={strings.GITHUB_URL} target='_blank' rel='noopener noreferrer' className='nav-link'>
-                            GitHub
-                        </a>
+                <div className={`w-full max-w-6xl transition-all duration-1000 transform ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                    <div className='terminal-window'>
+                        {/* Terminal Header */}
+                        <div className='terminal-header'>
+                            <div className='terminal-controls'>
+                                <div className='terminal-control red' />
+                                <div className='terminal-control yellow' />
+                                <div className='terminal-control green' />
+                            </div>
+                            <div className='terminal-title'>johnleonardo — ~/apps</div>
+                        </div>
+
+                        {/* Terminal Body with Split Screen */}
+                        <div className='terminal-split'>
+                            {/* Left Pane: Navigation & Info */}
+                            <div className='terminal-pane'>
+                                <div className='mb-12'>
+                                    <div className='flex items-center gap-2 mb-6 text-[var(--color-accent)]'>
+                                        <span className='terminal-prompt'>➜</span>
+                                        <span className='text-sm uppercase tracking-widest font-bold'>Menu</span>
+                                    </div>
+                                    <nav className='flex flex-col gap-4'>
+                                        <Link href='/' className='text-2xl hover:translate-x-3 transition-all inline-flex items-center gap-3 group whitespace-nowrap'>
+                                            <span className='text-[var(--color-accent)] opacity-0 group-hover:opacity-100 transition-opacity'>&lt;</span>
+                                            <span className='text-[var(--color-text-dim)] group-hover:text-[var(--color-text)] transition-colors'>Home</span>
+                                        </Link>
+                                        <Link href='/apps' className='text-2xl hover:translate-x-3 transition-all inline-flex items-center gap-3 group whitespace-nowrap text-[var(--color-accent)]'>
+                                            <span>&gt;</span>
+                                            Apps
+                                        </Link>
+                                        <Link href='/blog' className='text-2xl hover:translate-x-3 transition-all inline-flex items-center gap-3 group whitespace-nowrap'>
+                                            <span className='text-[var(--color-accent)] opacity-0 group-hover:opacity-100 transition-opacity'>&gt;</span>
+                                            <span className='text-[var(--color-text-dim)] group-hover:text-[var(--color-text)] transition-colors'>Blog</span>
+                                        </Link>
+                                        <Link href='/apps/resume' className='text-2xl hover:translate-x-3 transition-all inline-flex items-center gap-3 group whitespace-nowrap'>
+                                            <span className='text-[var(--color-accent)] opacity-0 group-hover:opacity-100 transition-opacity'>&gt;</span>
+                                            <span className='text-[var(--color-text-dim)] group-hover:text-[var(--color-text)] transition-colors'>Resume</span>
+                                        </Link>
+                                    </nav>
+                                </div>
+
+                                <div className='space-y-6 pt-8 border-t border-[var(--color-border)]'>
+                                    <div className='font-mono'>
+                                        <span className='text-[var(--color-text)] opacity-70'>$ cat README.md</span>
+                                        <div className='mt-4 text-sm text-[var(--color-text-dim)] leading-relaxed italic border-l-2 border-[var(--color-border)] pl-4'>
+                                            "A collection of experiments, prototypes, and production-ready tools built with various tech stacks."
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Right Pane: Content (App Entries) */}
+                            <div className='terminal-pane bg-[rgba(0,0,0,0.2)] scrollbar-hide'>
+                                <div className='flex items-center justify-between mb-8 text-[var(--color-accent)]'>
+                                    <div className='flex items-center gap-2'>
+                                        <span className='terminal-prompt'>$</span>
+                                        <span className='text-sm uppercase tracking-widest font-bold'>ls -F</span>
+                                    </div>
+                                    <span className='text-[10px] opacity-50 font-mono'>DRWX------</span>
+                                </div>
+
+                                <div className='flex flex-col gap-2'>
+                                    {apps.map((app) => (
+                                        <Link
+                                            key={app.title}
+                                            href={app.href}
+                                            className='group flex items-center justify-between p-3 border-b border-[var(--color-border)] hover:bg-[var(--color-accent)]/5 transition-all'
+                                        >
+                                            <div className='flex items-center gap-4 min-w-0'>
+                                                <span className='text-[var(--color-text-dim)] group-hover:text-[var(--color-accent)] transition-colors text-lg'>
+                                                    {app.emoji}
+                                                </span>
+                                                <div className='min-w-0'>
+                                                    <h2 className='text-md font-mono text-[var(--color-text)] group-hover:text-[var(--color-accent)] transition-colors flex items-center gap-2'>
+                                                        {app.title.toLowerCase().replace(/\s+/g, '_')}/
+                                                    </h2>
+                                                    <p className='text-xs text-[var(--color-text-dim)] truncate opacity-60'>
+                                                        {app.subtitle}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div className='text-xs font-mono text-[var(--color-text-dim)] group-hover:text-[var(--color-accent)] opacity-40 group-hover:opacity-100 transition-all'>
+                                                [ENTER]
+                                            </div>
+                                        </Link>
+                                    ))}
+                                </div>
+
+                                {/* Footer Stats for Apps Page */}
+                                <div className='mt-12 pt-8 border-t border-[var(--color-border)]'>
+                                    <div className='flex items-center justify-between text-[10px] font-mono text-[var(--color-text-dim)] uppercase tracking-wider'>
+                                        <div className='flex gap-4'>
+                                            <span>STORAGE: 1.2GB USED</span>
+                                            <span>ITEMS: {apps.length}</span>
+                                        </div>
+                                        <div>
+                                            VER: 2024.12
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {/* Console decoration */}
+                    <div className='mt-6 px-4 flex items-center justify-between text-xs font-mono text-[var(--color-text-dim)] opacity-50'>
+                        <div className='flex items-center gap-4'>
+                            <div className='flex items-center gap-2'>
+                                <div className='w-2 h-2 rounded-full bg-[var(--color-accent)] animate-pulse' />
+                                PROCESS: ACTIVE
+                            </div>
+                            <div>CPU: 2.1%</div>
+                        </div>
+                        <div>PID: 48921</div>
                     </div>
                 </div>
-            </nav>
-
-            <main className='main-content'>
-                <div className='container-responsive'>
-                    <Breadcrumbs items={breadcrumbItems} />
-
-                    {/* Apps Grid */}
-                    <section className='max-w-6xl mx-auto animate-reveal animate-reveal-delay-1'>
-                        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-                            {apps.map((app, index) => (
-                                <Link
-                                    key={app.title}
-                                    href={app.href}
-                                    className='group glass-card p-4 hover:glass-card-enhanced transition-all duration-300 hover:-translate-y-1 animate-reveal relative'
-                                    itemScope
-                                    itemType='https://schema.org/WebApplication'
-                                >
-                                    {/* App Icon & Content */}
-                                    <div className='flex items-center gap-3'>
-                                        <div className='w-10 h-10 flex items-center justify-center rounded-lg bg-gradient-to-br from-white to-gray-50 border border-gray-200 group-hover:scale-110 transition-transform duration-300 flex-shrink-0'>
-                                            <span className='text-xl'>{app.emoji}</span>
-                                        </div>
-                                        <div className='flex-1 min-w-0 pr-6'>
-                                            <h2
-                                                className='text-body font-semibold mb-1 group-hover:gradient-text-accent transition-all duration-300'
-                                                itemProp='name'
-                                            >
-                                                {app.title}
-                                            </h2>
-                                            <p
-                                                className='text-small opacity-70 leading-snug line-clamp-2'
-                                                itemProp='description'
-                                            >
-                                                {app.subtitle}
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    {/* Hover Arrow - Absolute positioned */}
-                                    <div className='absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300'>
-                                        <svg
-                                            width='16'
-                                            height='16'
-                                            viewBox='0 0 24 24'
-                                            fill='none'
-                                            stroke='currentColor'
-                                            strokeWidth='2'
-                                            strokeLinecap='round'
-                                            strokeLinejoin='round'
-                                            className='text-gray-400 group-hover:text-blue-500 transition-colors duration-300'
-                                        >
-                                            <path d='M5 12h14' />
-                                            <path d='M12 5l7 7-7 7' />
-                                        </svg>
-                                    </div>
-                                </Link>
-                            ))}
-                        </div>
-                    </section>
-
-                    {/* Bottom CTA */}
-                    <section className='text-center max-w-3xl mx-auto mt-16 animate-reveal animate-reveal-delay-3'>
-                        <div className='glass-card-subtle p-6'>
-                            <p className='text-body opacity-80 mb-4'>
-                                Enjoy exploring these mini apps! Each one demonstrates different aspects of web
-                                development.
-                            </p>
-                            <Link href='/' className='button-secondary group'>
-                                <svg
-                                    width='16'
-                                    height='16'
-                                    viewBox='0 0 24 24'
-                                    fill='none'
-                                    stroke='currentColor'
-                                    strokeWidth='2'
-                                    strokeLinecap='round'
-                                    strokeLinejoin='round'
-                                >
-                                    <path d='M19 12H5' />
-                                    <path d='M12 19l-7-7 7-7' />
-                                </svg>
-                                <span>Back to Home</span>
-                            </Link>
-                        </div>
-                    </section>
-                </div>
             </main>
-        </div>
+        </>
     );
 }

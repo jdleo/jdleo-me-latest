@@ -1,6 +1,5 @@
 'use client';
 
-import { strings } from '../../constants/strings';
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -9,7 +8,7 @@ import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/cjs/styles/prism';
-import { Breadcrumbs } from '@/components/SEO/Breadcrumbs';
+import { WebVitals } from '@/components/SEO/WebVitals';
 
 type Message = {
     content: string;
@@ -25,24 +24,15 @@ type Message = {
     };
 };
 
-// Custom code component with syntax highlighting and language labels
 const CodeBlock = ({ node, inline, className, children, ...props }: any) => {
     const match = /language-(\w+)/.exec(className || '');
     const language = match ? match[1] : '';
 
     return !inline && match ? (
-        <div className='relative rounded-lg overflow-hidden bg-gray-900 my-4'>
-            {/* Language label */}
+        <div className='relative rounded-lg overflow-hidden bg-[#0D0D0E] border border-[var(--color-border)] my-4'>
             {language && (
-                <div className='flex items-center justify-between px-4 py-2 bg-gray-800 border-b border-gray-700'>
-                    <span className='text-xs font-mono text-gray-300 uppercase tracking-wide'>{language}</span>
-                    <button
-                        onClick={() => navigator.clipboard.writeText(String(children).replace(/\n$/, ''))}
-                        className='text-xs text-gray-400 hover:text-gray-200 transition-colors duration-200 px-2 py-1 rounded hover:bg-gray-700'
-                        title='Copy code'
-                    >
-                        📋 Copy
-                    </button>
+                <div className='flex items-center justify-between px-4 py-1.5 bg-black/40 border-b border-[var(--color-border)]'>
+                    <span className='text-[10px] font-mono text-[var(--color-text-dim)] uppercase tracking-wider'>{language}</span>
                 </div>
             )}
             <SyntaxHighlighter
@@ -51,8 +41,9 @@ const CodeBlock = ({ node, inline, className, children, ...props }: any) => {
                 PreTag='div'
                 customStyle={{
                     margin: 0,
-                    borderRadius: language ? '0 0 0.5rem 0.5rem' : '0.5rem',
-                    fontSize: '0.875rem',
+                    background: 'transparent',
+                    padding: '1rem',
+                    fontSize: '0.8rem',
                     lineHeight: '1.5',
                 }}
                 {...props}
@@ -61,7 +52,7 @@ const CodeBlock = ({ node, inline, className, children, ...props }: any) => {
             </SyntaxHighlighter>
         </div>
     ) : (
-        <code className='bg-gray-100 text-gray-800 px-1.5 py-0.5 rounded text-sm font-mono' {...props}>
+        <code className='bg-white/5 text-[var(--color-accent-blue)] px-1.5 py-0.5 rounded text-sm font-mono' {...props}>
             {children}
         </code>
     );
@@ -75,19 +66,12 @@ export default function Chat() {
     const [isLoaded, setIsLoaded] = useState(false);
     const [selectedModel, setSelectedModel] = useState('openai/gpt-oss-120b');
     const [streamingMessage, setStreamingMessage] = useState('');
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [systemPrompt, setSystemPrompt] = useState(
         "You are a helpful AI assistant. Today's date is {{currentDate}}."
     );
     const [showSystemPrompt, setShowSystemPrompt] = useState(false);
+    const [isMobileModelSelectorOpen, setIsMobileModelSelectorOpen] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
-    const dropdownRef = useRef<HTMLDivElement>(null);
-
-    const breadcrumbItems = [
-        { label: 'Home', href: '/' },
-        { label: 'Apps', href: '/apps' },
-        { label: 'AI Chat', href: '/apps/chat' },
-    ];
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -98,85 +82,39 @@ export default function Chat() {
     }, [messages, isLoading, streamingMessage]);
 
     useEffect(() => {
-        // Small delay for smoother loading animation
         const timer = setTimeout(() => setIsLoaded(true), 100);
         return () => clearTimeout(timer);
     }, []);
 
-    // Load system prompt from localStorage on mount
     useEffect(() => {
         const savedSystemPrompt = localStorage.getItem('chatSystemPrompt');
-        if (savedSystemPrompt) {
-            setSystemPrompt(savedSystemPrompt);
-        }
+        if (savedSystemPrompt) setSystemPrompt(savedSystemPrompt);
     }, []);
 
-    // Save system prompt to localStorage whenever it changes
     useEffect(() => {
         localStorage.setItem('chatSystemPrompt', systemPrompt);
     }, [systemPrompt]);
 
-    useEffect(() => {
-        // Close dropdown when clicking outside
-        const handleClickOutside = (event: MouseEvent) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-                setIsDropdownOpen(false);
-            }
-        };
-
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, []);
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!input.trim() || isLoading) return;
-
-        const userMessage = input.trim();
-        sendMessage(userMessage);
-    };
-
-    const clearMessages = () => {
-        setMessages([]);
-        setShowWelcome(true);
-        setStreamingMessage('');
-    };
-
     const sendMessage = async (message: string) => {
+        if (!message.trim() || isLoading) return;
         setInput('');
-
-        // Hide welcome message on first user message
         setShowWelcome(false);
-
-        // Add user message to the conversation
         const updatedMessages = [...messages, { content: message, isUser: true }];
         setMessages(updatedMessages);
         setIsLoading(true);
         setStreamingMessage('');
-
-        // Track timing for tokens per second calculation
         const startTime = Date.now();
 
         try {
-            // Keep only last 10 messages for API context (to manage token usage)
             const apiMessages = updatedMessages.slice(-10);
-
-            // Replace {{currentDate}} variable with actual date
             const currentDate = new Date().toLocaleDateString('en-US', {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
             });
             const processedSystemPrompt = systemPrompt.replace(/\{\{currentDate\}\}/g, currentDate);
 
             const response = await fetch('/api/chat-openrouter', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     messages: apiMessages,
                     model: selectedModel,
@@ -184,9 +122,7 @@ export default function Chat() {
                 }),
             });
 
-            if (!response.ok) {
-                throw new Error('Failed to get response');
-            }
+            if (!response.ok) throw new Error('Failed to get response');
 
             const reader = response.body?.getReader();
             const decoder = new TextDecoder();
@@ -197,7 +133,6 @@ export default function Chat() {
                 while (true) {
                     const { done, value } = await reader.read();
                     if (done) break;
-
                     const chunk = decoder.decode(value, { stream: true });
                     const lines = chunk.split('\n');
 
@@ -205,25 +140,18 @@ export default function Chat() {
                         if (line.startsWith('data: ')) {
                             try {
                                 const data = JSON.parse(line.slice(6));
-
                                 if (data.type === 'content') {
                                     accumulatedContent += data.content;
                                     setStreamingMessage(accumulatedContent);
                                 } else if (data.type === 'usage') {
-                                    // Capture usage data from OpenRouter
                                     usageData = data.usage;
                                 } else if (data.type === 'done') {
-                                    // Calculate metrics
                                     const endTime = Date.now();
                                     const responseTimeMs = endTime - startTime;
-
                                     let processedUsage = null;
                                     if (usageData) {
                                         const tokensPerSecond = usageData.completion_tokens / (responseTimeMs / 1000);
-                                        // Rough cost estimation (varies by model, this is approximate)
-                                        const estimatedCost =
-                                            usageData.prompt_tokens * 0.000001 + usageData.completion_tokens * 0.000002;
-
+                                        const estimatedCost = usageData.prompt_tokens * 0.000001 + usageData.completion_tokens * 0.000002;
                                         processedUsage = {
                                             ...usageData,
                                             tokens_per_second: Math.round(tokensPerSecond * 10) / 10,
@@ -231,36 +159,23 @@ export default function Chat() {
                                             response_time_ms: responseTimeMs,
                                         };
                                     }
-
-                                    // Finalize the message
-                                    setMessages([
-                                        ...updatedMessages,
-                                        {
-                                            content: accumulatedContent,
-                                            isUser: false,
-                                            model: availableModels.find(m => m.id === selectedModel)?.name,
-                                            usage: processedUsage,
-                                        },
-                                    ]);
+                                    setMessages([...updatedMessages, {
+                                        content: accumulatedContent,
+                                        isUser: false,
+                                        model: availableModels.find(m => m.id === selectedModel)?.name,
+                                        usage: processedUsage,
+                                    }]);
                                     setStreamingMessage('');
                                     setIsLoading(false);
                                     return;
-                                } else if (data.type === 'error') {
-                                    throw new Error(data.error);
                                 }
-                            } catch (parseError) {
-                                console.error('Error parsing chunk:', parseError);
-                            }
+                            } catch (e) { }
                         }
                     }
                 }
             }
         } catch (error) {
-            console.error('Streaming error:', error);
-            setMessages([
-                ...updatedMessages,
-                { content: "Sorry, I'm having trouble connecting right now. Please try again!", isUser: false },
-            ]);
+            setMessages([...updatedMessages, { content: "ERROR: Failed to connect to terminal.", isUser: false }]);
         } finally {
             setIsLoading(false);
             setStreamingMessage('');
@@ -268,612 +183,251 @@ export default function Chat() {
     };
 
     const availableModels = [
-        {
-            id: 'openai/gpt-oss-120b',
-            name: 'OpenAI GPT-OSS 120B',
-            description: "OpenAI's small but powerful model",
-            icon: '/chatgpt.png',
-        },
-        {
-            id: 'anthropic/claude-sonnet-4',
-            name: 'Anthropic Claude Sonnet 4',
-            description: "Anthropic's latest flagship model",
-            icon: '/claude.png',
-        },
-        {
-            id: 'openai/gpt-5-chat',
-            name: 'OpenAI GPT-5 Chat',
-            description: "OpenAI's newest generation",
-            icon: '/chatgpt.png',
-        },
-        {
-            id: 'openai/o4-mini',
-            name: 'OpenAI O4-Mini',
-            description: 'Compact reasoning model with fast, cost-efficient performance',
-            icon: '/chatgpt.png',
-        },
-        {
-            id: 'x-ai/grok-4',
-            name: 'xAI Grok 4',
-            description: "xAI's advanced reasoning model",
-            icon: '/grok.png',
-        },
-        {
-            id: 'google/gemini-2.5-pro',
-            name: 'Google Gemini 2.5 Pro',
-            description: "Google's enhanced multimodal AI",
-            icon: '/gemini.png',
-        },
-        {
-            id: 'anthropic/claude-3.5-haiku',
-            name: 'Anthropic Claude 3.5 Haiku',
-            description: 'Fast model optimized for real-time applications and coding',
-            icon: '/claude.png',
-        },
-        {
-            id: 'moonshotai/kimi-k2',
-            name: 'Moonshot Kimi K2',
-            description: 'MoE model optimized for agentic capabilities and tool use',
-            icon: '/kimi.png',
-        },
-        {
-            id: 'z-ai/glm-4.5',
-            name: 'zAI GLM-4.5',
-            description: 'Agent-focused MoE model with thinking and non-thinking modes',
-            icon: '/zai.png',
-        },
-        {
-            id: 'google/gemini-2.5-flash',
-            name: 'Gemini 2.5 Flash',
-            description: "Google's fast and efficient model",
-            icon: '/gemini.png',
-        },
-        {
-            id: 'meta-llama/llama-4-maverick',
-            name: 'Meta Llama 4 Maverick',
-            description: "Meta's cutting-edge model",
-            icon: '/meta.png',
-        },
-        {
-            id: 'meta-llama/llama-4-scout',
-            name: 'Meta Llama 4 Scout',
-            description: 'Multimodal MoE model with 10M token context',
-            icon: '/meta.png',
-        },
-        {
-            id: 'amazon/nova-pro-v1',
-            name: 'Amazon Nova Pro V1',
-            description: "Amazon's professional AI model",
-            icon: '/amazon_nova.png',
-        },
-        {
-            id: 'mistralai/mistral-large-2411',
-            name: 'Mistral Large 2411',
-            description: 'Enhanced long context understanding with improved function calling',
-            icon: '/mistral.png',
-        },
-        {
-            id: 'inception/mercury',
-            name: 'Inception Mercury',
-            description: 'First diffusion LLM - 5-10x faster than speed-optimized models',
-            icon: '/inception.png',
-        },
+        { id: 'openai/gpt-oss-120b', name: 'GPT-OSS 120B', description: "Small & fast", icon: '/chatgpt.png' },
+        { id: 'anthropic/claude-sonnet-4.5', name: 'Claude 4.5 Sonnet', description: "Flagship", icon: '/claude.png' },
+        { id: 'openai/gpt-5.2-chat', name: 'GPT 5.2 Chat', description: "Newest gen", icon: '/chatgpt.png' },
+        { id: 'openai/o4-mini', name: 'O4-Mini', description: 'Compact reasoning', icon: '/chatgpt.png' },
+        { id: 'google/gemini-3-pro-preview', name: 'Gemini 3 Pro', description: "Google Enhanced", icon: '/gemini.png' },
+        { id: 'google/gemini-3-flash-preview', name: 'Gemini 3 Flash', description: "Fast & Efficient", icon: '/gemini.png' },
+        { id: 'x-ai/grok-4', name: 'Grok 4', description: "Advanced reasoning", icon: '/grok.png' },
     ];
 
     return (
-        <div className='min-h-screen bg-[var(--color-bg-light)] relative'>
-            {/* Breadcrumbs for SEO */}
-            <Breadcrumbs items={breadcrumbItems} />
-
-            {/* Subtle background gradients */}
-            <div
-                className='fixed inset-0 opacity-40 pointer-events-none'
-                style={{
-                    background:
-                        'radial-gradient(ellipse at 30% 20%, rgba(94, 106, 210, 0.08) 0%, transparent 50%), radial-gradient(ellipse at 70% 80%, rgba(139, 92, 246, 0.06) 0%, transparent 60%)',
-                }}
-            />
-
-            {/* Navigation Bar */}
-            <nav className='nav-container'>
-                <div className='nav-content'>
-                    <Link href='/' className='nav-logo'>
-                        JL
-                    </Link>
-                    <div className='nav-links'>
-                        <Link href='/apps' className='nav-link'>
-                            Apps
-                        </Link>
-                        <Link href='/' className='nav-link'>
-                            Home
-                        </Link>
-                        <a href={strings.LINKEDIN_URL} target='_blank' rel='noopener noreferrer' className='nav-link'>
-                            LinkedIn
-                        </a>
-                        <a href={strings.GITHUB_URL} target='_blank' rel='noopener noreferrer' className='nav-link'>
-                            GitHub
-                        </a>
-                    </div>
+        <>
+            <WebVitals />
+            <main className='min-h-screen bg-[var(--color-bg)] flex items-center justify-center p-4 md:p-8 selection:bg-[var(--color-accent)] selection:text-[var(--color-bg)]'>
+                <div className='fixed inset-0 overflow-hidden pointer-events-none'>
+                    <div className='absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(62,175,124,0.03),transparent_60%)]' />
+                    <div className='absolute inset-0' style={{
+                        backgroundImage: 'radial-gradient(rgba(255,255,255,0.02) 1px, transparent 1px)',
+                        backgroundSize: '32px 32px'
+                    }} />
                 </div>
-            </nav>
 
-            <main className='main-content flex flex-col' style={{ height: 'calc(100vh - 80px)' }}>
-                <div className='container-responsive flex-1 flex flex-col max-w-6xl'>
-                    {/* Hero Section */}
-                    <section className={`text-center mb-6 animate-reveal ${isLoaded ? '' : 'opacity-0'}`}>
-                        <h1 className='text-h1 gradient-text mb-4'>AI Chat</h1>
-                        <p className='text-body opacity-80'>
-                            Chat with multiple AI models for free. Compare responses and find your perfect AI assistant.
-                        </p>
-                    </section>
+                <div className={`w-full max-w-6xl h-[85vh] transition-all duration-1000 transform ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                    <div className='terminal-window flex flex-col h-full'>
+                        <div className='terminal-header'>
+                            <div className='terminal-controls'>
+                                <div className='terminal-control red' />
+                                <div className='terminal-control yellow' />
+                                <div className='terminal-control green' />
+                            </div>
+                            <div className='terminal-title'>johnleonardo — ~/ai-chat</div>
+                        </div>
 
-                    {/* Chat Container */}
-                    <div
-                        className={`flex-1 flex flex-col min-h-0 animate-reveal animate-reveal-delay-1 ${
-                            isLoaded ? '' : 'opacity-0'
-                        }`}
-                    >
-                        {/* Messages Area */}
-                        <div className='flex-1 glass-card-enhanced mb-4 flex flex-col overflow-hidden'>
-                            {/* Header with Model Selection and Clear Button */}
-                            <div className='p-4 md:p-6 pb-4 border-b border-gray-200 flex-shrink-0'>
-                                <div className='flex items-center justify-between mb-3'>
-                                    <h3 className='text-sm font-semibold text-[var(--color-text-dark)]'>AI Model</h3>
-                                    <div className='flex items-center gap-2'>
+                        <div className='terminal-split flex-grow overflow-hidden'>
+                            {/* Left Pane: Controls & Settings */}
+                            <div className='terminal-pane border-r border-[var(--color-border)] hidden md:flex flex-col gap-8'>
+                                <div>
+                                    <div className='flex items-center gap-2 mb-6 text-[var(--color-accent)]'>
+                                        <span className='terminal-prompt'>➜</span>
+                                        <span className='text-sm uppercase tracking-widest font-bold'>Session</span>
+                                    </div>
+                                    <div className='flex flex-col gap-4'>
+                                        <Link href='/' className='text-lg hover:text-[var(--color-accent)] transition-colors'>~/home</Link>
+                                        <Link href='/apps' className='text-lg hover:text-[var(--color-accent)] transition-colors'>~/apps</Link>
                                         <button
-                                            onClick={() => setShowSystemPrompt(!showSystemPrompt)}
-                                            className='text-xs px-3 py-1.5 rounded-lg glass-card-subtle border border-gray-200 hover:border-gray-300 transition-all duration-200 text-gray-600 hover:text-gray-800'
+                                            onClick={() => setMessages([])}
+                                            className='text-left text-lg text-red-400/70 hover:text-red-400 transition-colors'
                                         >
-                                            {showSystemPrompt ? '🔽' : '🔧'} System Prompt
-                                        </button>
-                                        <button
-                                            onClick={clearMessages}
-                                            className='text-xs px-3 py-1.5 rounded-lg bg-red-500 hover:bg-red-600 transition-all duration-200 text-white border-0'
-                                            disabled={isLoading}
-                                        >
-                                            🗑️ Clear Chat
+                                            ~/clear_history
                                         </button>
                                     </div>
                                 </div>
 
-                                {/* System Prompt Configuration */}
-                                {showSystemPrompt && (
-                                    <div className='mb-4 p-3 glass-card-subtle border border-gray-200 rounded-xl'>
-                                        <label className='block text-xs font-medium text-gray-700 mb-2'>
-                                            System Prompt
-                                        </label>
-                                        <textarea
-                                            value={systemPrompt}
-                                            onChange={e => setSystemPrompt(e.target.value)}
-                                            placeholder='Enter your system prompt here...'
-                                            className='w-full p-2 text-sm rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none'
-                                            rows={3}
-                                        />
-                                        <div className='flex justify-between items-center mt-2'>
-                                            <p className='text-xs text-gray-500'>
-                                                Preview:{' '}
-                                                {systemPrompt.replace(
-                                                    /\{\{currentDate\}\}/g,
-                                                    new Date().toLocaleDateString('en-US', {
-                                                        weekday: 'long',
-                                                        year: 'numeric',
-                                                        month: 'long',
-                                                        day: 'numeric',
-                                                    })
-                                                )}
-                                            </p>
-                                            <button
-                                                onClick={() =>
-                                                    setSystemPrompt(
-                                                        "You are a helpful AI assistant. Today's date is {{currentDate}}."
-                                                    )
-                                                }
-                                                className='text-xs px-2 py-1 rounded-md text-blue-600 hover:text-blue-700 hover:bg-blue-50 transition-all duration-200'
-                                            >
-                                                Reset to Default
-                                            </button>
-                                        </div>
-                                    </div>
-                                )}
-
-                                <div className='relative' ref={dropdownRef}>
-                                    {/* Dropdown Button */}
-                                    <button
-                                        onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                                        className='w-full glass-card-subtle border border-gray-200 hover:border-gray-300 p-3 rounded-xl text-left transition-all duration-200 flex items-center justify-between'
-                                    >
-                                        <div className='flex items-center gap-3 flex-1'>
-                                            <Image
-                                                src={
-                                                    availableModels.find(m => m.id === selectedModel)?.icon ||
-                                                    '/chatgpt.png'
-                                                }
-                                                alt={availableModels.find(m => m.id === selectedModel)?.name || 'AI'}
-                                                width={20}
-                                                height={20}
-                                                className='rounded-sm'
-                                            />
-                                            <div>
-                                                <div className='font-medium text-sm'>
-                                                    {availableModels.find(m => m.id === selectedModel)?.name}
-                                                </div>
-                                                <div className='text-xs opacity-70'>
-                                                    {availableModels.find(m => m.id === selectedModel)?.description}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <svg
-                                            className={`w-4 h-4 transition-transform duration-200 ${
-                                                isDropdownOpen ? 'rotate-180' : ''
-                                            }`}
-                                            fill='none'
-                                            stroke='currentColor'
-                                            viewBox='0 0 24 24'
-                                        >
-                                            <path
-                                                strokeLinecap='round'
-                                                strokeLinejoin='round'
-                                                strokeWidth={2}
-                                                d='M19 9l-7 7-7-7'
-                                            />
-                                        </svg>
-                                    </button>
-
-                                    {/* Dropdown Menu */}
-                                    {isDropdownOpen && (
-                                        <div className='absolute top-full left-0 right-0 mt-2 glass-card border border-gray-200 rounded-xl shadow-lg z-50 max-h-80 overflow-y-auto'>
-                                            {availableModels.map(model => (
+                                <div className='space-y-6 flex-grow overflow-y-auto scrollbar-hide'>
+                                    <div className='font-mono'>
+                                        <span className='text-[var(--color-text)] opacity-70'>$ select --model</span>
+                                        <div className='mt-4 flex flex-col gap-2'>
+                                            {availableModels.map(m => (
                                                 <button
-                                                    key={model.id}
-                                                    onClick={() => {
-                                                        setSelectedModel(model.id);
-                                                        setIsDropdownOpen(false);
-                                                    }}
-                                                    className={`w-full p-3 text-left hover:bg-gray-50 transition-all duration-200 flex items-center gap-3 ${
-                                                        selectedModel === model.id
-                                                            ? 'bg-blue-50 border-l-4 border-l-blue-500'
-                                                            : ''
-                                                    } ${model === availableModels[0] ? 'rounded-t-xl' : ''} ${
-                                                        model === availableModels[availableModels.length - 1]
-                                                            ? 'rounded-b-xl'
-                                                            : ''
-                                                    }`}
+                                                    key={m.id}
+                                                    onClick={() => setSelectedModel(m.id)}
+                                                    className={`p-3 text-left border rounded transition-all flex items-center gap-3 ${selectedModel === m.id ? 'border-[var(--color-accent)] bg-[var(--color-accent)]/5 text-[var(--color-accent)]' : 'border-[var(--color-border)] text-[var(--color-text-dim)] hover:border-[var(--color-text-dim)]'}`}
                                                 >
-                                                    <Image
-                                                        src={model.icon}
-                                                        alt={model.name}
-                                                        width={20}
-                                                        height={20}
-                                                        className='rounded-sm'
-                                                    />
-                                                    <div className='flex-1'>
-                                                        <div className='font-medium text-sm'>{model.name}</div>
-                                                        <div className='text-xs opacity-70 leading-tight'>
-                                                            {model.description}
-                                                        </div>
+                                                    <div className='w-5 h-5 rounded-sm bg-white flex items-center justify-center p-0.5 shrink-0'>
+                                                        <Image src={m.icon} alt={m.name} width={16} height={16} className='object-contain' />
                                                     </div>
-                                                    {selectedModel === model.id && (
-                                                        <svg
-                                                            className='w-4 h-4 text-blue-500'
-                                                            fill='currentColor'
-                                                            viewBox='0 0 20 20'
-                                                        >
-                                                            <path
-                                                                fillRule='evenodd'
-                                                                d='M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z'
-                                                                clipRule='evenodd'
-                                                            />
-                                                        </svg>
-                                                    )}
+                                                    <span className='text-xs font-bold uppercase tracking-tighter truncate'>{m.name}</span>
                                                 </button>
                                             ))}
                                         </div>
-                                    )}
+                                    </div>
+
+                                    <div className='font-mono'>
+                                        <span className='text-[var(--color-text)] opacity-70'>$ config --system</span>
+                                        <textarea
+                                            value={systemPrompt}
+                                            onChange={e => setSystemPrompt(e.target.value)}
+                                            className='mt-3 w-full bg-black/40 border border-[var(--color-border)] p-3 text-xs text-[var(--color-text-dim)] rounded focus:border-[var(--color-accent)] outline-none transition-colors'
+                                            rows={4}
+                                        />
+                                    </div>
                                 </div>
                             </div>
 
-                            {/* Scrollable Messages Container */}
-                            <div className='flex-1 overflow-y-auto p-4 md:p-6 pt-4'>
-                                <div className='space-y-4'>
-                                    {/* Welcome Message - UI Only */}
+                            {/* Right Pane: Chat Interface */}
+                            <div className='terminal-pane bg-black/20 flex flex-col p-0 overflow-hidden w-full'>
+                                <div className='flex-grow overflow-y-auto p-6 scrollbar-hide flex flex-col gap-8'>
                                     {showWelcome && (
-                                        <div className='flex justify-start'>
-                                            <div className='max-w-[85%] md:max-w-[75%] mr-4'>
-                                                <div className='flex items-center gap-2 mb-2'>
-                                                    <div className='w-6 h-6 rounded-full bg-gradient-to-br from-green-500 to-blue-500 flex items-center justify-center'>
-                                                        <span className='text-white text-xs font-bold'>AI</span>
-                                                    </div>
-                                                    <span className='text-small opacity-60'>Assistant</span>
-                                                </div>
-                                                <div className='glass-card-subtle border border-gray-200 p-3 md:p-4 rounded-2xl text-body leading-relaxed'>
-                                                    <p>
-                                                        Welcome! Choose from multiple AI models. Pro tip:{' '}
-                                                        <b>GPT 120B</b> is the fastest, and still intelligent.{' '}
-                                                        <b>Claude 4</b> is my personal favorite for complex tasks. Chats
-                                                        are NEVER saved or logged.
-                                                    </p>
-                                                </div>
+                                        <div className='opacity-40 font-mono text-sm leading-relaxed border border-dashed border-[var(--color-border)] p-8 rounded-xl'>
+                                            <div className='text-[var(--color-accent)] mb-4'>[TERMINAL READY]</div>
+                                            <p className='mb-4'>Welcome to the multi-model AI console. Compare responses from leading LLMs in a secure, technical environment.</p>
+                                            <p className='mb-4'>All models are routed via OpenRouter and session history is stored locally in-memory.</p>
+                                            <div className='flex flex-wrap gap-2 text-xs'>
+                                                <span className='px-2 py-1 bg-white/5 border border-[var(--color-border)] rounded text-[var(--color-text-dim)]'>CTRL+L to clear</span>
+                                                <span className='px-2 py-1 bg-white/5 border border-[var(--color-border)] rounded text-[var(--color-text-dim)]'>Markdown supported</span>
                                             </div>
                                         </div>
                                     )}
 
-                                    {messages.map((message, i) => (
-                                        <div
-                                            key={i}
-                                            className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}
-                                        >
-                                            <div
-                                                className={`max-w-[85%] md:max-w-[75%] ${
-                                                    message.isUser ? 'ml-4' : 'mr-4'
-                                                }`}
-                                            >
-                                                {!message.isUser && (
-                                                    <div className='flex items-center gap-2 mb-2'>
-                                                        {message.model &&
-                                                        availableModels.find(m => m.name === message.model) ? (
-                                                            <Image
-                                                                src={
-                                                                    availableModels.find(m => m.name === message.model)!
-                                                                        .icon
-                                                                }
-                                                                alt={message.model}
-                                                                width={24}
-                                                                height={24}
-                                                                className='rounded-full'
-                                                            />
-                                                        ) : (
-                                                            <div className='w-6 h-6 rounded-full bg-gradient-to-br from-green-500 to-blue-500 flex items-center justify-center'>
-                                                                <span className='text-white text-xs font-bold'>AI</span>
-                                                            </div>
-                                                        )}
-                                                        <span className='text-small opacity-60'>
-                                                            {message.model || 'Assistant'}
+                                    {messages.map((m, i) => (
+                                        <div key={i} className='flex flex-col gap-3 group'>
+                                            <div className='flex items-center justify-between'>
+                                                <div className='flex items-center gap-2'>
+                                                    <span className={`text-xs font-mono font-bold uppercase tracking-wider ${m.isUser ? 'text-[var(--color-accent-blue)]' : 'text-[var(--color-accent)]'}`}>
+                                                        [{m.isUser ? 'USER' : m.model?.toUpperCase().replace(/\s+/g, '_') || 'AI'}]
+                                                    </span>
+                                                    {!m.isUser && m.usage && (
+                                                        <span className='text-[10px] text-[var(--color-text-dim)] opacity-0 group-hover:opacity-100 transition-opacity font-mono'>
+                                                            (latency: {m.usage.response_time_ms}ms | cost: ${m.usage.estimated_cost?.toFixed(5)})
                                                         </span>
-                                                    </div>
-                                                )}
-                                                <div
-                                                    className={`p-3 md:p-4 rounded-2xl text-body leading-relaxed ${
-                                                        message.isUser
-                                                            ? 'bg-[var(--color-text-dark)] text-[var(--color-bg-light)] border border-gray-300'
-                                                            : 'glass-card-subtle border border-gray-200'
-                                                    }`}
-                                                >
-                                                    {message.isUser ? (
-                                                        <p>{message.content}</p>
-                                                    ) : (
-                                                        <div className='prose prose-sm max-w-none'>
-                                                            <ReactMarkdown
-                                                                remarkPlugins={[remarkGfm as any]}
-                                                                rehypePlugins={[rehypeRaw as any]}
-                                                                remarkRehypeOptions={{ passThrough: ['link'] }}
-                                                                components={{
-                                                                    code: CodeBlock,
-                                                                }}
-                                                            >
-                                                                {message.content}
-                                                            </ReactMarkdown>
-                                                        </div>
                                                     )}
                                                 </div>
-                                                {message.isUser ? (
-                                                    <div className='flex justify-end mt-1'>
-                                                        <span className='text-small opacity-60'>You</span>
+                                            </div>
+                                            <div className={`font-mono text-sm leading-relaxed ${m.isUser ? 'text-[var(--color-text)]' : 'text-[var(--color-text-dim)]'}`}>
+                                                {!m.isUser ? (
+                                                    <div className='prose prose-invert prose-sm max-w-none'>
+                                                        <ReactMarkdown
+                                                            remarkPlugins={[remarkGfm as any]}
+                                                            rehypePlugins={[rehypeRaw as any]}
+                                                            components={{ code: CodeBlock }}
+                                                        >
+                                                            {m.content}
+                                                        </ReactMarkdown>
                                                     </div>
                                                 ) : (
-                                                    // Usage metrics for AI responses
-                                                    message.usage && (
-                                                        <div className='flex justify-start mt-2'>
-                                                            <div className='text-xs opacity-60 bg-gray-50 px-2 py-1 rounded-lg border'>
-                                                                <div className='flex items-center gap-3'>
-                                                                    <span>
-                                                                        ⚡ {message.usage.tokens_per_second} t/s
-                                                                    </span>
-                                                                    <span>🎯 {message.usage.total_tokens} tokens</span>
-                                                                    <span>
-                                                                        💰 ~${message.usage.estimated_cost?.toFixed(5)}
-                                                                    </span>
-                                                                    <span>
-                                                                        ⏱️{' '}
-                                                                        {(
-                                                                            message.usage.response_time_ms! / 1000
-                                                                        ).toFixed(1)}
-                                                                        s
-                                                                    </span>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    )
+                                                    <p>{m.content}</p>
                                                 )}
                                             </div>
                                         </div>
                                     ))}
 
-                                    {/* Conversation Starters - Only show when no user messages */}
-                                    {showWelcome && messages.length === 0 && !isLoading && !streamingMessage && (
-                                        <div className='flex flex-col gap-3 mt-6'>
-                                            <p className='text-small opacity-60 text-center mb-2'>Try asking:</p>
-                                            <div className='grid grid-cols-1 md:grid-cols-2 gap-3'>
-                                                <button
-                                                    onClick={() =>
-                                                        sendMessage('Explain quantum computing in simple terms')
-                                                    }
-                                                    className='glass-card-subtle hover:glass-card border border-gray-200 p-4 rounded-xl text-left text-body transition-all duration-200 hover:-translate-y-0.5'
-                                                >
-                                                    <div className='font-medium mb-1'>Explain quantum computing</div>
-                                                    <div className='text-sm opacity-70'>
-                                                        Get a clear explanation of complex topics
-                                                    </div>
-                                                </button>
-                                                <button
-                                                    onClick={() =>
-                                                        sendMessage(
-                                                            'Write a Python function that sorts a list of dictionaries by a specific key'
-                                                        )
-                                                    }
-                                                    className='glass-card-subtle hover:glass-card border border-gray-200 p-4 rounded-xl text-left text-body transition-all duration-200 hover:-translate-y-0.5'
-                                                >
-                                                    <div className='font-medium mb-1'>Write a Python function</div>
-                                                    <div className='text-sm opacity-70'>Get help with coding tasks</div>
-                                                </button>
-                                                <button
-                                                    onClick={() =>
-                                                        sendMessage(
-                                                            'Help me plan a weekend trip to a nearby city with recommendations for activities'
-                                                        )
-                                                    }
-                                                    className='glass-card-subtle hover:glass-card border border-gray-200 p-4 rounded-xl text-left text-body transition-all duration-200 hover:-translate-y-0.5'
-                                                >
-                                                    <div className='font-medium mb-1'>Plan a weekend trip</div>
-                                                    <div className='text-sm opacity-70'>
-                                                        Get personalized recommendations
-                                                    </div>
-                                                </button>
-                                                <button
-                                                    onClick={() =>
-                                                        sendMessage(
-                                                            'Compare the pros and cons of React vs Vue.js for a new project'
-                                                        )
-                                                    }
-                                                    className='glass-card-subtle hover:glass-card border border-gray-200 p-4 rounded-xl text-left text-body transition-all duration-200 hover:-translate-y-0.5'
-                                                >
-                                                    <div className='font-medium mb-1'>Compare different approaches</div>
-                                                    <div className='text-sm opacity-70'>Analyze pros and cons</div>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    {/* Streaming Message */}
                                     {streamingMessage && (
-                                        <div className='flex justify-start'>
-                                            <div className='max-w-[85%] md:max-w-[75%] mr-4'>
-                                                <div className='flex items-center gap-2 mb-2'>
-                                                    <Image
-                                                        src={
-                                                            availableModels.find(m => m.id === selectedModel)?.icon ||
-                                                            '/claude.png'
-                                                        }
-                                                        alt={
-                                                            availableModels.find(m => m.id === selectedModel)?.name ||
-                                                            'AI'
-                                                        }
-                                                        width={24}
-                                                        height={24}
-                                                        className='rounded-full'
-                                                    />
-                                                    <span className='text-small opacity-60'>
-                                                        {availableModels.find(m => m.id === selectedModel)?.name ||
-                                                            'Assistant'}
-                                                    </span>
+                                        <div className='flex flex-col gap-3'>
+                                            <div className='flex items-center gap-2'>
+                                                <span className='text-[var(--color-accent)] text-xs font-mono font-bold uppercase tracking-wider'>
+                                                    [{availableModels.find(m => m.id === selectedModel)?.name.toUpperCase().replace(/\s+/g, '_') || 'AI'}]
+                                                </span>
+                                            </div>
+                                            <div className='font-mono text-sm text-[var(--color-text-dim)] leading-relaxed'>
+                                                <div className='prose prose-invert prose-sm max-w-none'>
+                                                    <ReactMarkdown
+                                                        remarkPlugins={[remarkGfm as any]}
+                                                        rehypePlugins={[rehypeRaw as any]}
+                                                        components={{ code: CodeBlock }}
+                                                    >
+                                                        {streamingMessage}
+                                                    </ReactMarkdown>
                                                 </div>
-                                                <div className='glass-card-subtle border border-gray-200 p-3 md:p-4 rounded-2xl'>
-                                                    <div className='prose prose-sm max-w-none text-body leading-relaxed'>
-                                                        <ReactMarkdown
-                                                            remarkPlugins={[remarkGfm as any]}
-                                                            rehypePlugins={[rehypeRaw as any]}
-                                                            remarkRehypeOptions={{ passThrough: ['link'] }}
-                                                            components={{
-                                                                code: CodeBlock,
-                                                            }}
-                                                        >
-                                                            {streamingMessage}
-                                                        </ReactMarkdown>
-                                                        <span className='inline-block w-2 h-5 bg-blue-500 ml-1 animate-pulse'></span>
-                                                    </div>
-                                                </div>
+                                                <span className='inline-block w-2 h-4 bg-[var(--color-accent)] ml-1 animate-pulse' />
                                             </div>
                                         </div>
                                     )}
 
-                                    {/* Loading State */}
                                     {isLoading && !streamingMessage && (
-                                        <div className='flex justify-start'>
-                                            <div className='max-w-[85%] md:max-w-[75%] mr-4'>
-                                                <div className='flex items-center gap-2 mb-2'>
-                                                    <Image
-                                                        src={
-                                                            availableModels.find(m => m.id === selectedModel)?.icon ||
-                                                            '/claude.png'
-                                                        }
-                                                        alt={
-                                                            availableModels.find(m => m.id === selectedModel)?.name ||
-                                                            'AI'
-                                                        }
-                                                        width={24}
-                                                        height={24}
-                                                        className='rounded-full'
-                                                    />
-                                                    <span className='text-small opacity-60'>
-                                                        {availableModels.find(m => m.id === selectedModel)?.name ||
-                                                            'Assistant'}
-                                                    </span>
-                                                </div>
-                                                <div className='glass-card-subtle border border-gray-200 p-3 md:p-4 rounded-2xl'>
-                                                    <div className='flex items-center gap-2'>
-                                                        <div className='flex gap-1'>
-                                                            <div
-                                                                className='w-2 h-2 bg-gray-400 rounded-full animate-bounce'
-                                                                style={{ animationDelay: '0ms' }}
-                                                            ></div>
-                                                            <div
-                                                                className='w-2 h-2 bg-gray-400 rounded-full animate-bounce'
-                                                                style={{ animationDelay: '150ms' }}
-                                                            ></div>
-                                                            <div
-                                                                className='w-2 h-2 bg-gray-400 rounded-full animate-bounce'
-                                                                style={{ animationDelay: '300ms' }}
-                                                            ></div>
-                                                        </div>
-                                                        <span className='text-body opacity-70'>Thinking...</span>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                        <div className='flex items-center gap-2 text-[var(--color-text-dim)] text-xs font-mono italic animate-pulse'>
+                                            <span>Establishing secure link...</span>
                                         </div>
                                     )}
-
                                     <div ref={messagesEndRef} />
                                 </div>
-                            </div>
-                        </div>
 
-                        {/* Input Area */}
-                        <div className={`animate-reveal animate-reveal-delay-2 ${isLoaded ? '' : 'opacity-0'}`}>
-                            <form onSubmit={handleSubmit} className='glass-card p-4 flex gap-3'>
-                                <input
-                                    type='text'
-                                    value={input}
-                                    onChange={e => setInput(e.target.value)}
-                                    placeholder={`Ask ${
-                                        availableModels.find(m => m.id === selectedModel)?.name || 'AI'
-                                    } anything...`}
-                                    className='flex-1 p-3 rounded-xl bg-white border border-gray-200 text-body placeholder:opacity-60 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200'
-                                    disabled={isLoading}
-                                />
-                                <button
-                                    type='submit'
-                                    disabled={isLoading || !input.trim()}
-                                    className='button-primary disabled:opacity-50 disabled:cursor-not-allowed'
-                                >
-                                    <span>Send</span>
-                                    <svg
-                                        width='16'
-                                        height='16'
-                                        viewBox='0 0 24 24'
-                                        fill='none'
-                                        stroke='currentColor'
-                                        strokeWidth='2'
-                                        strokeLinecap='round'
-                                        strokeLinejoin='round'
+                                {/* Terminal Input Field */}
+                                <div className='p-4 bg-black/40 border-t border-[var(--color-border)]'>
+                                    <form
+                                        onSubmit={(e) => { e.preventDefault(); sendMessage(input); }}
+                                        className='flex items-center gap-3 px-3 py-2 bg-white/5 border border-[var(--color-border)] rounded focus-within:border-[var(--color-accent)] transition-colors'
                                     >
-                                        <path d='M22 2L11 13' />
-                                        <path d='M22 2l-7 20-4-9-9-4 20-7z' />
-                                    </svg>
-                                </button>
-                            </form>
+                                        <span className='text-[var(--color-accent)] font-mono'>$</span>
+                                        <input
+                                            type='text'
+                                            value={input}
+                                            onChange={(e) => setInput(e.target.value)}
+                                            placeholder='Transmit command...'
+                                            className='flex-grow bg-transparent border-none outline-none text-sm font-mono text-[var(--color-text)] placeholder:text-[var(--color-text-dim)] placeholder:opacity-40'
+                                            disabled={isLoading}
+                                        />
+                                        <button
+                                            type='submit'
+                                            disabled={isLoading || !input.trim()}
+                                            className='text-[var(--color-accent)] hover:scale-110 transition-transform disabled:opacity-30'
+                                        >
+                                            <svg width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2.5' strokeLinecap='round' strokeLinejoin='round'>
+                                                <path d='M5 12h14M12 5l7 7-7 7' />
+                                            </svg>
+                                        </button>
+                                    </form>
+                                    <div className='mt-4 flex items-center justify-between'>
+                                        <div className='flex items-center gap-4 text-[10px] font-mono text-[var(--color-text-dim)] tracking-widest opacity-40 uppercase'>
+                                            <span>Buffer: OK</span>
+                                            <span>Stream: ACTIVE</span>
+                                            <span>Network: SECURE</span>
+                                        </div>
+                                        <div className='flex items-center gap-2 md:hidden'>
+                                            <button
+                                                type='button'
+                                                onClick={() => setIsMobileModelSelectorOpen(true)}
+                                                className='text-[10px] font-mono text-[var(--color-accent)] border border-[var(--color-accent)]/30 px-2 py-0.5 rounded bg-[var(--color-accent)]/5 hover:bg-[var(--color-accent)]/10 transition-colors flex items-center gap-1.5'
+                                            >
+                                                <span>{availableModels.find(m => m.id === selectedModel)?.name}</span>
+                                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                                                    <path d="m6 9 6 6 6-6" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Mobile Model Selector Overlay */}
+                            {isMobileModelSelectorOpen && (
+                                <div className='fixed inset-0 z-50 flex items-end justify-center bg-black/60 backdrop-blur-sm p-4 md:hidden' onClick={() => setIsMobileModelSelectorOpen(false)}>
+                                    <div className='w-full max-w-sm terminal-window animate-slide-up' onClick={e => e.stopPropagation()}>
+                                        <div className='terminal-header'>
+                                            <div className='terminal-title'>SELECT_MODEL</div>
+                                            <button onClick={() => setIsMobileModelSelectorOpen(false)} className='text-[var(--color-text-dim)] hover:text-[var(--color-text)] font-mono text-xs'>[CLOSE]</button>
+                                        </div>
+                                        <div className='p-4 flex flex-col gap-2 max-h-[60vh] overflow-y-auto scrollbar-hide'>
+                                            {availableModels.map(m => (
+                                                <button
+                                                    key={m.id}
+                                                    onClick={() => {
+                                                        setSelectedModel(m.id);
+                                                        setIsMobileModelSelectorOpen(false);
+                                                    }}
+                                                    className={`p-4 text-left border rounded transition-all flex items-center justify-between ${selectedModel === m.id ? 'border-[var(--color-accent)] bg-[var(--color-accent)]/10 text-[var(--color-accent)]' : 'border-[var(--color-border)] text-[var(--color-text-dim)]'}`}
+                                                >
+                                                    <div className='flex items-center gap-4'>
+                                                        <div className='w-6 h-6 rounded bg-white flex items-center justify-center p-0.5 shrink-0'>
+                                                            <Image src={m.icon} alt={m.name} width={20} height={20} className='object-contain' />
+                                                        </div>
+                                                        <div className='flex flex-col'>
+                                                            <span className='text-xs font-bold uppercase tracking-widest'>{m.name}</span>
+                                                            <span className='text-[10px] opacity-60'>{m.description}</span>
+                                                        </div>
+                                                    </div>
+                                                    {selectedModel === m.id && <span className='text-[var(--color-accent)] font-mono text-xs'>[ACTIVE]</span>}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
             </main>
-        </div>
+        </>
     );
 }

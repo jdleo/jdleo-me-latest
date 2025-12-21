@@ -24,7 +24,7 @@ export async function POST(req: Request) {
             async start(controller) {
                 try {
                     const messageStream = await anthropic.messages.create({
-                        model: 'claude-sonnet-4-20250514',
+                        model: 'google/gemini-3-flash-preview',
                         max_tokens: 8192,
                         system: SYSTEM_PROMPT,
                         messages: anthropicMessages,

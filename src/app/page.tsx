@@ -36,7 +36,7 @@ export default function Home() {
         // Fetch latest blog post
         const posts = getAllBlogPosts();
         if (posts.length > 0) {
-            setLatestPost(posts[0]); // Posts are already sorted by date in getAllBlogPosts
+            setLatestPost(posts[0]);
         }
 
         return () => clearTimeout(timer);
@@ -45,197 +45,149 @@ export default function Home() {
     return (
         <>
             <WebVitals />
-            <div className='min-h-screen bg-[var(--color-bg-light)] relative'>
-                {/* Subtle background gradients */}
-                <div
-                    className='fixed inset-0 opacity-40 pointer-events-none'
-                    style={{
-                        background:
-                            'radial-gradient(ellipse at 30% 20%, rgba(94, 106, 210, 0.08) 0%, transparent 50%), radial-gradient(ellipse at 70% 80%, rgba(139, 92, 246, 0.06) 0%, transparent 60%)',
-                    }}
-                />
+            <main className='min-h-screen bg-[var(--color-bg)] flex items-center justify-center p-4 md:p-8 selection:bg-[var(--color-accent)] selection:text-[var(--color-bg)]'>
+                {/* Background Grid/Glow */}
+                <div className='fixed inset-0 overflow-hidden pointer-events-none'>
+                    <div className='absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(62,175,124,0.05),transparent_50%)]' />
+                    <div className='absolute inset-0' style={{
+                        backgroundImage: 'radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px)',
+                        backgroundSize: '32px 32px'
+                    }} />
+                </div>
 
-                {/* Strong Navigation Bar */}
-                <nav className='nav-container'>
-                    <div className='nav-content'>
-                        <a href='/' className='nav-logo'>
-                            JL
-                        </a>
-                        <div className='nav-links'>
-                            <a href='/apps' className='nav-link'>
-                                Apps
-                            </a>
-                            <a href='/blog' className='nav-link'>
-                                Blog
-                            </a>
-                            <a href='/apps/resume' className='nav-link'>
-                                Resume
-                            </a>
-                            <a
-                                href={strings.LINKEDIN_URL}
-                                target='_blank'
-                                rel='noopener noreferrer'
-                                className='nav-link'
-                            >
-                                LinkedIn
-                            </a>
-                            <a href={strings.GITHUB_URL} target='_blank' rel='noopener noreferrer' className='nav-link'>
-                                GitHub
-                            </a>
-                        </div>
-                    </div>
-                </nav>
-
-                <main className='main-content'>
-                    <div className='container-responsive'>
-                        {/* Hero Section */}
-                        <section
-                            className='text-center max-w-5xl mx-auto mb-8'
-                            itemScope
-                            itemType='https://schema.org/Person'
-                        >
-                            {/* Name & Title */}
-                            <div className={`mb-12 animate-reveal ${isLoaded ? '' : 'opacity-0'}`}>
-                                <h1 className='text-display gradient-text mb-6' itemProp='name'>
-                                    {strings.NAME}
-                                </h1>
-                                <p className='text-h3 opacity-80 mb-4' itemProp='jobTitle'>
-                                    Senior Software Engineer
-                                </p>
+                <div className={`w-full max-w-6xl transition-all duration-1000 transform ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                    <div className='terminal-window'>
+                        {/* Terminal Header */}
+                        <div className='terminal-header'>
+                            <div className='terminal-controls'>
+                                <div className='terminal-control red' />
+                                <div className='terminal-control yellow' />
+                                <div className='terminal-control green' />
                             </div>
+                            <div className='terminal-title'>johnleonardo — ~/home</div>
+                        </div>
 
-                            {/* Main Description Card */}
-                            <div
-                                className={`glass-card-enhanced p-8 md:p-12 mb-12 animate-reveal animate-reveal-delay-1 ${
-                                    isLoaded ? '' : 'opacity-0'
-                                }`}
-                            >
-                                {/* Main Subtitle */}
-                                <p className='text-body leading-relaxed max-w-4xl mx-auto mb-6' itemProp='description'>
-                                    {strings.SUBTITLE}
-                                </p>
-
-                                {/* Fancy Mentorship Section */}
-                                <div className='border-t border-white border-opacity-20 pt-4'>
-                                    <div className='flex items-center justify-center gap-3 mb-4'>
-                                        <div className='w-2 h-2 bg-gradient-to-r from-purple-400 to-blue-400 rounded-full animate-pulse'></div>
-                                        <span className='text-small font-medium gradient-text-accent'>
-                                            Always open to
-                                        </span>
+                        {/* Terminal Body with Split Screen */}
+                        <div className='terminal-split'>
+                            {/* Left Pane: Identity & Bio */}
+                            <div className='terminal-pane'>
+                                <div className='mb-8'>
+                                    <div className='flex items-center gap-2 mb-4 text-[var(--color-accent)]'>
+                                        <span className='terminal-prompt'>➜</span>
+                                        <span className='text-sm uppercase tracking-widest font-bold'>Whoami</span>
                                     </div>
-                                    <div className='flex flex-wrap gap-3 justify-center mb-4'>
-                                        <span className='glass-card-subtle px-4 py-2 text-small font-medium'>
-                                            ✨ Mentorship
-                                        </span>
-                                        <span className='glass-card-subtle px-4 py-2 text-small font-medium'>
-                                            💡 Bouncing ideas
-                                        </span>
-                                        <span className='glass-card-subtle px-4 py-2 text-small font-medium'>
-                                            🎯 General guidance
-                                        </span>
-                                    </div>
+                                    <h1 className='text-4xl md:text-5xl font-bold mb-4 tracking-tight text-[var(--color-text)]'>
+                                        {strings.NAME}
+                                    </h1>
+                                    <p className='text-[var(--color-accent-blue)] text-lg mb-6'>
+                                        Senior Software Engineer
+                                    </p>
+                                </div>
 
-                                    {/* Subtle latest blog mention */}
-                                    {latestPost && (
-                                        <div className='border-t border-white border-opacity-10 pt-4'>
-                                            <div className='text-center text-small opacity-80'>
-                                                <span>My latest blog post is </span>
-                                                <a
-                                                    href={`/blog/${latestPost.slug}`}
-                                                    className='text-blue-600 hover:text-blue-500 transition-colors duration-300 font-medium'
-                                                >
-                                                    {latestPost.title}
-                                                </a>
-                                                <span>. Or, check out </span>
-                                                <a
-                                                    href='/blog'
-                                                    className='text-blue-600 hover:text-blue-500 transition-colors duration-300'
-                                                >
-                                                    all posts
-                                                </a>
-                                                <span>.</span>
-                                            </div>
+                                <div className='space-y-6 text-[var(--color-text-dim)] leading-relaxed'>
+                                    <div className='font-mono'>
+                                        <span className='text-[var(--color-text)] opacity-70'>$ cat bio.txt</span>
+                                        <div className='mt-2 border-l-2 border-[var(--color-border)] pl-4 italic'>
+                                            {strings.SUBTITLE}
                                         </div>
-                                    )}
+                                    </div>
+
+                                    <div className='pt-4'>
+                                        <div className='flex items-center gap-2 mb-4'>
+                                            <span className='terminal-prompt'>$</span>
+                                            <span className='text-[var(--color-text)] opacity-70'>ls social/</span>
+                                        </div>
+                                        <div className='grid grid-cols-2 gap-4'>
+                                            {[
+                                                { label: 'github', url: strings.GITHUB_URL },
+                                                { label: 'linkedin', url: strings.LINKEDIN_URL },
+                                                { label: 'email', url: `mailto:${strings.EMAIL}` },
+                                                { label: 'calendly', url: 'https://calendly.com/jleonardo-roblox' },
+                                            ].map((link) => (
+                                                <a
+                                                    key={link.label}
+                                                    href={link.url}
+                                                    target='_blank'
+                                                    className='flex items-center gap-2 hover:text-[var(--color-accent)] transition-all group'
+                                                >
+                                                    <span className='text-[var(--color-text-dim)] group-hover:translate-x-1 transition-transform'>└──</span> {link.label}
+                                                </a>
+                                            ))}
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
-                            {/* Primary Action Buttons */}
-                            <div
-                                className={`flex flex-row gap-4 sm:gap-6 justify-center items-center mb-4 animate-reveal animate-reveal-delay-2 ${
-                                    isLoaded ? '' : 'opacity-0'
-                                }`}
-                            >
-                                <a href={`mailto:${strings.EMAIL}`} className='button-primary group'>
-                                    <span>Email Me</span>
-                                    <svg
-                                        width='16'
-                                        height='16'
-                                        viewBox='0 0 24 24'
-                                        fill='none'
-                                        stroke='currentColor'
-                                        strokeWidth='2'
-                                        strokeLinecap='round'
-                                        strokeLinejoin='round'
-                                    >
-                                        <path d='M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z' />
-                                        <polyline points='22,6 12,13 2,6' />
-                                    </svg>
-                                </a>
-                                <a
-                                    href='https://calendly.com/jleonardo-roblox'
-                                    target='_blank'
-                                    rel='noopener noreferrer'
-                                    className='button-book group'
-                                >
-                                    <span>Let's chat!</span>
-                                    <svg
-                                        width='16'
-                                        height='16'
-                                        viewBox='0 0 24 24'
-                                        fill='none'
-                                        stroke='currentColor'
-                                        strokeWidth='2'
-                                        strokeLinecap='round'
-                                        strokeLinejoin='round'
-                                    >
-                                        <path d='M8 2v4' />
-                                        <path d='M16 2v4' />
-                                        <rect width='18' height='18' x='3' y='4' rx='2' />
-                                        <path d='M3 10h18' />
-                                    </svg>
-                                </a>
-                            </div>
-                        </section>
+                            {/* Right Pane: Navigation & Content */}
+                            <div className='terminal-pane bg-[rgba(0,0,0,0.2)]'>
+                                {/* Navigation */}
+                                <div className='mb-12'>
+                                    <div className='flex items-center gap-2 mb-6 text-[var(--color-accent)]'>
+                                        <span className='terminal-prompt'>➜</span>
+                                        <span className='text-sm uppercase tracking-widest font-bold'>Navigation</span>
+                                    </div>
+                                    <nav className='flex flex-col gap-4'>
+                                        {[
+                                            { label: 'Apps', href: '/apps' },
+                                            { label: 'Blog', href: '/blog' },
+                                            { label: 'Resume', href: '/apps/resume' },
+                                        ].map((nav) => (
+                                            <a
+                                                key={nav.label}
+                                                href={nav.href}
+                                                className='text-2xl hover:translate-x-3 transition-all inline-flex items-center gap-3 group whitespace-nowrap'
+                                            >
+                                                <span className='text-[var(--color-accent)] opacity-0 group-hover:opacity-100 transition-opacity'>&gt;</span>
+                                                <span className='group-hover:text-[var(--color-accent)] transition-colors'>{nav.label}</span>
+                                            </a>
+                                        ))}
+                                    </nav>
+                                </div>
 
-                        {/* Quick Links & Contact */}
-                        <section
-                            className={`max-w-4xl mx-auto text-center animate-reveal animate-reveal-delay-3 ${
-                                isLoaded ? '' : 'opacity-0'
-                            }`}
-                        >
-                            {/* View Counter - Glass Pill */}
-                            <div className='glass-card px-4 py-2 inline-flex items-center gap-2'>
-                                <svg
-                                    width='14'
-                                    height='14'
-                                    viewBox='0 0 24 24'
-                                    fill='none'
-                                    stroke='currentColor'
-                                    strokeWidth='2'
-                                    strokeLinecap='round'
-                                    strokeLinejoin='round'
-                                    className='opacity-60'
-                                >
-                                    <path d='M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z' />
-                                    <circle cx='12' cy='12' r='3' />
-                                </svg>
-                                <span className='text-small opacity-80'>{formatNumber(pageViewCount)} views</span>
+                                {/* Latest Post */}
+                                {latestPost && (
+                                    <div className='mb-12'>
+                                        <div className='flex items-center gap-2 mb-4 text-[var(--color-accent)]'>
+                                            <span className='terminal-prompt'>➜</span>
+                                            <span className='text-sm uppercase tracking-widest font-bold'>Latest_Post</span>
+                                        </div>
+                                        <a
+                                            href={`/blog/${latestPost.slug}`}
+                                            className='block p-6 border border-[var(--color-border)] rounded-lg hover:border-[var(--color-accent)] hover:bg-[var(--color-accent)]/5 transition-all group'
+                                        >
+                                            <h3 className='text-xl font-bold mb-2 group-hover:text-[var(--color-accent)] transition-colors'>
+                                                {latestPost.title}
+                                            </h3>
+                                            <p className='text-sm text-[var(--color-text-dim)] line-clamp-2'>
+                                                {latestPost.description}
+                                            </p>
+                                        </a>
+                                    </div>
+                                )}
+
+                                {/* System Stats */}
+                                <div className='mt-auto pt-8 border-t border-[var(--color-border)]'>
+                                    <div className='flex items-center justify-between text-xs font-mono text-[var(--color-text-dim)]'>
+                                        <div className='flex gap-4'>
+                                            <span>VIEWS: {formatNumber(pageViewCount)}</span>
+                                            <span>STATUS: ONLINE</span>
+                                        </div>
+                                        <div>
+                                            LOC: BAY AREA, CA, US, EARTH
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </section>
+                        </div>
                     </div>
-                </main>
-            </div>
+                    {/* Blinking Cursor at bottom of window (simulated) */}
+                    <div className='mt-4 flex items-center gap-2 text-[var(--color-text-dim)] text-sm px-2'>
+                        <span className='text-[var(--color-accent)]'>$</span>
+                        <span>waiting for input...</span>
+                        <span className='terminal-cursor' />
+                    </div>
+                </div>
+            </main>
         </>
     );
 }
