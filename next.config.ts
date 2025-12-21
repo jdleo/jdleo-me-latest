@@ -1,10 +1,6 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-    eslint: {
-        ignoreDuringBuilds: true,
-    },
-
     // SEO and Performance optimizations
     experimental: {
         optimizePackageImports: ['react-icons'],
