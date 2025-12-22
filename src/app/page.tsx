@@ -68,7 +68,7 @@ export default function Home() {
                         </div>
 
                         {/* Terminal Body with Split Screen */}
-                        <div className='terminal-split'>
+                        <div className='terminal-split terminal-split-equal'>
                             {/* Left Pane: Identity & Bio */}
                             <div className='terminal-pane'>
                                 <div className='mb-8'>
@@ -168,9 +168,13 @@ export default function Home() {
                                 {/* System Stats */}
                                 <div className='mt-auto pt-8 border-t border-[var(--color-border)]'>
                                     <div className='flex items-center justify-between text-xs font-mono text-[var(--color-text-dim)]'>
-                                        <div className='flex gap-4'>
-                                            <span>VIEWS: {formatNumber(pageViewCount)}</span>
-                                            <span>STATUS: ONLINE</span>
+                                        <div className='flex gap-6'>
+                                            <div className='flex items-center gap-2 px-2 py-0.5 bg-[var(--color-accent)]/5 rounded border border-[var(--color-accent)]/10'>
+                                                <span className='opacity-50'>VIEWS:</span>
+                                                <span className='text-[var(--color-accent)] font-bold shadow-[0_0_10px_rgba(62,175,124,0.3)]'>{formatNumber(pageViewCount)}</span>
+                                                <div className='w-1 h-1 rounded-full bg-[var(--color-accent)] animate-pulse' />
+                                            </div>
+                                            <span className='flex items-center'>STATUS: ONLINE</span>
                                         </div>
                                         <div>
                                             LOC: BAY AREA, CA, US, EARTH
