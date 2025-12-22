@@ -487,7 +487,6 @@
     grid-template-columns: 280px 1fr;
     gap: 0;
     flex-grow: 1;
-    max-height: 900px;
     background: var(--color-bg-secondary);
     overflow: hidden;
     position: relative;

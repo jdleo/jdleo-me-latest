@@ -27,8 +27,8 @@ export default function Apps() {
                     }} />
                 </div>
 
-                <div className={`w-full max-w-6xl transition-all duration-1000 transform ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-                    <div className='terminal-window'>
+                <div className={`w-full max-w-6xl h-[85vh] transition-all duration-1000 transform ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                    <div className='terminal-window flex flex-col h-full'>
                         {/* Terminal Header */}
                         <div className='terminal-header'>
                             <div className='terminal-controls'>
