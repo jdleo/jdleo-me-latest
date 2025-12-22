@@ -1,18 +1,13 @@
 'use client';
 
-import Link from 'next/link';
-import { strings } from '../../constants/strings';
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import dynamic from 'next/dynamic';
-import { Breadcrumbs } from '@/components/SEO/Breadcrumbs';
+import { WebVitals } from '@/components/SEO/WebVitals';
 
-// Dynamically import Mermaid component to avoid SSR issues
 const Mermaid = dynamic(() => import('../../../components/Mermaid'), {
     ssr: false,
 });
-
-// Light theme styles for Mermaid diagrams
-const MermaidStyles = () => <style jsx global>{``}</style>;
 
 export default function DiagramGenerator() {
     const [description, setDescription] = useState('');
@@ -22,13 +17,13 @@ export default function DiagramGenerator() {
     const [isLoaded, setIsLoaded] = useState(false);
 
     useEffect(() => {
-        // Small delay for smoother loading animation
         const timer = setTimeout(() => setIsLoaded(true), 100);
         return () => clearTimeout(timer);
     }, []);
 
-    const generateDiagram = async () => {
-        if (!description.trim()) return;
+    const generateDiagram = async (prompt?: string) => {
+        const finalDescription = prompt || description;
+        if (!finalDescription.trim()) return;
 
         try {
             setLoading(true);
@@ -36,14 +31,11 @@ export default function DiagramGenerator() {
 
             const response = await fetch('/api/diagram', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ description }),
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ description: finalDescription }),
             });
 
             const data = await response.json();
-
             if (data.error) {
                 setError(data.error);
                 setDiagramCode(null);
@@ -51,202 +43,131 @@ export default function DiagramGenerator() {
                 setDiagramCode(data.diagram);
             }
         } catch (err) {
-            setError('Failed to generate diagram. Please try again.');
+            setError('FAILED_TO_GENERATE_CHART');
             console.error(err);
         } finally {
             setLoading(false);
         }
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        generateDiagram();
-    };
-
-    const handleKeyDown = (e: React.KeyboardEvent) => {
-        if (e.key === 'Enter' && e.ctrlKey) {
-            generateDiagram();
-        }
-    };
-
     const examplePrompts = [
-        'Flowchart of user authentication process',
-        'Sequence diagram of API request handling',
-        'Class diagram for a blog application',
-        'Entity relationship diagram for an e-commerce database',
-        'State diagram for a shopping cart checkout process',
+        'Flowchart of user auth',
+        'API request sequence',
+        'Blog app class diagram',
+        'E-commerce ERD',
+        'Checkout state machine',
     ];
 
     const handleExampleClick = (example: string) => {
         setDescription(example);
-        // Wait for state update before generating
-        setTimeout(() => {
-            generateDiagram();
-        }, 100);
+        generateDiagram(example);
     };
 
     return (
-        <div className='min-h-screen bg-[var(--color-bg-light)] relative'>
-            <MermaidStyles />
-
-            {/* Subtle background gradients */}
-            <div
-                className='fixed inset-0 opacity-40 pointer-events-none'
-                style={{
-                    background:
-                        'radial-gradient(ellipse at 30% 20%, rgba(94, 106, 210, 0.08) 0%, transparent 50%), radial-gradient(ellipse at 70% 80%, rgba(139, 92, 246, 0.06) 0%, transparent 60%)',
-                }}
-            />
-
-            {/* Strong Navigation Bar */}
-            <nav className='nav-container'>
-                <div className='nav-content'>
-                    <Link href='/' className='nav-logo'>
-                        JL
-                    </Link>
-                    <div className='nav-links'>
-                        <Link href='/apps' className='nav-link'>
-                            Apps
-                        </Link>
-                        <Link href='/' className='nav-link'>
-                            Home
-                        </Link>
-                        <a href={strings.LINKEDIN_URL} target='_blank' rel='noopener noreferrer' className='nav-link'>
-                            LinkedIn
-                        </a>
-                        <a href={strings.GITHUB_URL} target='_blank' rel='noopener noreferrer' className='nav-link'>
-                            GitHub
-                        </a>
-                    </div>
+        <>
+            <WebVitals />
+            <main className='min-h-screen bg-[var(--color-bg)] flex items-center justify-center p-4 md:p-8 selection:bg-[var(--color-accent)] selection:text-[var(--color-bg)]'>
+                <div className='fixed inset-0 overflow-hidden pointer-events-none'>
+                    <div className='absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(62,175,124,0.03),transparent_60%)]' />
+                    <div className='absolute inset-0' style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,0.02) 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
                 </div>
-            </nav>
 
-            <main className='main-content'>
-                <div className='container-responsive max-w-5xl'>
-                    {/* Hero Section */}
-                    <section className={`text-center mb-8 animate-reveal ${isLoaded ? '' : 'opacity-0'}`}>
-                        <h1 className='text-h1 gradient-text mb-4'>AI Diagram Generator</h1>
-                        <p className='text-body opacity-80 max-w-2xl mx-auto'>
-                            Describe the diagram you want, and AI will generate a professional Mermaid diagram for you.
-                        </p>
-                    </section>
-
-                    {/* Input Section */}
-                    <section className={`mb-8 animate-reveal animate-reveal-delay-1 ${isLoaded ? '' : 'opacity-0'}`}>
-                        <form onSubmit={handleSubmit}>
-                            <div className='glass-card-enhanced p-6'>
-                                <textarea
-                                    value={description}
-                                    onChange={e => setDescription(e.target.value)}
-                                    onKeyDown={handleKeyDown}
-                                    placeholder="Describe the diagram you want to generate (e.g., 'Flowchart of user authentication process')"
-                                    className='w-full bg-transparent border-none outline-none text-body placeholder:opacity-60 resize-y min-h-[120px] focus:ring-0'
-                                />
-                                <div className='flex justify-between items-center mt-4 pt-4 border-t border-gray-200'>
-                                    <span className='text-small opacity-60'>Press Ctrl+Enter to generate</span>
-                                    <button
-                                        type='submit'
-                                        disabled={loading || !description.trim()}
-                                        className='button-primary disabled:opacity-50 disabled:cursor-not-allowed'
-                                    >
-                                        <span>{loading ? 'Generating...' : 'Generate Diagram'}</span>
-                                        <svg
-                                            width='16'
-                                            height='16'
-                                            viewBox='0 0 24 24'
-                                            fill='none'
-                                            stroke='currentColor'
-                                            strokeWidth='2'
-                                            strokeLinecap='round'
-                                            strokeLinejoin='round'
-                                        >
-                                            <path d='M13 2L3 14h9l-1 8 10-12h-9l1-8z' />
-                                        </svg>
-                                    </button>
-                                </div>
+                <div className={`w-full max-w-6xl h-[85vh] transition-all duration-1000 transform ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                    <div className='terminal-window flex flex-col h-full'>
+                        <div className='terminal-header'>
+                            <div className='terminal-controls'>
+                                <div className='terminal-control red' />
+                                <div className='terminal-control yellow' />
+                                <div className='terminal-control green' />
                             </div>
-                        </form>
-                    </section>
-
-                    {/* Example Prompts */}
-                    <section className={`mb-8 animate-reveal animate-reveal-delay-2 ${isLoaded ? '' : 'opacity-0'}`}>
-                        <p className='text-small opacity-60 text-center mb-4'>Try these examples:</p>
-                        <div className='flex flex-wrap gap-3 justify-center'>
-                            {examplePrompts.map((example, index) => (
-                                <button
-                                    key={index}
-                                    onClick={() => handleExampleClick(example)}
-                                    className='glass-card-subtle hover:glass-card border border-gray-200 px-4 py-2 rounded-xl text-small transition-all duration-200 hover:-translate-y-0.5'
-                                >
-                                    {example}
-                                </button>
-                            ))}
+                            <div className='terminal-title'>johnleonardo — ~/diagram-ai</div>
                         </div>
-                    </section>
 
-                    {/* Error Display */}
-                    {error && (
-                        <section className='mb-8'>
-                            <div className='glass-card border-red-200 bg-red-50 p-4 rounded-xl'>
-                                <div className='flex items-center gap-3'>
-                                    <svg
-                                        width='20'
-                                        height='20'
-                                        viewBox='0 0 24 24'
-                                        fill='none'
-                                        stroke='currentColor'
-                                        strokeWidth='2'
-                                        strokeLinecap='round'
-                                        strokeLinejoin='round'
-                                        className='text-red-500 flex-shrink-0'
-                                    >
-                                        <circle cx='12' cy='12' r='10' />
-                                        <line x1='15' x2='9' y1='9' y2='15' />
-                                        <line x1='9' x2='15' y1='9' y2='15' />
-                                    </svg>
-                                    <p className='text-body text-red-700'>{error}</p>
-                                </div>
-                            </div>
-                        </section>
-                    )}
+                        <div className='terminal-split flex-grow overflow-hidden'>
+                            {/* Left Sidebar: Prompt & Examples */}
+                            <div className='terminal-pane border-r border-[var(--color-border)] hidden md:flex flex-col gap-8'>
+                                <div>
+                                    <div className='flex items-center gap-2 mb-6 text-[var(--color-accent)]'>
+                                        <span className='terminal-prompt'>➜</span>
+                                        <span className='text-sm uppercase tracking-widest font-bold'>Interface</span>
+                                    </div>
+                                    <nav className='flex flex-col gap-4 mb-8'>
+                                        <Link href='/' className='text-lg hover:text-[var(--color-accent)] transition-colors'>~/home</Link>
+                                        <Link href='/apps' className='text-lg hover:text-[var(--color-accent)] transition-colors'>~/apps</Link>
+                                    </nav>
 
-                    {/* Loading State */}
-                    {loading && (
-                        <section className='mb-8'>
-                            <div className='glass-card-enhanced p-8 text-center'>
-                                <div className='flex items-center justify-center gap-3 mb-4'>
-                                    <div className='flex gap-1'>
-                                        <div
-                                            className='w-2 h-2 bg-blue-500 rounded-full animate-bounce'
-                                            style={{ animationDelay: '0ms' }}
-                                        ></div>
-                                        <div
-                                            className='w-2 h-2 bg-blue-500 rounded-full animate-bounce'
-                                            style={{ animationDelay: '150ms' }}
-                                        ></div>
-                                        <div
-                                            className='w-2 h-2 bg-blue-500 rounded-full animate-bounce'
-                                            style={{ animationDelay: '300ms' }}
-                                        ></div>
+                                    <div className='space-y-6 font-mono'>
+                                        <div>
+                                            <span className='text-[var(--color-text)] opacity-40 text-[10px] uppercase tracking-widest block mb-4'>$ input --description</span>
+                                            <textarea
+                                                value={description}
+                                                onChange={e => setDescription(e.target.value)}
+                                                placeholder='Describe architecture...'
+                                                className='w-full bg-black/40 border border-[var(--color-border)] rounded p-3 text-xs text-[var(--color-text)] focus:border-[var(--color-accent)] outline-none resize-none h-32'
+                                            />
+                                            <button
+                                                onClick={() => generateDiagram()}
+                                                disabled={loading || !description.trim()}
+                                                className={`w-full mt-3 py-2 border border-[var(--color-accent)]/30 hover:bg-[var(--color-accent)]/10 text-[var(--color-accent)] text-[10px] uppercase tracking-widest transition-all rounded ${loading ? 'animate-pulse' : ''}`}
+                                            >
+                                                {loading ? 'GEN_IN_PROGRESS...' : '[EXECUTE_GEN]'}
+                                            </button>
+                                        </div>
+
+                                        <div className='pt-4'>
+                                            <span className='text-[var(--color-text)] opacity-40 text-[10px] uppercase tracking-widest block mb-4'>$ ls --presets</span>
+                                            <div className='flex flex-col gap-2'>
+                                                {examplePrompts.map((p, i) => (
+                                                    <button
+                                                        key={i}
+                                                        onClick={() => handleExampleClick(p)}
+                                                        className='text-left text-[10px] text-[var(--color-text-dim)] hover:text-[var(--color-accent)] transition-colors flex items-center gap-2 group'
+                                                    >
+                                                        <span className='opacity-0 group-hover:opacity-100'>&gt;</span> {p}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                                <p className='text-body opacity-80'>Generating your diagram...</p>
-                            </div>
-                        </section>
-                    )}
-
-                    {/* Diagram Display */}
-                    {diagramCode && (
-                        <section className={`animate-reveal animate-reveal-delay-3 ${isLoaded ? '' : 'opacity-0'}`}>
-                            <div className='glass-card-enhanced p-6 overflow-auto'>
-                                <div className='min-w-full'>
-                                    <Mermaid chart={diagramCode} id='mermaid-diagram' />
+                                <div className='mt-auto pt-8 border-t border-[var(--color-border)] opacity-30 font-mono text-[9px] uppercase tracking-tighter'>
+                                    "Transformer-based generation of Mermaid.js semantic structured diagrams."
                                 </div>
                             </div>
-                        </section>
-                    )}
+
+                            {/* Main Display: Diagram Canvas */}
+                            <div className='terminal-pane bg-black/20 flex flex-col p-0 overflow-auto w-full'>
+                                {diagramCode ? (
+                                    <div className='p-8 md:p-16 min-w-full flex justify-center items-start'>
+                                        <div className='bg-white/5 border border-[var(--color-border)] p-8 rounded-xl backdrop-blur-md'>
+                                            <Mermaid chart={diagramCode} id='mermaid-main' />
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className='flex flex-col items-center justify-center flex-grow opacity-20'>
+                                        <div className='text-4xl font-mono mb-4 text-[var(--color-accent)]'>[VOID_BUFFER]</div>
+                                        <div className='text-xs font-mono uppercase tracking-[0.4em]'>Awaiting architectural schema generation</div>
+                                    </div>
+                                )}
+
+                                {error && (
+                                    <div className='absolute bottom-8 left-1/2 -translate-x-1/2 px-4 py-2 bg-red-500/10 border border-red-500/50 text-red-400 text-[10px] font-mono rounded-full animate-shake'>
+                                        [ERR_CODE_500]: {error}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                    {/* Console decoration */}
+                    <div className='mt-4 flex items-center justify-between text-[10px] font-mono text-[var(--color-text-dim)] opacity-40 uppercase tracking-[0.2em] px-4'>
+                        <div className='flex gap-6'>
+                            <span>Renderer: Mermaid_v11</span>
+                            <span>Engine: DiagramCore_v2</span>
+                        </div>
+                        <span>Status: buffer_ready</span>
+                    </div>
                 </div>
             </main>
-        </div>
+        </>
     );
 }

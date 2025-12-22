@@ -1,26 +1,22 @@
 'use client';
 
-import Link from 'next/link';
-import { strings } from '../../constants/strings';
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import crypto from 'crypto';
-
-type Particle = {
-    id: number;
-    width: string;
-    height: string;
-    backgroundColor: string;
-    boxShadow: string;
-    left: string;
-    top: string;
-    animationDuration: string;
-    animationDelay: string;
-};
+import { WebVitals } from '@/components/SEO/WebVitals';
 
 const HashCard = ({ name, hash }: { name: string; hash: string }) => (
-    <div className='w-full p-4 rounded-xl glass-card transition-all duration-300 hover:shadow-orbital-glow-sm'>
-        <div className='text-[color:var(--foreground)] text-opacity-60 mb-2 font-medium'>{name}</div>
-        <div className='font-mono text-xs break-all bg-[color:var(--background)] bg-opacity-50 p-3 rounded-lg text-[color:var(--foreground)] text-opacity-80'>
+    <div className='w-full p-4 rounded border border-[var(--color-border)] bg-black/40 hover:border-[var(--color-accent)]/30 transition-all group'>
+        <div className='text-[10px] font-mono text-[var(--color-accent)] opacity-60 mb-2 uppercase tracking-widest flex justify-between'>
+            <span>{name}</span>
+            <button
+                onClick={() => navigator.clipboard.writeText(hash)}
+                className='opacity-0 group-hover:opacity-100 hover:text-white transition-opacity'
+            >
+                [COPY]
+            </button>
+        </div>
+        <div className='font-mono text-[11px] break-all text-[var(--color-text-dim)] leading-relaxed selection:bg-[var(--color-accent)] selection:text-black'>
             {hash}
         </div>
     </div>
@@ -29,31 +25,10 @@ const HashCard = ({ name, hash }: { name: string; hash: string }) => (
 export default function Hash() {
     const [input, setInput] = useState('');
     const [isLoaded, setIsLoaded] = useState(false);
-    const [particles, setParticles] = useState<Particle[]>([]);
 
     useEffect(() => {
-        setIsLoaded(true);
-
-        // Generate particles once on component mount
-        const newParticles = Array.from({ length: 8 }, (_, i) => {
-            return {
-                id: i,
-                width: `${Math.random() * 4 + 2}px`,
-                height: `${Math.random() * 4 + 2}px`,
-                backgroundColor: `rgba(${150 + Math.random() * 100}, ${150 + Math.random() * 100}, ${
-                    200 + Math.random() * 55
-                }, ${0.3 + Math.random() * 0.3})`,
-                boxShadow: `0 0 ${Math.random() * 10 + 5}px rgba(${150 + Math.random() * 100}, ${
-                    150 + Math.random() * 100
-                }, ${200 + Math.random() * 55}, 0.3)`,
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-                animationDuration: `${Math.random() * 10 + 10}s`,
-                animationDelay: `${Math.random() * 5}s`,
-            };
-        });
-
-        setParticles(newParticles);
+        const timer = setTimeout(() => setIsLoaded(true), 100);
+        return () => clearTimeout(timer);
     }, []);
 
     const hashes = [
@@ -67,91 +42,104 @@ export default function Hash() {
     ];
 
     return (
-        <div className='min-h-screen bg-[color:var(--background)] overflow-hidden orbital-grid'>
-            {/* Background gradient effects */}
-            <div className='fixed inset-0 bg-[color:var(--background)] z-[-2]' />
-            <div
-                className='fixed top-[-50%] left-[-20%] w-[140%] h-[140%] z-[-1] opacity-30 animate-spin-slow'
-                style={{
-                    background: 'radial-gradient(ellipse at center, rgba(94, 106, 210, 0.1) 0%, transparent 70%)',
-                    transformOrigin: 'center center',
-                    animationDuration: '120s',
-                }}
-            />
-
-            {/* Header */}
-            <header className='absolute top-0 right-0 p-4 sm:p-6'>
-                <nav className='flex gap-4 sm:gap-6 text-[color:var(--foreground)] text-opacity-70 text-sm sm:text-base'>
-                    <Link href='/apps' className='linear-link'>
-                        Apps
-                    </Link>
-                    <Link href='/' className='linear-link'>
-                        Home
-                    </Link>
-                    <a href={`mailto:${strings.EMAIL}`} className='linear-link'>
-                        Email
-                    </a>
-                    <a href={strings.LINKEDIN_URL} target='_blank' rel='noopener noreferrer' className='linear-link'>
-                        LinkedIn
-                    </a>
-                    <a href={strings.GITHUB_URL} target='_blank' rel='noopener noreferrer' className='linear-link'>
-                        GitHub
-                    </a>
-                </nav>
-            </header>
-
-            <main
-                className={`flex-1 flex flex-col items-center pt-24 sm:pt-28 px-4 gap-6 transition-opacity duration-700 ${
-                    isLoaded ? 'opacity-100' : 'opacity-0'
-                }`}
-            >
-                <div className='mb-2 text-center'>
-                    <h1 className='text-2xl sm:text-3xl font-bold mb-2'>
-                        <span className='gradient-text'>Hash Lab</span>
-                    </h1>
-                    <p className='text-[color:var(--foreground)] text-opacity-70 max-w-md mb-6'>
-                        Convert text between different hash algorithms instantly.
-                    </p>
+        <>
+            <WebVitals />
+            <main className='min-h-screen bg-[var(--color-bg)] flex items-center justify-center p-4 md:p-8 selection:bg-[var(--color-accent)] selection:text-[var(--color-bg)]'>
+                <div className='fixed inset-0 overflow-hidden pointer-events-none'>
+                    <div className='absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(62,175,124,0.03),transparent_60%)]' />
                 </div>
 
-                <div className='w-full max-w-[500px] mb-4'>
-                    <input
-                        value={input}
-                        onChange={e => setInput(e.target.value)}
-                        placeholder='Enter text to hash'
-                        className='w-full p-4 rounded-lg bg-[color:var(--secondary)] border border-[color:var(--border)]
-                                text-[color:var(--foreground)] placeholder:text-[color:var(--foreground)] placeholder:text-opacity-50 
-                                focus:outline-none focus:border-[color:var(--primary)] focus:border-opacity-50
-                                transition-all duration-300'
-                    />
-                </div>
+                <div className={`w-full max-w-6xl h-[85vh] transition-all duration-1000 transform ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                    <div className='terminal-window flex flex-col h-full'>
+                        <div className='terminal-header'>
+                            <div className='terminal-controls'>
+                                <div className='terminal-control red' />
+                                <div className='terminal-control yellow' />
+                                <div className='terminal-control green' />
+                            </div>
+                            <div className='terminal-title'>johnleonardo — ~/cryptography-lab</div>
+                        </div>
 
-                <div className='grid grid-cols-1 gap-4 w-full max-w-[500px]'>
-                    {hashes.map(h => (
-                        <HashCard key={h.name} name={h.name} hash={h.value} />
-                    ))}
-                </div>
+                        <div className='terminal-split flex-grow overflow-hidden'>
+                            {/* Left Sidebar: Algorithms & Info */}
+                            <div className='terminal-pane border-r border-[var(--color-border)] hidden md:flex flex-col gap-8'>
+                                <div>
+                                    <div className='flex items-center gap-2 mb-6 text-[var(--color-accent)]'>
+                                        <span className='terminal-prompt'>➜</span>
+                                        <span className='text-sm uppercase tracking-widest font-bold'>Suite</span>
+                                    </div>
+                                    <nav className='flex flex-col gap-4 mb-10'>
+                                        <Link href='/' className='text-lg hover:text-[var(--color-accent)] transition-colors'>~/home</Link>
+                                        <Link href='/apps' className='text-lg hover:text-[var(--color-accent)] transition-colors'>~/apps</Link>
+                                    </nav>
 
-                {/* Floating particles for orbital effect */}
-                <div className='fixed inset-0 pointer-events-none'>
-                    {particles.map(particle => (
-                        <div
-                            key={particle.id}
-                            className='absolute rounded-full animate-float'
-                            style={{
-                                width: particle.width,
-                                height: particle.height,
-                                backgroundColor: particle.backgroundColor,
-                                boxShadow: particle.boxShadow,
-                                left: particle.left,
-                                top: particle.top,
-                                animationDuration: particle.animationDuration,
-                                animationDelay: particle.animationDelay,
-                            }}
-                        />
-                    ))}
+                                    <div className='space-y-6 font-mono'>
+                                        <div>
+                                            <span className='text-[var(--color-text)] opacity-40 text-[10px] uppercase tracking-widest block mb-4'>$ ls --algorithms</span>
+                                            <div className='space-y-2 opacity-60'>
+                                                {hashes.map(h => (
+                                                    <div key={h.name} className='text-[10px] flex items-center gap-2'>
+                                                        <span className='text-[var(--color-accent)]'>•</span> {h.name}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                        <div className='pt-6 border-t border-[var(--color-border)]'>
+                                            <span className='text-[var(--color-text)] opacity-40 text-[10px] uppercase tracking-widest block mb-4'>$ info --crypt</span>
+                                            <p className='text-[10px] text-[var(--color-text-dim)] leading-relaxed italic uppercase'>
+                                                "One-way trapdoor functions converting arbitrary payloads into fixed-length hex digests."
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Main Display: Input & Output */}
+                            <div className='terminal-pane bg-black/40 flex flex-col p-8 overflow-y-auto w-full'>
+                                <div className='max-w-2xl mx-auto w-full space-y-8'>
+                                    <div className='space-y-4'>
+                                        <div className='flex items-center gap-2 text-[var(--color-accent)]'>
+                                            <span className='terminal-prompt'>$</span>
+                                            <span className='text-[10px] uppercase tracking-widest opacity-60'>Entry_Point</span>
+                                        </div>
+                                        <textarea
+                                            value={input}
+                                            onChange={e => setInput(e.target.value)}
+                                            placeholder='ENTER_PAYLOAD_HERE...'
+                                            className='w-full bg-black/40 border border-[var(--color-border)] rounded-lg p-6 font-mono text-sm text-[var(--color-text)] focus:border-[var(--color-accent)] outline-none resize-none h-32 scrollbar-hide'
+                                            spellCheck={false}
+                                        />
+                                    </div>
+
+                                    <div className='space-y-6 pb-12'>
+                                        <div className='flex items-center gap-4 opacity-40'>
+                                            <div className='h-[1px] flex-grow bg-[var(--color-border)]' />
+                                            <span className='text-[10px] font-mono uppercase tracking-widest flex items-center gap-2'>
+                                                <span className='animate-pulse text-[var(--color-accent)]'>●</span> Digests_Calculated
+                                            </span>
+                                            <div className='h-[1px] flex-grow bg-[var(--color-border)]' />
+                                        </div>
+
+                                        <div className='grid gap-4'>
+                                            {hashes.map(h => (
+                                                <HashCard key={h.name} name={h.name} hash={h.value} />
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {/* Console decoration */}
+                    <div className='mt-4 flex items-center justify-between text-[10px] font-mono text-[var(--color-text-dim)] opacity-40 uppercase tracking-[0.2em] px-4'>
+                        <div className='flex gap-6'>
+                            <span>Lib: Crypto_v3</span>
+                            <span>CPU: 0.1%</span>
+                        </div>
+                        <span>Status: hashes_synchronized</span>
+                    </div>
                 </div>
             </main>
-        </div>
+        </>
     );
 }

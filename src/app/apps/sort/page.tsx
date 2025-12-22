@@ -1,13 +1,13 @@
 'use client';
 
-import Link from 'next/link';
-import { strings } from '../../constants/strings';
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { WebVitals } from '@/components/SEO/WebVitals';
 
 type Algorithm = 'bubble' | 'quick' | 'insertion' | 'selection';
 
-const ARRAY_SIZE = 30;
-const ANIMATION_SPEED = 30;
+const ARRAY_SIZE = 40;
+const ANIMATION_SPEED = 20;
 
 export default function Sort() {
     const [array, setArray] = useState<number[]>([]);
@@ -26,7 +26,6 @@ export default function Sort() {
 
     useEffect(() => {
         generateArray();
-        // Small delay for smoother loading animation
         const timer = setTimeout(() => setIsLoaded(true), 100);
         return () => clearTimeout(timer);
     }, []);
@@ -37,13 +36,11 @@ export default function Sort() {
         setSorting(true);
         const arr = [...array];
         let swapped;
-
         do {
             swapped = false;
             for (let i = 0; i < arr.length - 1; i++) {
                 setComparing([i, i + 1]);
                 await sleep(ANIMATION_SPEED);
-
                 if (arr[i] > arr[i + 1]) {
                     setSwapping([i, i + 1]);
                     [arr[i], arr[i + 1]] = [arr[i + 1], arr[i]];
@@ -52,16 +49,12 @@ export default function Sort() {
                 }
             }
         } while (swapped);
-
-        setComparing(null);
-        setSwapping(null);
-        setSorting(false);
+        setComparing(null); setSwapping(null); setSorting(false);
     };
 
     const insertionSort = async () => {
         setSorting(true);
         const arr = [...array];
-
         for (let i = 1; i < arr.length; i++) {
             let j = i;
             while (j > 0 && arr[j - 1] > arr[j]) {
@@ -73,52 +66,37 @@ export default function Sort() {
                 j--;
             }
         }
-
-        setComparing(null);
-        setSwapping(null);
-        setSorting(false);
+        setComparing(null); setSwapping(null); setSorting(false);
     };
 
     const selectionSort = async () => {
         setSorting(true);
         const arr = [...array];
-
         for (let i = 0; i < arr.length; i++) {
             let minIdx = i;
-
             for (let j = i + 1; j < arr.length; j++) {
                 setComparing([minIdx, j]);
                 await sleep(ANIMATION_SPEED);
-
-                if (arr[j] < arr[minIdx]) {
-                    minIdx = j;
-                }
+                if (arr[j] < arr[minIdx]) minIdx = j;
             }
-
             if (minIdx !== i) {
                 setSwapping([i, minIdx]);
                 [arr[i], arr[minIdx]] = [arr[minIdx], arr[i]];
                 setArray([...arr]);
             }
         }
-
-        setComparing(null);
-        setSwapping(null);
-        setSorting(false);
+        setComparing(null); setSwapping(null); setSorting(false);
     };
 
     const quickSort = async () => {
         setSorting(true);
         const arr = [...array];
-
         const partition = async (low: number, high: number) => {
             const pivot = arr[high];
             let i = low - 1;
-
             for (let j = low; j < high; j++) {
                 setComparing([j, high]);
                 await sleep(ANIMATION_SPEED);
-
                 if (arr[j] < pivot) {
                     i++;
                     setSwapping([i, j]);
@@ -126,14 +104,11 @@ export default function Sort() {
                     setArray([...arr]);
                 }
             }
-
             setSwapping([i + 1, high]);
             [arr[i + 1], arr[high]] = [arr[high], arr[i + 1]];
             setArray([...arr]);
-
             return i + 1;
         };
-
         const sort = async (low: number, high: number) => {
             if (low < high) {
                 const pi = await partition(low, high);
@@ -141,218 +116,142 @@ export default function Sort() {
                 await sort(pi + 1, high);
             }
         };
-
         await sort(0, arr.length - 1);
-        setComparing(null);
-        setSwapping(null);
-        setSorting(false);
+        setComparing(null); setSwapping(null); setSorting(false);
     };
 
-    const getRadius = () => {
-        if (typeof window === 'undefined') return 100;
-        const width = window.innerWidth;
-        if (width < 640) return 100; // mobile - smaller radius
-        return 180; // desktop - adjusted radius
+    const startSort = () => {
+        if (algorithm === 'bubble') bubbleSort();
+        else if (algorithm === 'quick') quickSort();
+        else if (algorithm === 'insertion') insertionSort();
+        else if (algorithm === 'selection') selectionSort();
+    };
+
+    const complexInfo = {
+        bubble: { time: 'O(n²)', space: 'O(1)', desc: 'Brute-force adjacent swaps.' },
+        quick: { time: 'O(n log n)', space: 'O(log n)', desc: 'Divide and conquer via pivot.' },
+        insertion: { time: 'O(n²)', space: 'O(1)', desc: 'Build sorted array incrementaly.' },
+        selection: { time: 'O(n²)', space: 'O(1)', desc: 'Min-element isolation and placement.' },
     };
 
     return (
-        <div className='min-h-screen bg-[var(--color-bg-light)] relative'>
-            {/* Subtle background gradients */}
-            <div
-                className='fixed inset-0 opacity-40 pointer-events-none'
-                style={{
-                    background:
-                        'radial-gradient(ellipse at 30% 20%, rgba(94, 106, 210, 0.08) 0%, transparent 50%), radial-gradient(ellipse at 70% 80%, rgba(139, 92, 246, 0.06) 0%, transparent 60%)',
-                }}
-            />
-
-            {/* Strong Navigation Bar */}
-            <nav className='nav-container'>
-                <div className='nav-content'>
-                    <Link href='/' className='nav-logo'>
-                        JL
-                    </Link>
-                    <div className='nav-links'>
-                        <Link href='/apps' className='nav-link'>
-                            Apps
-                        </Link>
-                        <Link href='/' className='nav-link'>
-                            Home
-                        </Link>
-                        <a href={strings.LINKEDIN_URL} target='_blank' rel='noopener noreferrer' className='nav-link'>
-                            LinkedIn
-                        </a>
-                        <a href={strings.GITHUB_URL} target='_blank' rel='noopener noreferrer' className='nav-link'>
-                            GitHub
-                        </a>
-                    </div>
+        <>
+            <WebVitals />
+            <main className='min-h-screen bg-[var(--color-bg)] flex items-center justify-center p-4 md:p-8 selection:bg-[var(--color-accent)] selection:text-[var(--color-bg)]'>
+                <div className='fixed inset-0 overflow-hidden pointer-events-none'>
+                    <div className='absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(62,175,124,0.03),transparent_60%)]' />
                 </div>
-            </nav>
 
-            <main className='main-content'>
-                <div className='container-responsive max-w-6xl'>
-                    {/* Hero Section */}
-                    <section className={`text-center mb-8 animate-reveal ${isLoaded ? '' : 'opacity-0'}`}>
-                        <h1 className='text-h1 gradient-text mb-4'>Sort Visualization</h1>
-                        <p className='text-body opacity-80 max-w-2xl mx-auto'>
-                            Watch and learn how different sorting algorithms work in real-time with beautiful circular
-                            visualization.
-                        </p>
-                    </section>
-
-                    {/* Visualization Section */}
-                    <section className={`mb-8 animate-reveal animate-reveal-delay-1 ${isLoaded ? '' : 'opacity-0'}`}>
-                        <div className='glass-card-enhanced p-8 rounded-3xl'>
-                            <div className='flex justify-center mb-8'>
-                                <div className='relative w-[280px] h-[280px] md:w-[400px] md:h-[400px] flex items-center justify-center'>
-                                    {/* Circular visualization */}
-                                    {array.map((value, index) => {
-                                        const angle = (index / array.length) * 2 * Math.PI;
-                                        const radius = getRadius();
-                                        const x = Math.cos(angle) * radius;
-                                        const y = Math.sin(angle) * radius;
-
-                                        return (
-                                            <div
-                                                key={index}
-                                                className={`
-                                                    absolute w-3 h-3 md:w-4 md:h-4 rounded-full
-                                                    transition-all duration-300 ease-out
-                                                    ${
-                                                        comparing?.includes(index)
-                                                            ? 'bg-yellow-400 shadow-[0_0_20px_rgba(250,204,21,0.8)] scale-150 z-10'
-                                                            : swapping?.includes(index)
-                                                            ? 'bg-blue-500 shadow-[0_0_20px_rgba(59,130,246,0.8)] scale-150 z-10'
-                                                            : 'bg-gray-600 shadow-sm'
-                                                    }
-                                                `}
-                                                style={{
-                                                    transform: `translate(${x}px, ${y}px) scale(${value / 50 + 0.5})`,
-                                                }}
-                                            />
-                                        );
-                                    })}
-                                </div>
+                <div className={`w-full max-w-6xl h-[85vh] transition-all duration-1000 transform ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                    <div className='terminal-window flex flex-col h-full'>
+                        <div className='terminal-header'>
+                            <div className='terminal-controls'>
+                                <div className='terminal-control red' />
+                                <div className='terminal-control yellow' />
+                                <div className='terminal-control green' />
                             </div>
+                            <div className='terminal-title'>johnleonardo — ~/sorting-algorithm-visualizer</div>
+                        </div>
 
-                            {/* Controls */}
-                            <div className='flex flex-col gap-4 max-w-2xl mx-auto'>
-                                <div className='grid grid-cols-1 md:grid-cols-3 gap-3'>
-                                    {/* Algorithm Selector */}
-                                    <select
-                                        value={algorithm}
-                                        onChange={e => setAlgorithm(e.target.value as Algorithm)}
-                                        className='glass-card-subtle border border-gray-200 px-4 py-3 rounded-xl text-body focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 transition-all duration-200'
-                                        disabled={sorting}
-                                    >
-                                        <option value='bubble'>Bubble Sort</option>
-                                        <option value='quick'>Quick Sort</option>
-                                        <option value='insertion'>Insertion Sort</option>
-                                        <option value='selection'>Selection Sort</option>
-                                    </select>
-
-                                    {/* Generate Array Button */}
-                                    <button
-                                        onClick={generateArray}
-                                        disabled={sorting}
-                                        className='button-secondary disabled:opacity-50 disabled:cursor-not-allowed'
-                                    >
-                                        <span>Generate New Array</span>
-                                        <svg
-                                            width='16'
-                                            height='16'
-                                            viewBox='0 0 24 24'
-                                            fill='none'
-                                            stroke='currentColor'
-                                            strokeWidth='2'
-                                            strokeLinecap='round'
-                                            strokeLinejoin='round'
-                                        >
-                                            <path d='M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8' />
-                                            <path d='M21 3v5h-5' />
-                                            <path d='M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16' />
-                                            <path d='M3 21v-5h5' />
-                                        </svg>
-                                    </button>
-
-                                    {/* Start Sorting Button */}
-                                    <button
-                                        onClick={() => {
-                                            switch (algorithm) {
-                                                case 'bubble':
-                                                    bubbleSort();
-                                                    break;
-                                                case 'quick':
-                                                    quickSort();
-                                                    break;
-                                                case 'insertion':
-                                                    insertionSort();
-                                                    break;
-                                                case 'selection':
-                                                    selectionSort();
-                                                    break;
-                                            }
-                                        }}
-                                        disabled={sorting}
-                                        className='button-primary disabled:opacity-50 disabled:cursor-not-allowed'
-                                    >
-                                        <span>{sorting ? 'Sorting...' : 'Start Sorting'}</span>
-                                        <svg
-                                            width='16'
-                                            height='16'
-                                            viewBox='0 0 24 24'
-                                            fill='none'
-                                            stroke='currentColor'
-                                            strokeWidth='2'
-                                            strokeLinecap='round'
-                                            strokeLinejoin='round'
-                                        >
-                                            <polygon points='5,3 19,12 5,21' />
-                                        </svg>
-                                    </button>
-                                </div>
-
-                                {/* Legend */}
-                                <div className='glass-card border border-gray-200 p-4 rounded-xl'>
-                                    <div className='flex flex-wrap gap-6 justify-center'>
-                                        <div className='flex items-center gap-2'>
-                                            <div className='w-3 h-3 rounded-full bg-gray-600'></div>
-                                            <span className='text-small opacity-70'>Normal</span>
+                        <div className='terminal-split flex-grow overflow-hidden'>
+                            {/* Left Sidebar: Controls & Complexity */}
+                            <div className='terminal-pane border-r border-[var(--color-border)] hidden md:flex flex-col gap-8'>
+                                <div>
+                                    <div className='flex items-center gap-2 mb-6 text-[var(--color-accent)]'>
+                                        <span className='terminal-prompt'>➜</span>
+                                        <span className='text-sm uppercase tracking-widest font-bold'>Interface</span>
+                                    </div>
+                                    <nav className='flex flex-col gap-4 mb-8'>
+                                        <div className='flex flex-col gap-2 mb-4 font-mono'>
+                                            <Link href='/' className='text-lg hover:text-[var(--color-accent)] transition-colors'>~/home</Link>
+                                            <Link href='/apps' className='text-lg hover:text-[var(--color-accent)] transition-colors'>~/apps</Link>
                                         </div>
-                                        <div className='flex items-center gap-2'>
-                                            <div className='w-3 h-3 rounded-full bg-yellow-400 shadow-[0_0_10px_rgba(250,204,21,0.5)]'></div>
-                                            <span className='text-small opacity-70'>Comparing</span>
+                                        <div className='space-y-4 font-mono'>
+                                            <div className='flex flex-col gap-1'>
+                                                <span className='text-[9px] opacity-40 uppercase tracking-widest'>$ set --algo</span>
+                                                <div className='flex flex-wrap gap-2'>
+                                                    {(['bubble', 'quick', 'insertion', 'selection'] as Algorithm[]).map(a => (
+                                                        <button key={a} onClick={() => setAlgorithm(a)} disabled={sorting} className={`px-2 py-1 border text-[9px] uppercase tracking-widest rounded transition-all ${algorithm === a ? 'border-[var(--color-accent)] text-[var(--color-accent)] bg-[var(--color-accent)]/5' : 'border-[var(--color-border)] opacity-40 hover:opacity-100'}`}>
+                                                            {a}
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                            <button onClick={generateArray} disabled={sorting} className='w-full py-2 border border-blue-500/30 hover:bg-blue-500/10 text-blue-400 text-[10px] uppercase tracking-widest rounded'>[REGEN_ARRAY]</button>
+                                            <button onClick={startSort} disabled={sorting} className='w-full py-2 border border-[var(--color-accent)] hover:bg-[var(--color-accent)]/10 text-[var(--color-accent)] text-[10px] uppercase tracking-widest rounded font-bold'>{sorting ? 'PROCESSING...' : '[START_SORT]'}</button>
                                         </div>
-                                        <div className='flex items-center gap-2'>
-                                            <div className='w-3 h-3 rounded-full bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]'></div>
-                                            <span className='text-small opacity-70'>Swapping</span>
+                                    </nav>
+
+                                    <div className='space-y-6 font-mono border-t border-[var(--color-border)] pt-8'>
+                                        <div>
+                                            <span className='text-[var(--color-text)] opacity-40 text-[10px] uppercase tracking-widest block mb-4'>$ info --complexity</span>
+                                            <div className='space-y-3'>
+                                                <div className='flex justify-between text-[10px]'>
+                                                    <span className='opacity-40 uppercase'>Avg_Time:</span>
+                                                    <span className='text-[var(--color-accent)]'>{complexInfo[algorithm].time}</span>
+                                                </div>
+                                                <div className='flex justify-between text-[10px]'>
+                                                    <span className='opacity-40 uppercase'>Aux_Space:</span>
+                                                    <span className='text-[var(--color-accent)]'>{complexInfo[algorithm].space}</span>
+                                                </div>
+                                                <p className='text-[9px] text-[var(--color-text-dim)] uppercase leading-relaxed italic mt-2'>
+                                                    "{complexInfo[algorithm].desc}"
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div className='pt-6 border-t border-[var(--color-border)]'>
+                                            <span className='text-[var(--color-text)] opacity-40 text-[10px] uppercase tracking-widest block mb-4'>$ cat legend.log</span>
+                                            <div className='space-y-2 opacity-60'>
+                                                <div className='text-[9px] flex items-center gap-2'><div className='w-1.5 h-1.5 rounded-full bg-white/20' /> NORMAL</div>
+                                                <div className='text-[9px] flex items-center gap-2'><div className='w-1.5 h-1.5 rounded-full bg-yellow-400' /> COMPARING</div>
+                                                <div className='text-[9px] flex items-center gap-2'><div className='w-1.5 h-1.5 rounded-full bg-blue-500' /> SWAPPING</div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </section>
 
-                    {/* Algorithm Info */}
-                    <section className={`animate-reveal animate-reveal-delay-2 ${isLoaded ? '' : 'opacity-0'}`}>
-                        <div className='glass-card p-6 rounded-xl text-center'>
-                            <h3 className='text-h3 mb-2'>
-                                {algorithm.charAt(0).toUpperCase() + algorithm.slice(1)} Sort
-                            </h3>
-                            <p className='text-body opacity-70'>
-                                {algorithm === 'bubble' &&
-                                    'Compares adjacent elements and swaps them if they are in the wrong order. Simple but inefficient.'}
-                                {algorithm === 'quick' &&
-                                    'Divides the array around a pivot element and recursively sorts the subarrays. Very efficient on average.'}
-                                {algorithm === 'insertion' &&
-                                    'Builds the final sorted array one item at a time. Efficient for small datasets.'}
-                                {algorithm === 'selection' &&
-                                    'Finds the minimum element and places it at the beginning. Simple but not very efficient.'}
-                            </p>
+                            {/* Main Display: Circular Visualizer */}
+                            <div className='terminal-pane bg-black/40 flex flex-col items-center justify-center p-8 overflow-hidden w-full'>
+                                <div className='relative w-[300px] h-[300px] md:w-[450px] md:h-[450px] flex items-center justify-center animate-spin-slow-mobile md:animate-spin-very-slow'>
+                                    {array.map((value, index) => {
+                                        const angle = (index / array.length) * 2 * Math.PI;
+                                        const radius = 180;
+                                        const x = Math.cos(angle) * radius;
+                                        const y = Math.sin(angle) * radius;
+                                        const isComp = comparing?.includes(index);
+                                        const isSwap = swapping?.includes(index);
+
+                                        return (
+                                            <div
+                                                key={index}
+                                                className={`absolute rounded-full transition-all duration-300 ${isComp ? 'bg-yellow-400 w-4 h-4 shadow-[0_0_20px_rgba(250,204,21,0.8)] z-10' : isSwap ? 'bg-blue-500 w-4 h-4 shadow-[0_0_20px_rgba(59,130,246,0.8)] z-10' : 'bg-white/10 w-2 h-2'}`}
+                                                style={{ transform: `translate(${x}px, ${y}px) scale(${value / 50 + 0.3})` }}
+                                            />
+                                        );
+                                    })}
+                                </div>
+                                <div className='mt-12 flex items-center gap-10 opacity-20 font-mono text-[10px] uppercase tracking-[0.5em]'>
+                                    <span>N = {ARRAY_SIZE}</span>
+                                    <span>S = {ANIMATION_SPEED}ms</span>
+                                </div>
+                            </div>
                         </div>
-                    </section>
+                    </div>
+                    {/* Console decoration */}
+                    <div className='mt-6 px-4 flex items-center justify-between text-[10px] font-mono text-[var(--color-text-dim)] opacity-40 uppercase tracking-[0.2em]'>
+                        <div className='flex gap-6'>
+                            <span>Protocol: TCP/IP_V4</span>
+                            <span>Encryption: TLS_1.3</span>
+                        </div>
+                        <div className='flex items-center gap-2'>
+                            <div className='w-1.5 h-1.5 rounded-full bg-[var(--color-accent)] animate-pulse' />
+                            Status: processing_complete
+                        </div>
+                    </div>
                 </div>
             </main>
-        </div>
+        </>
     );
 }

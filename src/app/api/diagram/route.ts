@@ -1,7 +1,4 @@
 import { NextResponse } from 'next/server';
-import Anthropic from '@anthropic-ai/sdk';
-
-const anthropic = new Anthropic();
 
 const SYSTEM_PROMPT = `You are a Mermaid diagram generation expert. Generate ONLY valid, error-free Mermaid diagram syntax.
 
@@ -46,8 +43,8 @@ graph TD
     B -->|No| D[Show Error]
     C --> E[Redirect to Dashboard]
     
-    classDef default fill:transparent,stroke:#5e6ad2,color:#191B18,stroke-width:2px
-    classDef decision fill:transparent,stroke:#818cf8,color:#191B18,stroke-width:2px
+    classDef default fill:transparent,stroke:#5e6ad2,color:#f7f8f8,stroke-width:2px
+    classDef decision fill:transparent,stroke:#818cf8,color:#f7f8f8,stroke-width:2px
     class B decision
 
 ALWAYS TEST: Before responding, mentally check each line for:
@@ -60,22 +57,48 @@ export async function POST(req: Request) {
     try {
         const { description } = await req.json();
 
-        const response = await anthropic.messages.create({
-            model: 'claude-sonnet-4-20250514',
-            max_tokens: 2048,
-            system: SYSTEM_PROMPT,
-            messages: [
-                {
-                    role: 'user',
-                    content: `Generate a Mermaid diagram for: ${description}.`,
-                },
-            ],
+        if (!process.env.OPENROUTER_API_KEY) {
+            return NextResponse.json({ error: 'OpenRouter API key not configured' }, { status: 500 });
+        }
+
+        const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+                'Content-Type': 'application/json',
+                'HTTP-Referer': process.env.NEXT_PUBLIC_SITE_URL || 'https://jdleo.me',
+                'X-Title': 'jdleo.me',
+            },
+            body: JSON.stringify({
+                model: 'anthropic/claude-sonnet-4.5',
+                messages: [
+                    {
+                        role: 'system',
+                        content: SYSTEM_PROMPT,
+                    },
+                    {
+                        role: 'user',
+                        content: `Generate a Mermaid diagram for: ${description}.`,
+                    },
+                ],
+                max_tokens: 2048,
+                temperature: 0.2, // Lower temperature for more consistent syntax
+            }),
         });
 
-        // @ts-expect-error anthropic types are wrong
-        const diagramCode = response.content[0].text.trim();
+        if (!response.ok) {
+            const error = await response.json();
+            console.error('OpenRouter error:', error);
+            throw new Error(`OpenRouter API error: ${response.status}`);
+        }
 
-        return NextResponse.json({ diagram: diagramCode });
+        const data = await response.json();
+        const diagramCode = data.choices[0].message.content.trim();
+
+        // Safety check: remove any markdown code block wrap if the model ignored instructions
+        const cleanedCode = diagramCode.replace(/```mermaid\n?|```/g, '').trim();
+
+        return NextResponse.json({ diagram: cleanedCode });
     } catch (error) {
         console.error('Diagram generation error:', error);
         return NextResponse.json({ error: 'Failed to generate diagram' }, { status: 500 });

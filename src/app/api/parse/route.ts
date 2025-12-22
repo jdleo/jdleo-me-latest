@@ -1,7 +1,4 @@
 import { NextResponse } from 'next/server';
-import Anthropic from '@anthropic-ai/sdk';
-
-const anthropic = new Anthropic();
 
 const SYSTEM_PROMPT = `You are a resume parsing assistant. Extract structured information from resumes into a strict JSON format.
 
@@ -52,27 +49,51 @@ Output Format:
 }`;
 
 export async function POST(req: Request) {
-    try {
-        const { text } = await req.json();
+  try {
+    const { text } = await req.json();
 
-        const response = await anthropic.messages.create({
-            model: 'claude-3-5-haiku-latest',
-            max_tokens: 2048,
-            system: SYSTEM_PROMPT,
-            messages: [
-                {
-                    role: 'user',
-                    content: `Parse this resume text into the specified JSON format: ${text}`,
-                },
-            ],
-        });
-
-        // @ts-expect-error anthropic types are wrong
-        const parsedData = JSON.parse(response.content[0].text);
-
-        return NextResponse.json(parsedData);
-    } catch (error) {
-        console.error('Resume parsing error:', error);
-        return NextResponse.json({ error: 'Failed to parse resume' }, { status: 500 });
+    if (!process.env.OPENROUTER_API_KEY) {
+      return NextResponse.json({ error: 'OpenRouter API key not configured' }, { status: 500 });
     }
+
+    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+        'Content-Type': 'application/json',
+        'HTTP-Referer': process.env.NEXT_PUBLIC_SITE_URL || 'https://jdleo.me',
+        'X-Title': 'jdleo.me',
+      },
+      body: JSON.stringify({
+        model: 'google/gemini-3-flash-preview',
+        messages: [
+          {
+            role: 'system',
+            content: SYSTEM_PROMPT,
+          },
+          {
+            role: 'user',
+            content: `Parse this resume text into the specified JSON format: ${text}`,
+          },
+        ],
+        max_tokens: 2048,
+        temperature: 0.1, // Near-zero for structured output
+        response_format: { type: 'json_object' }
+      }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      console.error('OpenRouter parse error:', error);
+      throw new Error(`OpenRouter API error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    const parsedData = JSON.parse(data.choices[0].message.content);
+
+    return NextResponse.json(parsedData);
+  } catch (error) {
+    console.error('Resume parsing error:', error);
+    return NextResponse.json({ error: 'Failed to parse resume' }, { status: 500 });
+  }
 }

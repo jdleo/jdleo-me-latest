@@ -1,10 +1,9 @@
 'use client';
 
-import { strings } from '../../constants/strings';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
-import { Breadcrumbs } from '@/components/SEO/Breadcrumbs';
+import { WebVitals } from '@/components/SEO/WebVitals';
 
 type LeaderboardEntry = {
     model_id: string;
@@ -13,8 +12,6 @@ type LeaderboardEntry = {
     wins: number;
     losses: number;
     ties: number;
-    created_at: string;
-    updated_at: string;
 };
 
 type BattleModels = {
@@ -30,12 +27,6 @@ type Response = {
 export default function LLMLeaderboard() {
     const [isLoaded, setIsLoaded] = useState(false);
     const [activeTab, setActiveTab] = useState<'vote' | 'leaderboard'>('vote');
-
-    const breadcrumbItems = [
-        { label: 'Home', href: '/' },
-        { label: 'Apps', href: '/apps' },
-        { label: 'LLM Leaderboard', href: '/apps/llm-leaderboard' },
-    ];
     const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
     const [leaderboardLoading, setLeaderboardLoading] = useState(false);
     const [battleModels, setBattleModels] = useState<BattleModels | null>(null);
@@ -48,7 +39,6 @@ export default function LLMLeaderboard() {
     const [isVoting, setIsVoting] = useState(false);
     const [votingComplete, setVotingComplete] = useState(false);
     const [revealedModels, setRevealedModels] = useState(false);
-    const [inputError, setInputError] = useState('');
 
     useEffect(() => {
         const timer = setTimeout(() => setIsLoaded(true), 100);
@@ -56,567 +46,244 @@ export default function LLMLeaderboard() {
     }, []);
 
     useEffect(() => {
-        if (activeTab === 'leaderboard') {
-            fetchLeaderboard();
-        } else if (activeTab === 'vote' && !battleModels) {
-            setupBattle();
-        }
+        if (activeTab === 'leaderboard') fetchLeaderboard();
+        else if (activeTab === 'vote' && !battleModels) setupBattle();
     }, [activeTab]);
 
     const fetchLeaderboard = async () => {
         setLeaderboardLoading(true);
         try {
-            const response = await fetch('/api/llm-leaderboard');
-            const data = await response.json();
+            const res = await fetch('/api/llm-leaderboard');
+            const data = await res.json();
             setLeaderboard(data);
-        } catch (error) {
-            console.error('Failed to fetch leaderboard:', error);
-        } finally {
-            setLeaderboardLoading(false);
-        }
+        } catch (e) { console.error(e); }
+        finally { setLeaderboardLoading(false); }
     };
 
     const setupBattle = async () => {
         try {
-            const response = await fetch('/api/llm-battle');
-            const data = await response.json();
+            const res = await fetch('/api/llm-battle');
+            const data = await res.json();
             setBattleModels(data);
             setResponseA({ content: '', loading: false });
             setResponseB({ content: '', loading: false });
+            setStreamingMessageA('');
+            setStreamingMessageB('');
             setShowVoting(false);
             setVotingComplete(false);
             setRevealedModels(false);
-        } catch (error) {
-            console.error('Failed to setup battle:', error);
-        }
+        } catch (e) { console.error(e); }
     };
 
-    const streamResponse = async (
-        model: string,
-        setStreamingMessage: (msg: string) => void,
-        setResponse: (response: Response) => void
-    ) => {
+    const streamResponse = async (model: string, setSM: (m: string) => void, setR: (r: Response) => void) => {
         try {
-            const response = await fetch('/api/llm-generate', {
+            const res = await fetch('/api/llm-generate', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ model, prompt }),
             });
-
-            if (!response.ok) {
-                throw new Error('Failed to generate response');
-            }
-
-            const reader = response.body?.getReader();
+            const reader = res.body?.getReader();
             const decoder = new TextDecoder();
-            let accumulatedContent = '';
-
+            let accumulated = '';
             if (reader) {
                 while (true) {
                     const { done, value } = await reader.read();
                     if (done) break;
-
-                    const chunk = decoder.decode(value, { stream: true });
+                    const chunk = decoder.decode(value);
                     const lines = chunk.split('\n');
-
                     for (const line of lines) {
                         if (line.startsWith('data: ')) {
                             try {
                                 const data = JSON.parse(line.slice(6));
-
-                                if (data.type === 'content') {
-                                    accumulatedContent += data.content;
-                                    setStreamingMessage(accumulatedContent);
-                                } else if (data.type === 'done') {
-                                    setResponse({ content: accumulatedContent, loading: false });
-                                    setStreamingMessage('');
-                                    return;
-                                } else if (data.type === 'error') {
-                                    setResponse({ content: data.error || 'Error generating response', loading: false });
-                                    setStreamingMessage('');
-                                    return;
-                                }
-                            } catch (parseError) {
-                                console.error('Error parsing chunk:', parseError);
-                            }
+                                if (data.type === 'content') { accumulated += data.content; setSM(accumulated); }
+                                else if (data.type === 'done') { setR({ content: accumulated, loading: false }); setSM(''); return; }
+                            } catch (e) { }
                         }
                     }
                 }
             }
-        } catch (error) {
-            console.error(`Streaming error for ${model}:`, error);
-            setResponse({ content: 'Error generating response', loading: false });
-            setStreamingMessage('');
-        }
+        } catch (e) { setR({ content: 'GENERATION_ERROR', loading: false }); setSM(''); }
     };
 
     const handleGenerate = async () => {
         if (!prompt.trim() || !battleModels) return;
-
-        // Validate input length
-        if (prompt.length > 2000) {
-            setInputError('Prompt must be 2000 characters or less');
-            return;
-        }
-
-        setInputError('');
         setResponseA({ content: '', loading: true });
         setResponseB({ content: '', loading: true });
-        setStreamingMessageA('');
-        setStreamingMessageB('');
-        setShowVoting(false);
-        setRevealedModels(false);
-
-        // Start streaming both responses in parallel
-        const streamA = streamResponse(battleModels.modelA, setStreamingMessageA, setResponseA);
-        const streamB = streamResponse(battleModels.modelB, setStreamingMessageB, setResponseB);
-
-        // Wait for both streams to complete
-        await Promise.all([streamA, streamB]);
-
-        // Show voting once both are complete
+        const sA = streamResponse(battleModels.modelA, setStreamingMessageA, setResponseA);
+        const sB = streamResponse(battleModels.modelB, setStreamingMessageB, setResponseB);
+        await Promise.all([sA, sB]);
         setShowVoting(true);
-    };
-
-    const handlePromptChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-        const value = e.target.value;
-        setPrompt(value);
-
-        if (value.length > 2000) {
-            setInputError('Prompt must be 2000 characters or less');
-        } else {
-            setInputError('');
-        }
     };
 
     const handleVote = async (winner: 'A' | 'B' | 'tie') => {
         if (!battleModels || isVoting) return;
-
-        // Reveal model names immediately when user votes
         setRevealedModels(true);
         setIsVoting(true);
-
         try {
-            const response = await fetch('/api/llm-vote', {
+            const res = await fetch('/api/llm-vote', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    modelA: battleModels.modelA,
-                    modelB: battleModels.modelB,
-                    winner,
-                }),
+                body: JSON.stringify({ modelA: battleModels.modelA, modelB: battleModels.modelB, winner }),
             });
-
-            if (response.ok) {
-                setVotingComplete(true);
-                setIsVoting(false);
-            }
-        } catch (error) {
-            console.error('Failed to submit vote:', error);
-            setIsVoting(false);
-        }
-    };
-
-    const startNewBattle = () => {
-        setupBattle();
-        setPrompt('');
-    };
-
-    // Generate structured data for the leaderboard
-    const structuredData = {
-        '@context': 'https://schema.org',
-        '@type': 'WebApplication',
-        name: 'LLM Leaderboard - AI Model Battle Arena',
-        description:
-            'Vote on head-to-head LLM battles and see which AI models reign supreme. Compare responses side-by-side and help determine the ultimate AI leaderboard.',
-        url: 'https://jdleo.me/apps/llm-leaderboard',
-        applicationCategory: 'DeveloperApplication',
-        operatingSystem: 'Web',
-        author: {
-            '@type': 'Person',
-            name: 'John Leonardo',
-            url: 'https://jdleo.me',
-        },
-        offers: {
-            '@type': 'Offer',
-            price: '0',
-            priceCurrency: 'USD',
-        },
-        featureList: [
-            'Head-to-head AI model battles',
-            'Real-time ELO rating system',
-            'Side-by-side response comparison',
-            'Community-driven rankings',
-            'Multiple AI model support',
-        ],
+            if (res.ok) setVotingComplete(true);
+        } finally { setIsVoting(false); }
     };
 
     return (
-        <div className='min-h-screen bg-[var(--color-bg-light)] relative'>
-            {/* Structured Data */}
-            <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
-
-            {/* Subtle background gradients */}
-            <div
-                className='fixed inset-0 opacity-40 pointer-events-none'
-                style={{
-                    background:
-                        'radial-gradient(ellipse at 30% 20%, rgba(94, 106, 210, 0.08) 0%, transparent 50%), radial-gradient(ellipse at 70% 80%, rgba(139, 92, 246, 0.06) 0%, transparent 60%)',
-                }}
-            />
-
-            {/* Navigation */}
-            <nav className='nav-container'>
-                <div className='nav-content'>
-                    <Link href='/' className='nav-logo'>
-                        JL
-                    </Link>
-                    <div className='nav-links'>
-                        <Link href='/apps' className='nav-link'>
-                            Apps
-                        </Link>
-                        <Link href='/' className='nav-link'>
-                            Home
-                        </Link>
-                        <a href={strings.LINKEDIN_URL} target='_blank' rel='noopener noreferrer' className='nav-link'>
-                            LinkedIn
-                        </a>
-                        <a href={strings.GITHUB_URL} target='_blank' rel='noopener noreferrer' className='nav-link'>
-                            GitHub
-                        </a>
-                    </div>
+        <>
+            <WebVitals />
+            <main className='min-h-screen bg-[var(--color-bg)] flex items-center justify-center p-4 md:p-8 selection:bg-[var(--color-accent)] selection:text-[var(--color-bg)]'>
+                <div className='fixed inset-0 overflow-hidden pointer-events-none'>
+                    <div className='absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(62,175,124,0.03),transparent_60%)]' />
                 </div>
-            </nav>
 
-            <main className='main-content'>
-                <div className='container-responsive max-w-6xl'>
-                    {/* Breadcrumbs */}
-                    <div className={`mb-6 animate-reveal ${isLoaded ? '' : 'opacity-0'}`}>
-                        <Breadcrumbs items={breadcrumbItems} />
-                    </div>
+                <div className={`w-full max-w-6xl h-[85vh] transition-all duration-1000 transform ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                    <div className='terminal-window flex flex-col h-full'>
+                        <div className='terminal-header'>
+                            <div className='terminal-controls'>
+                                <div className='terminal-control red' />
+                                <div className='terminal-control yellow' />
+                                <div className='terminal-control green' />
+                            </div>
+                            <div className='terminal-title'>johnleonardo — ~/neural-leaderboard</div>
+                        </div>
 
-                    {/* Hero Section */}
-                    <section
-                        className={`text-center mb-8 animate-reveal ${isLoaded ? '' : 'opacity-0'}`}
-                        itemScope
-                        itemType='https://schema.org/WebApplication'
-                    >
-                        <h1 className='text-h1 gradient-text mb-4'>🏆 LLM Leaderboard</h1>
-                        <p className='text-body opacity-80'>
-                            Vote on head-to-head LLM battles and see which models reign supreme
-                        </p>
-                    </section>
+                        <div className='terminal-split flex-grow overflow-hidden'>
+                            {/* Left Sidebar: Modes & Stats */}
+                            <div className='terminal-pane border-r border-[var(--color-border)] hidden md:flex flex-col gap-8'>
+                                <div>
+                                    <div className='flex items-center gap-2 mb-6 text-[var(--color-accent)]'>
+                                        <span className='terminal-prompt'>➜</span>
+                                        <span className='text-sm uppercase tracking-widest font-bold'>Navigator</span>
+                                    </div>
+                                    <nav className='flex flex-col gap-4 mb-10'>
+                                        <button onClick={() => setActiveTab('vote')} className={`text-left text-lg transition-colors ${activeTab === 'vote' ? 'text-[var(--color-accent)]' : 'text-[var(--color-text-dim)] hover:text-white'}`}>~/arena</button>
+                                        <button onClick={() => setActiveTab('leaderboard')} className={`text-left text-lg transition-colors ${activeTab === 'leaderboard' ? 'text-[var(--color-accent)]' : 'text-[var(--color-text-dim)] hover:text-white'}`}>~/rankings</button>
+                                        <div className='h-[1px] bg-[var(--color-border)] my-2' />
+                                        <Link href='/' className='text-sm opacity-60 hover:text-[var(--color-accent)]'>~/home</Link>
+                                        <Link href='/apps' className='text-sm opacity-60 hover:text-[var(--color-accent)]'>~/apps</Link>
+                                    </nav>
 
-                    {/* Tab Navigation */}
-                    <div
-                        className={`flex justify-center gap-4 mb-8 animate-reveal animate-reveal-delay-1 ${
-                            isLoaded ? '' : 'opacity-0'
-                        }`}
-                    >
-                        <button
-                            onClick={() => setActiveTab('vote')}
-                            className={`px-6 py-3 rounded-xl font-medium transition-all duration-200 ${
-                                activeTab === 'vote'
-                                    ? 'button-primary'
-                                    : 'glass-card-subtle border border-gray-300 text-body hover:glass-card'
-                            }`}
-                        >
-                            🗳️ Vote
-                        </button>
-                        <button
-                            onClick={() => setActiveTab('leaderboard')}
-                            className={`px-6 py-3 rounded-xl font-medium transition-all duration-200 ${
-                                activeTab === 'leaderboard'
-                                    ? 'button-primary'
-                                    : 'glass-card-subtle border border-gray-300 text-body hover:glass-card'
-                            }`}
-                        >
-                            🏆 Leaderboard
-                        </button>
-                    </div>
+                                    <div className='space-y-6 font-mono'>
+                                        <div className='p-4 border border-[var(--color-border)] rounded bg-white/5'>
+                                            <span className='text-[10px] opacity-40 uppercase tracking-widest block mb-2'>System_Status</span>
+                                            <div className='flex items-center gap-2'>
+                                                <div className='w-2 h-2 rounded-full bg-green-500 animate-pulse' />
+                                                <span className='text-[11px] text-green-400'>NODES_ONLINE</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className='mt-auto pt-8 border-t border-[var(--color-border)] opacity-30 font-mono text-[9px] uppercase tracking-tighter leading-relaxed'>
+                                    "Benchmarking large language models via decentralized community consensus and ELO-based evaluation cycles."
+                                </div>
+                            </div>
 
-                    {/* Content */}
-                    <div className={`animate-reveal animate-reveal-delay-2 ${isLoaded ? '' : 'opacity-0'}`}>
-                        {activeTab === 'vote' ? (
-                            <div className='space-y-8'>
-                                {/* Prompt Input */}
-                                {!showVoting && (
-                                    <div className='glass-card p-6 rounded-2xl'>
-                                        <h2 className='text-h3 mb-4'>Enter your prompt</h2>
-                                        <div className='space-y-4'>
-                                            <div>
+                            {/* Main Display: Arena or Rankings */}
+                            <div className='terminal-pane bg-black/20 flex flex-col p-0 overflow-y-auto w-full'>
+                                {activeTab === 'vote' ? (
+                                    <div className='p-8 md:p-12 max-w-5xl mx-auto w-full space-y-12'>
+                                        {!showVoting && !responseA.loading ? (
+                                            <div className='space-y-6'>
+                                                <div className='flex items-center gap-2 text-[var(--color-accent)]'>
+                                                    <span className='terminal-prompt'>$</span>
+                                                    <span className='text-[10px] uppercase tracking-widest opacity-60'>Launch_Query</span>
+                                                </div>
                                                 <textarea
                                                     value={prompt}
-                                                    onChange={handlePromptChange}
-                                                    placeholder='Ask something interesting...'
-                                                    className='w-full p-4 rounded-xl border border-gray-200 resize-none h-32 text-body focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
-                                                    maxLength={2000}
+                                                    onChange={e => setPrompt(e.target.value)}
+                                                    placeholder='ENTER_CHALLENGE_PROMPT...'
+                                                    className='w-full bg-black/40 border border-[var(--color-border)] rounded-lg p-6 font-mono text-sm text-[var(--color-text)] focus:border-[var(--color-accent)] outline-none resize-none h-48'
                                                 />
-                                                <div className='flex justify-between items-center mt-2'>
-                                                    <span
-                                                        className={`text-small ${
-                                                            prompt.length > 2000 ? 'text-red-500' : 'text-gray-500'
-                                                        }`}
-                                                    >
-                                                        {prompt.length}/2000 characters
-                                                    </span>
-                                                    {inputError && (
-                                                        <span className='text-small text-red-500'>{inputError}</span>
-                                                    )}
-                                                </div>
-                                            </div>
-                                            <button
-                                                onClick={handleGenerate}
-                                                disabled={!prompt.trim() || responseA.loading || responseB.loading}
-                                                className='button-primary disabled:opacity-50 disabled:cursor-not-allowed'
-                                            >
-                                                {responseA.loading || responseB.loading
-                                                    ? streamingMessageA || streamingMessageB
-                                                        ? 'Streaming responses...'
-                                                        : 'Generating...'
-                                                    : 'Generate Battle'}
-                                            </button>
-                                        </div>
-                                    </div>
-                                )}
-
-                                {/* Battle Results */}
-                                {(responseA.loading || responseB.loading || showVoting) && (
-                                    <div>
-                                        <div className='text-center mb-6'>
-                                            <h3 className='text-h3 gradient-text mb-2'>Battle Results</h3>
-                                            <p className='text-body opacity-70'>Prompt: "{prompt}"</p>
-                                        </div>
-
-                                        <div className='grid md:grid-cols-2 gap-6 mb-8'>
-                                            {/* Model A Response */}
-                                            <div className='glass-card-subtle border border-gray-200 p-6 rounded-xl'>
-                                                <div className='flex items-center justify-between mb-4'>
-                                                    <h4 className='text-body font-semibold'>Model A</h4>
-                                                    {responseA.loading && (
-                                                        <div className='text-blue-500'>
-                                                            <div className='animate-spin w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full'></div>
-                                                        </div>
-                                                    )}
-                                                </div>
-                                                <div className='text-small leading-relaxed'>
-                                                    {responseA.loading ? (
-                                                        streamingMessageA ? (
-                                                            <div className='prose prose-sm max-w-none text-body leading-relaxed'>
-                                                                <ReactMarkdown>{streamingMessageA}</ReactMarkdown>
-                                                                <span className='inline-block w-2 h-5 bg-blue-500 ml-1 animate-pulse'></span>
-                                                            </div>
-                                                        ) : (
-                                                            <div className='flex items-center justify-center h-32 text-gray-500'>
-                                                                <div className='text-center space-y-2'>
-                                                                    <div className='animate-spin w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full mx-auto'></div>
-                                                                    <p>Generating response...</p>
-                                                                </div>
-                                                            </div>
-                                                        )
-                                                    ) : (
-                                                        <div className='prose prose-sm max-w-none'>
-                                                            <ReactMarkdown>{responseA.content}</ReactMarkdown>
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            </div>
-
-                                            {/* Model B Response */}
-                                            <div className='glass-card-subtle border border-gray-200 p-6 rounded-xl'>
-                                                <div className='flex items-center justify-between mb-4'>
-                                                    <h4 className='text-body font-semibold'>Model B</h4>
-                                                    {responseB.loading && (
-                                                        <div className='text-blue-500'>
-                                                            <div className='animate-spin w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full'></div>
-                                                        </div>
-                                                    )}
-                                                </div>
-                                                <div className='text-small leading-relaxed'>
-                                                    {responseB.loading ? (
-                                                        streamingMessageB ? (
-                                                            <div className='prose prose-sm max-w-none text-body leading-relaxed'>
-                                                                <ReactMarkdown>{streamingMessageB}</ReactMarkdown>
-                                                                <span className='inline-block w-2 h-5 bg-blue-500 ml-1 animate-pulse'></span>
-                                                            </div>
-                                                        ) : (
-                                                            <div className='flex items-center justify-center h-32 text-gray-500'>
-                                                                <div className='text-center space-y-2'>
-                                                                    <div className='animate-spin w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full mx-auto'></div>
-                                                                    <p>Generating response...</p>
-                                                                </div>
-                                                            </div>
-                                                        )
-                                                    ) : (
-                                                        <div className='prose prose-sm max-w-none'>
-                                                            <ReactMarkdown>{responseB.content}</ReactMarkdown>
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        {/* Voting Buttons */}
-                                        {showVoting && !votingComplete && (
-                                            <div className='text-center space-y-4'>
-                                                <p className='text-body font-semibold'>Which response is better?</p>
-
-                                                {/* Show model names when voting */}
-                                                {revealedModels && (
-                                                    <div className='flex justify-center gap-8 mb-4'>
-                                                        <div className='text-center'>
-                                                            <div className='text-small font-semibold text-blue-600'>
-                                                                Model A
-                                                            </div>
-                                                            <div className='text-small opacity-70'>
-                                                                {battleModels?.modelA}
-                                                            </div>
-                                                        </div>
-                                                        <div className='text-center'>
-                                                            <div className='text-small font-semibold text-green-600'>
-                                                                Model B
-                                                            </div>
-                                                            <div className='text-small opacity-70'>
-                                                                {battleModels?.modelB}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                )}
-
-                                                <div className='flex flex-col sm:flex-row gap-4 justify-center'>
-                                                    <button
-                                                        onClick={() => handleVote('A')}
-                                                        disabled={isVoting}
-                                                        className='button-primary bg-blue-600 hover:bg-blue-700'
-                                                    >
-                                                        {isVoting ? 'Voting...' : 'Model A Wins'}
-                                                    </button>
-                                                    <button
-                                                        onClick={() => handleVote('tie')}
-                                                        disabled={isVoting}
-                                                        className='glass-card-subtle border border-gray-300 px-6 py-3 rounded-xl text-body hover:bg-gray-50 transition-all duration-200'
-                                                    >
-                                                        {isVoting ? 'Voting...' : "It's a Tie"}
-                                                    </button>
-                                                    <button
-                                                        onClick={() => handleVote('B')}
-                                                        disabled={isVoting}
-                                                        className='button-primary bg-green-600 hover:bg-green-700'
-                                                    >
-                                                        {isVoting ? 'Voting...' : 'Model B Wins'}
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        )}
-
-                                        {/* Vote Complete */}
-                                        {votingComplete && (
-                                            <div className='text-center space-y-4'>
-                                                <div className='text-green-600 text-2xl'>✅</div>
-                                                <p className='text-body font-semibold'>
-                                                    Vote recorded! Thanks for participating.
-                                                </p>
-
-                                                {/* Show model names after voting */}
-                                                {revealedModels && battleModels && (
-                                                    <div className='glass-card-subtle border border-gray-200 p-4 rounded-xl max-w-md mx-auto'>
-                                                        <p className='text-small font-semibold mb-3 text-gray-700'>
-                                                            Battle Results:
-                                                        </p>
-                                                        <div className='flex justify-center gap-8'>
-                                                            <div className='text-center'>
-                                                                <div className='text-small font-semibold text-blue-600'>
-                                                                    Model A
-                                                                </div>
-                                                                <div className='text-small opacity-70'>
-                                                                    {battleModels.modelA}
-                                                                </div>
-                                                            </div>
-                                                            <div className='text-center'>
-                                                                <div className='text-small font-semibold text-green-600'>
-                                                                    Model B
-                                                                </div>
-                                                                <div className='text-small opacity-70'>
-                                                                    {battleModels.modelB}
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                )}
-
-                                                <button onClick={startNewBattle} className='button-primary'>
-                                                    Vote Again
+                                                <button
+                                                    onClick={handleGenerate}
+                                                    disabled={!prompt.trim()}
+                                                    className='w-full py-4 border border-[var(--color-accent)]/50 hover:bg-[var(--color-accent)]/10 text-[var(--color-accent)] font-mono text-xs uppercase tracking-[0.3em] rounded transition-all'
+                                                >
+                                                    [INITIATE_BATTLE]
                                                 </button>
                                             </div>
+                                        ) : (
+                                            <div className='space-y-8 pb-12'>
+                                                <div className='grid md:grid-cols-2 gap-8'>
+                                                    {[
+                                                        { label: 'NODE_ALPHA', content: responseA.content, stream: streamingMessageA, loading: responseA.loading, model: battleModels?.modelA },
+                                                        { label: 'NODE_BETA', content: responseB.content, stream: streamingMessageB, loading: responseB.loading, model: battleModels?.modelB }
+                                                    ].map((node, i) => (
+                                                        <div key={i} className='border border-[var(--color-border)] rounded-lg bg-black/40 p-6 flex flex-col h-[500px]'>
+                                                            <div className='flex justify-between items-center mb-6 border-b border-[var(--color-border)] pb-4'>
+                                                                <span className='text-[10px] font-mono text-[var(--color-accent)] uppercase tracking-widest'>{node.label}</span>
+                                                                {revealedModels && <span className='text-[10px] font-mono opacity-40 truncate max-w-[150px]'>{node.model}</span>}
+                                                            </div>
+                                                            <div className='flex-grow overflow-y-auto pr-2 custom-scrollbar text-sm font-mono leading-relaxed prose prose-invert prose-sm'>
+                                                                <ReactMarkdown>{node.loading ? node.stream : node.content}</ReactMarkdown>
+                                                                {node.loading && <span className='inline-block w-2 h-4 bg-[var(--color-accent)] ml-1 animate-pulse' />}
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+
+                                                {showVoting && !votingComplete && (
+                                                    <div className='flex flex-col items-center gap-6 animate-reveal'>
+                                                        <span className='text-xs font-mono uppercase tracking-[0.3em] opacity-60'>Evaluator_Input_Required</span>
+                                                        <div className='flex gap-4'>
+                                                            <button onClick={() => handleVote('A')} className='px-8 py-3 border border-blue-500/50 hover:bg-blue-500/10 text-blue-400 font-mono text-[10px] uppercase rounded tracking-widest'>Select_Alpha</button>
+                                                            <button onClick={() => handleVote('tie')} className='px-8 py-3 border border-white/20 hover:bg-white/5 text-white/40 font-mono text-[10px] uppercase rounded tracking-widest'>Equal_Utility</button>
+                                                            <button onClick={() => handleVote('B')} className='px-8 py-3 border border-green-500/50 hover:bg-green-500/10 text-green-400 font-mono text-[10px] uppercase rounded tracking-widest'>Select_Beta</button>
+                                                        </div>
+                                                    </div>
+                                                )}
+
+                                                {votingComplete && (
+                                                    <div className='flex flex-col items-center gap-6 animate-reveal'>
+                                                        <div className='p-6 border border-[var(--color-accent)]/30 rounded bg-[var(--color-accent)]/5 text-center'>
+                                                            <div className='text-[11px] font-mono text-[var(--color-accent)] uppercase tracking-widest mb-2'>VOTE_COMMITTED_TO_ELASTICSEARCH</div>
+                                                            <button onClick={setupBattle} className='text-[10px] font-mono text-[var(--color-text-dim)] hover:text-white underline underline-offset-4'>[SPAWN_NEW_CYCLE]</button>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
                                         )}
                                     </div>
-                                )}
-                            </div>
-                        ) : (
-                            /* Leaderboard */
-                            <div className='glass-card p-6 rounded-2xl'>
-                                <h2 className='text-h3 gradient-text mb-6 text-center'>Model Rankings</h2>
-                                {leaderboardLoading ? (
-                                    <div className='flex items-center justify-center py-12'>
-                                        <div className='text-center space-y-4'>
-                                            <div className='animate-spin w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full mx-auto'></div>
-                                            <p className='text-body text-gray-600'>Loading leaderboard...</p>
+                                ) : (
+                                    <div className='p-8 md:p-12 w-full max-w-5xl mx-auto'>
+                                        <div className='flex items-center gap-4 mb-8 opacity-60'>
+                                            <span className='text-[10px] font-mono uppercase tracking-widest'>Node_ELO_Performance_Leaderboard</span>
+                                            <div className='h-[1px] flex-grow bg-[var(--color-border)]' />
+                                        </div>
+
+                                        <div className='border border-[var(--color-border)] rounded-lg overflow-hidden bg-black/40'>
+                                            <table className='w-full font-mono text-left'>
+                                                <thead>
+                                                    <tr className='bg-white/5 text-[10px] uppercase tracking-widest opacity-40 border-b border-[var(--color-border)]'>
+                                                        <th className='p-4'>Rank</th>
+                                                        <th className='p-4'>Model_ID</th>
+                                                        <th className='p-4'>ELO_Rating</th>
+                                                        <th className='p-4'>Agg_Votes</th>
+                                                        <th className='p-4 text-right'>W/L/T_Ratio</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody className='text-xs'>
+                                                    {leaderboard.map((e, i) => (
+                                                        <tr key={e.model_id} className='border-b border-[var(--color-border)] hover:bg-white/5 transition-colors'>
+                                                            <td className='p-4 opacity-40'>#{String(i + 1).padStart(2, '0')}</td>
+                                                            <td className='p-4 text-[var(--color-text)]'>{e.model_id}</td>
+                                                            <td className='p-4 text-[var(--color-accent)] font-bold'>{e.elo_rating}</td>
+                                                            <td className='p-4 opacity-60'>{e.total_votes}</td>
+                                                            <td className='p-4 text-right opacity-60'>{e.wins}/{e.losses}/{e.ties}</td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
+                                            {leaderboardLoading && <div className='p-20 text-center text-[10px] opacity-20 uppercase tracking-[0.5em]'>Scanning_Block_Metas...</div>}
                                         </div>
                                     </div>
-                                ) : leaderboard.length > 0 ? (
-                                    <div className='overflow-x-auto'>
-                                        <table className='w-full'>
-                                            <thead>
-                                                <tr className='border-b border-gray-200'>
-                                                    <th className='text-left py-3 px-4 font-semibold text-body'>
-                                                        Rank
-                                                    </th>
-                                                    <th className='text-left py-3 px-4 font-semibold text-body'>
-                                                        Model
-                                                    </th>
-                                                    <th className='text-left py-3 px-4 font-semibold text-body'>
-                                                        ELO Rating
-                                                    </th>
-                                                    <th className='text-left py-3 px-4 font-semibold text-body'>
-                                                        Votes
-                                                    </th>
-                                                    <th className='text-left py-3 px-4 font-semibold text-body'>
-                                                        W/L/T
-                                                    </th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {leaderboard.map((entry, index) => (
-                                                    <tr
-                                                        key={entry.model_id}
-                                                        className='border-b border-gray-100 hover:bg-gray-50 transition-colors'
-                                                    >
-                                                        <td className='py-3 px-4 text-body'>#{index + 1}</td>
-                                                        <td className='py-3 px-4 text-body font-medium'>
-                                                            {entry.model_id}
-                                                        </td>
-                                                        <td className='py-3 px-4 text-body font-semibold text-blue-600'>
-                                                            {entry.elo_rating}
-                                                        </td>
-                                                        <td className='py-3 px-4 text-body'>{entry.total_votes}</td>
-                                                        <td className='py-3 px-4 text-small text-gray-600'>
-                                                            {entry.wins}/{entry.losses}/{entry.ties}
-                                                        </td>
-                                                    </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                ) : (
-                                    <div className='text-center py-8 text-gray-500'>
-                                        <p>No models ranked yet. Start voting to see the leaderboard!</p>
-                                    </div>
                                 )}
                             </div>
-                        )}
+                        </div>
                     </div>
                 </div>
             </main>
-        </div>
+        </>
     );
 }
