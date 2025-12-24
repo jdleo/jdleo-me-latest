@@ -167,16 +167,16 @@ export default function Home() {
 
                                 {/* System Stats */}
                                 <div className='mt-auto pt-8 border-t border-[var(--color-border)]'>
-                                    <div className='flex items-center justify-between text-xs font-mono text-[var(--color-text-dim)]'>
-                                        <div className='flex gap-6'>
+                                    <div className='flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-0 text-xs font-mono text-[var(--color-text-dim)]'>
+                                        <div className='flex items-center gap-6'>
                                             <div className='flex items-center gap-2 px-2 py-0.5 bg-[var(--color-accent)]/5 rounded border border-[var(--color-accent)]/10'>
                                                 <span className='opacity-50'>VIEWS:</span>
-                                                <span className='text-[var(--color-accent)] font-bold shadow-[0_0_10px_rgba(62,175,124,0.3)]'>{formatNumber(pageViewCount)}</span>
+                                                <span className='text-[var(--color-accent)] font-bold'>{formatNumber(pageViewCount)}</span>
                                                 <div className='w-1 h-1 rounded-full bg-[var(--color-accent)] animate-pulse' />
                                             </div>
-                                            <span className='flex items-center'>STATUS: ONLINE</span>
+                                            <span className='flex items-center whitespace-nowrap'>STATUS: ONLINE</span>
                                         </div>
-                                        <div>
+                                        <div className='whitespace-nowrap opacity-80'>
                                             LOC: BAY AREA, CA, US, EARTH
                                         </div>
                                     </div>

@@ -123,7 +123,7 @@ export default function Apps() {
                                             <span>ITEMS: {apps.length}</span>
                                         </div>
                                         <div>
-                                            VER: 2024.12
+                                            VER: 2025.12
                                         </div>
                                     </div>
                                 </div>
