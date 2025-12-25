@@ -83,12 +83,35 @@ function isValidUrl(url: string): boolean {
         // Check for valid domain structure
         const domainParts = hostname.split('.');
         if (domainParts.length < 2) {
-            return false; // Must have at least domain.tld
+            // Allow localhost for development, but block it in production if necessary
+            // Actually, the IP check already handles 127.0.0.1
+            if (hostname !== 'localhost') {
+                return false; // Must have at least domain.tld
+            }
+        }
+
+        // Prevent circular links (blocking own domain and subdomains)
+        const blockedDomains = ['jdleo.me', 'link.fyi', 'localhost'];
+        const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+        if (siteUrl) {
+            try {
+                const siteHostname = new URL(siteUrl).hostname.toLowerCase();
+                if (!blockedDomains.includes(siteHostname)) {
+                    blockedDomains.push(siteHostname);
+                }
+            } catch (e) {
+                // Ignore invalid NEXT_PUBLIC_SITE_URL
+            }
+        }
+
+        if (blockedDomains.some(domain => hostname === domain || hostname.endsWith('.' + domain))) {
+            return false;
         }
 
         // Check each domain part
         for (const part of domainParts) {
             if (part.length === 0 || part.length > 63) {
+                if (hostname === 'localhost') continue; // Skip length check for localhost
                 return false;
             }
             // Domain parts can only contain letters, numbers, and hyphens
