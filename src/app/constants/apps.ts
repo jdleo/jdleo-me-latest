@@ -78,4 +78,10 @@ export const apps: MiniApp[] = [
         emoji: '🧮',
         href: '/apps/california-tax-calculator',
     },
+    {
+        title: 'Founder Dilution',
+        subtitle: 'Simulate startup fundraising rounds and see how your equity evolves from Seed to Exit.',
+        emoji: '📈',
+        href: '/apps/dilution',
+    },
 ] as const;
