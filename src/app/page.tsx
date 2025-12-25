@@ -187,7 +187,7 @@ export default function Home() {
                                 <div className='card p-4 flex flex-col justify-between overflow-hidden relative text-white bg-gradient-to-br from-[#181925] to-[#2a2d40] border-none shadow-xl'>
                                     <div className='relative z-10'>
                                         <h3 className='text-[10px] font-bold uppercase tracking-widest text-white/50 mb-0.5'>Currently</h3>
-                                        <p className='text-sm font-bold'>Senior @ Roblox</p>
+                                        <p className='text-sm font-bold'>Senior Engineer @ Roblox</p>
                                     </div>
                                     <div className='absolute -bottom-3 -right-3 text-5xl opacity-10 rotate-12 select-none'>🤖</div>
                                 </div>
