@@ -132,7 +132,7 @@ export default function Home() {
                                         Talk about career, guidance, or just chat via:
                                     </p>
                                     <a
-                                        href='https://calendly.com/jleonardo-roblox'
+                                        href='https://calendly.com/jleonardo-roblox?ref=jdleo.me'
                                         target='_blank'
                                         className='btn btn-secondary w-full py-2 text-[10px] font-bold border-[var(--purple-2)]'
                                     >
@@ -190,6 +190,76 @@ export default function Home() {
                                         <p className='text-sm font-bold'>Senior Engineer @ Roblox</p>
                                     </div>
                                     <div className='absolute -bottom-3 -right-3 text-5xl opacity-10 rotate-12 select-none'>🤖</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Active Side Projects - Compact & Themed */}
+                        <div className='lg:col-span-12'>
+                            <div className='card'>
+                                <h2 className='text-lg mb-4 text-[#181925]'>Active Side Projects</h2>
+
+                                <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+                                    {/* Web Apps */}
+                                    <div>
+                                        <h3 className='text-[10px] font-bold uppercase tracking-widest text-subtle mb-3'>Web</h3>
+                                        <div className='grid grid-cols-1 gap-2'>
+                                            <a
+                                                href='https://resume.rodeo?ref=jdleo.me'
+                                                target='_blank'
+                                                className='flex items-center justify-between p-2 rounded hover:bg-black/[0.02] transition-colors group'
+                                            >
+                                                <div className='flex items-center gap-3'>
+                                                    <div className='w-1.5 h-1.5 rounded-full bg-orange-400' />
+                                                    <div>
+                                                        <div className='text-sm font-semibold text-[#181925]'>Resume Rodeo</div>
+                                                        <div className='text-[11px] text-muted'>AI Resume Analysis & Optimization</div>
+                                                    </div>
+                                                </div>
+                                                <span className='text-[10px] font-bold text-muted group-hover:text-[var(--purple-4)] transition-colors opacity-0 group-hover:opacity-100'>VISIT</span>
+                                            </a>
+                                            <a
+                                                href='https://lite.fyi?ref=jdleo.me'
+                                                target='_blank'
+                                                className='flex items-center justify-between p-2 rounded hover:bg-black/[0.02] transition-colors group'
+                                            >
+                                                <div className='flex items-center gap-3'>
+                                                    <div className='w-1.5 h-1.5 rounded-full bg-blue-400' />
+                                                    <div>
+                                                        <div className='text-sm font-semibold text-[#181925]'>Lite.fyi</div>
+                                                        <div className='text-[11px] text-muted'>Fastest Link Shortener</div>
+                                                    </div>
+                                                </div>
+                                                <span className='text-[10px] font-bold text-muted group-hover:text-[var(--purple-4)] transition-colors opacity-0 group-hover:opacity-100'>VISIT</span>
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    {/* iOS Apps */}
+                                    <div>
+                                        <h3 className='text-[10px] font-bold uppercase tracking-widest text-subtle mb-3'>iOS</h3>
+                                        <div className='grid grid-cols-2 gap-2'>
+                                            {[
+                                                { name: 'Convo', desc: 'AI Chat Agents', url: 'https://apps.apple.com/us/app/convo-ai-chat-agents/id6753784349?ref=jdleo.me', color: 'bg-indigo-400' },
+                                                { name: 'Tale', desc: 'Story Generator', url: 'https://apps.apple.com/us/app/tale-ai-story-generator/id6753922553?ref=jdleo.me', color: 'bg-purple-400' },
+                                                { name: 'Grasp', desc: 'Learn Anything', url: 'https://apps.apple.com/us/app/grasp-learn-anything-with-ai/id6754008830?ref=jdleo.me', color: 'bg-emerald-400' },
+                                                { name: 'Wave', desc: 'Social Discovery', url: 'https://apps.apple.com/us/app/wave-meet-friends-chat/id6754500401?ref=jdleo.me', color: 'bg-pink-400' },
+                                            ].map((app) => (
+                                                <a
+                                                    key={app.name}
+                                                    href={app.url}
+                                                    target='_blank'
+                                                    className='p-2 rounded hover:bg-black/[0.02] transition-colors group'
+                                                >
+                                                    <div className='flex items-center gap-2 mb-0.5'>
+                                                        <div className={`w-1.5 h-1.5 rounded-full ${app.color}`} />
+                                                        <span className='text-sm font-semibold text-[#181925]'>{app.name}</span>
+                                                    </div>
+                                                    <div className='text-[10px] text-muted pl-3.5'>{app.desc}</div>
+                                                </a>
+                                            ))}
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

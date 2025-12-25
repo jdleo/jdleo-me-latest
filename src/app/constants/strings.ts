@@ -41,7 +41,7 @@ export const strings = {
             images: ['/og-image.png'],
         },
     },
-    LINKEDIN_URL: 'https://linkedin.com/in/jdleo',
-    GITHUB_URL: 'https://github.com/jdleo',
+    LINKEDIN_URL: 'https://linkedin.com/in/jdleo?ref=jdleo.me',
+    GITHUB_URL: 'https://github.com/jdleo?ref=jdleo.me',
     EMAIL: 'j@jdleo.me',
 } as const;
