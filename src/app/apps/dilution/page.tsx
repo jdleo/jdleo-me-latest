@@ -164,237 +164,312 @@ export default function DilutionCalculator() {
         }).format(val);
     };
 
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
     return (
         <>
             <WebVitals />
-            <main className='min-h-screen bg-[var(--color-bg)] flex items-center justify-center p-4 md:p-8 selection:bg-[var(--color-accent)] selection:text-[var(--color-bg)]'>
-                <div className='fixed inset-0 overflow-hidden pointer-events-none'>
-                    <div className='absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(62,175,124,0.03),transparent_60%)]' />
-                    <div className='absolute inset-0' style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,0.02) 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
-                </div>
+            <main className='relative h-screen bg-[#fafbff] overflow-hidden selection:bg-[var(--purple-2)] selection:text-[var(--purple-4)] flex flex-col md:flex-row'>
 
-                <div className={`w-full max-w-6xl h-[85vh] transition-all duration-1000 transform ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-                    <div className='terminal-window flex flex-col h-full'>
-                        <div className='terminal-header'>
-                            <div className='terminal-controls'>
-                                <div className='terminal-control red' />
-                                <div className='terminal-control yellow' />
-                                <div className='terminal-control green' />
-                            </div>
-                            <div className='terminal-title'>johnleonardo — ~/founder-dilution-calc</div>
+                {/* Mobile Header */}
+                <header className='md:hidden flex items-center justify-between p-4 border-b border-[var(--border-light)] bg-white/80 backdrop-blur-md z-50'>
+                    <Link href='/apps' className='text-sm font-bold uppercase tracking-widest text-muted hover:text-[var(--purple-4)]'>
+                        ← Apps
+                    </Link>
+                    <button
+                        onClick={() => setIsMobileMenuOpen(true)}
+                        className='px-3 py-1.5 bg-white border border-[var(--border-light)] rounded-full shadow-sm text-xs font-bold uppercase tracking-wider text-[var(--fg-4)] flex items-center gap-1.5'
+                    >
+                        <span>Config</span>
+                        <span className='text-[10px]'>▼</span>
+                    </button>
+                </header>
+
+                {/* Left Sidebar (Desktop) - Global Settings */}
+                <aside className='hidden md:flex flex-col w-80 h-full border-r border-[var(--border-light)] bg-white/50 backdrop-blur-xl z-20'>
+                    <div className='p-6 border-b border-[var(--border-light)]'>
+                        <div className='flex items-center gap-3 mb-6'>
+                            <div className='w-3 h-3 rounded-full bg-[var(--purple-4)]' />
+                            <span className='font-bold uppercase tracking-widest text-sm text-[var(--fg-4)]'>Dilution Engine</span>
                         </div>
+                        <nav className='flex flex-col gap-2'>
+                            <Link href='/apps' className='text-xs font-bold uppercase tracking-wider text-muted hover:text-[var(--purple-4)] transition-colors flex items-center gap-2'>
+                                <span>←</span> Back to Apps
+                            </Link>
+                        </nav>
+                    </div>
 
-                        <div className='terminal-split flex-grow overflow-hidden'>
-                            {/* Left Pane: Config */}
-                            <div className='terminal-pane border-r border-[var(--color-border)] hidden md:flex flex-col gap-8 w-[350px] flex-shrink-0 relative overflow-hidden'>
-                                <div className='absolute inset-0 bg-[var(--color-bg)] opacity-95 pointer-events-none' style={{ zIndex: -1 }} />
-                                {/* ^ Ensures legibility if backgrounds overlap, standard in my other apps */}
-
-                                <div className='flex flex-col h-full'>
-                                    <div className='flex items-center gap-2 mb-6 text-[var(--color-accent)]'>
-                                        <span className='terminal-prompt'>➜</span>
-                                        <span className='text-sm uppercase tracking-widest font-bold'>Configuration</span>
-                                    </div>
-
-                                    <nav className='flex flex-col gap-4 mb-8'>
-                                        <Link href='/' className='text-lg hover:text-[var(--color-accent)] transition-colors'>~/home</Link>
-                                        <Link href='/apps' className='text-lg hover:text-[var(--color-accent)] transition-colors'>~/apps</Link>
-                                    </nav>
-
-                                    <div className='space-y-6 flex-grow overflow-y-auto pr-2 scrollbar-hide'>
-                                        <div className='font-mono'>
-                                            <span className='text-[var(--color-text)] opacity-40 text-[10px] uppercase tracking-widest block mb-4'>$ set --exit-value</span>
-                                            <div className='relative'>
-                                                <span className='absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-accent)] font-bold text-xs'>$</span>
-                                                <input
-                                                    type='number'
-                                                    value={exitValuation}
-                                                    onChange={e => setExitValuation(e.target.value)}
-                                                    className='w-full bg-black/40 border border-[var(--color-border)] rounded p-2 pl-7 text-[13px] font-mono text-[var(--color-text)] focus:border-[var(--color-accent)] outline-none transition-colors'
-                                                />
-                                            </div>
-                                        </div>
-
-                                        <div className='font-mono'>
-                                            <span className='text-[var(--color-text)] opacity-40 text-[10px] uppercase tracking-widest block mb-4'>$ set --initial-equity</span>
-                                            <div className='relative'>
-                                                <input
-                                                    type='number'
-                                                    value={initialFoundersOwnership}
-                                                    onChange={e => setInitialFoundersOwnership(e.target.value)}
-                                                    className='w-full bg-black/40 border border-[var(--color-border)] rounded p-2 pl-4 text-[13px] font-mono text-[var(--color-text)] focus:border-[var(--color-accent)] outline-none transition-colors'
-                                                />
-                                                <span className='absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-accent)]/50 font-bold text-xs'>%</span>
-                                            </div>
-                                        </div>
-
-                                        <div className='pt-6 border-t border-[var(--color-border)] font-mono'>
-                                            <div className='flex justify-between items-center mb-4'>
-                                                <span className='text-[var(--color-text)] opacity-40 text-[10px] uppercase tracking-widest'>Rounds Database</span>
-                                                <button
-                                                    onClick={loadTypical}
-                                                    className='text-[9px] text-[var(--color-accent)] hover:underline uppercase tracking-wider'
-                                                >
-                                                    [Load_Defaults]
-                                                </button>
-                                            </div>
-
-                                            <div className='space-y-3 mb-4'>
-                                                {rounds.map((round) => (
-                                                    <div key={round.id} className='group border border-[var(--color-border)] bg-black/20 p-3 rounded hover:border-[var(--color-accent)]/50 transition-all'>
-                                                        <div className='flex justify-between items-start mb-2'>
-                                                            <input
-                                                                value={round.name}
-                                                                onChange={(e) => updateRound(round.id, { name: e.target.value })}
-                                                                className='bg-transparent text-[11px] font-bold text-[var(--color-text)] w-24 outline-none border-b border-transparent focus:border-[var(--color-accent)]'
-                                                            />
-                                                            <button onClick={() => removeRound(round.id)} className='text-red-500/30 hover:text-red-500 text-[10px] opacity-0 group-hover:opacity-100 transition-opacity'>[DEL]</button>
-                                                        </div>
-                                                        <div className='grid grid-cols-2 gap-2'>
-                                                            <div>
-                                                                <label className='text-[8px] opacity-30 uppercase block'>Raise</label>
-                                                                <input
-                                                                    type='number'
-                                                                    value={round.amountRaised}
-                                                                    onChange={(e) => updateRound(round.id, { amountRaised: Number(e.target.value) })}
-                                                                    className='w-full bg-black/30 text-[10px] p-1 rounded border border-transparent focus:border-[var(--color-accent)] outline-none'
-                                                                />
-                                                            </div>
-                                                            <div>
-                                                                <label className='text-[8px] opacity-30 uppercase block'>Pre-Val</label>
-                                                                <input
-                                                                    type='number'
-                                                                    value={round.preMoneyValuation}
-                                                                    onChange={(e) => updateRound(round.id, { preMoneyValuation: Number(e.target.value) })}
-                                                                    className='w-full bg-black/30 text-[10px] p-1 rounded border border-transparent focus:border-[var(--color-accent)] outline-none'
-                                                                />
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                ))}
-                                            </div>
-
-                                            <button
-                                                onClick={addRound}
-                                                className='w-full py-2 border border-dashed border-[var(--color-border)] rounded text-[10px] uppercase tracking-widest opacity-40 hover:opacity-100 hover:border-[var(--color-accent)] hover:text-[var(--color-accent)] transition-all'
-                                            >
-                                                + Append_Round_Node
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    <div className='mt-auto pt-4 border-t border-[var(--color-border)] opacity-30 font-mono text-[9px] leading-relaxed uppercase tracking-tighter'>
-                                        "Simulates standard SV-style dilution mechanics. Use at own risk."
+                    <div className='flex-grow overflow-y-auto p-6 space-y-8'>
+                        <div>
+                            <h3 className='text-[10px] font-bold uppercase tracking-[0.2em] text-muted mb-4'>Global Scenarios</h3>
+                            <div className='space-y-4'>
+                                <div className='space-y-2'>
+                                    <label className='text-xs font-bold text-[var(--fg-4)]'>Exit Valuation ($)</label>
+                                    <input
+                                        type='number'
+                                        value={exitValuation}
+                                        onChange={e => setExitValuation(e.target.value)}
+                                        className='w-full bg-white border border-[var(--border-light)] rounded-xl p-3 text-sm text-[var(--fg-4)] focus:border-[var(--purple-4)] focus:ring-2 focus:ring-[var(--purple-1)] outline-none transition-all'
+                                    />
+                                </div>
+                                <div className='space-y-2'>
+                                    <label className='text-xs font-bold text-[var(--fg-4)]'>Initial Founder Equity (%)</label>
+                                    <div className='relative'>
+                                        <input
+                                            type='number'
+                                            value={initialFoundersOwnership}
+                                            onChange={e => setInitialFoundersOwnership(e.target.value)}
+                                            className='w-full bg-white border border-[var(--border-light)] rounded-xl p-3 text-sm text-[var(--fg-4)] focus:border-[var(--purple-4)] focus:ring-2 focus:ring-[var(--purple-1)] outline-none transition-all'
+                                        />
+                                        <div className='absolute right-3 top-1/2 -translate-y-1/2 text-muted text-xs font-bold'>%</div>
                                     </div>
                                 </div>
                             </div>
+                        </div>
 
-                            {/* Main Pane: Calculation Output */}
-                            <div className='terminal-pane bg-black/5 flex flex-col p-0 overflow-y-auto w-full'>
-                                {rounds.length > 0 ? (
-                                    <div className='p-8 md:p-12 max-w-3xl mx-auto w-full space-y-12 animate-reveal'>
-                                        {/* Top Headline Stats */}
-                                        <div className='grid grid-cols-1 md:grid-cols-2 gap-8'>
-                                            <div className='border border-[var(--color-border)] p-6 rounded-lg bg-white/5 group hover:border-[var(--color-accent)]/30 transition-all'>
-                                                <span className='text-[10px] font-mono opacity-40 uppercase tracking-widest block mb-2'>FOUNDER_EXIT_PAYOUT</span>
-                                                <div className='text-3xl md:text-4xl font-bold text-[var(--color-accent)] font-mono tracking-tight group-hover:scale-105 transition-transform origin-left'>
-                                                    {formatCurrency(results.founderExitPayout)}
-                                                </div>
-                                                <span className='text-[9px] font-mono opacity-30 block mt-2'>* PRE-TAX ESTIMATION</span>
-                                            </div>
-                                            <div className='border border-[var(--color-border)] p-6 rounded-lg bg-white/5 group hover:border-blue-500/30 transition-all'>
-                                                <span className='text-[10px] font-mono opacity-40 uppercase tracking-widest block mb-2'>FINAL_OWNERSHIP</span>
-                                                <div className='text-3xl md:text-4xl font-bold text-blue-400 font-mono tracking-tight'>
-                                                    {results.founderFinalPct.toFixed(2)}%
-                                                </div>
-                                                <span className='text-[9px] font-mono opacity-30 block mt-2'>* POST-DILUTION EQUITY</span>
-                                            </div>
-                                        </div>
-
-                                        {/* Visualization Bar */}
-                                        <div className='space-y-4'>
-                                            <div className='flex items-center gap-4 text-[var(--color-accent)] opacity-60'>
-                                                <div className='h-[1px] flex-grow bg-[var(--color-border)]' />
-                                                <span className='text-[10px] font-mono uppercase tracking-widest whitespace-nowrap'>Cap Table Distribution</span>
-                                                <div className='h-[1px] flex-grow bg-[var(--color-border)]' />
-                                            </div>
-
-                                            <div className='h-8 w-full bg-black/40 rounded flex border border-[var(--color-border)] p-1 overflow-hidden'>
-                                                <div className='h-full bg-[var(--color-accent)] transition-all duration-1000' style={{ width: `${results.founderFinalPct}%` }} />
-                                                <div className='h-full bg-blue-500 transition-all duration-1000' style={{ width: `${results.investorFinalPct}%` }} />
-                                                <div className='h-full bg-purple-500 transition-all duration-1000' style={{ width: `${results.poolFinalPct}%` }} />
-                                            </div>
-
-                                            <div className='flex gap-6 justify-center font-mono text-[10px]'>
-                                                <div className='flex items-center gap-2'>
-                                                    <div className='w-2 h-2 rounded bg-[var(--color-accent)]' />
-                                                    <span className='opacity-60'>FOUNDERS ({results.founderFinalPct.toFixed(1)}%)</span>
-                                                </div>
-                                                <div className='flex items-center gap-2'>
-                                                    <div className='w-2 h-2 rounded bg-blue-500' />
-                                                    <span className='opacity-60'>INVESTORS ({results.investorFinalPct.toFixed(1)}%)</span>
-                                                </div>
-                                                <div className='flex items-center gap-2'>
-                                                    <div className='w-2 h-2 rounded bg-purple-500' />
-                                                    <span className='opacity-60'>POOL ({results.poolFinalPct.toFixed(1)}%)</span>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        {/* Detailed Ledger */}
-                                        <div className='space-y-6'>
-                                            <div className='flex items-center gap-4 text-[var(--color-accent)] opacity-60'>
-                                                <div className='h-[1px] flex-grow bg-[var(--color-border)]' />
-                                                <span className='text-[10px] font-mono uppercase tracking-widest whitespace-nowrap'>Round Evolution</span>
-                                                <div className='h-[1px] flex-grow bg-[var(--color-border)]' />
-                                            </div>
-
-                                            <div className='font-mono space-y-1'>
-                                                {results.roundDetails.map((rd, idx) => (
-                                                    <div key={rd.id} className='flex justify-between items-center py-3 border-b border-[var(--color-border)] hover:bg-white/5 px-2 transition-colors'>
-                                                        <div className='flex flex-col'>
-                                                            <span className='text-xs font-bold text-[var(--color-text)] uppercase'>{rd.name}</span>
-                                                            <span className='text-[9px] opacity-40 uppercase tracking-wider'>VAL: {formatCurrency(rd.postMoney)}</span>
-                                                        </div>
-                                                        <div className='text-right'>
-                                                            <span className='text-sm text-[var(--color-accent)] font-bold block'>{rd.founderOwnershipAfterRound.toFixed(2)}%</span>
-                                                            <span className='text-[9px] opacity-40 uppercase tracking-widest'>Your Equity</span>
-                                                        </div>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </div>
-
-                                        {/* Advisory Note */}
-                                        <div className='p-4 border border-yellow-500/20 rounded bg-yellow-500/5 flex gap-4 items-start'>
-                                            <span className='text-xl'>😉</span>
-                                            <div>
-                                                <h4 className='text-[10px] font-mono text-yellow-500 uppercase mb-1 tracking-widest'>Tax Advisory Protocol</h4>
-                                                <p className='text-[10px] font-mono text-[var(--color-text-dim)] leading-relaxed opacity-70'>
-                                                    REMINDER: GROSS_PAYOUT != NET_PAYOUT. UNCLE_SAM_PROCESS (IRS) CONSUMES RESOURCES. PLAN ACCORDINGLY.
-                                                </p>
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                ) : (
-                                    <div className='flex flex-col items-center justify-center flex-grow opacity-20'>
-                                        <div className='text-4xl font-mono mb-4 text-[var(--color-accent)]'>[AWAITING_ROUNDS]</div>
-                                        <div className='text-xs font-mono uppercase tracking-[0.4em]'>Inject financing data to compute dilution</div>
-                                    </div>
-                                )}
+                        <div>
+                            <h3 className='text-[10px] font-bold uppercase tracking-[0.2em] text-muted mb-4'>Actions</h3>
+                            <div className='space-y-3'>
+                                <button
+                                    onClick={addRound}
+                                    className='w-full py-3 bg-[var(--fg-4)] hover:bg-[var(--purple-4)] text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-all shadow-md hover:shadow-lg'
+                                >
+                                    + Add Round
+                                </button>
+                                <button
+                                    onClick={loadTypical}
+                                    className='w-full py-3 bg-white border border-[var(--border-light)] hover:border-[var(--purple-4)] text-[var(--fg-4)] hover:text-[var(--purple-4)] font-bold text-xs uppercase tracking-widest rounded-xl transition-all shadow-sm hover:shadow-md'
+                                >
+                                    Load Defaults
+                                </button>
                             </div>
                         </div>
                     </div>
-                    {/* Console decoration */}
-                    <div className='mt-4 flex items-center justify-between text-[10px] font-mono text-[var(--color-text-dim)] opacity-40 uppercase tracking-[0.2em] px-4'>
-                        <div className='flex gap-6'>
-                            <span>Engine: DilutionSim_v1</span>
-                            <span>Model: 2024_STD</span>
+                </aside>
+
+                {/* Main Content Area */}
+                <div className='flex-grow flex flex-col h-full relative bg-[#fafbff] overflow-hidden'>
+                    {/* Floating decorations */}
+                    <div className='absolute top-0 right-0 w-[600px] h-[600px] bg-[var(--purple-1)] opacity-30 rounded-full blur-3xl pointer-events-none -translate-y-1/2 translate-x-1/2' />
+
+                    <div className='flex-grow overflow-y-auto p-4 md:p-8 scrollbar-hide z-10'>
+                        <div className='max-w-6xl mx-auto space-y-8 animate-fade-in-up'>
+
+                            {/* Top Summary Cards */}
+                            <div className='grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8'>
+                                <div className='bg-white p-6 rounded-2xl border border-[var(--border-light)] shadow-sm relative overflow-hidden group hover:border-[var(--purple-4)] transition-colors'>
+                                    <div className='relative z-10'>
+                                        <span className='text-[10px] font-bold uppercase tracking-wider text-muted block mb-2'>Projected Founder Payout</span>
+                                        <div className='text-3xl md:text-5xl font-black text-[var(--purple-4)] tracking-tight'>
+                                            {formatCurrency(results.founderExitPayout)}
+                                        </div>
+                                    </div>
+                                    <div className='absolute right-0 bottom-0 opacity-5 transform translate-x-1/3 translate-y-1/3 text-[150px] leading-none text-[var(--purple-4)] group-hover:scale-110 transition-transform'>$</div>
+                                </div>
+                                <div className='bg-white p-6 rounded-2xl border border-[var(--border-light)] shadow-sm relative overflow-hidden group hover:border-blue-500 transition-colors'>
+                                    <div className='relative z-10'>
+                                        <span className='text-[10px] font-bold uppercase tracking-wider text-muted block mb-2'>Final Ownership</span>
+                                        <div className='text-3xl md:text-5xl font-black text-blue-500 tracking-tight'>
+                                            {results.founderFinalPct.toFixed(2)}%
+                                        </div>
+                                    </div>
+                                    <div className='absolute right-0 bottom-0 opacity-5 transform translate-x-1/4 translate-y-1/4 text-[150px] leading-none text-blue-500 group-hover:scale-110 transition-transform'>%</div>
+                                </div>
+                            </div>
+
+                            <div className='grid grid-cols-1 lg:grid-cols-3 gap-8'>
+                                {/* Left Column: Rounds Editor */}
+                                <div className='lg:col-span-2 space-y-6'>
+                                    <h2 className='text-lg font-bold text-[var(--fg-4)] flex items-center gap-2'>
+                                        <span className='w-2 h-2 rounded-full bg-[var(--purple-4)]' />
+                                        Investment Rounds
+                                    </h2>
+
+                                    {rounds.length === 0 ? (
+                                        <div className='bg-white rounded-2xl border border-dashed border-[var(--border-light)] p-12 text-center'>
+                                            <div className='w-16 h-16 bg-[var(--bg-2)] rounded-full flex items-center justify-center text-3xl mx-auto mb-4 text-muted'>∅</div>
+                                            <h3 className='font-bold text-[var(--fg-4)] mb-2'>No Rounds Defined</h3>
+                                            <p className='text-sm text-muted mb-6'>Add a financing round to calculate dilution effects.</p>
+                                            <button onClick={addRound} className='px-6 py-2 bg-[var(--purple-4)] text-white text-xs font-bold uppercase tracking-wider rounded-lg shadow-md hover:bg-[var(--purple-4)]/90'>
+                                                Add First Round
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <div className='space-y-4'>
+                                            {rounds.map((round) => (
+                                                <div key={round.id} className='bg-white rounded-2xl border border-[var(--border-light)] p-6 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden'>
+                                                    {/* Header */}
+                                                    <div className='flex justify-between items-start mb-6'>
+                                                        <div className='flex-grow mr-4'>
+                                                            <label className='text-[10px] font-bold uppercase tracking-wider text-muted block mb-1'>Round Name</label>
+                                                            <input
+                                                                value={round.name}
+                                                                onChange={(e) => updateRound(round.id, { name: e.target.value })}
+                                                                className='text-lg font-bold text-[var(--fg-4)] bg-transparent border-b border-transparent hover:border-[var(--border-light)] focus:border-[var(--purple-4)] outline-none w-full transition-colors'
+                                                                placeholder='Series Name'
+                                                            />
+                                                        </div>
+                                                        <button
+                                                            onClick={() => removeRound(round.id)}
+                                                            className='w-8 h-8 rounded-full bg-[var(--bg-2)] text-muted hover:bg-red-50 hover:text-red-500 flex items-center justify-center transition-colors'
+                                                        >
+                                                            ✕
+                                                        </button>
+                                                    </div>
+
+                                                    {/* Inputs Grid */}
+                                                    <div className='grid grid-cols-2 md:grid-cols-4 gap-4'>
+                                                        <div>
+                                                            <label className='text-[10px] font-bold text-muted uppercase tracking-wider block mb-2'>Amount Raised</label>
+                                                            <input
+                                                                type='number'
+                                                                value={round.amountRaised}
+                                                                onChange={(e) => updateRound(round.id, { amountRaised: Number(e.target.value) })}
+                                                                className='w-full bg-[var(--bg-2)] border border-[var(--border-light)] rounded-lg p-2 text-sm text-[var(--fg-4)] focus:border-[var(--purple-4)] outline-none'
+                                                            />
+                                                        </div>
+                                                        <div>
+                                                            <label className='text-[10px] font-bold text-muted uppercase tracking-wider block mb-2'>Pre-Money Val</label>
+                                                            <input
+                                                                type='number'
+                                                                value={round.preMoneyValuation}
+                                                                onChange={(e) => updateRound(round.id, { preMoneyValuation: Number(e.target.value) })}
+                                                                className='w-full bg-[var(--bg-2)] border border-[var(--border-light)] rounded-lg p-2 text-sm text-[var(--fg-4)] focus:border-[var(--purple-4)] outline-none'
+                                                            />
+                                                        </div>
+                                                        <div>
+                                                            <label className='text-[10px] font-bold text-muted uppercase tracking-wider block mb-2'>Option Pool %</label>
+                                                            <input
+                                                                type='number'
+                                                                value={round.optionPoolPercent}
+                                                                onChange={(e) => updateRound(round.id, { optionPoolPercent: Number(e.target.value) })}
+                                                                className='w-full bg-[var(--bg-2)] border border-[var(--border-light)] rounded-lg p-2 text-sm text-[var(--fg-4)] focus:border-[var(--purple-4)] outline-none'
+                                                            />
+                                                        </div>
+                                                        <div>
+                                                            <label className='text-[10px] font-bold text-muted uppercase tracking-wider block mb-2'>Liq. Pref</label>
+                                                            <input
+                                                                type='number'
+                                                                value={round.liquidationPreference}
+                                                                onChange={(e) => updateRound(round.id, { liquidationPreference: Number(e.target.value) })}
+                                                                className='w-full bg-[var(--bg-2)] border border-[var(--border-light)] rounded-lg p-2 text-sm text-[var(--fg-4)] focus:border-[var(--purple-4)] outline-none'
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                            <button
+                                                onClick={addRound}
+                                                className='w-full py-4 border-2 border-dashed border-[var(--border-light)] rounded-2xl text-[var(--fg-4)] font-bold text-sm hover:border-[var(--purple-4)] hover:text-[var(--purple-4)] hover:bg-[var(--purple-1)]/10 transition-all flex items-center justify-center gap-2'
+                                            >
+                                                <span>+</span> Add Another Round
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Right Column: Cap Table Visualization */}
+                                <div className='space-y-6'>
+                                    <h2 className='text-lg font-bold text-[var(--fg-4)] flex items-center gap-2'>
+                                        <span className='w-2 h-2 rounded-full bg-blue-500' />
+                                        Cap Table Analysis
+                                    </h2>
+
+                                    <div className='bg-white p-6 rounded-2xl border border-[var(--border-light)] shadow-sm sticky top-6'>
+                                        <div className='mb-6'>
+                                            <h3 className='text-xs font-bold uppercase tracking-wider text-muted mb-4'>Ownership Distribution</h3>
+                                            <div className='h-4 w-full bg-[var(--bg-2)] rounded-full overflow-hidden flex mb-3'>
+                                                <div className='h-full bg-[var(--purple-4)]' style={{ width: `${results.founderFinalPct}%` }} title='Founders' />
+                                                <div className='h-full bg-blue-500' style={{ width: `${results.investorFinalPct}%` }} title='Investors' />
+                                                <div className='h-full bg-gray-400' style={{ width: `${results.poolFinalPct}%` }} title='Option Pool' />
+                                            </div>
+                                            <div className='flex gap-4 flex-wrap'>
+                                                <div className='flex items-center gap-2 text-xs'>
+                                                    <div className='w-2 h-2 rounded-full bg-[var(--purple-4)]' />
+                                                    <span className='text-[var(--fg-4)] font-medium'>Founders ({results.founderFinalPct.toFixed(1)}%)</span>
+                                                </div>
+                                                <div className='flex items-center gap-2 text-xs'>
+                                                    <div className='w-2 h-2 rounded-full bg-blue-500' />
+                                                    <span className='text-[var(--fg-4)] font-medium'>Investors ({results.investorFinalPct.toFixed(1)}%)</span>
+                                                </div>
+                                                <div className='flex items-center gap-2 text-xs'>
+                                                    <div className='w-2 h-2 rounded-full bg-gray-400' />
+                                                    <span className='text-[var(--fg-4)] font-medium'>Pool ({results.poolFinalPct.toFixed(1)}%)</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className='pt-6 border-t border-[var(--border-light)]'>
+                                            <h3 className='text-xs font-bold uppercase tracking-wider text-muted mb-4'>Round Ledger</h3>
+                                            <div className='space-y-4'>
+                                                {results.roundDetails.map((rd) => (
+                                                    <div key={rd.id} className='flex justify-between items-center text-sm'>
+                                                        <span className='font-bold text-[var(--fg-4)]'>{rd.name}</span>
+                                                        <div className='text-right'>
+                                                            <span className='block font-bold text-[var(--purple-4)]'>{rd.founderOwnershipAfterRound.toFixed(2)}%</span>
+                                                            <span className='text-[10px] text-muted uppercase tracking-wider'>Your Share</span>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                                {results.roundDetails.length === 0 && (
+                                                    <span className='text-sm text-muted italic'>No active rounds</span>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <span>Status: Active</span>
                     </div>
                 </div>
+
+                {/* Mobile Menu Overlay */}
+                {isMobileMenuOpen && (
+                    <div className='fixed inset-0 z-[100] flex items-end justify-center bg-black/40 backdrop-blur-sm p-4 md:hidden' onClick={() => setIsMobileMenuOpen(false)}>
+                        <div className='w-full max-w-sm bg-white rounded-2xl shadow-2xl animate-slide-up overflow-hidden border border-[var(--border-light)]' onClick={e => e.stopPropagation()}>
+                            <div className='p-4 border-b border-[var(--border-light)] flex justify-between items-center bg-[var(--bg-2)]'>
+                                <span className='text-xs font-bold uppercase tracking-widest text-[var(--fg-4)]'>Configuration</span>
+                                <button onClick={() => setIsMobileMenuOpen(false)} className='w-6 h-6 rounded-full bg-white border border-[var(--border-light)] flex items-center justify-center text-muted'>✕</button>
+                            </div>
+                            <div className='p-4 space-y-6'>
+                                <div className='space-y-4'>
+                                    <div className='space-y-2'>
+                                        <label className='text-xs font-bold text-[var(--fg-4)]'>Exit Valuation ($)</label>
+                                        <input
+                                            type='number'
+                                            value={exitValuation}
+                                            onChange={e => setExitValuation(e.target.value)}
+                                            className='w-full bg-[var(--bg-2)] border border-[var(--border-light)] rounded-xl p-3 text-sm text-[var(--fg-4)] focus:border-[var(--purple-4)] outline-none'
+                                        />
+                                    </div>
+                                    <div className='space-y-2'>
+                                        <label className='text-xs font-bold text-[var(--fg-4)]'>Initial Founder Equity (%)</label>
+                                        <input
+                                            type='number'
+                                            value={initialFoundersOwnership}
+                                            onChange={e => setInitialFoundersOwnership(e.target.value)}
+                                            className='w-full bg-[var(--bg-2)] border border-[var(--border-light)] rounded-xl p-3 text-sm text-[var(--fg-4)] focus:border-[var(--purple-4)] outline-none'
+                                        />
+                                    </div>
+                                </div>
+                                <div className='space-y-3 pt-4 border-t border-[var(--border-light)]'>
+                                    <button
+                                        onClick={() => { addRound(); setIsMobileMenuOpen(false); }}
+                                        className='w-full py-3 bg-[var(--fg-4)] text-white font-bold text-xs uppercase tracking-widest rounded-xl shadow-md'
+                                    >
+                                        + Add Round
+                                    </button>
+                                    <button
+                                        onClick={() => { loadTypical(); setIsMobileMenuOpen(false); }}
+                                        className='w-full py-3 bg-white border border-[var(--border-light)] text-[var(--fg-4)] font-bold text-xs uppercase tracking-widest rounded-xl shadow-sm'
+                                    >
+                                        Load Defaults
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </main>
         </>
     );

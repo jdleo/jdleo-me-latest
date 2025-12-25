@@ -5,8 +5,7 @@ import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { oneDark } from 'react-syntax-highlighter/dist/cjs/styles/prism';
+import CodeBlock from '@/components/CodeBlock';
 import { WebVitals } from '@/components/SEO/WebVitals';
 
 type Message = {
@@ -15,53 +14,14 @@ type Message = {
     model?: string;
 };
 
-// Custom code component with syntax highlighting
-const CodeBlock = ({ node, inline, className, children, ...props }: any) => {
-    const match = /language-(\w+)/.exec(className || '');
-    const language = match ? match[1] : '';
-
-    return !inline && match ? (
-        <div className='relative rounded-lg overflow-hidden bg-[#0D0D0E] border border-[var(--color-border)] my-4'>
-            {language && (
-                <div className='flex items-center justify-between px-4 py-1.5 bg-black/40 border-b border-[var(--color-border)]'>
-                    <span className='text-[10px] font-mono text-[var(--color-text-dim)] uppercase tracking-wider'>{language}</span>
-                </div>
-            )}
-            <SyntaxHighlighter
-                style={oneDark}
-                language={language}
-                PreTag='div'
-                customStyle={{
-                    margin: 0,
-                    background: 'transparent',
-                    padding: '1rem',
-                    fontSize: '0.8rem',
-                    lineHeight: '1.5',
-                }}
-                {...props}
-            >
-                {String(children).replace(/\n$/, '')}
-            </SyntaxHighlighter>
-        </div>
-    ) : (
-        <code className='bg-white/5 text-[var(--color-accent-blue)] px-1.5 py-0.5 rounded text-sm font-mono' {...props}>
-            {children}
-        </code>
-    );
-};
-
 export default function Resume() {
-    const [messages, setMessages] = useState<Message[]>([
-        {
-            content: "Hey! I'm John's personal AI assistant. Ask me anything about his experience, skills, projects, or background!",
-            isUser: false,
-            model: "johns_resume_ai",
-        },
-    ]);
+    const [messages, setMessages] = useState<Message[]>([]);
+    const [showWelcome, setShowWelcome] = useState(true);
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [isLoaded, setIsLoaded] = useState(false);
     const [streamingMessage, setStreamingMessage] = useState('');
+    const [isMobileSuggestionsOpen, setIsMobileSuggestionsOpen] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     const scrollToBottom = () => {
@@ -81,6 +41,8 @@ export default function Resume() {
         if (!message.trim() || isLoading) return;
 
         setInput('');
+        setShowWelcome(false);
+        setIsMobileSuggestionsOpen(false);
         const updatedMessages = [...messages, { content: message, isUser: true }];
         setMessages(updatedMessages);
         setIsLoading(true);
@@ -148,159 +110,247 @@ export default function Resume() {
         }
     };
 
+    const suggestedQueries = [
+        "What is John's work history?",
+        "Tell me about his experience at Roblox.",
+        "What is his tech stack?",
+        "Is he open to new roles?",
+        "What database technologies does he know?",
+    ];
+
     return (
         <>
             <WebVitals />
-            <main className='min-h-screen bg-[var(--color-bg)] flex items-center justify-center p-4 md:p-8 selection:bg-[var(--color-accent)] selection:text-[var(--color-bg)]'>
-                <div className='fixed inset-0 overflow-hidden pointer-events-none'>
-                    <div className='absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(62,175,124,0.03),transparent_60%)]' />
-                    <div className='absolute inset-0' style={{
-                        backgroundImage: 'radial-gradient(rgba(255,255,255,0.02) 1px, transparent 1px)',
-                        backgroundSize: '32px 32px'
-                    }} />
-                </div>
+            <main className='relative h-screen bg-[#fafbff] overflow-hidden selection:bg-[var(--purple-2)] selection:text-[var(--purple-4)] flex flex-col md:flex-row'>
 
-                <div className={`w-full max-w-6xl h-[85vh] transition-all duration-1000 transform ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-                    <div className='terminal-window flex flex-col h-full'>
-                        <div className='terminal-header'>
-                            <div className='terminal-controls'>
-                                <div className='terminal-control red' />
-                                <div className='terminal-control yellow' />
-                                <div className='terminal-control green' />
-                            </div>
-                            <div className='terminal-title'>johnleonardo — ~/resume-ai</div>
+                {/* Mobile Header */}
+                <header className='md:hidden flex items-center justify-between p-4 border-b border-[var(--border-light)] bg-white/80 backdrop-blur-md z-50'>
+                    <Link href='/apps' className='text-sm font-bold uppercase tracking-widest text-muted hover:text-[var(--purple-4)]'>
+                        ← Apps
+                    </Link>
+                    <button
+                        onClick={() => setIsMobileSuggestionsOpen(true)}
+                        className='px-3 py-1.5 bg-white border border-[var(--border-light)] rounded-full shadow-sm text-xs font-bold uppercase tracking-wider text-[var(--fg-4)] flex items-center gap-1.5'
+                    >
+                        <span>Suggestions</span>
+                        <span className='text-[10px]'>▼</span>
+                    </button>
+                </header>
+
+                {/* Left Sidebar (Desktop) */}
+                <aside className='hidden md:flex flex-col w-80 h-full border-r border-[var(--border-light)] bg-white/50 backdrop-blur-xl z-20'>
+                    <div className='p-6 border-b border-[var(--border-light)]'>
+                        <div className='flex items-center gap-3 mb-6'>
+                            <div className='w-3 h-3 rounded-full bg-[var(--purple-4)]' />
+                            <span className='font-bold uppercase tracking-widest text-sm text-[var(--fg-4)]'>Resume Bot</span>
                         </div>
+                        <nav className='flex flex-col gap-2'>
+                            <Link href='/apps' className='text-xs font-bold uppercase tracking-wider text-muted hover:text-[var(--purple-4)] transition-colors flex items-center gap-2'>
+                                <span>←</span> Back to Apps
+                            </Link>
+                        </nav>
+                    </div>
 
-                        <div className='terminal-split flex-grow overflow-hidden'>
-                            {/* Left Pane: Info & Presets */}
-                            <div className='terminal-pane border-r border-[var(--color-border)] hidden md:block'>
-                                <div className='mb-8'>
-                                    <div className='flex items-center gap-2 mb-4 text-[var(--color-accent)]'>
-                                        <span className='terminal-prompt'>➜</span>
-                                        <span className='text-sm uppercase tracking-widest font-bold'>System</span>
-                                    </div>
-                                    <nav className='flex flex-col gap-2'>
-                                        <Link href='/' className='text-lg hover:text-[var(--color-accent)] transition-colors'>~/home</Link>
-                                        <Link href='/apps' className='text-lg hover:text-[var(--color-accent)] transition-colors'>~/apps</Link>
-                                    </nav>
-                                </div>
-
-                                <div className='space-y-6'>
-                                    <div className='font-mono'>
-                                        <span className='text-[var(--color-text)] opacity-70'>$ help --ai</span>
-                                        <div className='mt-2 text-xs text-[var(--color-text-dim)] leading-relaxed italic border-l-2 border-[var(--color-border)] pl-4'>
-                                            "I have deep access to John's experience, from distributed systems at Roblox to AI at Amazon."
-                                        </div>
-                                    </div>
-
-                                    <div className='pt-4'>
-                                        <span className='text-[var(--color-text)] opacity-70 text-xs font-mono font-bold uppercase block mb-4 tracking-wider'>Suggested Queries:</span>
-                                        <div className='flex flex-col gap-2'>
-                                            {[
-                                                "What's his work history?",
-                                                "Experience with Distributed Systems?",
-                                                "His tech stack?",
-                                                "Open to new roles?"
-                                            ].map((q) => (
-                                                <button
-                                                    key={q}
-                                                    onClick={() => sendMessage(q)}
-                                                    className='text-left text-sm text-[var(--color-text-dim)] hover:text-[var(--color-accent)] transition-colors flex items-center gap-2 group'
-                                                >
-                                                    <span className='opacity-0 group-hover:opacity-100 transition-opacity'>&gt;</span> {q}
-                                                </button>
-                                            ))}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Right Pane: Chat Interface */}
-                            <div className='terminal-pane bg-black/20 flex flex-col p-0 overflow-hidden w-full'>
-                                <div className='flex-grow overflow-y-auto p-6 scrollbar-hide flex flex-col gap-6'>
-                                    {messages.map((m, i) => (
-                                        <div key={i} className={`flex flex-col ${m.isUser ? 'items-end' : 'items-start'}`}>
-                                            <div className='flex items-center gap-2 mb-2'>
-                                                {!m.isUser && <span className='text-[var(--color-accent)] text-xs font-mono font-bold'>[RESUME_AI]</span>}
-                                                {m.isUser && <span className='text-[var(--color-accent-blue)] text-xs font-mono font-bold'>[USER]</span>}
-                                            </div>
-                                            <div className={`max-w-[90%] md:max-w-[85%] font-mono text-sm leading-relaxed ${m.isUser ? 'text-right text-[var(--color-text)]' : 'text-[var(--color-text-dim)]'}`}>
-                                                {!m.isUser ? (
-                                                    <div className='prose prose-invert prose-sm max-w-none'>
-                                                        <ReactMarkdown
-                                                            remarkPlugins={[remarkGfm as any]}
-                                                            rehypePlugins={[rehypeRaw as any]}
-                                                            components={{ code: CodeBlock }}
-                                                        >
-                                                            {m.content}
-                                                        </ReactMarkdown>
-                                                    </div>
-                                                ) : (
-                                                    <p>{m.content}</p>
-                                                )}
-                                            </div>
-                                        </div>
-                                    ))}
-
-                                    {streamingMessage && (
-                                        <div className='flex flex-col items-start'>
-                                            <div className='flex items-center gap-2 mb-2'>
-                                                <span className='text-[var(--color-accent)] text-xs font-mono font-bold'>[RESUME_AI]</span>
-                                            </div>
-                                            <div className='max-w-[90%] md:max-w-[85%] font-mono text-sm text-[var(--color-text-dim)] leading-relaxed'>
-                                                <div className='prose prose-invert prose-sm max-w-none'>
-                                                    <ReactMarkdown
-                                                        remarkPlugins={[remarkGfm as any]}
-                                                        rehypePlugins={[rehypeRaw as any]}
-                                                        components={{ code: CodeBlock }}
-                                                    >
-                                                        {streamingMessage}
-                                                    </ReactMarkdown>
-                                                </div>
-                                                <span className='inline-block w-2 h-4 bg-[var(--color-accent)] ml-1 animate-pulse' />
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    {isLoading && !streamingMessage && (
-                                        <div className='flex items-center gap-2 text-[var(--color-text-dim)] text-xs font-mono italic animate-pulse'>
-                                            <span>Searching database...</span>
-                                        </div>
-                                    )}
-                                    <div ref={messagesEndRef} />
-                                </div>
-
-                                {/* Terminal Input Field */}
-                                <div className='p-4 bg-black/40 border-t border-[var(--color-border)]'>
-                                    <form
-                                        onSubmit={(e) => { e.preventDefault(); sendMessage(input); }}
-                                        className='flex items-center gap-3 px-3 py-2 bg-white/5 border border-[var(--color-border)] rounded focus-within:border-[var(--color-accent)] transition-colors'
+                    <div className='flex-grow overflow-y-auto p-4 space-y-6'>
+                        <div>
+                            <h3 className='text-[10px] font-bold uppercase tracking-[0.2em] text-muted mb-4 px-2'>Suggested Queries</h3>
+                            <div className='space-y-2'>
+                                {suggestedQueries.map((q, i) => (
+                                    <button
+                                        key={i}
+                                        onClick={() => sendMessage(q)}
+                                        className='w-full p-3 text-left rounded-xl hover:bg-white/60 border border-transparent hover:border-[var(--border-light)] transition-all flex items-center gap-2 group'
                                     >
-                                        <span className='text-[var(--color-accent)] font-mono'>$</span>
-                                        <input
-                                            type='text'
-                                            value={input}
-                                            onChange={(e) => setInput(e.target.value)}
-                                            placeholder='Ask about John...'
-                                            className='flex-grow bg-transparent border-none outline-none text-sm font-mono text-[var(--color-text)] placeholder:text-[var(--color-text-dim)] placeholder:opacity-40'
-                                            disabled={isLoading}
-                                        />
-                                        <button
-                                            type='submit'
-                                            disabled={isLoading || !input.trim()}
-                                            className='text-[var(--color-accent)] hover:scale-110 transition-transform disabled:opacity-30'
-                                        >
-                                            <svg width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2.5' strokeLinecap='round' strokeLinejoin='round'>
-                                                <path d='M5 12h14M12 5l7 7-7 7' />
-                                            </svg>
-                                        </button>
-                                    </form>
-                                </div>
+                                        <div className='w-6 h-6 rounded-full bg-[var(--bg-2)] flex items-center justify-center text-[var(--purple-4)] text-[10px] font-bold group-hover:bg-[var(--purple-1)] transition-colors'>
+                                            ?
+                                        </div>
+                                        <span className='text-xs font-medium text-[var(--fg-4)]'>{q}</span>
+                                    </button>
+                                ))}
                             </div>
                         </div>
                     </div>
+
+                    <div className='p-4 border-t border-[var(--border-light)]'>
+                        <button
+                            onClick={() => { setMessages([]); setShowWelcome(true); }}
+                            className='w-full py-2 px-4 rounded-lg border border-red-100 hover:bg-red-50 text-red-500 text-xs font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-2'
+                        >
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+                            </svg>
+                            Clear Conversation
+                        </button>
+                    </div>
+                </aside>
+
+                {/* Main Chat Area */}
+                <div className='flex-grow flex flex-col h-full relative bg-[#fafbff]'>
+                    {/* Floating decorations for main area */}
+                    <div className='absolute top-0 right-0 w-[500px] h-[500px] bg-[var(--purple-1)] opacity-40 rounded-full blur-3xl pointer-events-none -translate-y-1/2 translate-x-1/2' />
+
+                    <div className='flex-grow overflow-y-auto p-4 md:p-8 scrollbar-hide space-y-8 pb-32 z-10'>
+                        {showWelcome && (
+                            <div className='flex flex-col items-center justify-center h-full text-center space-y-6 opacity-0 animate-fade-in-up' style={{ animationFillMode: 'forwards' }}>
+                                <div>
+                                    <h1 className='text-2xl font-bold text-[var(--fg-4)] mb-2'>Hi! I know everything about John.</h1>
+                                    <p className='text-muted max-w-md mx-auto'>
+                                        Ask me anything about his experience, skills, projects, or background.
+                                    </p>
+                                </div>
+                                <div className='grid grid-cols-1 md:grid-cols-2 gap-3 max-w-lg w-full px-4'>
+                                    {suggestedQueries.slice(0, 4).map((q, i) => (
+                                        <button
+                                            key={i}
+                                            onClick={() => sendMessage(q)}
+                                            className='p-4 bg-white border border-[var(--border-light)] rounded-xl text-xs font-medium text-[var(--fg-4)] hover:border-[var(--purple-2)] hover:shadow-sm transition-all text-left'
+                                        >
+                                            {q}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {messages.map((m, i) => (
+                            <div key={i} className={`flex ${m.isUser ? 'justify-end' : 'justify-start'} animate-fade-in-up`}>
+                                <div className={`max-w-[90%] md:max-w-3xl ${m.isUser
+                                    ? 'bg-[var(--fg-4)] text-white rounded-2xl rounded-tr-sm px-5 py-3 shadow-lg'
+                                    : 'bg-white rounded-2xl rounded-tl-sm px-6 py-5 shadow-sm border border-[var(--border-light)]'
+                                    }`}>
+                                    {!m.isUser && (
+                                        <div className='flex items-center gap-2 mb-3 pb-3 border-b border-gray-100'>
+                                            <span className='text-[10px] font-bold uppercase tracking-widest text-[var(--purple-4)]'>
+                                                Resume AI
+                                            </span>
+                                        </div>
+                                    )}
+                                    <div className={`prose prose-sm max-w-none ${m.isUser ? 'prose-invert' : 'blog-content'}`}>
+                                        {m.isUser ? (
+                                            <p className='whitespace-pre-wrap leading-relaxed'>{m.content}</p>
+                                        ) : (
+                                            <ReactMarkdown
+                                                remarkPlugins={[remarkGfm]}
+                                                rehypePlugins={[rehypeRaw]}
+                                                components={{
+                                                    code: CodeBlock as any,
+                                                    table: ({ children }) => <div className="table-wrapper"><table className="w-full">{children}</table></div>,
+                                                    thead: ({ children }) => <thead className="bg-[var(--gray-1)]">{children}</thead>,
+                                                    th: ({ children }) => <th className="p-3 text-left font-bold text-xs uppercase tracking-wider text-[var(--fg-4)] border-b border-[var(--border-light)]">{children}</th>,
+                                                    td: ({ children }) => <td className="p-3 border-b border-[var(--border-light)] text-sm">{children}</td>,
+                                                }}
+                                            >
+                                                {m.content}
+                                            </ReactMarkdown>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+
+                        {streamingMessage && (
+                            <div className='flex justify-start animate-fade-in-up'>
+                                <div className='max-w-[90%] md:max-w-3xl bg-white rounded-2xl rounded-tl-sm px-6 py-5 shadow-sm border border-[var(--border-light)]'>
+                                    <div className='flex items-center gap-2 mb-3 pb-3 border-b border-gray-100'>
+                                        <span className='text-[10px] font-bold uppercase tracking-widest text-[var(--purple-4)]'>
+                                            Thinking...
+                                        </span>
+                                    </div>
+                                    <div className='prose prose-sm max-w-none blog-content'>
+                                        <ReactMarkdown
+                                            remarkPlugins={[remarkGfm]}
+                                            rehypePlugins={[rehypeRaw]}
+                                            components={{
+                                                code: CodeBlock as any,
+                                                table: ({ children }) => <div className="table-wrapper"><table className="w-full">{children}</table></div>,
+                                                thead: ({ children }) => <thead className="bg-[var(--gray-1)]">{children}</thead>,
+                                                th: ({ children }) => <th className="p-3 text-left font-bold text-xs uppercase tracking-wider text-[var(--fg-4)] border-b border-[var(--border-light)]">{children}</th>,
+                                                td: ({ children }) => <td className="p-3 border-b border-[var(--border-light)] text-sm">{children}</td>,
+                                            }}
+                                        >
+                                            {streamingMessage}
+                                        </ReactMarkdown>
+                                        <span className='inline-block w-1.5 h-4 bg-[var(--purple-4)] ml-1 animate-pulse align-middle rounded-full' />
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {isLoading && !streamingMessage && (
+                            <div className='flex justify-start animate-fade-in-up'>
+                                <div className='max-w-[90%] md:max-w-3xl bg-white rounded-2xl rounded-tl-sm px-6 py-4 shadow-sm border border-[var(--border-light)]'>
+                                    <div className='flex items-center gap-1.5'>
+                                        <div className='w-2 h-2 rounded-full bg-[var(--purple-4)] animate-bounce' style={{ animationDelay: '0ms' }} />
+                                        <div className='w-2 h-2 rounded-full bg-[var(--purple-4)] animate-bounce' style={{ animationDelay: '150ms' }} />
+                                        <div className='w-2 h-2 rounded-full bg-[var(--purple-4)] animate-bounce' style={{ animationDelay: '300ms' }} />
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                        <div ref={messagesEndRef} />
+                    </div>
+
+                    {/* Input Area */}
+                    <div className='p-4 md:p-6 bg-white/80 backdrop-blur-xl border-t border-[var(--border-light)] z-20'>
+                        <div className='max-w-3xl mx-auto'>
+                            <form
+                                onSubmit={(e) => { e.preventDefault(); sendMessage(input); }}
+                                className='relative group'
+                            >
+                                <input
+                                    type='text'
+                                    value={input}
+                                    onChange={(e) => setInput(e.target.value)}
+                                    placeholder='Ask about John...'
+                                    className='w-full bg-white border border-[var(--border-light)] rounded-full pl-6 pr-14 py-4 shadow-sm focus:shadow-lg focus:border-[var(--purple-4)] outline-none transition-all text-sm font-medium text-[var(--fg-4)] placeholder:text-muted/60'
+                                    disabled={isLoading}
+                                    autoFocus
+                                />
+                                <button
+                                    type='submit'
+                                    disabled={isLoading || !input.trim()}
+                                    className='absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-[var(--fg-4)] hover:bg-[var(--purple-4)] text-white rounded-full flex items-center justify-center transition-all disabled:opacity-50 disabled:hover:bg-[var(--fg-4)] shadow-md hover:shadow-lg hover:scale-105 active:scale-95'
+                                >
+                                    {isLoading ? (
+                                        <div className='w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin' />
+                                    ) : (
+                                        <svg width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2.5' strokeLinecap='round' strokeLinejoin='round'>
+                                            <path d='M5 12h14M12 5l7 7-7 7' />
+                                        </svg>
+                                    )}
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
+
+                {/* Mobile Suggestions Overlay */}
+                {isMobileSuggestionsOpen && (
+                    <div className='fixed inset-0 z-[100] flex items-end justify-center bg-black/40 backdrop-blur-sm p-4 md:hidden' onClick={() => setIsMobileSuggestionsOpen(false)}>
+                        <div className='w-full max-w-sm bg-white rounded-2xl shadow-2xl animate-slide-up overflow-hidden border border-[var(--border-light)]' onClick={e => e.stopPropagation()}>
+                            <div className='p-4 border-b border-[var(--border-light)] flex justify-between items-center bg-[var(--bg-2)]'>
+                                <span className='text-xs font-bold uppercase tracking-widest text-[var(--fg-4)]'>Suggested Queries</span>
+                                <button onClick={() => setIsMobileSuggestionsOpen(false)} className='w-6 h-6 rounded-full bg-white border border-[var(--border-light)] flex items-center justify-center text-muted'>✕</button>
+                            </div>
+                            <div className='p-2 max-h-[60vh] overflow-y-auto'>
+                                {suggestedQueries.map((q, i) => (
+                                    <button
+                                        key={i}
+                                        onClick={() => sendMessage(q)}
+                                        className='w-full p-3 text-left rounded-xl hover:bg-[var(--bg-2)] border border-transparent transition-all flex items-center gap-3'
+                                    >
+                                        <div className='w-6 h-6 rounded-full bg-[var(--purple-1)] flex items-center justify-center text-[var(--purple-4)] text-[10px] font-bold'>
+                                            ?
+                                        </div>
+                                        <span className='text-xs font-medium text-[var(--fg-4)]'>{q}</span>
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                )}
             </main>
         </>
     );
 }
+

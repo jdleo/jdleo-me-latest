@@ -17,10 +17,10 @@ export default function Apps() {
     return (
         <>
             <WebVitals />
-            <main className='relative min-h-screen overflow-hidden selection:bg-[var(--purple-2)] selection:text-[var(--purple-4)]'>
+            <main className='relative min-h-screen bg-[#fafbff] overflow-hidden selection:bg-[var(--purple-2)] selection:text-[var(--purple-4)]'>
                 {/* Floating Decorations */}
-                <div className='float-decoration float-1' />
-                <div className='float-decoration float-2' />
+                <div className='absolute top-0 right-0 w-[600px] h-[600px] bg-[var(--purple-1)] opacity-40 rounded-full blur-3xl pointer-events-none -translate-y-1/2 translate-x-1/2' />
+                <div className='absolute bottom-0 left-0 w-[400px] h-[400px] bg-blue-100 opacity-40 rounded-full blur-3xl pointer-events-none translate-y-1/2 -translate-x-1/2' />
 
                 {/* Header Navigation */}
                 <header className={`fixed top-0 left-0 right-0 z-50 px-6 py-4 transition-all duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
@@ -78,7 +78,7 @@ export default function Apps() {
                                             </div>
                                         </div>
 
-                                        <h2 className='text-sm md:text-xl font-bold mb-1 md:mb-2 group-hover:text-[var(--purple-4)] transition-colors line-clamp-1'>
+                                        <h2 className={`font-bold mb-1 md:mb-2 group-hover:text-[var(--purple-4)] transition-colors truncate ${app.title.length > 18 ? 'text-xs md:text-lg' : 'text-sm md:text-xl'}`}>
                                             {app.title}
                                         </h2>
 

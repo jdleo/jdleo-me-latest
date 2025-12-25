@@ -26,6 +26,7 @@ export default function Privacy() {
         memory: 'Not Available',
         cores: 0,
     });
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     useEffect(() => {
         const timer = setTimeout(() => setIsLoaded(true), 100);
@@ -56,117 +57,150 @@ export default function Privacy() {
     }, []);
 
     const metaItems = [
-        { label: 'DEVICE_PLATFORM', value: browserInfo.platform },
-        { label: 'LOCALE_IDENTIFIER', value: browserInfo.language },
-        { label: 'CHRONO_ZONE', value: browserInfo.timezone },
-        { label: 'DISPLAY_MATRIX', value: `${browserInfo.screen.width}x${browserInfo.screen.height}` },
-        { label: 'COLOR_DEPTH_BITS', value: `${browserInfo.screen.colorDepth}-BIT` },
-        { label: 'HARDWARE_CONCURRENCY', value: `${browserInfo.cores} CORES` },
-        { label: 'VOLATILE_MEMORY', value: browserInfo.memory },
-        { label: 'REMOTE_HOST_ADDR', value: ipInfo?.ip || 'SCANNING...' },
-        { label: 'CLIENT_IDENTIFIER_HASH', value: fingerprint || 'GENERATING...' },
+        { label: 'Device Platform', value: browserInfo.platform, icon: '💻' },
+        { label: 'Locale / Language', value: browserInfo.language, icon: '🌐' },
+        { label: 'Timezone', value: browserInfo.timezone, icon: '🕒' },
+        { label: 'Display Resolution', value: `${browserInfo.screen.width}x${browserInfo.screen.height}`, icon: '🖥️' },
+        { label: 'Color Depth', value: `${browserInfo.screen.colorDepth}-bit`, icon: '🎨' },
+        { label: 'CPU Cores', value: `${browserInfo.cores} Cores`, icon: '⚙️' },
+        { label: 'Memory (RAM)', value: browserInfo.memory, icon: '💾' },
+        { label: 'Fingerprint Hash', value: fingerprint || 'GENERATING...', icon: '🆔' },
     ];
 
     return (
         <>
             <WebVitals />
-            <main className='min-h-screen bg-[var(--color-bg)] flex items-center justify-center p-4 md:p-8 selection:bg-[var(--color-accent)] selection:text-[var(--color-bg)]'>
-                <div className='fixed inset-0 overflow-hidden pointer-events-none'>
-                    <div className='absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(62,175,124,0.03),transparent_60%)]' />
-                </div>
+            <main className='relative h-screen bg-[#fafbff] overflow-hidden selection:bg-[var(--purple-2)] selection:text-[var(--purple-4)] flex flex-col md:flex-row'>
 
-                <div className={`w-full max-w-6xl h-[85vh] transition-all duration-1000 transform ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-                    <div className='terminal-window flex flex-col h-full'>
-                        <div className='terminal-header'>
-                            <div className='terminal-controls'>
-                                <div className='terminal-control red' />
-                                <div className='terminal-control yellow' />
-                                <div className='terminal-control green' />
+                {/* Mobile Header */}
+                <header className='md:hidden flex items-center justify-between p-4 border-b border-[var(--border-light)] bg-white/80 backdrop-blur-md z-50'>
+                    <Link href='/apps' className='text-sm font-bold uppercase tracking-widest text-muted hover:text-[var(--purple-4)]'>
+                        ← Apps
+                    </Link>
+                    <button
+                        onClick={() => setIsMobileMenuOpen(true)}
+                        className='px-3 py-1.5 bg-white border border-[var(--border-light)] rounded-full shadow-sm text-xs font-bold uppercase tracking-wider text-[var(--fg-4)] flex items-center gap-1.5'
+                    >
+                        <span>Status</span>
+                        <span className='text-[10px]'>▼</span>
+                    </button>
+                </header>
+
+                {/* Left Sidebar (Desktop) */}
+                <aside className='hidden md:flex flex-col w-80 h-full border-r border-[var(--border-light)] bg-white/50 backdrop-blur-xl z-20'>
+                    <div className='p-6 border-b border-[var(--border-light)]'>
+                        <div className='flex items-center gap-3 mb-6'>
+                            <div className='w-3 h-3 rounded-full bg-[var(--purple-4)]' />
+                            <span className='font-bold uppercase tracking-widest text-sm text-[var(--fg-4)]'>Privacy Scan</span>
+                        </div>
+                        <nav className='flex flex-col gap-2'>
+                            <Link href='/apps' className='text-xs font-bold uppercase tracking-wider text-muted hover:text-[var(--purple-4)] transition-colors flex items-center gap-2'>
+                                <span>←</span> Back to Apps
+                            </Link>
+                        </nav>
+                    </div>
+
+                    <div className='flex-grow overflow-y-auto p-6 space-y-8'>
+                        <div>
+                            <h3 className='text-[10px] font-bold uppercase tracking-[0.2em] text-muted mb-4'>Exposure Status</h3>
+                            <div className='space-y-4'>
+                                <div className='bg-red-50 border border-red-100 p-4 rounded-xl'>
+                                    <span className='text-[10px] font-bold uppercase tracking-wider text-red-500 block mb-2'>Public IP Address</span>
+                                    <div className='text-xl font-bold text-red-600 font-mono tracking-tight'>
+                                        {ipInfo?.ip || 'SCANNING...'}
+                                    </div>
+                                </div>
+                                <div className='bg-white border border-[var(--border-light)] p-4 rounded-xl shadow-sm'>
+                                    <span className='text-[10px] font-bold uppercase tracking-wider text-muted block mb-2'>Approximate Location</span>
+                                    <div className='text-sm font-bold text-[var(--fg-4)]'>
+                                        {ipInfo ? `${ipInfo.city}, ${ipInfo.country}` : 'LOCATING...'}
+                                    </div>
+                                    <div className='text-xs text-muted mt-1'>{ipInfo?.region}</div>
+                                </div>
                             </div>
-                            <div className='terminal-title'>johnleonardo — ~/privacy-exposure-scanner</div>
                         </div>
 
-                        <div className='terminal-split flex-grow overflow-hidden'>
-                            {/* Left Sidebar: Key Identifiers */}
-                            <div className='terminal-pane border-r border-[var(--color-border)] hidden md:flex flex-col gap-8'>
+
+                    </div>
+                </aside>
+
+                {/* Main Content Area */}
+                <div className='flex-grow flex flex-col h-full relative bg-[#fafbff] overflow-hidden'>
+                    {/* Floating decorations */}
+                    <div className='absolute top-0 right-0 w-[500px] h-[500px] bg-[var(--purple-1)] opacity-30 rounded-full blur-3xl pointer-events-none -translate-y-1/2 translate-x-1/2' />
+
+                    <div className='flex-grow overflow-auto p-4 md:p-8 z-10 custom-scrollbar'>
+                        <div className='max-w-4xl mx-auto w-full space-y-8 animate-fade-in-up'>
+
+                            {/* Header Section */}
+                            <div className='flex items-center justify-between'>
                                 <div>
-                                    <div className='flex items-center gap-2 mb-6 text-[var(--color-accent)]'>
-                                        <span className='terminal-prompt'>➜</span>
-                                        <span className='text-sm uppercase tracking-widest font-bold'>Exposure</span>
-                                    </div>
-                                    <nav className='flex flex-col gap-4 mb-10'>
-                                        <div className='p-4 border border-red-500/20 bg-red-500/5 rounded-lg font-mono'>
-                                            <span className='text-[10px] text-red-400 uppercase tracking-widest block mb-2 font-bold'>Resource_Leaked</span>
-                                            <div className='text-xl font-bold text-white truncate'>{ipInfo?.ip || 'SCANNING...'}</div>
-                                            <span className='text-[9px] opacity-40 uppercase block mt-1'>{ipInfo ? `${ipInfo.city}, ${ipInfo.country}` : 'LOCATING...'}</span>
-                                        </div>
-                                        <Link href='/' className='text-sm hover:text-[var(--color-accent)] transition-colors mt-4 font-mono uppercase tracking-[0.2em] opacity-60'>~/home</Link>
-                                        <Link href='/apps' className='text-sm hover:text-[var(--color-accent)] transition-colors font-mono uppercase tracking-[0.2em] opacity-60'>~/apps</Link>
-                                    </nav>
-
-                                    <div className='space-y-6 font-mono'>
-                                        <div>
-                                            <span className='text-[var(--color-text)] opacity-40 text-[10px] uppercase tracking-widest block mb-4'>$ cat fingerprint.id</span>
-                                            <div className='text-[11px] font-mono text-[var(--color-accent)] break-all bg-black/40 p-3 border border-[var(--color-border)] rounded'>
-                                                {fingerprint || '[CALCULATING_HASH...]'}
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <h2 className='text-2xl font-bold text-[var(--fg-4)]'>Digital Fingerprint</h2>
+                                    <p className='text-sm text-muted mt-1'>Data exposed to every website you visit.</p>
                                 </div>
-                                <div className='mt-auto pt-8 border-t border-[var(--color-border)] opacity-30 font-mono text-[9px] uppercase tracking-tighter leading-relaxed'>
-                                    "Passive reconnaissance of client-side artifacts and network headers."
+                                <div className='px-3 py-1 bg-red-50 text-red-500 border border-red-100 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-2'>
+                                    <span className='relative flex h-2 w-2'>
+                                        <span className='animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75'></span>
+                                        <span className='relative inline-flex rounded-full h-2 w-2 bg-red-500'></span>
+                                    </span>
+                                    Detected
                                 </div>
                             </div>
 
-                            {/* Main Display: Full Exposure Matrix */}
-                            <div className='terminal-pane bg-black/40 flex flex-col p-8 overflow-y-auto w-full'>
-                                <div className='max-w-4xl mx-auto w-full space-y-10'>
-                                    <div className='flex items-center gap-4 opacity-40'>
-                                        <span className='text-[10px] font-mono uppercase tracking-widest'>Client_Artifact_Exposure_Matrix</span>
-                                        <div className='h-[1px] flex-grow bg-[var(--color-border)]' />
-                                    </div>
-
-                                    <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-                                        {metaItems.map(item => (
-                                            <div key={item.label} className='border border-[var(--color-border)] p-5 rounded-lg bg-black/40 hover:border-[var(--color-accent)]/30 transition-all group'>
-                                                <span className='text-[9px] font-mono text-[var(--color-accent)] opacity-40 uppercase tracking-widest block mb-2 group-hover:opacity-80 transition-opacity'>{item.label}</span>
-                                                <div className='text-xs font-mono text-[var(--color-text)] break-all uppercase selection:bg-[var(--color-accent)] selection:text-black'>
-                                                    {item.value || '[NULL]'}
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-
-                                    <div className='pt-10 border-t border-[var(--color-border)]'>
-                                        <div className='flex items-center gap-2 mb-6 text-red-400 font-mono'>
-                                            <span className='terminal-prompt'>$</span>
-                                            <span className='text-[10px] uppercase tracking-widest opacity-60'>User_Agent_String</span>
+                            {/* Artifact Grid */}
+                            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+                                {metaItems.map(item => (
+                                    <div key={item.label} className='bg-white p-5 rounded-2xl border border-[var(--border-light)] shadow-sm hover:shadow-md hover:border-[var(--purple-2)] transition-all group'>
+                                        <div className='flex items-start justify-between mb-3'>
+                                            <span className='text-2xl opacity-50 grayscale group-hover:grayscale-0 transition-all'>{item.icon}</span>
+                                            <span className='text-[10px] font-bold uppercase tracking-wider text-muted'>{item.label}</span>
                                         </div>
-                                        <div className='p-6 bg-red-400/5 border border-red-500/20 rounded-lg selection:bg-red-400/20'>
-                                            <p className='text-xs font-mono text-red-300 leading-relaxed break-all uppercase'>
-                                                {browserInfo.userAgent}
-                                            </p>
+                                        <div className='text-sm font-bold text-[var(--fg-4)] font-mono break-all'>
+                                            {item.value}
                                         </div>
                                     </div>
+                                ))}
+                            </div>
 
-                                    <div className='flex flex-col items-center gap-4 py-12 opacity-30 animate-pulse'>
-                                        <div className='flex gap-2 font-mono text-[10px] uppercase tracking-[0.4em]'>
-                                            <span className='text-red-500'>[DATA_COLLECTED]</span>
-                                            <span className='text-red-500'>[TRACKING_ACTIVE]</span>
+                            {/* User Agent Block */}
+                            <div className='bg-white p-6 rounded-2xl border border-[var(--border-light)] shadow-sm'>
+                                <span className='text-[10px] font-bold uppercase tracking-wider text-muted block mb-3'>User Agent String</span>
+                                <div className='p-4 bg-[var(--bg-2)] rounded-xl border border-[var(--border-light)]'>
+                                    <code className='text-xs font-mono text-[var(--fg-4)] break-all leading-relaxed'>
+                                        {browserInfo.userAgent}
+                                    </code>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Mobile Menu Overlay */}
+                    {isMobileMenuOpen && (
+                        <div className='fixed inset-0 z-[100] flex items-end justify-center bg-black/40 backdrop-blur-sm p-4 md:hidden' onClick={() => setIsMobileMenuOpen(false)}>
+                            <div className='w-full max-w-sm bg-white rounded-2xl shadow-2xl animate-slide-up overflow-hidden border border-[var(--border-light)]' onClick={e => e.stopPropagation()}>
+                                <div className='p-4 border-b border-[var(--border-light)] flex justify-between items-center bg-[var(--bg-2)]'>
+                                    <span className='text-xs font-bold uppercase tracking-widest text-[var(--fg-4)]'>Exposure Data</span>
+                                    <button onClick={() => setIsMobileMenuOpen(false)} className='w-6 h-6 rounded-full bg-white border border-[var(--border-light)] flex items-center justify-center text-muted'>✕</button>
+                                </div>
+                                <div className='p-4 space-y-4'>
+                                    <div className='bg-red-50 p-4 rounded-xl border border-red-100 text-center'>
+                                        <span className='text-[10px] font-bold uppercase tracking-wider text-red-500 block mb-1'>IP Address</span>
+                                        <span className='text-lg font-bold text-red-600 font-mono'>{ipInfo?.ip || '...'}</span>
+                                    </div>
+                                    <div className='grid grid-cols-2 gap-3'>
+                                        <div className='bg-[var(--bg-2)] p-3 rounded-xl border border-[var(--border-light)]'>
+                                            <span className='text-[10px] font-bold uppercase tracking-wider text-muted block mb-1'>Platform</span>
+                                            <span className='text-xs font-bold text-[var(--fg-4)]'>{browserInfo.platform}</span>
+                                        </div>
+                                        <div className='bg-[var(--bg-2)] p-3 rounded-xl border border-[var(--border-light)]'>
+                                            <span className='text-[10px] font-bold uppercase tracking-wider text-muted block mb-1'>Cores</span>
+                                            <span className='text-xs font-bold text-[var(--fg-4)]'>{browserInfo.cores}</span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    {/* Console decoration */}
-                    <div className='mt-4 flex items-center justify-between text-[10px] font-mono text-[var(--color-text-dim)] opacity-40 uppercase tracking-[0.2em] px-4'>
-                        <div className='flex gap-6'>
-                            <span>Protocol: TCP/IP_V4</span>
-                            <span>Encryption: TLS_1.3</span>
-                        </div>
-                        <span>Status: scan_complete</span>
-                    </div>
+                    )}
                 </div>
             </main>
         </>

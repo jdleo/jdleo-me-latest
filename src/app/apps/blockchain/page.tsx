@@ -18,68 +18,7 @@ type Block = {
 
 const GENESIS_HASH = '0'.repeat(64);
 
-const BlockCard = ({
-    block,
-    index,
-    onDataChange,
-    onMine,
-    isMining,
-    isValid,
-    needsRemining,
-}: {
-    block: Block;
-    index: number;
-    onDataChange: (index: number, data: string) => void;
-    onMine: (index: number) => void;
-    isMining: boolean;
-    isValid: boolean;
-    needsRemining: boolean;
-}) => (
-    <div className={`w-[280px] p-4 rounded-lg flex-shrink-0 transition-all duration-300 border ${isValid ? 'bg-white/5 border-[var(--color-border)] hover:border-[var(--color-accent)]/30' : 'bg-red-500/10 border-red-500/50 shadow-lg'}`}>
-        <div className='flex flex-col gap-4'>
-            <div className='flex justify-between items-center'>
-                <span className={`text-[10px] font-mono tracking-widest uppercase ${isValid ? 'text-[var(--color-text-dim)]' : 'text-red-400'}`}>BLOCK_0{index + 1}</span>
-                {needsRemining && <span className='text-[8px] font-mono bg-[var(--color-accent)]/20 text-[var(--color-accent)] px-1.5 py-0.5 rounded'>MINE_REQUIRED</span>}
-            </div>
 
-            <textarea
-                value={block.data}
-                onChange={e => onDataChange(index, e.target.value)}
-                placeholder='DATA_PAYLOAD'
-                className='w-full bg-black/40 border border-[var(--color-border)] p-2 text-xs font-mono text-[var(--color-text)] rounded focus:border-[var(--color-accent)] outline-none transition-colors resize-none h-20'
-            />
-
-            <div className='space-y-4 text-[10px] font-mono'>
-                <div className='flex justify-between border-b border-[var(--color-border)] pb-1'>
-                    <span className='opacity-40 uppercase'>Nonce</span>
-                    <span className='text-[var(--color-accent)]'>{block.nonce}</span>
-                </div>
-
-                <div className='space-y-1.5'>
-                    <span className='opacity-40 uppercase block'>Prev_Hash</span>
-                    <div className='text-[9px] bg-black/40 p-2 rounded break-all opacity-80 leading-relaxed truncate'>
-                        {block.previousHash}
-                    </div>
-                </div>
-
-                <div className='space-y-1.5'>
-                    <span className='opacity-40 uppercase block'>Current_Hash</span>
-                    <div className={`text-[9px] p-2 rounded break-all leading-relaxed ${isValid ? 'bg-black/40 text-[var(--color-accent)]' : 'bg-red-500/20 text-red-400'}`}>
-                        {block.hash}
-                    </div>
-                </div>
-            </div>
-
-            <button
-                onClick={() => onMine(index)}
-                disabled={isMining}
-                className={`w-full py-2 border border-[var(--color-accent)]/30 hover:bg-[var(--color-accent)]/10 text-[var(--color-accent)] text-[10px] font-mono transition-all rounded uppercase tracking-widest ${isMining ? 'animate-pulse opacity-50 cursor-not-allowed' : ''}`}
-            >
-                {isMining ? 'MINE_IN_PROGRESS...' : '[EXECUTE_MINING]'}
-            </button>
-        </div>
-    </div>
-);
 
 export default function Blockchain() {
     const [blocks, setBlocks] = useState<Block[]>([
@@ -92,7 +31,6 @@ export default function Blockchain() {
     const [isLoaded, setIsLoaded] = useState(false);
     const [invalidBlocks, setInvalidBlocks] = useState<Set<number>>(new Set());
     const [blocksNeedingRemining, setBlocksNeedingRemining] = useState<Set<number>>(new Set());
-    const scrollContainerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const timer = setTimeout(() => setIsLoaded(true), 100);
@@ -198,132 +136,236 @@ export default function Blockchain() {
         setTimeout(() => setShowConfetti(false), 3000);
     };
 
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
     return (
         <>
             <WebVitals />
             {showConfetti && <ReactConfetti style={{ zIndex: 100 }} />}
-            <main className='min-h-screen bg-[var(--color-bg)] flex items-center justify-center p-4 md:p-8 selection:bg-[var(--color-accent)] selection:text-[var(--color-bg)]'>
-                <div className='fixed inset-0 overflow-hidden pointer-events-none'>
-                    <div className='absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(62,175,124,0.03),transparent_60%)]' />
-                    <div className='absolute inset-0' style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,0.02) 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
-                </div>
+            <main className='relative h-screen bg-[#fafbff] overflow-hidden selection:bg-[var(--purple-2)] selection:text-[var(--purple-4)] flex flex-col md:flex-row'>
 
-                <div className={`w-full max-w-6xl h-[85vh] transition-all duration-1000 transform ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-                    <div className='terminal-window flex flex-col h-full'>
-                        <div className='terminal-header'>
-                            <div className='terminal-controls'>
-                                <div className='terminal-control red' />
-                                <div className='terminal-control yellow' />
-                                <div className='terminal-control green' />
+                {/* Mobile Header */}
+                <header className='md:hidden flex items-center justify-between p-4 border-b border-[var(--border-light)] bg-white/80 backdrop-blur-md z-50'>
+                    <Link href='/apps' className='text-sm font-bold uppercase tracking-widest text-muted hover:text-[var(--purple-4)]'>
+                        ← Apps
+                    </Link>
+                    <button
+                        onClick={() => setIsMobileMenuOpen(true)}
+                        className='px-3 py-1.5 bg-white border border-[var(--border-light)] rounded-full shadow-sm text-xs font-bold uppercase tracking-wider text-[var(--fg-4)] flex items-center gap-1.5'
+                    >
+                        <span>Protocol</span>
+                        <span className='text-[10px]'>▼</span>
+                    </button>
+                </header>
+
+                {/* Left Sidebar (Desktop) */}
+                <aside className='hidden md:flex flex-col w-80 h-full border-r border-[var(--border-light)] bg-white/50 backdrop-blur-xl z-20'>
+                    <div className='p-6 border-b border-[var(--border-light)]'>
+                        <div className='flex items-center gap-3 mb-6'>
+                            <div className='w-3 h-3 rounded-full bg-[var(--purple-4)]' />
+                            <span className='font-bold uppercase tracking-widest text-sm text-[var(--fg-4)]'>Blockchain Net</span>
+                        </div>
+                        <nav className='flex flex-col gap-2'>
+                            <Link href='/apps' className='text-xs font-bold uppercase tracking-wider text-muted hover:text-[var(--purple-4)] transition-colors flex items-center gap-2'>
+                                <span>←</span> Back to Apps
+                            </Link>
+                        </nav>
+                    </div>
+
+                    <div className='flex-grow overflow-y-auto p-6 space-y-8'>
+                        <div>
+                            <h3 className='text-[10px] font-bold uppercase tracking-[0.2em] text-muted mb-4'>Protocol Difficulty</h3>
+                            <div className='bg-white p-4 rounded-xl border border-[var(--border-light)] shadow-sm'>
+                                <input
+                                    type='range'
+                                    min='1'
+                                    max='5' // Reduced max for better UX
+                                    value={difficulty}
+                                    onChange={e => setDifficulty(Number(e.target.value))}
+                                    className='w-full accent-[var(--purple-4)] h-2 bg-[var(--bg-2)] rounded-lg appearance-none cursor-pointer'
+                                />
+                                <div className='flex justify-between text-[10px] font-bold uppercase tracking-wider mt-3'>
+                                    <span className='text-muted'>Fast</span>
+                                    <span className='text-[var(--purple-4)] bg-[var(--purple-1)] px-2 py-0.5 rounded'>{difficulty} Zeros</span>
+                                    <span className='text-muted'>Secure</span>
+                                </div>
                             </div>
-                            <div className='terminal-title'>johnleonardo — ~/blockchain-net</div>
                         </div>
 
-                        <div className='terminal-split flex-grow overflow-hidden'>
-                            {/* Left Sidebar: Controls & Metrics */}
-                            <div className='terminal-pane border-r border-[var(--color-border)] hidden md:flex flex-col gap-8'>
-                                <div>
-                                    <div className='flex items-center gap-2 mb-6 text-[var(--color-accent)]'>
-                                        <span className='terminal-prompt'>➜</span>
-                                        <span className='text-sm uppercase tracking-widest font-bold'>Protocol</span>
-                                    </div>
-                                    <nav className='flex flex-col gap-4 mb-8'>
-                                        <Link href='/' className='text-lg hover:text-[var(--color-accent)] transition-colors'>~/home</Link>
-                                        <Link href='/apps' className='text-lg hover:text-[var(--color-accent)] transition-colors'>~/apps</Link>
-                                    </nav>
-
-                                    <div className='space-y-6'>
-                                        <div className='font-mono'>
-                                            <span className='text-[var(--color-text)] opacity-70 text-[10px] uppercase tracking-widest'>$ set --difficulty</span>
-                                            <div className='mt-4 flex flex-col gap-2'>
-                                                <input
-                                                    type='range'
-                                                    min='1'
-                                                    max='6'
-                                                    value={difficulty}
-                                                    onChange={e => setDifficulty(Number(e.target.value))}
-                                                    className='w-full accent-[var(--color-accent)] bg-white/10 rounded-lg h-1'
-                                                />
-                                                <div className='flex justify-between text-[10px] text-[var(--color-text-dim)]'>
-                                                    <span>FAST</span>
-                                                    <span className='text-[var(--color-accent)] font-bold'>{difficulty} ZEROS</span>
-                                                    <span>SLOW</span>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div className='font-mono pt-4'>
-                                            <span className='text-[var(--color-text)] opacity-40 text-[10px] uppercase tracking-widest'>$ node --status</span>
-                                            <div className='mt-4 space-y-3'>
-                                                <div className='flex justify-between text-xs border-b border-[var(--color-border)] pb-2'>
-                                                    <span className='opacity-60'>HASHRATE</span>
-                                                    <span className='text-[var(--color-accent)]'>{mining !== null ? `${hashRate.toLocaleString()} H/s` : 'IDLE'}</span>
-                                                </div>
-                                                <div className='flex justify-between text-xs border-b border-[var(--color-border)] pb-2'>
-                                                    <span className='opacity-60'>STATUS</span>
-                                                    <span className={invalidBlocks.size > 0 ? 'text-red-400' : 'text-green-400'}>
-                                                        {invalidBlocks.size > 0 ? 'FORKED/BROKEN' : 'SYNCHRONIZED'}
-                                                    </span>
-                                                </div>
-                                                <div className='flex justify-between text-xs border-b border-[var(--color-border)] pb-2'>
-                                                    <span className='opacity-60'>BLOCKS</span>
-                                                    <span className='text-[var(--color-text)]'>{blocks.length}</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                        <div>
+                            <h3 className='text-[10px] font-bold uppercase tracking-[0.2em] text-muted mb-4'>Network Status</h3>
+                            <div className='space-y-3'>
+                                <div className='flex justify-between items-center p-3 bg-white border border-[var(--border-light)] rounded-xl'>
+                                    <span className='text-xs font-bold text-muted uppercase tracking-wider'>Hashrate</span>
+                                    <span className='text-xs font-bold text-[var(--purple-4)] font-mono'>{mining !== null ? `${hashRate.toLocaleString()} H/s` : 'IDLE'}</span>
                                 </div>
-                                <div className='mt-auto pt-8 border-t border-[var(--color-border)] opacity-40 italic font-mono text-[10px]'>
-                                    "Immutable ledger records via SHA-256 proof-of-work mechanism."
+                                <div className='flex justify-between items-center p-3 bg-white border border-[var(--border-light)] rounded-xl'>
+                                    <span className='text-xs font-bold text-muted uppercase tracking-wider'>Health</span>
+                                    <span className={`text-xs font-bold uppercase tracking-wider ${invalidBlocks.size > 0 ? 'text-red-500' : 'text-green-500'}`}>
+                                        {invalidBlocks.size > 0 ? 'Compromised' : 'Healthy'}
+                                    </span>
+                                </div>
+                                <div className='flex justify-between items-center p-3 bg-white border border-[var(--border-light)] rounded-xl'>
+                                    <span className='text-xs font-bold text-muted uppercase tracking-wider'>Height</span>
+                                    <span className='text-xs font-bold text-[var(--fg-4)] font-mono'>#{blocks.length}</span>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                </aside>
 
-                            {/* Main Display: Blockchain Visualization */}
-                            <div className='terminal-pane bg-black/20 flex flex-col p-0 overflow-x-auto w-full'>
-                                <ArcherContainer
-                                    strokeColor={invalidBlocks.size > 0 ? '#ef4444' : '#3EAF7C'}
-                                    strokeWidth={1}
-                                    strokeDasharray={invalidBlocks.size > 0 ? '5,5' : '0'}
-                                    endShape={{ arrow: { arrowLength: 6 } }}
-                                >
-                                    <div className='p-12 inline-flex gap-8 items-center min-w-full'>
-                                        {blocks.map((block, index) => (
-                                            <ArcherElement
-                                                key={index}
-                                                id={`block-${index}`}
-                                                relations={index < blocks.length - 1 ? [{ targetId: `block-${index + 1}`, targetAnchor: 'left', sourceAnchor: 'right' }] : []}
-                                            >
-                                                <div className='relative'>
-                                                    <BlockCard
-                                                        block={block}
-                                                        index={index}
-                                                        onDataChange={handleDataChange}
-                                                        onMine={mineBlock}
-                                                        isMining={mining === index}
-                                                        isValid={!invalidBlocks.has(index)}
-                                                        needsRemining={blocksNeedingRemining.has(index)}
-                                                    />
-                                                    <div className='absolute -top-8 left-0 text-[10px] font-mono opacity-30'>
-                                                        PTR_0x{index.toString(16).padStart(4, '0')}
+                {/* Main Content Area */}
+                <div className='flex-grow flex flex-col h-full relative bg-[#fafbff] overflow-hidden'>
+                    {/* Floating decorations */}
+                    <div className='absolute top-0 right-0 w-[500px] h-[500px] bg-[var(--purple-1)] opacity-30 rounded-full blur-3xl pointer-events-none -translate-y-1/2 translate-x-1/2' />
+
+                    <div className='flex-grow overflow-x-auto overflow-y-hidden p-8 flex items-center z-10 custom-scrollbar'>
+                        <ArcherContainer
+                            strokeColor={invalidBlocks.size > 0 ? '#ef4444' : '#a78bfa'}
+                            strokeWidth={2}
+                            strokeDasharray={invalidBlocks.size > 0 ? '5,5' : '0'}
+                            endShape={{ arrow: { arrowLength: 4 } }}
+                            style={{ height: '100%', display: 'flex', alignItems: 'center' }}
+                        >
+                            <div className='inline-flex gap-12 items-center px-12 min-w-full'>
+                                {blocks.map((block, index) => {
+                                    const isValid = !invalidBlocks.has(index);
+                                    const needsRemining = blocksNeedingRemining.has(index);
+                                    const isMining = mining === index;
+
+                                    return (
+                                        <ArcherElement
+                                            key={index}
+                                            id={`block-${index}`}
+                                            relations={index < blocks.length - 1 ? [{ targetId: `block-${index + 1}`, targetAnchor: 'left', sourceAnchor: 'right' }] : []}
+                                        >
+                                            <div className='relative group'>
+                                                <div className={`w-[320px] bg-white rounded-2xl p-6 shadow-sm border-2 transition-all duration-300 flex flex-col gap-4 relative z-10 ${isValid ? 'border-transparent hover:border-[var(--purple-2)] hover:shadow-xl'
+                                                    : 'border-red-100 shadow-red-100/50 hover:shadow-red-200'
+                                                    }`}>
+                                                    {/* Header */}
+                                                    <div className='flex justify-between items-center pb-4 border-b border-[var(--border-light)]'>
+                                                        <div className='flex items-center gap-3'>
+                                                            <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs ${isValid ? 'bg-[var(--purple-1)] text-[var(--purple-4)]' : 'bg-red-50 text-red-500'}`}>
+                                                                {index}
+                                                            </div>
+                                                            <span className='text-xs font-bold uppercase tracking-wider text-[var(--fg-4)]'>Block</span>
+                                                        </div>
+                                                        {needsRemining && (
+                                                            <span className='px-2 py-1 bg-yellow-50 text-yellow-600 text-[10px] font-bold uppercase tracking-wider rounded-md border border-yellow-100'>
+                                                                Re-Mine Required
+                                                            </span>
+                                                        )}
                                                     </div>
+
+                                                    {/* Data Payload */}
+                                                    <div className='space-y-1'>
+                                                        <label className='text-[10px] font-bold uppercase tracking-wider text-muted ml-1'>Data</label>
+                                                        <textarea
+                                                            value={block.data}
+                                                            onChange={e => handleDataChange(index, e.target.value)}
+                                                            placeholder='Enter transaction data...'
+                                                            className='w-full bg-[var(--bg-2)] border-2 border-transparent focus:border-[var(--purple-2)] rounded-xl p-3 text-xs font-medium text-[var(--fg-4)] outline-none transition-all resize-none h-24 placeholder:text-muted/50'
+                                                        />
+                                                    </div>
+
+                                                    {/* Meta Info */}
+                                                    <div className='grid grid-cols-2 gap-3'>
+                                                        <div className='bg-[var(--bg-2)] p-2 rounded-lg'>
+                                                            <span className='text-[8px] font-bold uppercase tracking-wider text-muted block mb-1'>Nonce</span>
+                                                            <span className='text-xs font-mono font-bold text-[var(--purple-4)]'>{block.nonce}</span>
+                                                        </div>
+                                                        <div className='bg-[var(--bg-2)] p-2 rounded-lg'>
+                                                            <span className='text-[8px] font-bold uppercase tracking-wider text-muted block mb-1'>Timestamp</span>
+                                                            <span className='text-[10px] font-mono font-medium text-[var(--fg-4)] opacity-70'>{new Date(block.timestamp).toLocaleTimeString()}</span>
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Hashes */}
+                                                    <div className='space-y-2'>
+                                                        <div className='space-y-1'>
+                                                            <span className='text-[8px] font-bold uppercase tracking-wider text-muted ml-1'>Previous Hash</span>
+                                                            <div className='text-[9px] font-mono bg-[var(--bg-2)] p-2 rounded-lg text-muted truncate select-all'>
+                                                                {block.previousHash}
+                                                            </div>
+                                                        </div>
+                                                        <div className='space-y-1'>
+                                                            <span className='text-[8px] font-bold uppercase tracking-wider text-muted ml-1'>Current Hash</span>
+                                                            <div className={`text-[9px] font-mono p-2 rounded-lg truncate select-all font-bold transition-colors ${isValid ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-500'}`}>
+                                                                {block.hash}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Mine Button */}
+                                                    <button
+                                                        onClick={() => mineBlock(index)}
+                                                        disabled={isMining}
+                                                        className={`w-full py-3 rounded-xl font-bold text-xs uppercase tracking-widest transition-all shadow-md active:scale-95 flex items-center justify-center gap-2 ${isMining
+                                                            ? 'bg-[var(--bg-2)] text-muted cursor-wait'
+                                                            : isValid && !needsRemining
+                                                                ? 'bg-white border border-[var(--border-light)] text-[var(--fg-4)] hover:border-[var(--purple-4)] hover:text-[var(--purple-4)]'
+                                                                : 'bg-[var(--purple-4)] text-white hover:bg-[var(--purple-4)]/90 shadow-lg shadow-purple-200'
+                                                            }`}
+                                                    >
+                                                        {isMining ? (
+                                                            <>
+                                                                <div className='w-3 h-3 border-2 border-muted border-t-transparent rounded-full animate-spin' />
+                                                                <span>Mining...</span>
+                                                            </>
+                                                        ) : (
+                                                            <span>{isValid && !needsRemining ? 'Re-Mine' : 'Mine Block'}</span>
+                                                        )}
+                                                    </button>
                                                 </div>
-                                            </ArcherElement>
-                                        ))}
+                                                {/* Connector Line Logic implied by Archer */}
+                                            </div>
+                                        </ArcherElement>
+                                    );
+                                })}
+                                {/* Add Block Ghost Card */}
+                                <div className='w-[100px] h-[400px] flex items-center justify-center opacity-0'>
+                                    {/* Spacer for scroll */}
+                                </div>
+                            </div>
+                        </ArcherContainer>
+                    </div>
+                </div>
+                {/* Mobile Menu Overlay */}
+                {isMobileMenuOpen && (
+                    <div className='fixed inset-0 z-[100] flex items-end justify-center bg-black/40 backdrop-blur-sm p-4 md:hidden' onClick={() => setIsMobileMenuOpen(false)}>
+                        <div className='w-full max-w-sm bg-white rounded-2xl shadow-2xl animate-slide-up overflow-hidden border border-[var(--border-light)]' onClick={e => e.stopPropagation()}>
+                            <div className='p-4 border-b border-[var(--border-light)] flex justify-between items-center bg-[var(--bg-2)]'>
+                                <span className='text-xs font-bold uppercase tracking-widest text-[var(--fg-4)]'>Protocol Settings</span>
+                                <button onClick={() => setIsMobileMenuOpen(false)} className='w-6 h-6 rounded-full bg-white border border-[var(--border-light)] flex items-center justify-center text-muted'>✕</button>
+                            </div>
+                            <div className='p-4 space-y-6'>
+                                <div>
+                                    <h3 className='text-[10px] font-bold uppercase tracking-[0.2em] text-muted mb-4'>Difficulty</h3>
+                                    <input
+                                        type='range'
+                                        min='1'
+                                        max='5'
+                                        value={difficulty}
+                                        onChange={e => setDifficulty(Number(e.target.value))}
+                                        className='w-full accent-[var(--purple-4)] h-2 bg-[var(--bg-2)] rounded-lg appearance-none'
+                                    />
+                                    <div className='text-center mt-2 text-xs font-bold text-[var(--purple-4)]'>{difficulty} Leading Zeros</div>
+                                </div>
+                                <div className='pt-4 border-t border-[var(--border-light)]'>
+                                    <h3 className='text-[10px] font-bold uppercase tracking-[0.2em] text-muted mb-4'>Status</h3>
+                                    <div className='flex justify-between items-center p-3 bg-[var(--bg-2)] rounded-xl'>
+                                        <span className='text-xs font-bold text-muted'>Hashrate</span>
+                                        <span className='text-xs font-bold text-[var(--fg-4)]'>{mining !== null ? `${hashRate.toLocaleString()} H/s` : 'IDLE'}</span>
                                     </div>
-                                </ArcherContainer>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    {/* Console decoration */}
-                    <div className='mt-4 flex items-center justify-between text-[10px] font-mono text-[var(--color-text-dim)] opacity-40 uppercase tracking-[0.2em] px-4'>
-                        <div className='flex gap-6'>
-                            <span>Latency: 2ms</span>
-                            <span>Prot: SHA-256</span>
-                        </div>
-                        <span>p2p_network: fully_connected</span>
-                    </div>
-                </div>
+                )}
             </main>
         </>
     );
 }
+
+

@@ -28,6 +28,7 @@ export default function LinkShortener() {
     const [analyticsData, setAnalyticsData] = useState<any[]>([]);
     const [analyticsAuthenticated, setAnalyticsAuthenticated] = useState(false);
     const [analyticsOriginalUrl, setAnalyticsOriginalUrl] = useState<string | null>(null);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     useEffect(() => {
         const timer = setTimeout(() => setIsLoaded(true), 100);
@@ -47,6 +48,7 @@ export default function LinkShortener() {
             if (response.ok) {
                 setShortenedUrl(data.shortenedUrl);
                 setAnalyticsPassword(data.password);
+                setAnalyticsAuthenticated(false);
             }
         } catch (error) {
             console.error(error);
@@ -69,6 +71,7 @@ export default function LinkShortener() {
                 setAnalyticsData(data.visitData || []);
                 setAnalyticsOriginalUrl(data.url || null);
                 setAnalyticsAuthenticated(true);
+                setShortenedUrl(null); // Clear shorten result view if switch to analytics
             }
         } catch (error) {
             console.error(error);
@@ -82,13 +85,13 @@ export default function LinkShortener() {
         datasets: [{
             label: 'Clicks',
             data: analyticsData.map(d => d.clicks),
-            borderColor: '#3EAF7C',
-            backgroundColor: 'rgba(62, 175, 124, 0.1)',
+            borderColor: '#8b5cf6', // purple-500
+            backgroundColor: 'rgba(139, 92, 246, 0.1)',
             fill: true,
             tension: 0.4,
             borderWidth: 2,
             pointRadius: 4,
-            pointBackgroundColor: '#3EAF7C',
+            pointBackgroundColor: '#8b5cf6',
         }]
     };
 
@@ -97,186 +100,278 @@ export default function LinkShortener() {
         maintainAspectRatio: false,
         plugins: { legend: { display: false } },
         scales: {
-            x: { grid: { display: false }, ticks: { color: 'rgba(255,255,255,0.4)', font: { size: 10 } } },
-            y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: 'rgba(255,255,255,0.4)', font: { size: 10 } } }
+            x: {
+                grid: { display: false },
+                ticks: { color: '#64748b', font: { size: 10, family: 'sans-serif' } }
+            },
+            y: {
+                grid: { color: 'rgba(0,0,0,0.05)' },
+                ticks: { color: '#64748b', font: { size: 10, family: 'sans-serif' }, stepSize: 1 }
+            }
         }
     };
 
     return (
         <>
             <WebVitals />
-            <main className='min-h-screen bg-[var(--color-bg)] flex items-center justify-center p-4 md:p-8 selection:bg-[var(--color-accent)] selection:text-[var(--color-bg)]'>
-                <div className='fixed inset-0 overflow-hidden pointer-events-none'>
-                    <div className='absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(62,175,124,0.03),transparent_60%)]' />
-                </div>
+            <main className='relative h-screen bg-[#fafbff] overflow-hidden selection:bg-[var(--purple-2)] selection:text-[var(--purple-4)] flex flex-col md:flex-row'>
 
-                <div className={`w-full max-w-6xl h-[85vh] transition-all duration-1000 transform ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-                    <div className='terminal-window flex flex-col h-full'>
-                        <div className='terminal-header'>
-                            <div className='terminal-controls'>
-                                <div className='terminal-control red' />
-                                <div className='terminal-control yellow' />
-                                <div className='terminal-control green' />
+                {/* Mobile Header */}
+                <header className='md:hidden flex items-center justify-between p-4 border-b border-[var(--border-light)] bg-white/80 backdrop-blur-md z-50'>
+                    <Link href='/apps' className='text-sm font-bold uppercase tracking-widest text-muted hover:text-[var(--purple-4)]'>
+                        ← Apps
+                    </Link>
+                    <button
+                        onClick={() => setIsMobileMenuOpen(true)}
+                        className='px-3 py-1.5 bg-white border border-[var(--border-light)] rounded-full shadow-sm text-xs font-bold uppercase tracking-wider text-[var(--fg-4)] flex items-center gap-1.5'
+                    >
+                        <span>Menu</span>
+                        <span className='text-[10px]'>▼</span>
+                    </button>
+                </header>
+
+                {/* Left Sidebar (Desktop) */}
+                <aside className='hidden md:flex flex-col w-80 h-full border-r border-[var(--border-light)] bg-white/50 backdrop-blur-xl z-20'>
+                    <div className='p-6 border-b border-[var(--border-light)]'>
+                        <div className='flex items-center gap-3 mb-6'>
+                            <div className='w-3 h-3 rounded-full bg-[var(--purple-4)]' />
+                            <span className='font-bold uppercase tracking-widest text-sm text-[var(--fg-4)]'>Control Center</span>
+                        </div>
+                        <nav className='flex flex-col gap-2'>
+                            <Link href='/apps' className='text-xs font-bold uppercase tracking-wider text-muted hover:text-[var(--purple-4)] transition-colors flex items-center gap-2'>
+                                <span>←</span> Back to Apps
+                            </Link>
+                        </nav>
+                    </div>
+
+                    <div className='flex-grow overflow-y-auto p-6 space-y-8'>
+                        <div>
+                            <h3 className='text-[10px] font-bold uppercase tracking-[0.2em] text-muted mb-4'>Create Link</h3>
+                            <div className='space-y-3'>
+                                <input
+                                    value={url}
+                                    onChange={e => setUrl(e.target.value)}
+                                    placeholder='Enter URL to shorten...'
+                                    className='w-full bg-white border border-[var(--border-light)] rounded-xl p-3 text-sm text-[var(--fg-4)] focus:border-[var(--purple-4)] focus:ring-2 focus:ring-[var(--purple-1)] outline-none transition-all placeholder:text-muted/50'
+                                />
+                                <button
+                                    onClick={handleShorten}
+                                    disabled={isShortening || !url.trim()}
+                                    className='w-full py-3 bg-[var(--fg-4)] hover:bg-[var(--purple-4)] text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed'
+                                >
+                                    {isShortening ? 'Shortening...' : 'Generate Link'}
+                                </button>
                             </div>
-                            <div className='terminal-title'>johnleonardo — ~/link-proxy-node</div>
                         </div>
 
-                        <div className='terminal-split flex-grow overflow-hidden'>
-                            {/* Left Sidebar: Logic & Access */}
-                            <div className='terminal-pane border-r border-[var(--color-border)] hidden md:flex flex-col gap-8'>
-                                <div>
-                                    <div className='flex items-center gap-2 mb-6 text-[var(--color-accent)]'>
-                                        <span className='terminal-prompt'>➜</span>
-                                        <span className='text-sm uppercase tracking-widest font-bold'>Gateway</span>
-                                    </div>
-                                    <nav className='flex flex-col gap-4 mb-8'>
-                                        <Link href='/' className='text-lg hover:text-[var(--color-accent)] transition-colors'>~/home</Link>
-                                        <Link href='/apps' className='text-lg hover:text-[var(--color-accent)] transition-colors'>~/apps</Link>
-                                    </nav>
+                        <div className='pt-6 border-t border-[var(--border-light)]'>
+                            <h3 className='text-[10px] font-bold uppercase tracking-[0.2em] text-muted mb-4'>Analytics Access</h3>
+                            <div className='space-y-3'>
+                                <input
+                                    type='password'
+                                    value={analyticsPasswordInput}
+                                    onChange={e => setAnalyticsPasswordInput(e.target.value)}
+                                    placeholder='Enter access key...'
+                                    className='w-full bg-white border border-[var(--border-light)] rounded-xl p-3 text-sm text-[var(--fg-4)] focus:border-[var(--purple-4)] focus:ring-2 focus:ring-[var(--purple-1)] outline-none transition-all placeholder:text-muted/50'
+                                />
+                                <button
+                                    onClick={handleViewAnalytics}
+                                    disabled={analyticsLoading || !analyticsPasswordInput.trim()}
+                                    className='w-full py-3 bg-white border border-[var(--border-light)] hover:border-[var(--purple-4)] text-[var(--fg-4)] hover:text-[var(--purple-4)] font-bold text-xs uppercase tracking-widest rounded-xl transition-all shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed'
+                                >
+                                    {analyticsLoading ? 'Loading...' : 'View Stats'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
 
-                                    <div className='space-y-6 font-mono'>
-                                        <div>
-                                            <span className='text-[var(--color-text)] opacity-40 text-[10px] uppercase tracking-widest block mb-4'>$ spawn --proxy</span>
-                                            <input
-                                                value={url}
-                                                onChange={e => setUrl(e.target.value)}
-                                                placeholder='ENTER_URL...'
-                                                className='w-full bg-black/40 border border-[var(--color-border)] rounded p-2 text-xs text-[var(--color-text)] focus:border-[var(--color-accent)] outline-none mb-2'
-                                            />
-                                            <button
-                                                onClick={handleShorten}
-                                                disabled={isShortening || !url.trim()}
-                                                className='w-full py-2 border border-[var(--color-accent)]/30 hover:bg-[var(--color-accent)]/10 text-[var(--color-accent)] text-[10px] uppercase tracking-widest transition-all rounded'
-                                            >
-                                                {isShortening ? 'ENCODING...' : '[GENERATE_SHORT_ID]'}
-                                            </button>
-                                        </div>
+                    <div className='p-4 border-t border-[var(--border-light)]'>
+                        <div className='p-4 bg-[var(--bg-2)] rounded-xl'>
+                            <div className='text-[10px] text-muted uppercase tracking-wider font-bold mb-1'>Service Status</div>
+                            <div className='flex items-center gap-2'>
+                                <div className='w-2 h-2 rounded-full bg-green-500 animate-pulse' />
+                                <span className='text-xs font-medium text-[var(--fg-4)]'>Operational</span>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
 
-                                        <div className='pt-6 border-t border-[var(--color-border)]'>
-                                            <span className='text-[var(--color-text)] opacity-40 text-[10px] uppercase tracking-widest block mb-4'>$ view --analytics</span>
-                                            <input
-                                                type='password'
-                                                value={analyticsPasswordInput}
-                                                onChange={e => setAnalyticsPasswordInput(e.target.value)}
-                                                placeholder='PROXY_PASS_KEY...'
-                                                className='w-full bg-black/40 border border-[var(--color-border)] rounded p-2 text-xs text-[var(--color-text)] focus:border-[var(--color-accent)] outline-none mb-2'
-                                            />
-                                            <button
-                                                onClick={handleViewAnalytics}
-                                                disabled={analyticsLoading || !analyticsPasswordInput.trim()}
-                                                className='w-full py-2 border border-blue-500/30 hover:bg-blue-500/10 text-blue-400 text-[10px] uppercase tracking-widest transition-all rounded'
-                                            >
-                                                {analyticsLoading ? 'CONNECTING...' : '[FETCH_METRICS]'}
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className='mt-auto pt-8 border-t border-[var(--color-border)] opacity-30 font-mono text-[9px] uppercase tracking-tighter leading-relaxed'>
-                                    "Redirect layer with real-time telemetry and access-controlled observability."
+                {/* Main Content Area */}
+                <div className='flex-grow flex flex-col h-full relative bg-[#fafbff] overflow-hidden'>
+                    {/* Floating decorations */}
+                    <div className='absolute top-0 right-0 w-[500px] h-[500px] bg-[var(--purple-1)] opacity-40 rounded-full blur-3xl pointer-events-none -translate-y-1/2 translate-x-1/2' />
+
+                    <div className='flex-grow overflow-y-auto p-4 md:p-8 scrollbar-hide z-10'>
+                        {/* Empty State */}
+                        {!shortenedUrl && !analyticsAuthenticated && (
+                            <div className='h-full flex flex-col items-center justify-center opacity-100 text-center max-w-sm mx-auto p-8'>
+                                <div className='w-20 h-20 bg-[var(--purple-1)] rounded-full flex items-center justify-center mb-6 text-4xl opacity-40'>🔗</div>
+                                <h2 className='text-3xl font-bold text-[var(--fg-4)] mb-2'>Ready to Shorten</h2>
+                                <p className='text-muted max-w-sm font-medium mb-8'>Use the sidebar to create new short links or view analytics for existing ones.</p>
+
+                                {/* Mobile Input Card (Visible only on mobile/empty state) */}
+                                <div className='block md:hidden w-full bg-white p-6 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border-2 border-[var(--purple-4)] relative overflow-hidden'>
+                                    <div className="absolute top-0 left-0 w-full h-1 bg-[var(--purple-4)]" />
+                                    <input
+                                        value={url}
+                                        onChange={e => setUrl(e.target.value)}
+                                        placeholder='Paste URL here...'
+                                        className='w-full bg-[var(--bg-2)] border border-[var(--border-light)] rounded-xl p-3 text-sm text-[var(--fg-4)] focus:border-[var(--purple-4)] focus:ring-2 focus:ring-[var(--purple-1)] outline-none mb-3 placeholder:text-muted/50'
+                                    />
+                                    <button
+                                        onClick={() => handleShorten()}
+                                        disabled={isShortening || !url.trim()}
+                                        className='w-full py-3 bg-[var(--purple-4)] text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-all shadow-md active:scale-95 disabled:opacity-50'
+                                    >
+                                        {isShortening ? 'Shortening...' : 'Generate Short Link'}
+                                    </button>
                                 </div>
                             </div>
+                        )}
 
-                            {/* Main Display: Results & Visuals */}
-                            <div className='terminal-pane bg-black/20 flex flex-col p-8 overflow-y-auto w-full'>
-                                {shortenedUrl && !analyticsAuthenticated && (
-                                    <div className='max-w-2xl mx-auto w-full animate-reveal'>
-                                        <div className='border border-[var(--color-accent)]/30 bg-[var(--color-accent)]/5 p-8 rounded-lg space-y-6'>
-                                            <div className='flex justify-between items-center border-b border-[var(--color-accent)]/10 pb-4'>
-                                                <span className='text-[10px] font-mono text-[var(--color-accent)] uppercase tracking-widest'>Success: Resource_Generated</span>
-                                                <span className='text-[9px] font-mono opacity-40 uppercase'>ID: {shortenedUrl.split('/').pop()}</span>
+                        {/* Result View */}
+                        {shortenedUrl && !analyticsAuthenticated && (
+                            <div className='max-w-2xl mx-auto w-full animate-fade-in-up pt-12'>
+                                <div className='bg-white rounded-2xl shadow-lg border border-[var(--border-light)] overflow-hidden'>
+                                    <div className='p-6 border-b border-[var(--border-light)] bg-[var(--bg-2)] flex justify-between items-center'>
+                                        <div className='flex items-center gap-3'>
+                                            <div className='w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-600 font-bold'>✓</div>
+                                            <span className='text-sm font-bold uppercase tracking-widest text-[var(--fg-4)]'>Link Created</span>
+                                        </div>
+                                    </div>
+
+                                    <div className='p-8 space-y-8'>
+                                        <div className='space-y-2'>
+                                            <label className='text-xs font-bold uppercase tracking-wider text-muted'>Short Link</label>
+                                            <div className='flex items-center gap-3'>
+                                                <div className='flex-grow bg-[var(--bg-2)] p-4 rounded-xl border border-[var(--border-light)] text-[var(--purple-4)] font-medium font-mono text-sm break-all'>
+                                                    {shortenedUrl}
+                                                </div>
+                                                <button
+                                                    onClick={() => navigator.clipboard.writeText(shortenedUrl)}
+                                                    className='p-4 bg-[var(--fg-4)] hover:bg-[var(--purple-4)] text-white rounded-xl transition-all shadow-md active:scale-95'
+                                                >
+                                                    Copy
+                                                </button>
                                             </div>
+                                        </div>
 
-                                            <div className='space-y-2'>
-                                                <label className='text-[10px] font-mono opacity-40 uppercase'>Short_Proxy_Url</label>
-                                                <div className='flex items-center gap-2'>
-                                                    <div className='flex-grow bg-black/40 p-4 rounded font-mono text-sm text-[var(--color-accent)] break-all border border-[var(--color-border)]'>
-                                                        {shortenedUrl}
-                                                    </div>
-                                                    <button onClick={() => navigator.clipboard.writeText(shortenedUrl)} className='p-4 border border-[var(--color-accent)] text-[var(--color-accent)] rounded hover:bg-[var(--color-accent)]/10'>
-                                                        [COPY]
-                                                    </button>
-                                                </div>
+                                        <div className='space-y-2'>
+                                            <div className='flex justify-between items-center'>
+                                                <label className='text-xs font-bold uppercase tracking-wider text-muted'>Analytics Key</label>
+                                                <span className='text-[10px] font-bold text-red-500 bg-red-50 px-2 py-0.5 rounded-full uppercase tracking-wider'>Save This</span>
                                             </div>
-
-                                            <div className='space-y-2'>
-                                                <div className='flex justify-between items-center'>
-                                                    <label className='text-[10px] font-mono opacity-40 uppercase'>Access_Credential (REQUIRED_FOR_ANALYTICS)</label>
-                                                    <span className='text-[9px] font-mono text-red-500 uppercase'>!!! SAVE_NOW !!!</span>
+                                            <div className='flex items-center gap-3'>
+                                                <div className='flex-grow bg-red-50 p-4 rounded-xl border border-red-100 text-red-600 font-bold font-mono text-sm break-all'>
+                                                    {analyticsPassword}
                                                 </div>
-                                                <div className='flex items-center gap-2'>
-                                                    <div className='flex-grow bg-black/40 p-4 rounded font-mono text-sm text-yellow-500 break-all border border-yellow-500/20'>
-                                                        {analyticsPassword}
-                                                    </div>
-                                                    <button onClick={() => navigator.clipboard.writeText(analyticsPassword!)} className='p-4 border border-yellow-500/50 text-yellow-500 rounded hover:bg-yellow-500/10'>
-                                                        [COPY]
-                                                    </button>
-                                                </div>
+                                                <button
+                                                    onClick={() => navigator.clipboard.writeText(analyticsPassword!)}
+                                                    className='p-4 bg-white border border-[var(--border-light)] hover:border-red-200 text-red-500 rounded-xl transition-all shadow-sm active:scale-95 hover:bg-red-50'
+                                                >
+                                                    Copy
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
-                                )}
+                                </div>
+                            </div>
+                        )}
 
-                                {analyticsAuthenticated && (
-                                    <div className='max-w-4xl mx-auto w-full space-y-10 animate-reveal pb-12'>
-                                        <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
-                                            <div className='border border-[var(--color-border)] p-6 rounded bg-black/40'>
-                                                <span className='text-[10px] font-mono opacity-40 uppercase block mb-1'>Total_Requests</span>
-                                                <div className='text-3xl font-bold font-mono text-[var(--color-accent)]'>
-                                                    {analyticsData.reduce((s, d) => s + d.clicks, 0)}
-                                                </div>
-                                            </div>
-                                            <div className='border border-[var(--color-border)] p-6 rounded bg-black/40'>
-                                                <span className='text-[10px] font-mono opacity-40 uppercase block mb-1'>Avg_Daily_Load</span>
-                                                <div className='text-3xl font-bold font-mono text-blue-400'>
-                                                    {(analyticsData.reduce((s, d) => s + d.clicks, 0) / 30).toFixed(1)}
-                                                </div>
-                                            </div>
-                                            <div className='border border-[var(--color-border)] p-6 rounded bg-black/40'>
-                                                <span className='text-[10px] font-mono opacity-40 uppercase block mb-1'>Origin_Resolution</span>
-                                                <div className='text-[11px] font-mono text-[var(--color-text-dim)] truncate mt-2'>
-                                                    {analyticsOriginalUrl}
-                                                </div>
-                                            </div>
+                        {/* Analytics Dashboard */}
+                        {analyticsAuthenticated && (
+                            <div className='max-w-4xl mx-auto w-full space-y-8 animate-fade-in-up pb-12'>
+                                <div className='flex items-center justify-between'>
+                                    <div>
+                                        <h1 className='text-2xl font-bold text-[var(--fg-4)]'>Analytics Dashboard</h1>
+                                        <p className='text-sm text-muted mt-1 truncate max-w-md'>{analyticsOriginalUrl}</p>
+                                    </div>
+                                    <button
+                                        onClick={() => { setAnalyticsAuthenticated(false); setAnalyticsData([]); }}
+                                        className='px-4 py-2 bg-white border border-[var(--border-light)] rounded-lg text-xs font-bold uppercase tracking-wider text-muted hover:text-red-500 hover:border-red-100 transition-colors'
+                                    >
+                                        Close
+                                    </button>
+                                </div>
+
+                                <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                                    <div className='bg-white p-6 rounded-2xl border border-[var(--border-light)] shadow-sm'>
+                                        <span className='text-[10px] font-bold uppercase tracking-wider text-muted block mb-2'>Total Clicks</span>
+                                        <div className='text-4xl font-bold text-[var(--purple-4)]'>
+                                            {analyticsData.reduce((s, d) => s + d.clicks, 0).toLocaleString()}
                                         </div>
-
-                                        <div className='border border-[var(--color-border)] p-8 rounded bg-black/40'>
-                                            <div className='flex items-center gap-2 mb-8 text-[var(--color-accent)]'>
-                                                <span className='text-[10px] font-mono uppercase tracking-[0.3em] font-bold'>Request_Telemetry_Stream_30D</span>
-                                            </div>
-                                            <div className='h-64'>
-                                                <Line data={chartData} options={chartOptions} />
-                                            </div>
+                                    </div>
+                                    <div className='bg-white p-6 rounded-2xl border border-[var(--border-light)] shadow-sm'>
+                                        <span className='text-[10px] font-bold uppercase tracking-wider text-muted block mb-2'>Avg. Daily</span>
+                                        <div className='text-4xl font-bold text-[var(--fg-4)]'>
+                                            {(analyticsData.reduce((s, d) => s + d.clicks, 0) / (analyticsData.length || 1)).toFixed(1)}
                                         </div>
+                                    </div>
+                                </div>
 
+                                <div className='bg-white p-6 md:p-8 rounded-2xl border border-[var(--border-light)] shadow-sm'>
+                                    <div className='mb-6'>
+                                        <h3 className='text-sm font-bold uppercase tracking-wider text-[var(--fg-4)]'>Click Activity (30 Days)</h3>
+                                    </div>
+                                    <div className='h-72'>
+                                        <Line data={chartData} options={chartOptions} />
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                {/* Mobile Menu Overlay */}
+                {isMobileMenuOpen && (
+                    <div className='fixed inset-0 z-[100] flex items-end justify-center bg-black/40 backdrop-blur-sm p-4 md:hidden' onClick={() => setIsMobileMenuOpen(false)}>
+                        <div className='w-full max-w-sm bg-white rounded-2xl shadow-2xl animate-slide-up overflow-hidden border border-[var(--border-light)]' onClick={e => e.stopPropagation()}>
+                            <div className='p-4 border-b border-[var(--border-light)] flex justify-between items-center bg-[var(--bg-2)]'>
+                                <span className='text-xs font-bold uppercase tracking-widest text-[var(--fg-4)]'>Control Center</span>
+                                <button onClick={() => setIsMobileMenuOpen(false)} className='w-6 h-6 rounded-full bg-white border border-[var(--border-light)] flex items-center justify-center text-muted'>✕</button>
+                            </div>
+                            <div className='p-4 space-y-6'>
+                                <div>
+                                    <h3 className='text-[10px] font-bold uppercase tracking-[0.2em] text-muted mb-4'>Create Link</h3>
+                                    <div className='space-y-3'>
+                                        <input
+                                            value={url}
+                                            onChange={e => setUrl(e.target.value)}
+                                            placeholder='Enter URL to shorten...'
+                                            className='w-full bg-[var(--bg-2)] border border-[var(--border-light)] rounded-xl p-3 text-sm text-[var(--fg-4)] outline-none'
+                                        />
                                         <button
-                                            onClick={() => setAnalyticsAuthenticated(false)}
-                                            className='text-[10px] font-mono text-[var(--color-text-dim)] hover:text-white uppercase tracking-widest'
+                                            onClick={() => { handleShorten(); setIsMobileMenuOpen(false); }}
+                                            disabled={isShortening || !url.trim()}
+                                            className='w-full py-3 bg-[var(--fg-4)] text-white font-bold text-xs uppercase tracking-widest rounded-xl shadow-md'
                                         >
-                                            [TERMINATE_SESSION]
+                                            Generate
                                         </button>
                                     </div>
-                                )}
-
-                                {!shortenedUrl && !analyticsAuthenticated && (
-                                    <div className='flex flex-col items-center justify-center flex-grow opacity-20'>
-                                        <div className='text-4xl font-mono mb-4 text-[var(--color-accent)]'>[READY_TO_ENCODE]</div>
-                                        <div className='text-xs font-mono uppercase tracking-[0.4em] text-center max-w-sm leading-relaxed'>
-                                            Enter upstream resource location to establish secondary proxy tunnel
-                                        </div>
+                                </div>
+                                <div className='pt-6 border-t border-[var(--border-light)]'>
+                                    <h3 className='text-[10px] font-bold uppercase tracking-[0.2em] text-muted mb-4'>Analytics</h3>
+                                    <div className='space-y-3'>
+                                        <input
+                                            type='password'
+                                            value={analyticsPasswordInput}
+                                            onChange={e => setAnalyticsPasswordInput(e.target.value)}
+                                            placeholder='Enter access key...'
+                                            className='w-full bg-[var(--bg-2)] border border-[var(--border-light)] rounded-xl p-3 text-sm text-[var(--fg-4)] outline-none'
+                                        />
+                                        <button
+                                            onClick={() => { handleViewAnalytics(); setIsMobileMenuOpen(false); }}
+                                            disabled={analyticsLoading || !analyticsPasswordInput.trim()}
+                                            className='w-full py-3 bg-white border border-[var(--border-light)] text-[var(--fg-4)] font-bold text-xs uppercase tracking-widest rounded-xl shadow-sm'
+                                        >
+                                            View Stats
+                                        </button>
                                     </div>
-                                )}
+                                </div>
                             </div>
                         </div>
                     </div>
-                    {/* Console decoration */}
-                    <div className='mt-4 flex items-center justify-between text-[10px] font-mono text-[var(--color-text-dim)] opacity-40 uppercase tracking-[0.2em] px-4'>
-                        <div className='flex gap-6'>
-                            <span>Prot: HTTPS/TLS_1.3</span>
-                            <span>Latency: 14ms</span>
-                        </div>
-                        <span>Status: pool_ready</span>
-                    </div>
-                </div>
+                )}
             </main>
         </>
     );

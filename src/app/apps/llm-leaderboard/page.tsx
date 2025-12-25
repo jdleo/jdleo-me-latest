@@ -39,6 +39,7 @@ export default function LLMLeaderboard() {
     const [isVoting, setIsVoting] = useState(false);
     const [votingComplete, setVotingComplete] = useState(false);
     const [revealedModels, setRevealedModels] = useState(false);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     useEffect(() => {
         const timer = setTimeout(() => setIsLoaded(true), 100);
@@ -132,157 +133,227 @@ export default function LLMLeaderboard() {
     return (
         <>
             <WebVitals />
-            <main className='min-h-screen bg-[var(--color-bg)] flex items-center justify-center p-4 md:p-8 selection:bg-[var(--color-accent)] selection:text-[var(--color-bg)]'>
-                <div className='fixed inset-0 overflow-hidden pointer-events-none'>
-                    <div className='absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(62,175,124,0.03),transparent_60%)]' />
-                </div>
+            <main className='relative h-screen bg-[#fafbff] overflow-hidden selection:bg-[var(--purple-2)] selection:text-[var(--purple-4)] flex flex-col md:flex-row'>
+                {/* Mobile Header */}
+                <header className='md:hidden flex items-center justify-between p-4 border-b border-[var(--border-light)] bg-white/80 backdrop-blur-md z-50'>
+                    <Link href='/apps' className='text-sm font-bold uppercase tracking-widest text-muted hover:text-[var(--purple-4)]'>
+                        ← Apps
+                    </Link>
+                    <button
+                        onClick={() => setIsMobileMenuOpen(true)}
+                        className='px-3 py-1.5 bg-white border border-[var(--border-light)] rounded-full shadow-sm text-xs font-bold uppercase tracking-wider text-[var(--fg-4)] flex items-center gap-1.5'
+                    >
+                        <span>Menu</span>
+                        <span className='text-[10px]'>▼</span>
+                    </button>
+                </header>
 
-                <div className={`w-full max-w-6xl h-[85vh] transition-all duration-1000 transform ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-                    <div className='terminal-window flex flex-col h-full'>
-                        <div className='terminal-header'>
-                            <div className='terminal-controls'>
-                                <div className='terminal-control red' />
-                                <div className='terminal-control yellow' />
-                                <div className='terminal-control green' />
-                            </div>
-                            <div className='terminal-title'>johnleonardo — ~/neural-leaderboard</div>
+                {/* Left Sidebar (Desktop) */}
+                <aside className='hidden md:flex flex-col w-72 h-full border-r border-[var(--border-light)] bg-white/50 backdrop-blur-xl z-20'>
+                    <div className='p-6 border-b border-[var(--border-light)]'>
+                        <div className='flex items-center gap-3 mb-6'>
+                            <div className='w-3 h-3 rounded-full bg-[var(--purple-4)]' />
+                            <span className='font-bold uppercase tracking-widest text-sm text-[var(--fg-4)]'>LLM Arena</span>
+                        </div>
+                        <nav className='flex flex-col gap-2'>
+                            <Link href='/apps' className='text-xs font-bold uppercase tracking-wider text-muted hover:text-[var(--purple-4)] transition-colors flex items-center gap-2'>
+                                <span>←</span> Back to Apps
+                            </Link>
+                        </nav>
+                    </div>
+
+                    <div className='flex-grow p-6 space-y-8'>
+                        <div>
+                            <h3 className='text-[10px] font-bold uppercase tracking-[0.2em] text-muted mb-4'>Mode</h3>
+                            <nav className='flex flex-col gap-2'>
+                                <button
+                                    onClick={() => setActiveTab('vote')}
+                                    className={`w-full p-3 text-left rounded-xl transition-all flex items-center gap-3 ${activeTab === 'vote'
+                                            ? 'bg-white shadow-md border border-[var(--purple-2)] text-[var(--purple-4)]'
+                                            : 'hover:bg-white/60 text-[var(--fg-4)]'
+                                        }`}
+                                >
+                                    <span className='text-lg'>⚔️</span>
+                                    <span className='text-xs font-bold uppercase tracking-wider'>Battle Arena</span>
+                                </button>
+                                <button
+                                    onClick={() => setActiveTab('leaderboard')}
+                                    className={`w-full p-3 text-left rounded-xl transition-all flex items-center gap-3 ${activeTab === 'leaderboard'
+                                            ? 'bg-white shadow-md border border-[var(--purple-2)] text-[var(--purple-4)]'
+                                            : 'hover:bg-white/60 text-[var(--fg-4)]'
+                                        }`}
+                                >
+                                    <span className='text-lg'>🏆</span>
+                                    <span className='text-xs font-bold uppercase tracking-wider'>Rankings</span>
+                                </button>
+                            </nav>
                         </div>
 
-                        <div className='terminal-split flex-grow overflow-hidden'>
-                            {/* Left Sidebar: Modes & Stats */}
-                            <div className='terminal-pane border-r border-[var(--color-border)] hidden md:flex flex-col gap-8'>
-                                <div>
-                                    <div className='flex items-center gap-2 mb-6 text-[var(--color-accent)]'>
-                                        <span className='terminal-prompt'>➜</span>
-                                        <span className='text-sm uppercase tracking-widest font-bold'>Navigator</span>
-                                    </div>
-                                    <nav className='flex flex-col gap-4 mb-10'>
-                                        <button onClick={() => setActiveTab('vote')} className={`text-left text-lg transition-colors ${activeTab === 'vote' ? 'text-[var(--color-accent)]' : 'text-[var(--color-text-dim)] hover:text-white'}`}>~/arena</button>
-                                        <button onClick={() => setActiveTab('leaderboard')} className={`text-left text-lg transition-colors ${activeTab === 'leaderboard' ? 'text-[var(--color-accent)]' : 'text-[var(--color-text-dim)] hover:text-white'}`}>~/rankings</button>
-                                        <div className='h-[1px] bg-[var(--color-border)] my-2' />
-                                        <Link href='/' className='text-sm opacity-60 hover:text-[var(--color-accent)]'>~/home</Link>
-                                        <Link href='/apps' className='text-sm opacity-60 hover:text-[var(--color-accent)]'>~/apps</Link>
-                                    </nav>
-
-                                    <div className='space-y-6 font-mono'>
-                                        <div className='p-4 border border-[var(--color-border)] rounded bg-white/5'>
-                                            <span className='text-[10px] opacity-40 uppercase tracking-widest block mb-2'>System_Status</span>
-                                            <div className='flex items-center gap-2'>
-                                                <div className='w-2 h-2 rounded-full bg-green-500 animate-pulse' />
-                                                <span className='text-[11px] text-green-400'>NODES_ONLINE</span>
-                                            </div>
-                                        </div>
-                                    </div>
+                        <div>
+                            <h3 className='text-[10px] font-bold uppercase tracking-[0.2em] text-muted mb-4'>System Status</h3>
+                            <div className='p-4 bg-white border border-[var(--border-light)] rounded-xl shadow-sm'>
+                                <div className='flex items-center gap-2 mb-2'>
+                                    <div className='w-2 h-2 rounded-full bg-green-500 animate-pulse' />
+                                    <span className='text-[10px] font-bold uppercase tracking-wider text-[var(--fg-4)]'>Online</span>
                                 </div>
-                                <div className='mt-auto pt-8 border-t border-[var(--color-border)] opacity-30 font-mono text-[9px] uppercase tracking-tighter leading-relaxed'>
-                                    "Benchmarking large language models via decentralized community consensus and ELO-based evaluation cycles."
-                                </div>
-                            </div>
-
-                            {/* Main Display: Arena or Rankings */}
-                            <div className='terminal-pane bg-black/20 flex flex-col p-0 overflow-y-auto w-full'>
-                                {activeTab === 'vote' ? (
-                                    <div className='p-8 md:p-12 max-w-5xl mx-auto w-full space-y-12'>
-                                        {!showVoting && !responseA.loading ? (
-                                            <div className='space-y-6'>
-                                                <div className='flex items-center gap-2 text-[var(--color-accent)]'>
-                                                    <span className='terminal-prompt'>$</span>
-                                                    <span className='text-[10px] uppercase tracking-widest opacity-60'>Launch_Query</span>
-                                                </div>
-                                                <textarea
-                                                    value={prompt}
-                                                    onChange={e => setPrompt(e.target.value)}
-                                                    placeholder='ENTER_CHALLENGE_PROMPT...'
-                                                    className='w-full bg-black/40 border border-[var(--color-border)] rounded-lg p-6 font-mono text-sm text-[var(--color-text)] focus:border-[var(--color-accent)] outline-none resize-none h-48'
-                                                />
-                                                <button
-                                                    onClick={handleGenerate}
-                                                    disabled={!prompt.trim()}
-                                                    className='w-full py-4 border border-[var(--color-accent)]/50 hover:bg-[var(--color-accent)]/10 text-[var(--color-accent)] font-mono text-xs uppercase tracking-[0.3em] rounded transition-all'
-                                                >
-                                                    [INITIATE_BATTLE]
-                                                </button>
-                                            </div>
-                                        ) : (
-                                            <div className='space-y-8 pb-12'>
-                                                <div className='grid md:grid-cols-2 gap-8'>
-                                                    {[
-                                                        { label: 'NODE_ALPHA', content: responseA.content, stream: streamingMessageA, loading: responseA.loading, model: battleModels?.modelA },
-                                                        { label: 'NODE_BETA', content: responseB.content, stream: streamingMessageB, loading: responseB.loading, model: battleModels?.modelB }
-                                                    ].map((node, i) => (
-                                                        <div key={i} className='border border-[var(--color-border)] rounded-lg bg-black/40 p-6 flex flex-col h-[500px]'>
-                                                            <div className='flex justify-between items-center mb-6 border-b border-[var(--color-border)] pb-4'>
-                                                                <span className='text-[10px] font-mono text-[var(--color-accent)] uppercase tracking-widest'>{node.label}</span>
-                                                                {revealedModels && <span className='text-[10px] font-mono opacity-40 truncate max-w-[150px]'>{node.model}</span>}
-                                                            </div>
-                                                            <div className='flex-grow overflow-y-auto pr-2 custom-scrollbar text-sm font-mono leading-relaxed prose prose-invert prose-sm'>
-                                                                <ReactMarkdown>{node.loading ? node.stream : node.content}</ReactMarkdown>
-                                                                {node.loading && <span className='inline-block w-2 h-4 bg-[var(--color-accent)] ml-1 animate-pulse' />}
-                                                            </div>
-                                                        </div>
-                                                    ))}
-                                                </div>
-
-                                                {showVoting && !votingComplete && (
-                                                    <div className='flex flex-col items-center gap-6 animate-reveal'>
-                                                        <span className='text-xs font-mono uppercase tracking-[0.3em] opacity-60'>Evaluator_Input_Required</span>
-                                                        <div className='flex gap-4'>
-                                                            <button onClick={() => handleVote('A')} className='px-8 py-3 border border-blue-500/50 hover:bg-blue-500/10 text-blue-400 font-mono text-[10px] uppercase rounded tracking-widest'>Select_Alpha</button>
-                                                            <button onClick={() => handleVote('tie')} className='px-8 py-3 border border-white/20 hover:bg-white/5 text-white/40 font-mono text-[10px] uppercase rounded tracking-widest'>Equal_Utility</button>
-                                                            <button onClick={() => handleVote('B')} className='px-8 py-3 border border-green-500/50 hover:bg-green-500/10 text-green-400 font-mono text-[10px] uppercase rounded tracking-widest'>Select_Beta</button>
-                                                        </div>
-                                                    </div>
-                                                )}
-
-                                                {votingComplete && (
-                                                    <div className='flex flex-col items-center gap-6 animate-reveal'>
-                                                        <div className='p-6 border border-[var(--color-accent)]/30 rounded bg-[var(--color-accent)]/5 text-center'>
-                                                            <div className='text-[11px] font-mono text-[var(--color-accent)] uppercase tracking-widest mb-2'>VOTE_COMMITTED_TO_ELASTICSEARCH</div>
-                                                            <button onClick={setupBattle} className='text-[10px] font-mono text-[var(--color-text-dim)] hover:text-white underline underline-offset-4'>[SPAWN_NEW_CYCLE]</button>
-                                                        </div>
-                                                    </div>
-                                                )}
-                                            </div>
-                                        )}
-                                    </div>
-                                ) : (
-                                    <div className='p-8 md:p-12 w-full max-w-5xl mx-auto'>
-                                        <div className='flex items-center gap-4 mb-8 opacity-60'>
-                                            <span className='text-[10px] font-mono uppercase tracking-widest'>Node_ELO_Performance_Leaderboard</span>
-                                            <div className='h-[1px] flex-grow bg-[var(--color-border)]' />
-                                        </div>
-
-                                        <div className='border border-[var(--color-border)] rounded-lg overflow-hidden bg-black/40'>
-                                            <table className='w-full font-mono text-left'>
-                                                <thead>
-                                                    <tr className='bg-white/5 text-[10px] uppercase tracking-widest opacity-40 border-b border-[var(--color-border)]'>
-                                                        <th className='p-4'>Rank</th>
-                                                        <th className='p-4'>Model_ID</th>
-                                                        <th className='p-4'>ELO_Rating</th>
-                                                        <th className='p-4'>Agg_Votes</th>
-                                                        <th className='p-4 text-right'>W/L/T_Ratio</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody className='text-xs'>
-                                                    {leaderboard.map((e, i) => (
-                                                        <tr key={e.model_id} className='border-b border-[var(--color-border)] hover:bg-white/5 transition-colors'>
-                                                            <td className='p-4 opacity-40'>#{String(i + 1).padStart(2, '0')}</td>
-                                                            <td className='p-4 text-[var(--color-text)]'>{e.model_id}</td>
-                                                            <td className='p-4 text-[var(--color-accent)] font-bold'>{e.elo_rating}</td>
-                                                            <td className='p-4 opacity-60'>{e.total_votes}</td>
-                                                            <td className='p-4 text-right opacity-60'>{e.wins}/{e.losses}/{e.ties}</td>
-                                                        </tr>
-                                                    ))}
-                                                </tbody>
-                                            </table>
-                                            {leaderboardLoading && <div className='p-20 text-center text-[10px] opacity-20 uppercase tracking-[0.5em]'>Scanning_Block_Metas...</div>}
-                                        </div>
-                                    </div>
-                                )}
+                                <p className='text-[10px] text-muted leading-relaxed'>
+                                    Benchmarking via decentralized consensus and ELO evaluation.
+                                </p>
                             </div>
                         </div>
                     </div>
+                </aside>
+
+                {/* Main Content Area */}
+                <div className='flex-grow flex flex-col h-full relative bg-[#fafbff] overflow-hidden'>
+                    {/* Floating decorations */}
+                    <div className='absolute top-0 right-0 w-[600px] h-[600px] bg-[var(--purple-1)] opacity-30 rounded-full blur-3xl pointer-events-none -translate-y-1/2 translate-x-1/2' />
+
+                    <div className='flex-grow overflow-y-auto p-4 md:p-8 scrollbar-hide z-10'>
+                        {activeTab === 'vote' ? (
+                            <div className='max-w-5xl mx-auto w-full space-y-8 pb-32'>
+                                <div className='text-center space-y-2 mb-8'>
+                                    <h1 className='text-2xl font-bold text-[var(--fg-4)]'>Battle Arena</h1>
+                                    <p className='text-muted text-sm'>Enter a prompt to compare two anonymous models.</p>
+                                </div>
+
+                                {!showVoting && !responseA.loading ? (
+                                    <div className='bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-[var(--border-light)] max-w-3xl mx-auto'>
+                                        <textarea
+                                            value={prompt}
+                                            onChange={e => setPrompt(e.target.value)}
+                                            placeholder='Enter a challenging prompt...'
+                                            className='w-full bg-[var(--bg-2)] border border-[var(--border-light)] rounded-xl p-4 text-sm text-[var(--fg-4)] focus:border-[var(--purple-4)] focus:ring-2 focus:ring-[var(--purple-1)] outline-none resize-none h-40 transition-all placeholder:text-muted/50 mb-6'
+                                        />
+                                        <button
+                                            onClick={handleGenerate}
+                                            disabled={!prompt.trim()}
+                                            className='w-full py-4 bg-[var(--fg-4)] hover:bg-[var(--purple-4)] text-white font-bold text-xs uppercase tracking-[0.2em] rounded-xl transition-all shadow-lg hover:shadow-xl hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:hover:bg-[var(--fg-4)] disabled:hover:scale-100 disabled:cursor-not-allowed'
+                                        >
+                                            Initiate Battle
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div className='space-y-8 animate-fade-in-up'>
+                                        <div className='grid md:grid-cols-2 gap-6'>
+                                            {[
+                                                { label: 'Model A', content: responseA.content, stream: streamingMessageA, loading: responseA.loading, model: battleModels?.modelA },
+                                                { label: 'Model B', content: responseB.content, stream: streamingMessageB, loading: responseB.loading, model: battleModels?.modelB }
+                                            ].map((node, i) => (
+                                                <div key={i} className='bg-white border border-[var(--border-light)] rounded-2xl p-6 shadow-sm flex flex-col h-[500px] overflow-hidden relative'>
+                                                    <div className='flex justify-between items-center mb-4 pb-4 border-b border-[var(--border-light)]'>
+                                                        <span className='text-xs font-bold uppercase tracking-widest text-[var(--purple-4)]'>{node.label}</span>
+                                                        {revealedModels && <span className='text-[10px] font-medium text-[var(--fg-4)] bg-[var(--purple-1)] px-2 py-1 rounded'>{node.model}</span>}
+                                                    </div>
+                                                    <div className='flex-grow overflow-y-auto pr-2 custom-scrollbar markdown-body text-sm text-[var(--fg-4)] leading-relaxed'>
+                                                        <div className='prose prose-sm max-w-none'>
+                                                            <ReactMarkdown>{node.loading ? node.stream : node.content}</ReactMarkdown>
+                                                            {node.loading && <span className='inline-block w-1.5 h-4 bg-[var(--purple-4)] ml-1 animate-pulse align-middle rounded-full' />}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+
+                                        {showVoting && !votingComplete && (
+                                            <div className='flex flex-col items-center gap-6 p-6 bg-white/80 backdrop-blur-xl border border-[var(--border-light)] rounded-2xl shadow-lg sticky bottom-6 max-w-2xl mx-auto'>
+                                                <span className='text-xs font-bold uppercase tracking-[0.2em] text-muted'>Select Winner</span>
+                                                <div className='flex gap-4 w-full'>
+                                                    <button onClick={() => handleVote('A')} className='flex-1 py-3 bg-white border border-[var(--border-light)] hover:border-[var(--purple-4)] hover:bg-[var(--purple-1)] text-[var(--fg-4)] hover:text-[var(--purple-4)] font-bold text-xs uppercase rounded-xl tracking-widest transition-all shadow-sm'>Model A</button>
+                                                    <button onClick={() => handleVote('tie')} className='flex-1 py-3 bg-[var(--bg-2)] border border-[var(--border-light)] hover:bg-[var(--border-light)] text-muted font-bold text-xs uppercase rounded-xl tracking-widest transition-all'>Tie</button>
+                                                    <button onClick={() => handleVote('B')} className='flex-1 py-3 bg-white border border-[var(--border-light)] hover:border-[var(--purple-4)] hover:bg-[var(--purple-1)] text-[var(--fg-4)] hover:text-[var(--purple-4)] font-bold text-xs uppercase rounded-xl tracking-widest transition-all shadow-sm'>Model B</button>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {votingComplete && (
+                                            <div className='flex flex-col items-center gap-6 animate-fade-in-up'>
+                                                <div className='p-8 bg-white border border-[var(--purple-2)] rounded-2xl shadow-lg text-center max-w-md mx-auto'>
+                                                    <div className='w-12 h-12 bg-[var(--green-1)] text-[var(--green-4)] rounded-full flex items-center justify-center mx-auto mb-4 text-xl'>✓</div>
+                                                    <div className='text-xs font-bold text-[var(--purple-4)] uppercase tracking-widest mb-4'>Vote Committed</div>
+                                                    <button
+                                                        onClick={setupBattle}
+                                                        className='text-sm font-medium text-[var(--fg-4)] hover:text-[var(--purple-4)] underline underline-offset-4 transition-colors'
+                                                    >
+                                                        Start Next Battle
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+                        ) : (
+                            <div className='max-w-5xl mx-auto w-full pb-32'>
+                                <div className='text-center space-y-2 mb-8'>
+                                    <h1 className='text-2xl font-bold text-[var(--fg-4)]'>Leaderboard</h1>
+                                    <p className='text-muted text-sm'>Top performing models based on community ELO ratings.</p>
+                                </div>
+
+                                <div className='bg-white border border-[var(--border-light)] rounded-2xl overflow-hidden shadow-sm'>
+                                    <div className='overflow-x-auto'>
+                                        <table className='w-full text-left'>
+                                            <thead>
+                                                <tr className='bg-[var(--gray-1)] border-b border-[var(--border-light)]'>
+                                                    <th className='p-4 text-[10px] font-bold uppercase tracking-widest text-muted'>Rank</th>
+                                                    <th className='p-4 text-[10px] font-bold uppercase tracking-widest text-muted'>Model</th>
+                                                    <th className='p-4 text-[10px] font-bold uppercase tracking-widest text-muted'>ELO</th>
+                                                    <th className='p-4 text-[10px] font-bold uppercase tracking-widest text-muted'>Votes</th>
+                                                    <th className='p-4 text-[10px] font-bold uppercase tracking-widest text-muted text-right'>W / L / T</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className='text-sm'>
+                                                {leaderboard.map((e, i) => (
+                                                    <tr key={e.model_id} className='border-b border-[var(--border-light)] hover:bg-[var(--bg-2)] transition-colors'>
+                                                        <td className='p-4 font-mono text-muted text-xs'>#{String(i + 1).padStart(2, '0')}</td>
+                                                        <td className='p-4 font-medium text-[var(--fg-4)]'>{e.model_id}</td>
+                                                        <td className='p-4 font-bold text-[var(--purple-4)]'>{e.elo_rating}</td>
+                                                        <td className='p-4 text-muted'>{e.total_votes}</td>
+                                                        <td className='p-4 text-right font-mono text-xs text-muted'>{e.wins} / {e.losses} / {e.ties}</td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    {leaderboardLoading && (
+                                        <div className='p-12 text-center'>
+                                            <div className='w-6 h-6 border-2 border-[var(--border-light)] border-t-[var(--purple-4)] rounded-full animate-spin mx-auto mb-2'></div>
+                                            <span className='text-[10px] font-bold uppercase tracking-widest text-muted'>Loading Stats...</span>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+                    </div>
                 </div>
+
+                {/* Mobile Menu Overlay */}
+                {isMobileMenuOpen && (
+                    <div className='fixed inset-0 z-[100] flex items-end justify-center bg-black/40 backdrop-blur-sm p-4 md:hidden' onClick={() => setIsMobileMenuOpen(false)}>
+                        <div className='w-full max-w-sm bg-white rounded-2xl shadow-2xl animate-slide-up overflow-hidden border border-[var(--border-light)]' onClick={e => e.stopPropagation()}>
+                            <div className='p-4 border-b border-[var(--border-light)] flex justify-between items-center bg-[var(--bg-2)]'>
+                                <span className='text-xs font-bold uppercase tracking-widest text-[var(--fg-4)]'>Menu</span>
+                                <button onClick={() => setIsMobileMenuOpen(false)} className='w-6 h-6 rounded-full bg-white border border-[var(--border-light)] flex items-center justify-center text-muted'>✕</button>
+                            </div>
+                            <div className='p-2'>
+                                <button
+                                    onClick={() => { setActiveTab('vote'); setIsMobileMenuOpen(false); }}
+                                    className={`w-full p-3 text-left rounded-xl transition-all flex items-center gap-3 ${activeTab === 'vote' ? 'bg-[var(--purple-1)] text-[var(--purple-4)]' : 'hover:bg-[var(--bg-2)]'}`}
+                                >
+                                    <span className='text-lg'>⚔️</span>
+                                    <span className='text-xs font-bold uppercase tracking-wider'>Battle Arena</span>
+                                </button>
+                                <button
+                                    onClick={() => { setActiveTab('leaderboard'); setIsMobileMenuOpen(false); }}
+                                    className={`w-full p-3 text-left rounded-xl transition-all flex items-center gap-3 ${activeTab === 'leaderboard' ? 'bg-[var(--purple-1)] text-[var(--purple-4)]' : 'hover:bg-[var(--bg-2)]'}`}
+                                >
+                                    <span className='text-lg'>🏆</span>
+                                    <span className='text-xs font-bold uppercase tracking-wider'>Rankings</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </main>
         </>
     );

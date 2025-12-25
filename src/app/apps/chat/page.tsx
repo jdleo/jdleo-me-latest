@@ -6,9 +6,9 @@ import Image from 'next/image';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { oneDark } from 'react-syntax-highlighter/dist/cjs/styles/prism';
+import CodeBlock from '@/components/CodeBlock';
 import { WebVitals } from '@/components/SEO/WebVitals';
+import { strings } from '../../constants/strings';
 
 type Message = {
     content: string;
@@ -24,40 +24,6 @@ type Message = {
     };
 };
 
-const CodeBlock = ({ node, inline, className, children, ...props }: any) => {
-    const match = /language-(\w+)/.exec(className || '');
-    const language = match ? match[1] : '';
-
-    return !inline && match ? (
-        <div className='relative rounded-lg overflow-hidden bg-[#0D0D0E] border border-[var(--color-border)] my-4'>
-            {language && (
-                <div className='flex items-center justify-between px-4 py-1.5 bg-black/40 border-b border-[var(--color-border)]'>
-                    <span className='text-[10px] font-mono text-[var(--color-text-dim)] uppercase tracking-wider'>{language}</span>
-                </div>
-            )}
-            <SyntaxHighlighter
-                style={oneDark}
-                language={language}
-                PreTag='div'
-                customStyle={{
-                    margin: 0,
-                    background: 'transparent',
-                    padding: '1rem',
-                    fontSize: '0.8rem',
-                    lineHeight: '1.5',
-                }}
-                {...props}
-            >
-                {String(children).replace(/\n$/, '')}
-            </SyntaxHighlighter>
-        </div>
-    ) : (
-        <code className='bg-white/5 text-[var(--color-accent-blue)] px-1.5 py-0.5 rounded text-sm font-mono' {...props}>
-            {children}
-        </code>
-    );
-};
-
 export default function Chat() {
     const [messages, setMessages] = useState<Message[]>([]);
     const [showWelcome, setShowWelcome] = useState(true);
@@ -66,10 +32,10 @@ export default function Chat() {
     const [isLoaded, setIsLoaded] = useState(false);
     const [selectedModel, setSelectedModel] = useState('openai/gpt-oss-120b');
     const [streamingMessage, setStreamingMessage] = useState('');
+    const [isMobileSettingsOpen, setIsMobileSettingsOpen] = useState(false);
     const [systemPrompt, setSystemPrompt] = useState(
         "You are a helpful AI assistant. Today's date is {{currentDate}}."
     );
-    const [showSystemPrompt, setShowSystemPrompt] = useState(false);
     const [isMobileModelSelectorOpen, setIsMobileModelSelectorOpen] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -175,7 +141,7 @@ export default function Chat() {
                 }
             }
         } catch (error) {
-            setMessages([...updatedMessages, { content: "ERROR: Failed to connect to terminal.", isUser: false }]);
+            setMessages([...updatedMessages, { content: "ERROR: Failed to connect to service.", isUser: false }]);
         } finally {
             setIsLoading(false);
             setStreamingMessage('');
@@ -195,238 +161,306 @@ export default function Chat() {
     return (
         <>
             <WebVitals />
-            <main className='min-h-screen bg-[var(--color-bg)] flex items-center justify-center p-4 md:p-8 selection:bg-[var(--color-accent)] selection:text-[var(--color-bg)]'>
-                <div className='fixed inset-0 overflow-hidden pointer-events-none'>
-                    <div className='absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(62,175,124,0.03),transparent_60%)]' />
-                    <div className='absolute inset-0' style={{
-                        backgroundImage: 'radial-gradient(rgba(255,255,255,0.02) 1px, transparent 1px)',
-                        backgroundSize: '32px 32px'
-                    }} />
-                </div>
+            <main className='relative h-screen bg-[#fafbff] overflow-hidden selection:bg-[var(--purple-2)] selection:text-[var(--purple-4)] flex flex-col md:flex-row'>
 
-                <div className={`w-full max-w-6xl h-[85vh] transition-all duration-1000 transform ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-                    <div className='terminal-window flex flex-col h-full'>
-                        <div className='terminal-header'>
-                            <div className='terminal-controls'>
-                                <div className='terminal-control red' />
-                                <div className='terminal-control yellow' />
-                                <div className='terminal-control green' />
+                {/* Mobile Header */}
+                <header className='md:hidden flex items-center justify-between p-4 border-b border-[var(--border-light)] bg-white/80 backdrop-blur-md z-50'>
+                    <Link href='/apps' className='text-sm font-bold uppercase tracking-widest text-muted hover:text-[var(--purple-4)]'>
+                        ← Apps
+                    </Link>
+                    <div className='flex items-center gap-2'>
+                        <button
+                            onClick={() => setIsMobileModelSelectorOpen(true)}
+                            className='flex items-center gap-1.5 px-3 py-1.5 bg-white border border-[var(--border-light)] rounded-full shadow-sm text-xs font-bold uppercase tracking-wider text-[var(--fg-4)]'
+                        >
+                            <span>{availableModels.find(m => m.id === selectedModel)?.name}</span>
+                            <span className='text-[10px]'>▼</span>
+                        </button>
+                        <button
+                            onClick={() => setIsMobileSettingsOpen(true)}
+                            className='w-8 h-8 rounded-full bg-white border border-[var(--border-light)] flex items-center justify-center text-[var(--fg-4)] shadow-sm'
+                        >
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.74v-.47a2 2 0 0 1 1-1.74l.15-.1a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+                                <circle cx="12" cy="12" r="3" />
+                            </svg>
+                        </button>
+                    </div>
+                </header>
+
+                {/* Left Sidebar (Desktop) */}
+                <aside className='hidden md:flex flex-col w-80 h-full border-r border-[var(--border-light)] bg-white/50 backdrop-blur-xl z-20'>
+                    <div className='p-6 border-b border-[var(--border-light)]'>
+                        <div className='flex items-center gap-3 mb-6'>
+                            <div className='w-3 h-3 rounded-full bg-[var(--purple-4)]' />
+                            <span className='font-bold uppercase tracking-widest text-sm text-[var(--fg-4)]'>AI Studio</span>
+                        </div>
+                        <nav className='flex flex-col gap-2'>
+                            <Link href='/apps' className='text-xs font-bold uppercase tracking-wider text-muted hover:text-[var(--purple-4)] transition-colors flex items-center gap-2'>
+                                <span>←</span> Back to Apps
+                            </Link>
+                        </nav>
+                    </div>
+
+                    <div className='flex-grow overflow-y-auto p-4 space-y-6'>
+                        <div>
+                            <h3 className='text-[10px] font-bold uppercase tracking-[0.2em] text-muted mb-4 px-2'>Select Model</h3>
+                            <div className='space-y-2'>
+                                {availableModels.map(m => (
+                                    <button
+                                        key={m.id}
+                                        onClick={() => setSelectedModel(m.id)}
+                                        className={`w-full p-3 text-left rounded-xl transition-all flex items-center gap-3 group ${selectedModel === m.id
+                                            ? 'bg-white shadow-md border border-[var(--purple-2)] ring-1 ring-[var(--purple-2)]'
+                                            : 'hover:bg-white/60 border border-transparent hover:border-[var(--border-light)]'
+                                            }`}
+                                    >
+                                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center p-1 transition-colors ${selectedModel === m.id ? 'bg-[var(--purple-1)]' : 'bg-white border border-[var(--border-light)]'}`}>
+                                            <Image src={m.icon} alt={m.name} width={20} height={20} className='object-contain' />
+                                        </div>
+                                        <div>
+                                            <div className={`text-xs font-bold uppercase tracking-wider ${selectedModel === m.id ? 'text-[var(--purple-4)]' : 'text-[var(--fg-4)]'}`}>
+                                                {m.name}
+                                            </div>
+                                            <div className='text-[10px] text-muted font-medium opacity-70'>
+                                                {m.description}
+                                            </div>
+                                        </div>
+                                    </button>
+                                ))}
                             </div>
-                            <div className='terminal-title'>johnleonardo — ~/ai-chat</div>
                         </div>
 
-                        <div className='terminal-split flex-grow overflow-hidden'>
-                            {/* Left Pane: Controls & Settings */}
-                            <div className='terminal-pane border-r border-[var(--color-border)] hidden md:flex flex-col gap-8'>
+                        <div>
+                            <h3 className='text-[10px] font-bold uppercase tracking-[0.2em] text-muted mb-4 px-2'>System Configuration</h3>
+                            <textarea
+                                value={systemPrompt}
+                                onChange={e => setSystemPrompt(e.target.value)}
+                                className='w-full bg-white border border-[var(--border-light)] p-3 text-xs rounded-xl focus:border-[var(--purple-4)] focus:ring-2 focus:ring-[var(--purple-1)] outline-none transition-all resize-none shadow-sm text-muted font-medium leading-relaxed'
+                                rows={6}
+                                placeholder="Enter system prompt..."
+                            />
+                        </div>
+                    </div>
+
+                    <div className='p-4 border-t border-[var(--border-light)]'>
+                        <button
+                            onClick={() => setMessages([])}
+                            className='w-full py-2 px-4 rounded-lg border border-red-100 hover:bg-red-50 text-red-500 text-xs font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-2'
+                        >
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+                            </svg>
+                            Clear History
+                        </button>
+                    </div>
+                </aside>
+
+                {/* Main Chat Area */}
+                <div className='flex-grow flex flex-col h-full relative bg-[#fafbff]'>
+                    {/* Floating decorations for main area */}
+                    <div className='absolute top-0 right-0 w-[600px] h-[600px] bg-[var(--purple-1)] opacity-30 rounded-full blur-3xl pointer-events-none -translate-y-1/2 translate-x-1/2' />
+
+                    <div className='flex-grow overflow-y-auto p-4 md:p-8 scrollbar-hide space-y-6 pb-32 z-10'>
+                        {showWelcome && (
+                            <div className='flex flex-col items-center justify-center h-full text-center space-y-6 opacity-0 animate-fade-in-up' style={{ animationFillMode: 'forwards' }}>
                                 <div>
-                                    <div className='flex items-center gap-2 mb-6 text-[var(--color-accent)]'>
-                                        <span className='terminal-prompt'>➜</span>
-                                        <span className='text-sm uppercase tracking-widest font-bold'>Session</span>
-                                    </div>
-                                    <div className='flex flex-col gap-4'>
-                                        <Link href='/' className='text-lg hover:text-[var(--color-accent)] transition-colors'>~/home</Link>
-                                        <Link href='/apps' className='text-lg hover:text-[var(--color-accent)] transition-colors'>~/apps</Link>
-                                        <button
-                                            onClick={() => setMessages([])}
-                                            className='text-left text-lg text-red-400/70 hover:text-red-400 transition-colors'
-                                        >
-                                            ~/clear_history
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <div className='space-y-6 flex-grow overflow-y-auto scrollbar-hide'>
-                                    <div className='font-mono'>
-                                        <span className='text-[var(--color-text)] opacity-70'>$ select --model</span>
-                                        <div className='mt-4 flex flex-col gap-2'>
-                                            {availableModels.map(m => (
-                                                <button
-                                                    key={m.id}
-                                                    onClick={() => setSelectedModel(m.id)}
-                                                    className={`p-3 text-left border rounded transition-all flex items-center gap-3 ${selectedModel === m.id ? 'border-[var(--color-accent)] bg-[var(--color-accent)]/5 text-[var(--color-accent)]' : 'border-[var(--color-border)] text-[var(--color-text-dim)] hover:border-[var(--color-text-dim)]'}`}
-                                                >
-                                                    <div className='w-5 h-5 rounded-sm bg-white flex items-center justify-center p-0.5 shrink-0'>
-                                                        <Image src={m.icon} alt={m.name} width={16} height={16} className='object-contain' />
-                                                    </div>
-                                                    <span className='text-xs font-bold uppercase tracking-tighter truncate'>{m.name}</span>
-                                                </button>
-                                            ))}
-                                        </div>
-                                    </div>
-
-                                    <div className='font-mono'>
-                                        <span className='text-[var(--color-text)] opacity-70'>$ config --system</span>
-                                        <textarea
-                                            value={systemPrompt}
-                                            onChange={e => setSystemPrompt(e.target.value)}
-                                            className='mt-3 w-full bg-black/40 border border-[var(--color-border)] p-3 text-xs text-[var(--color-text-dim)] rounded focus:border-[var(--color-accent)] outline-none transition-colors'
-                                            rows={4}
-                                        />
-                                    </div>
+                                    <h1 className='text-2xl font-bold text-[var(--fg-4)] mb-2'>Feel free to chat and ask anything!</h1>
+                                    <p className='text-muted max-w-lg mx-auto leading-relaxed'>
+                                        Your chats are <span className='font-bold text-[var(--purple-4)]'>NEVER EVER</span> saved anywhere.
+                                        <br />
+                                        This is totally free (for now), so have fun! ✨
+                                    </p>
                                 </div>
                             </div>
+                        )}
 
-                            {/* Right Pane: Chat Interface */}
-                            <div className='terminal-pane bg-black/20 flex flex-col p-0 overflow-hidden w-full'>
-                                <div className='flex-grow overflow-y-auto p-6 scrollbar-hide flex flex-col gap-8'>
-                                    {showWelcome && (
-                                        <div className='opacity-40 font-mono text-sm leading-relaxed border border-dashed border-[var(--color-border)] p-8 rounded-xl'>
-                                            <div className='text-[var(--color-accent)] mb-4'>[TERMINAL READY]</div>
-                                            <p className='mb-4'>Welcome to the multi-model AI console. Compare responses from leading LLMs in a secure, technical environment.</p>
-                                            <p className='mb-4'>All models are routed via OpenRouter and session history is stored locally in-memory.</p>
-                                            <div className='flex flex-wrap gap-2 text-xs'>
-                                                <span className='px-2 py-1 bg-white/5 border border-[var(--color-border)] rounded text-[var(--color-text-dim)]'>CTRL+L to clear</span>
-                                                <span className='px-2 py-1 bg-white/5 border border-[var(--color-border)] rounded text-[var(--color-text-dim)]'>Markdown supported</span>
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    {messages.map((m, i) => (
-                                        <div key={i} className='flex flex-col gap-3 group'>
-                                            <div className='flex items-center justify-between'>
-                                                <div className='flex items-center gap-2'>
-                                                    <span className={`text-xs font-mono font-bold uppercase tracking-wider ${m.isUser ? 'text-[var(--color-accent-blue)]' : 'text-[var(--color-accent)]'}`}>
-                                                        [{m.isUser ? 'USER' : m.model?.toUpperCase().replace(/\s+/g, '_') || 'AI'}]
-                                                    </span>
-                                                    {!m.isUser && m.usage && (
-                                                        <span className='text-[10px] text-[var(--color-text-dim)] opacity-0 group-hover:opacity-100 transition-opacity font-mono'>
-                                                            (latency: {m.usage.response_time_ms}ms | cost: ${m.usage.estimated_cost?.toFixed(5)})
-                                                        </span>
-                                                    )}
-                                                </div>
-                                            </div>
-                                            <div className={`font-mono text-sm leading-relaxed ${m.isUser ? 'text-[var(--color-text)]' : 'text-[var(--color-text-dim)]'}`}>
-                                                {!m.isUser ? (
-                                                    <div className='prose prose-invert prose-sm max-w-none'>
-                                                        <ReactMarkdown
-                                                            remarkPlugins={[remarkGfm as any]}
-                                                            rehypePlugins={[rehypeRaw as any]}
-                                                            components={{ code: CodeBlock }}
-                                                        >
-                                                            {m.content}
-                                                        </ReactMarkdown>
-                                                    </div>
-                                                ) : (
-                                                    <p>{m.content}</p>
-                                                )}
-                                            </div>
-                                        </div>
-                                    ))}
-
-                                    {streamingMessage && (
-                                        <div className='flex flex-col gap-3'>
-                                            <div className='flex items-center gap-2'>
-                                                <span className='text-[var(--color-accent)] text-xs font-mono font-bold uppercase tracking-wider'>
-                                                    [{availableModels.find(m => m.id === selectedModel)?.name.toUpperCase().replace(/\s+/g, '_') || 'AI'}]
+                        {messages.map((m, i) => (
+                            <div key={i} className={`flex ${m.isUser ? 'justify-end' : 'justify-start'} animate-fade-in-up`}>
+                                <div className={`max-w-[90%] md:max-w-3xl ${m.isUser
+                                    ? 'bg-[var(--fg-4)] text-white rounded-2xl rounded-tr-sm px-5 py-3 shadow-lg'
+                                    : 'bg-white rounded-2xl rounded-tl-sm px-6 py-5 shadow-sm border border-[var(--border-light)]'
+                                    }`}>
+                                    {!m.isUser && (
+                                        <div className='flex items-center gap-2 mb-3 pb-3 border-b border-gray-100'>
+                                            <span className='text-[10px] font-bold uppercase tracking-widest text-[var(--purple-4)]'>
+                                                {m.model}
+                                            </span>
+                                            {m.usage && (
+                                                <span className='text-[10px] text-muted opacity-60'>
+                                                    • {m.usage.response_time_ms}ms
                                                 </span>
-                                            </div>
-                                            <div className='font-mono text-sm text-[var(--color-text-dim)] leading-relaxed'>
-                                                <div className='prose prose-invert prose-sm max-w-none'>
-                                                    <ReactMarkdown
-                                                        remarkPlugins={[remarkGfm as any]}
-                                                        rehypePlugins={[rehypeRaw as any]}
-                                                        components={{ code: CodeBlock }}
-                                                    >
-                                                        {streamingMessage}
-                                                    </ReactMarkdown>
-                                                </div>
-                                                <span className='inline-block w-2 h-4 bg-[var(--color-accent)] ml-1 animate-pulse' />
-                                            </div>
+                                            )}
                                         </div>
                                     )}
-
-                                    {isLoading && !streamingMessage && (
-                                        <div className='flex items-center gap-2 text-[var(--color-text-dim)] text-xs font-mono italic animate-pulse'>
-                                            <span>Establishing secure link...</span>
-                                        </div>
-                                    )}
-                                    <div ref={messagesEndRef} />
-                                </div>
-
-                                {/* Terminal Input Field */}
-                                <div className='p-4 bg-black/40 border-t border-[var(--color-border)]'>
-                                    <form
-                                        onSubmit={(e) => { e.preventDefault(); sendMessage(input); }}
-                                        className='flex items-center gap-3 px-3 py-2 bg-white/5 border border-[var(--color-border)] rounded focus-within:border-[var(--color-accent)] transition-colors'
-                                    >
-                                        <span className='text-[var(--color-accent)] font-mono'>$</span>
-                                        <input
-                                            type='text'
-                                            value={input}
-                                            onChange={(e) => setInput(e.target.value)}
-                                            placeholder='Transmit command...'
-                                            className='flex-grow bg-transparent border-none outline-none text-sm font-mono text-[var(--color-text)] placeholder:text-[var(--color-text-dim)] placeholder:opacity-40'
-                                            disabled={isLoading}
-                                        />
-                                        <button
-                                            type='submit'
-                                            disabled={isLoading || !input.trim()}
-                                            className='text-[var(--color-accent)] hover:scale-110 transition-transform disabled:opacity-30'
-                                        >
-                                            <svg width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2.5' strokeLinecap='round' strokeLinejoin='round'>
-                                                <path d='M5 12h14M12 5l7 7-7 7' />
-                                            </svg>
-                                        </button>
-                                    </form>
-                                    <div className='mt-4 flex items-center justify-between'>
-                                        <div className='flex items-center gap-4 text-[10px] font-mono text-[var(--color-text-dim)] tracking-widest opacity-40 uppercase'>
-                                            <span>Buffer: OK</span>
-                                            <span>Stream: ACTIVE</span>
-                                            <span>Network: SECURE</span>
-                                        </div>
-                                        <div className='flex items-center gap-2 md:hidden'>
-                                            <button
-                                                type='button'
-                                                onClick={() => setIsMobileModelSelectorOpen(true)}
-                                                className='text-[10px] font-mono text-[var(--color-accent)] border border-[var(--color-accent)]/30 px-2 py-0.5 rounded bg-[var(--color-accent)]/5 hover:bg-[var(--color-accent)]/10 transition-colors flex items-center gap-1.5'
+                                    <div className={`prose prose-sm max-w-none ${m.isUser ? 'prose-invert' : 'blog-content'}`}>
+                                        {m.isUser ? (
+                                            <p className='whitespace-pre-wrap leading-relaxed'>{m.content}</p>
+                                        ) : (
+                                            <ReactMarkdown
+                                                remarkPlugins={[remarkGfm]}
+                                                rehypePlugins={[rehypeRaw]}
+                                                components={{
+                                                    code: CodeBlock as any,
+                                                    table: ({ children }) => <div className="table-wrapper"><table className="w-full">{children}</table></div>,
+                                                    thead: ({ children }) => <thead className="bg-[var(--gray-1)]">{children}</thead>,
+                                                    th: ({ children }) => <th className="p-3 text-left font-bold text-xs uppercase tracking-wider text-[var(--fg-4)] border-b border-[var(--border-light)]">{children}</th>,
+                                                    td: ({ children }) => <td className="p-3 border-b border-[var(--border-light)] text-sm">{children}</td>,
+                                                }}
                                             >
-                                                <span>{availableModels.find(m => m.id === selectedModel)?.name}</span>
-                                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                                                    <path d="m6 9 6 6 6-6" />
-                                                </svg>
-                                            </button>
-                                        </div>
+                                                {m.content}
+                                            </ReactMarkdown>
+                                        )}
                                     </div>
                                 </div>
                             </div>
+                        ))}
 
-                            {/* Mobile Model Selector Overlay */}
-                            {isMobileModelSelectorOpen && (
-                                <div className='fixed inset-0 z-50 flex items-end justify-center bg-black/60 backdrop-blur-sm p-4 md:hidden' onClick={() => setIsMobileModelSelectorOpen(false)}>
-                                    <div className='w-full max-w-sm terminal-window animate-slide-up' onClick={e => e.stopPropagation()}>
-                                        <div className='terminal-header'>
-                                            <div className='terminal-title'>SELECT_MODEL</div>
-                                            <button onClick={() => setIsMobileModelSelectorOpen(false)} className='text-[var(--color-text-dim)] hover:text-[var(--color-text)] font-mono text-xs'>[CLOSE]</button>
-                                        </div>
-                                        <div className='p-4 flex flex-col gap-2 max-h-[60vh] overflow-y-auto scrollbar-hide'>
-                                            {availableModels.map(m => (
-                                                <button
-                                                    key={m.id}
-                                                    onClick={() => {
-                                                        setSelectedModel(m.id);
-                                                        setIsMobileModelSelectorOpen(false);
-                                                    }}
-                                                    className={`p-4 text-left border rounded transition-all flex items-center justify-between ${selectedModel === m.id ? 'border-[var(--color-accent)] bg-[var(--color-accent)]/10 text-[var(--color-accent)]' : 'border-[var(--color-border)] text-[var(--color-text-dim)]'}`}
-                                                >
-                                                    <div className='flex items-center gap-4'>
-                                                        <div className='w-6 h-6 rounded bg-white flex items-center justify-center p-0.5 shrink-0'>
-                                                            <Image src={m.icon} alt={m.name} width={20} height={20} className='object-contain' />
-                                                        </div>
-                                                        <div className='flex flex-col'>
-                                                            <span className='text-xs font-bold uppercase tracking-widest'>{m.name}</span>
-                                                            <span className='text-[10px] opacity-60'>{m.description}</span>
-                                                        </div>
-                                                    </div>
-                                                    {selectedModel === m.id && <span className='text-[var(--color-accent)] font-mono text-xs'>[ACTIVE]</span>}
-                                                </button>
-                                            ))}
-                                        </div>
+                        {streamingMessage && (
+                            <div className='flex justify-start animate-fade-in-up'>
+                                <div className='max-w-[90%] md:max-w-3xl bg-white rounded-2xl rounded-tl-sm px-6 py-5 shadow-sm border border-[var(--border-light)]'>
+                                    <div className='flex items-center gap-2 mb-3 pb-3 border-b border-gray-100'>
+                                        <span className='text-[10px] font-bold uppercase tracking-widest text-[var(--purple-4)]'>
+                                            Thinking...
+                                        </span>
+                                    </div>
+                                    <div className='prose prose-sm max-w-none blog-content'>
+                                        <ReactMarkdown
+                                            remarkPlugins={[remarkGfm]}
+                                            rehypePlugins={[rehypeRaw]}
+                                            components={{
+                                                code: CodeBlock as any,
+                                                table: ({ children }) => <div className="table-wrapper"><table className="w-full">{children}</table></div>,
+                                                thead: ({ children }) => <thead className="bg-[var(--gray-1)]">{children}</thead>,
+                                                th: ({ children }) => <th className="p-3 text-left font-bold text-xs uppercase tracking-wider text-[var(--fg-4)] border-b border-[var(--border-light)]">{children}</th>,
+                                                td: ({ children }) => <td className="p-3 border-b border-[var(--border-light)] text-sm">{children}</td>,
+                                            }}
+                                        >
+                                            {streamingMessage}
+                                        </ReactMarkdown>
+                                        <span className='inline-block w-1.5 h-4 bg-[var(--purple-4)] ml-1 animate-pulse align-middle rounded-full' />
                                     </div>
                                 </div>
-                            )}
+                            </div>
+                        )}
+
+                        {isLoading && !streamingMessage && (
+                            <div className='flex justify-start animate-fade-in-up'>
+                                <div className='max-w-[90%] md:max-w-3xl bg-white rounded-2xl rounded-tl-sm px-6 py-4 shadow-sm border border-[var(--border-light)]'>
+                                    <div className='flex items-center gap-1.5'>
+                                        <div className='w-2 h-2 rounded-full bg-[var(--purple-4)] animate-bounce' style={{ animationDelay: '0ms' }} />
+                                        <div className='w-2 h-2 rounded-full bg-[var(--purple-4)] animate-bounce' style={{ animationDelay: '150ms' }} />
+                                        <div className='w-2 h-2 rounded-full bg-[var(--purple-4)] animate-bounce' style={{ animationDelay: '300ms' }} />
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                        <div ref={messagesEndRef} />
+                    </div>
+
+                    {/* Input Area */}
+                    <div className='p-4 md:p-6 bg-white/80 backdrop-blur-xl border-t border-[var(--border-light)] z-20'>
+                        <div className='max-w-3xl mx-auto'>
+                            <form
+                                onSubmit={(e) => { e.preventDefault(); sendMessage(input); }}
+                                className='relative group'
+                            >
+                                <input
+                                    type='text'
+                                    value={input}
+                                    onChange={(e) => setInput(e.target.value)}
+                                    placeholder='Ask anything...'
+                                    className='w-full bg-white border border-[var(--border-light)] rounded-full pl-6 pr-14 py-4 shadow-sm focus:shadow-lg focus:border-[var(--purple-4)] outline-none transition-all text-sm font-medium text-[var(--fg-4)] placeholder:text-muted/60'
+                                    disabled={isLoading}
+                                    autoFocus
+                                />
+                                <button
+                                    type='submit'
+                                    disabled={isLoading || !input.trim()}
+                                    className='absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-[var(--fg-4)] hover:bg-[var(--purple-4)] text-white rounded-full flex items-center justify-center transition-all disabled:opacity-50 disabled:hover:bg-[var(--fg-4)] shadow-md hover:shadow-lg hover:scale-105 active:scale-95'
+                                >
+                                    {isLoading ? (
+                                        <div className='w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin' />
+                                    ) : (
+                                        <svg width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2.5' strokeLinecap='round' strokeLinejoin='round'>
+                                            <path d='M5 12h14M12 5l7 7-7 7' />
+                                        </svg>
+                                    )}
+                                </button>
+                            </form>
+                            <div className='text-center mt-3'>
+                                <span className='text-[10px] text-muted font-medium opacity-60 uppercase tracking-widest'>
+                                    Powered by {availableModels.find(m => m.id === selectedModel)?.name}
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </div>
+
+                {/* Mobile Model Selector Overlay */}
+                {isMobileModelSelectorOpen && (
+                    <div className='fixed inset-0 z-[100] flex items-end justify-center bg-black/40 backdrop-blur-sm p-4 md:hidden' onClick={() => setIsMobileModelSelectorOpen(false)}>
+                        <div className='w-full max-w-sm bg-white rounded-2xl shadow-2xl animate-slide-up overflow-hidden border border-[var(--border-light)]' onClick={e => e.stopPropagation()}>
+                            <div className='p-4 border-b border-[var(--border-light)] flex justify-between items-center bg-[var(--bg-2)]'>
+                                <span className='text-xs font-bold uppercase tracking-widest text-[var(--fg-4)]'>Select Model</span>
+                                <button onClick={() => setIsMobileModelSelectorOpen(false)} className='w-6 h-6 rounded-full bg-white border border-[var(--border-light)] flex items-center justify-center text-muted'>✕</button>
+                            </div>
+                            <div className='p-2 max-h-[60vh] overflow-y-auto'>
+                                {availableModels.map(m => (
+                                    <button
+                                        key={m.id}
+                                        onClick={() => {
+                                            setSelectedModel(m.id);
+                                            setIsMobileModelSelectorOpen(false);
+                                        }}
+                                        className={`w-full p-3 text-left rounded-xl transition-all flex items-center gap-3 ${selectedModel === m.id ? 'bg-[var(--purple-1)] border border-[var(--purple-2)]' : 'hover:bg-[var(--bg-2)] border border-transparent'}`}
+                                    >
+                                        <Image src={m.icon} alt={m.name} width={24} height={24} className='object-contain bg-white rounded-md p-0.5 border border-[var(--border-light)]' />
+                                        <div className='flex flex-col'>
+                                            <span className={`text-xs font-bold uppercase tracking-wider ${selectedModel === m.id ? 'text-[var(--purple-4)]' : 'text-[var(--fg-4)]'}`}>{m.name}</span>
+                                            <span className='text-[10px] text-muted'>{m.description}</span>
+                                        </div>
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Mobile Settings Overlay */}
+                {isMobileSettingsOpen && (
+                    <div className='fixed inset-0 z-[100] flex items-end justify-center bg-black/40 backdrop-blur-sm p-4 md:hidden' onClick={() => setIsMobileSettingsOpen(false)}>
+                        <div className='w-full max-w-sm bg-white rounded-2xl shadow-2xl animate-slide-up overflow-hidden border border-[var(--border-light)]' onClick={e => e.stopPropagation()}>
+                            <div className='p-4 border-b border-[var(--border-light)] flex justify-between items-center bg-[var(--bg-2)]'>
+                                <span className='text-xs font-bold uppercase tracking-widest text-[var(--fg-4)]'>System Configuration</span>
+                                <button onClick={() => setIsMobileSettingsOpen(false)} className='w-6 h-6 rounded-full bg-white border border-[var(--border-light)] flex items-center justify-center text-muted'>✕</button>
+                            </div>
+                            <div className='p-4'>
+                                <textarea
+                                    value={systemPrompt}
+                                    onChange={e => setSystemPrompt(e.target.value)}
+                                    className='w-full bg-[var(--bg-2)] border border-[var(--border-light)] p-3 text-xs rounded-xl focus:border-[var(--purple-4)] focus:ring-2 focus:ring-[var(--purple-1)] outline-none transition-all resize-none shadow-sm text-muted font-medium leading-relaxed'
+                                    rows={8}
+                                    placeholder="Enter system prompt..."
+                                />
+                                <div className='mt-4 flex justify-end gap-2'>
+                                    <button
+                                        onClick={() => setMessages([])}
+                                        className='py-2 px-4 rounded-lg border border-red-100 bg-red-50 text-red-500 text-xs font-bold uppercase tracking-wider transition-colors'
+                                    >
+                                        Clear History
+                                    </button>
+                                    <button
+                                        onClick={() => setIsMobileSettingsOpen(false)}
+                                        className='py-2 px-4 rounded-lg bg-[var(--fg-4)] text-white text-xs font-bold uppercase tracking-wider transition-colors shadow-md'
+                                    >
+                                        Save & Close
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </main>
         </>
     );
