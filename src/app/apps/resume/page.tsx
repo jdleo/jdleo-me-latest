@@ -12,6 +12,14 @@ type Message = {
     content: string;
     isUser: boolean;
     model?: string;
+    usage?: {
+        prompt_tokens: number;
+        completion_tokens: number;
+        total_tokens: number;
+        tokens_per_second?: number;
+        estimated_cost?: number;
+        response_time_ms?: number;
+    };
 };
 
 export default function Resume() {
@@ -23,6 +31,31 @@ export default function Resume() {
     const [streamingMessage, setStreamingMessage] = useState('');
     const [isMobileSuggestionsOpen, setIsMobileSuggestionsOpen] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const streamBufferRef = useRef('');
+
+    useEffect(() => {
+        let animationFrameId: number;
+
+        const animate = () => {
+            if (streamBufferRef.current && streamingMessage !== streamBufferRef.current) {
+                setStreamingMessage(prev => {
+                    const diff = streamBufferRef.current.length - prev.length;
+                    if (diff <= 0) return streamBufferRef.current;
+                    const jump = Math.max(1, Math.min(diff, Math.ceil(diff / 8)));
+                    return streamBufferRef.current.slice(0, prev.length + jump);
+                });
+            }
+            animationFrameId = requestAnimationFrame(animate);
+        };
+
+        if (isLoading) {
+            animationFrameId = requestAnimationFrame(animate);
+        }
+
+        return () => {
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+        };
+    }, [isLoading, streamingMessage]);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -48,6 +81,7 @@ export default function Resume() {
         setIsLoading(true);
         setStreamingMessage('');
 
+        const startTime = Date.now();
         try {
             const apiMessages = updatedMessages.slice(-10);
             const systemPromptResponse = await fetch('/api/resume-prompt');
@@ -68,6 +102,7 @@ export default function Resume() {
             const reader = response.body?.getReader();
             const decoder = new TextDecoder();
             let accumulatedContent = '';
+            let usageData: any = null;
 
             if (reader) {
                 while (true) {
@@ -83,17 +118,34 @@ export default function Resume() {
                                 const data = JSON.parse(line.slice(6));
                                 if (data.type === 'content') {
                                     accumulatedContent += data.content;
-                                    setStreamingMessage(accumulatedContent);
+                                    streamBufferRef.current = accumulatedContent;
+                                } else if (data.type === 'usage') {
+                                    usageData = data.usage;
                                 } else if (data.type === 'done') {
+                                    const endTime = Date.now();
+                                    const responseTimeMs = endTime - startTime;
+                                    let processedUsage = null;
+                                    if (usageData) {
+                                        const tokensPerSecond = usageData.completion_tokens / (responseTimeMs / 1000);
+                                        const estimatedCost = usageData.prompt_tokens * 0.000001 + usageData.completion_tokens * 0.000002;
+                                        processedUsage = {
+                                            ...usageData,
+                                            tokens_per_second: Math.round(tokensPerSecond * 10) / 10,
+                                            estimated_cost: Math.round(estimatedCost * 100000) / 100000,
+                                            response_time_ms: responseTimeMs,
+                                        };
+                                    }
                                     setMessages([
                                         ...updatedMessages,
                                         {
                                             content: accumulatedContent,
                                             isUser: false,
                                             model: "johns_resume_ai",
+                                            usage: processedUsage,
                                         },
                                     ]);
                                     setStreamingMessage('');
+                                    streamBufferRef.current = '';
                                     setIsLoading(false);
                                     return;
                                 }
@@ -107,6 +159,7 @@ export default function Resume() {
         } finally {
             setIsLoading(false);
             setStreamingMessage('');
+            streamBufferRef.current = '';
         }
     };
 
@@ -219,10 +272,17 @@ export default function Resume() {
                                     : 'bg-white rounded-2xl rounded-tl-sm px-6 py-5 shadow-sm border border-[var(--border-light)]'
                                     }`}>
                                     {!m.isUser && (
-                                        <div className='flex items-center gap-2 mb-3 pb-3 border-b border-gray-100'>
+                                        <div className='flex items-center gap-3 mb-3 pb-3 border-b border-gray-100'>
                                             <span className='text-[10px] font-bold uppercase tracking-widest text-[var(--purple-4)]'>
                                                 Resume AI
                                             </span>
+                                            {m.usage && (
+                                                <div className='flex items-center gap-3 text-[10px] text-muted opacity-60 font-medium'>
+                                                    <span>{m.usage.response_time_ms}ms</span>
+                                                    <span>{m.usage.tokens_per_second?.toFixed(1)} tok/s</span>
+                                                    <span>${m.usage.estimated_cost?.toFixed(5)}</span>
+                                                </div>
+                                            )}
                                         </div>
                                     )}
                                     <div className={`prose prose-sm max-w-none ${m.isUser ? 'prose-invert' : 'blog-content'}`}>

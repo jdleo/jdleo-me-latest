@@ -38,6 +38,37 @@ export default function Chat() {
     );
     const [isMobileModelSelectorOpen, setIsMobileModelSelectorOpen] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const streamBufferRef = useRef('');
+
+    useEffect(() => {
+        let animationFrameId: number;
+
+        const animate = () => {
+            if (streamBufferRef.current && streamingMessage !== streamBufferRef.current) {
+                setStreamingMessage(prev => {
+                    const diff = streamBufferRef.current.length - prev.length;
+                    if (diff <= 0) return streamBufferRef.current; // Catch up if buffer reset or smaller (shouldn't happen usually)
+
+                    // Throttling logic: larger jump if falling behind
+                    const jump = Math.max(1, Math.min(diff, Math.ceil(diff / 8)));
+                    return streamBufferRef.current.slice(0, prev.length + jump);
+                });
+            } else if (!streamBufferRef.current && streamingMessage) {
+                // Buffer cleared but message exists (e.g. finished), clear it? 
+                // Handled by sendMessage finally block usually, but let's be safe
+                // setStreamingMessage('');
+            }
+            animationFrameId = requestAnimationFrame(animate);
+        };
+
+        if (isLoading) {
+            animationFrameId = requestAnimationFrame(animate);
+        }
+
+        return () => {
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+        };
+    }, [isLoading, streamingMessage]);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -108,7 +139,7 @@ export default function Chat() {
                                 const data = JSON.parse(line.slice(6));
                                 if (data.type === 'content') {
                                     accumulatedContent += data.content;
-                                    setStreamingMessage(accumulatedContent);
+                                    streamBufferRef.current = accumulatedContent;
                                 } else if (data.type === 'usage') {
                                     usageData = data.usage;
                                 } else if (data.type === 'done') {
@@ -132,6 +163,7 @@ export default function Chat() {
                                         usage: processedUsage,
                                     }]);
                                     setStreamingMessage('');
+                                    streamBufferRef.current = '';
                                     setIsLoading(false);
                                     return;
                                 }
@@ -145,6 +177,7 @@ export default function Chat() {
         } finally {
             setIsLoading(false);
             setStreamingMessage('');
+            streamBufferRef.current = '';
         }
     };
 
@@ -287,9 +320,11 @@ export default function Chat() {
                                                 {m.model}
                                             </span>
                                             {m.usage && (
-                                                <span className='text-[10px] text-muted opacity-60'>
-                                                    • {m.usage.response_time_ms}ms
-                                                </span>
+                                                <div className='flex items-center gap-3 text-[10px] text-muted opacity-60 font-medium'>
+                                                    <span>{m.usage.response_time_ms}ms</span>
+                                                    <span>{m.usage.tokens_per_second?.toFixed(1)} tok/s</span>
+                                                    <span>${m.usage.estimated_cost?.toFixed(5)}</span>
+                                                </div>
                                             )}
                                         </div>
                                     )}
