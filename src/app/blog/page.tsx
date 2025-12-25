@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { getAllBlogPosts } from '@/blog/registry';
 import { WebVitals } from '@/components/SEO/WebVitals';
+import { strings } from '../constants/strings';
 
 async function getAllBlogViewCounts(): Promise<Record<string, number>> {
     try {
@@ -38,140 +39,119 @@ export default function BlogPage() {
         return () => clearTimeout(timer);
     }, []);
 
+    // Format number helper
+    const formatNumber = (num: number) => {
+        return num.toLocaleString('en-US');
+    };
+
     return (
         <>
             <WebVitals />
-            <main className='min-h-screen bg-[var(--color-bg)] flex items-center justify-center p-4 md:p-8 selection:bg-[var(--color-accent)] selection:text-[var(--color-bg)]'>
-                <div className='fixed inset-0 overflow-hidden pointer-events-none'>
-                    <div className='absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(62,175,124,0.03),transparent_60%)]' />
-                    <div className='absolute inset-0' style={{
-                        backgroundImage: 'radial-gradient(rgba(255,255,255,0.02) 1px, transparent 1px)',
-                        backgroundSize: '32px 32px'
-                    }} />
-                </div>
+            <main className='relative min-h-screen overflow-hidden selection:bg-[var(--purple-2)] selection:text-[var(--purple-4)]'>
+                {/* Floating Decorations */}
+                <div className='float-decoration float-1' />
+                <div className='float-decoration float-2' />
 
-                <div className={`w-full max-w-6xl h-[85vh] transition-all duration-1000 transform ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-                    <div className='terminal-window flex flex-col h-full'>
-                        <div className='terminal-header'>
-                            <div className='terminal-controls'>
-                                <div className='terminal-control red' />
-                                <div className='terminal-control yellow' />
-                                <div className='terminal-control green' />
-                            </div>
-                            <div className='terminal-title'>johnleonardo — ~/blog</div>
-                        </div>
+                {/* Header Navigation */}
+                <header className={`fixed top-0 left-0 right-0 z-50 px-6 py-4 transition-all duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
+                    <div className='max-w-6xl mx-auto flex justify-between items-center'>
+                        <Link href='/' className='text-sm font-bold uppercase tracking-widest text-[var(--fg-4)] hover:text-[var(--purple-4)] transition-colors'>
+                            {strings.NAME}
+                        </Link>
+                        <nav className='flex items-center gap-6 md:gap-10'>
+                            {[
+                                { label: 'Apps', href: '/apps' },
+                                { label: 'Blog', href: '/blog' },
+                                { label: 'Resume', href: '/apps/resume' },
+                            ].map((link) => (
+                                <Link
+                                    key={link.label}
+                                    href={link.href}
+                                    className={`text-[10px] font-bold uppercase tracking-[0.2em] transition-all ${link.href === '/blog' ? 'text-[var(--purple-4)]' : 'text-muted hover:text-[var(--purple-4)]'
+                                        }`}
+                                >
+                                    {link.label}
+                                </Link>
+                            ))}
+                        </nav>
+                    </div>
+                </header>
 
-                        <div className='terminal-split flex-grow overflow-y-auto scrollbar-hide'>
-                            {/* Left Pane: Navigation & Archive Info */}
-                            <div className='terminal-pane border-r border-[var(--color-border)] hidden md:block'>
-                                <div className='mb-12'>
-                                    <div className='flex items-center gap-2 mb-6 text-[var(--color-accent)]'>
-                                        <span className='terminal-prompt'>➜</span>
-                                        <span className='text-sm uppercase tracking-widest font-bold'>Archive</span>
-                                    </div>
-                                    <nav className='flex flex-col gap-4'>
-                                        <Link href='/' className='text-xl hover:text-[var(--color-accent)] transition-colors'>~/home</Link>
-                                        <Link href='/apps' className='text-xl hover:text-[var(--color-accent)] transition-colors'>~/apps</Link>
-                                        <Link href='/blog' className='text-xl text-[var(--color-accent)] transition-colors'>~/blog</Link>
-                                    </nav>
-                                </div>
+                <div className={`container mx-auto px-6 pt-32 pb-20 transition-all duration-1000 transform ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
 
-                                <div className='space-y-6'>
-                                    <div className='font-mono'>
-                                        <span className='text-[var(--color-text)] opacity-70'>$ query --stats</span>
-                                        <div className='mt-4 flex flex-col gap-2 text-xs text-[var(--color-text-dim)] font-mono'>
-                                            <div className='flex justify-between'>
-                                                <span>TOTAL_POSTS:</span>
-                                                <span className='text-[var(--color-accent)]'>{posts.length}</span>
-                                            </div>
-                                            <div className='flex justify-between'>
-                                                <span>TOTAL_VIEWS:</span>
-                                                <span className='text-[var(--color-accent)]'>
-                                                    {Object.values(viewCounts).reduce((a, b) => a + b, 0).toLocaleString()}
-                                                </span>
-                                            </div>
-                                            <div className='flex justify-between'>
-                                                <span>LAST_SYNC:</span>
-                                                <span className='text-[var(--color-accent)]'>{new Date().toLocaleDateString()}</span>
-                                            </div>
+                    {/* Header Section */}
+                    <div className='max-w-4xl mx-auto mb-16 text-center'>
+                        <h1 className='text-4xl md:text-5xl font-bold mb-4 text-[var(--fg-4)]'>
+                            Thoughts & Notes
+                        </h1>
+                        <p className='text-lg text-muted max-w-2xl mx-auto'>
+                            Exploring distributed systems, AI engineering, and interface design.
+                        </p>
+                    </div>
+
+                    {/* Blog Grid */}
+                    <div className='grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto'>
+                        {posts.map((post) => (
+                            <Link
+                                key={post.slug}
+                                href={`/blog/${post.slug}`}
+                                className='group'
+                            >
+                                <div className='card h-full p-8 hover:border-[var(--purple-2)] hover:shadow-lg transition-all duration-300 flex flex-col'>
+                                    <div className='flex items-center justify-between mb-4'>
+                                        <div className='flex items-center gap-2'>
+                                            <span className='px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider bg-[var(--purple-1)] text-[var(--purple-4)]'>
+                                                Article
+                                            </span>
+                                            <span className='text-[10px] text-muted font-bold uppercase tracking-wider'>
+                                                {post.date}
+                                            </span>
                                         </div>
-                                    </div>
-
-                                    <div className='pt-8'>
-                                        <div className='text-[10px] text-[var(--color-text-dim)] opacity-40 font-mono tracking-[0.2em] uppercase mb-4'>Technical Notes</div>
-                                        <p className='text-[11px] text-[var(--color-text-dim)] leading-relaxed font-mono opacity-60 italic'>
-                                            Building in public. Documenting distributed systems, AI research, and high-performance design.
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Right Pane: Blog Post List */}
-                            <div className='terminal-pane bg-black/5 flex flex-col p-0 overflow-y-auto scrollbar-hide w-full'>
-                                <div className='p-6'>
-                                    <div className='flex items-center justify-between mb-8 text-[var(--color-accent)]'>
-                                        <div className='flex items-center gap-2 font-mono'>
-                                            <span>$ cat index.lst</span>
-                                        </div>
-                                    </div>
-
-                                    <div className='space-y-1'>
-                                        {posts.map((post) => (
-                                            <Link
-                                                key={post.slug}
-                                                href={`/blog/${post.slug}`}
-                                                className='group block p-4 border border-transparent hover:border-[var(--color-border)] hover:bg-white/5 rounded-lg transition-all'
-                                            >
-                                                <div className='flex flex-col md:flex-row md:items-center justify-between gap-4'>
-                                                    <div className='space-y-1 min-w-0'>
-                                                        <div className='flex items-center gap-3'>
-                                                            <span className='text-[var(--color-accent)] font-mono text-sm opacity-0 group-hover:opacity-100 transition-opacity'>&gt;</span>
-                                                            <h2 className='text-lg font-bold group-hover:text-[var(--color-accent)] transition-colors truncate'>
-                                                                {post.title}
-                                                            </h2>
-                                                        </div>
-                                                        <p className='text-xs text-[var(--color-text-dim)] line-clamp-1 opacity-60 font-mono'>
-                                                            {post.description}
-                                                        </p>
-                                                    </div>
-                                                    <div className='flex items-center gap-4 text-[10px] font-mono whitespace-nowrap opacity-40 group-hover:opacity-100 transition-opacity'>
-                                                        <span className='uppercase'>{post.date.replace(/-/g, '.')}</span>
-                                                        <span className='flex items-center gap-1'>
-                                                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                                                                <path d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
-                                                                <circle cx="12" cy="12" r="3" />
-                                                            </svg>
-                                                            {(viewCounts[post.slug] || 0)}
-                                                        </span>
-                                                        <span className='text-[var(--color-accent)] group-hover:translate-x-1 transition-transform'>[READ_MORE]</span>
-                                                    </div>
-                                                </div>
-                                            </Link>
-                                        ))}
-
-                                        {posts.length === 0 && (
-                                            <div className='p-12 text-center font-mono opacity-40 border border-dashed border-[var(--color-border)] rounded-xl'>
-                                                <div className='mb-4'>[ERR_EMPTY_SET]</div>
-                                                <p className='text-xs uppercase tracking-widest'>No entries found in archive.</p>
+                                        {viewCounts[post.slug] > 0 && (
+                                            <div className='flex items-center gap-1 text-[10px] font-bold text-muted'>
+                                                <span>{formatNumber(viewCounts[post.slug])}</span>
+                                                <span>views</span>
                                             </div>
                                         )}
                                     </div>
+
+                                    <h2 className='text-2xl font-bold mb-4 group-hover:text-[var(--purple-4)] transition-colors'>
+                                        {post.title}
+                                    </h2>
+
+                                    <p className='text-muted leading-relaxed mb-6 flex-grow'>
+                                        {post.description}
+                                    </p>
+
+                                    <div className='flex flex-wrap gap-2 mt-auto'>
+                                        {post.tags.map((tag) => (
+                                            <span
+                                                key={tag}
+                                                className='text-[10px] font-bold uppercase tracking-wider text-muted opacity-60 group-hover:opacity-100 transition-opacity'
+                                            >
+                                                #{tag}
+                                            </span>
+                                        ))}
+                                    </div>
                                 </div>
+                            </Link>
+                        ))}
+
+                        {posts.length === 0 && (
+                            <div className='col-span-full text-center py-20'>
+                                <div className='text-6xl mb-4'>📭</div>
+                                <h3 className='text-xl font-bold mb-2'>No posts found</h3>
+                                <p className='text-muted'>Check back soon for new content.</p>
                             </div>
-                        </div>
+                        )}
                     </div>
 
-                    {/* Footer decoration */}
-                    <div className='mt-6 px-4 flex items-center justify-between text-[10px] font-mono text-[var(--color-text-dim)] opacity-50 uppercase tracking-[0.2em]'>
-                        <div className='flex items-center gap-6'>
-                            <div className='flex items-center gap-2'>
-                                <div className='w-1.5 h-1.5 rounded-full bg-blue-500' />
-                                HTTP/2 200 OK
-                            </div>
-                            <div>GZIP: ON</div>
-                        </div>
-                        <div>ARCHIVE_ACCESS: GRANTED</div>
-                    </div>
+                    {/* Footer */}
+                    <footer className='py-20 text-center text-muted border-t border-[var(--border-light)] mt-20 max-w-4xl mx-auto'>
+                        <p className='text-[10px] font-bold uppercase tracking-[0.4em] opacity-30'>
+                            © 2026 {strings.NAME}
+                        </p>
+                    </footer>
                 </div>
             </main>
         </>

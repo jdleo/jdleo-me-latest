@@ -61,124 +61,93 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             <ViewTracker slug={slug} />
             <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
 
-            <main className='min-h-screen bg-[var(--color-bg)] flex items-center justify-center p-4 md:p-8 selection:bg-[var(--color-accent)] selection:text-[var(--color-bg)]'>
-                <div className='fixed inset-0 overflow-hidden pointer-events-none'>
-                    <div className='absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(62,175,124,0.03),transparent_60%)]' />
-                    <div className='absolute inset-0' style={{
-                        backgroundImage: 'radial-gradient(rgba(255,255,255,0.02) 1px, transparent 1px)',
-                        backgroundSize: '32px 32px'
-                    }} />
-                </div>
+            <main className='relative min-h-screen overflow-hidden selection:bg-[var(--purple-2)] selection:text-[var(--purple-4)]'>
+                {/* Floating Decorations */}
+                <div className='float-decoration float-1' />
+                <div className='float-decoration float-2' />
 
-                <div className='w-full max-w-6xl h-[90vh] animate-reveal'>
-                    <div className='terminal-window flex flex-col h-full'>
-                        <div className='terminal-header'>
-                            <div className='terminal-controls'>
-                                <div className='terminal-control red' />
-                                <div className='terminal-control yellow' />
-                                <div className='terminal-control green' />
-                            </div>
-                            <div className='terminal-title'>johnleonardo — ~/blog/{slug}.md</div>
-                        </div>
+                {/* Return Navigation */}
+                <header className='fixed top-0 left-0 right-0 z-50 px-6 py-4 pointer-events-none'>
+                    <div className='max-w-6xl mx-auto flex justify-between items-center pointer-events-auto'>
+                        <Link
+                            href='/blog'
+                            className='group flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-muted hover:text-[var(--purple-4)] transition-colors'
+                        >
+                            <span className='group-hover:-translate-x-1 transition-transform'>←</span>
+                            Back to Blog
+                        </Link>
 
-                        <div className='terminal-split flex-grow overflow-hidden'>
-                            {/* Sidebar: Metadata & Navigation */}
-                            <div className='terminal-pane border-r border-[var(--color-border)] hidden lg:block'>
-                                <nav className='mb-12 flex flex-col gap-3'>
-                                    <Link href='/blog' className='text-lg hover:text-[var(--color-accent)] transition-colors inline-flex items-center gap-2'>
-                                        <span className='opacity-50 font-mono'>&lt;</span> ~/blog
-                                    </Link>
-                                    <Link href='/apps' className='text-lg hover:text-[var(--color-accent)] transition-colors inline-flex items-center gap-2'>
-                                        <span className='opacity-50 font-mono'>&lt;</span> ~/apps
-                                    </Link>
-                                </nav>
-
-                                <div className='space-y-8'>
-                                    <div className='font-mono'>
-                                        <div className='text-[var(--color-text)] opacity-40 text-[10px] uppercase tracking-widest mb-4'>File Metadata</div>
-                                        <div className='space-y-3 text-xs text-[var(--color-text-dim)]'>
-                                            <div className='flex justify-between border-b border-[var(--color-border)] pb-2'>
-                                                <span>CREATED</span>
-                                                <span className='text-[var(--color-text)]'>{post.date.replace(/-/g, '.')}</span>
-                                            </div>
-                                            <div className='flex justify-between border-b border-[var(--color-border)] pb-2'>
-                                                <span>VIEWS</span>
-                                                <span className='text-[var(--color-text)]'>{displayViewCount.toLocaleString()}</span>
-                                            </div>
-                                            <div className='flex justify-between border-b border-[var(--color-border)] pb-2'>
-                                                <span>TYPE</span>
-                                                <span className='text-[var(--color-text)]'>MARKDOWN</span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className='font-mono'>
-                                        <div className='text-[var(--color-text)] opacity-40 text-[10px] uppercase tracking-widest mb-4'>Tags</div>
-                                        <div className='flex flex-wrap gap-2'>
-                                            {post.tags.map((tag: string) => (
-                                                <span key={tag} className='px-2 py-0.5 bg-white/5 border border-[var(--color-border)] rounded text-[10px] text-[var(--color-accent)] uppercase'>
-                                                    {tag}
-                                                </span>
-                                            ))}
-                                        </div>
-                                    </div>
-
-                                    <div className='pt-8 border-t border-[var(--color-border)]'>
-                                        <a href={`mailto:${strings.EMAIL}`} className='block w-full text-center py-2 px-4 border border-[var(--color-accent)]/30 hover:bg-[var(--color-accent)]/10 text-[var(--color-accent)] text-xs font-mono transition-all rounded'>
-                                            [SEND_FEEDBACK]
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Main Post Content */}
-                            <div className='terminal-pane bg-black/5 flex-grow overflow-y-auto scrollbar-hide'>
-                                <article className='max-w-4xl mx-auto py-12 px-6 md:px-12'>
-                                    <header className='mb-16 pb-8 border-b border-[var(--color-border)]'>
-                                        <h1 className='text-4xl md:text-5xl font-bold text-[var(--color-text)] leading-tight mb-8'>
-                                            {post.title}
-                                        </h1>
-                                        <div className='flex items-center gap-6 text-xs font-mono text-[var(--color-text-dim)] opacity-60'>
-                                            <div className='flex items-center gap-2'>
-                                                <div className='w-1.5 h-1.5 rounded-full bg-[var(--color-accent)]' />
-                                                WRITTEN BY JOHN LEONARDO
-                                            </div>
-                                            <div className='md:hidden'>
-                                                {post.date.replace(/-/g, '.')}
-                                            </div>
-                                        </div>
-                                    </header>
-
-                                    <div className='font-mono text-sm leading-relaxed text-[var(--color-text-dim)]'>
-                                        <div className='prose prose-invert prose-sm max-w-none'>
-                                            <ReactMarkdown
-                                                remarkPlugins={[remarkGfm]}
-                                                rehypePlugins={[rehypeRaw]}
-                                                components={{
-                                                    code: CodeBlock as any,
-                                                }}
-                                            >
-                                                {content}
-                                            </ReactMarkdown>
-                                        </div>
-                                    </div>
-
-                                    <footer className='mt-24 pt-8 border-t border-[var(--color-border)]'>
-                                        <div className='flex flex-col md:flex-row md:items-center justify-between gap-8 opacity-60'>
-                                            <div className='text-xs font-mono'>
-                                                EOF // END OF CONTENT
-                                            </div>
-                                            <div className='flex items-center gap-4'>
-                                                <Link href='/blog' className='text-xs font-mono hover:text-[var(--color-accent)] transition-colors'>~/archive</Link>
-                                                <Link href='/' className='text-xs font-mono hover:text-[var(--color-accent)] transition-colors'>~/root</Link>
-                                            </div>
-                                        </div>
-                                    </footer>
-                                </article>
-                            </div>
-                        </div>
+                        <Link href='/' className='text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--fg-4)] hover:text-[var(--purple-4)] transition-colors'>
+                            {strings.NAME}
+                        </Link>
                     </div>
-                </div>
+                </header>
+
+                <article className='container mx-auto px-6 pt-32 pb-20 animate-reveal'>
+                    <div className='max-w-3xl mx-auto'>
+                        {/* Article Header */}
+                        <header className='mb-12 text-center'>
+                            <div className='flex items-center justify-center gap-3 mb-6'>
+                                <span className='px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-[var(--purple-1)] text-[var(--purple-4)] border border-[var(--purple-a2)]'>
+                                    Article
+                                </span>
+                                <span className='text-[10px] font-bold uppercase tracking-widest text-muted'>
+                                    {post.date}
+                                </span>
+                            </div>
+
+                            <h1 className='text-3xl md:text-5xl font-extrabold mb-6 leading-tight text-[var(--fg-4)]'>
+                                {post.title}
+                            </h1>
+
+                            <div className='flex items-center justify-center gap-6 text-xs font-bold text-muted'>
+                                <div className='flex items-center gap-2'>
+                                    <div className='w-2 h-2 rounded-full bg-[var(--blue-4)]' />
+                                    <span>John Leonardo</span>
+                                </div>
+                                <span>•</span>
+                                <span>{displayViewCount.toLocaleString()} views</span>
+                            </div>
+                        </header>
+
+                        {/* Article Content */}
+                        <div className='card p-8 md:p-12 mb-12 blog-content'>
+                            <ReactMarkdown
+                                remarkPlugins={[remarkGfm]}
+                                rehypePlugins={[rehypeRaw]}
+                                components={{
+                                    code: CodeBlock as any,
+                                    table: ({ children }) => (
+                                        <div className='table-wrapper'>
+                                            <table>{children}</table>
+                                        </div>
+                                    ),
+                                }}
+                            >
+                                {content}
+                            </ReactMarkdown>
+                        </div>
+
+                        {/* Footer / Tags */}
+                        <div className='flex flex-wrap gap-2 justify-center mb-16'>
+                            {post.tags.map((tag: string) => (
+                                <span key={tag} className='px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-white border-2 border-[var(--border-light)] text-muted'>
+                                    #{tag}
+                                </span>
+                            ))}
+                        </div>
+
+                        {/* Article Footer */}
+                        <footer className='py-12 border-t border-[var(--border-light)] text-center'>
+                            <Link
+                                href='/blog'
+                                className='btn btn-secondary inline-flex px-8 py-3 text-xs'
+                            >
+                                Read More Articles
+                            </Link>
+                        </footer>
+                    </div>
+                </article>
             </main>
         </>
     );

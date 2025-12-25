@@ -12,22 +12,21 @@ const CodeBlock = ({ inline, className, children, ...props }: CodeBlockProps) =>
     const language = match ? match[1] : '';
 
     return !inline && match ? (
-        <div className='relative rounded-lg overflow-hidden bg-[#0D0D0E] border border-[var(--color-border)] my-4'>
-            {language && (
-                <div className='flex items-center justify-between px-4 py-1.5 bg-black/40 border-b border-[var(--color-border)]'>
-                    <span className='text-[10px] font-mono text-[var(--color-text-dim)] uppercase tracking-wider'>{language}</span>
-                </div>
-            )}
+        <div className='relative rounded-xl overflow-hidden my-6 border border-[var(--gray-4)] shadow-sm bg-[#1e1e2e]'>
+            <div className='absolute top-0 right-0 px-3 py-1 bg-white/5 rounded-bl-lg border-b border-l border-white/5 z-10'>
+                <span className='text-[10px] font-mono text-white/30 uppercase tracking-widest'>{language}</span>
+            </div>
             <SyntaxHighlighter
                 style={oneDark}
                 language={language}
-                PreTag='div'
+                PreTag="div"
                 customStyle={{
                     margin: 0,
                     background: 'transparent',
-                    padding: '1.25rem',
-                    fontSize: '0.85rem',
+                    padding: '1.5rem',
+                    fontSize: '0.9rem',
                     lineHeight: '1.6',
+                    fontFamily: 'var(--font-family-mono)',
                 }}
                 {...props}
             >
@@ -35,7 +34,7 @@ const CodeBlock = ({ inline, className, children, ...props }: CodeBlockProps) =>
             </SyntaxHighlighter>
         </div>
     ) : (
-        <code className='bg-white/5 text-[var(--color-accent-blue)] px-1.5 py-0.5 rounded text-sm font-mono' {...props}>
+        <code className='bg-[var(--purple-1)] text-[var(--purple-4)] px-1.5 py-0.5 rounded-md text-[0.9em] font-mono border border-[var(--purple-2)] align-middle' {...props}>
             {children}
         </code>
     );

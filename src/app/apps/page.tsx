@@ -17,130 +17,91 @@ export default function Apps() {
     return (
         <>
             <WebVitals />
-            <main className='min-h-screen bg-[var(--color-bg)] flex items-center justify-center p-4 md:p-8 selection:bg-[var(--color-accent)] selection:text-[var(--color-bg)]'>
-                {/* Background Grid/Glow */}
-                <div className='fixed inset-0 overflow-hidden pointer-events-none'>
-                    <div className='absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(62,175,124,0.03),transparent_60%)]' />
-                    <div className='absolute inset-0' style={{
-                        backgroundImage: 'radial-gradient(rgba(255,255,255,0.02) 1px, transparent 1px)',
-                        backgroundSize: '32px 32px'
-                    }} />
-                </div>
+            <main className='relative min-h-screen overflow-hidden selection:bg-[var(--purple-2)] selection:text-[var(--purple-4)]'>
+                {/* Floating Decorations */}
+                <div className='float-decoration float-1' />
+                <div className='float-decoration float-2' />
 
-                <div className={`w-full max-w-6xl h-[85vh] transition-all duration-1000 transform ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-                    <div className='terminal-window flex flex-col h-full'>
-                        {/* Terminal Header */}
-                        <div className='terminal-header'>
-                            <div className='terminal-controls'>
-                                <div className='terminal-control red' />
-                                <div className='terminal-control yellow' />
-                                <div className='terminal-control green' />
-                            </div>
-                            <div className='terminal-title'>johnleonardo — ~/apps</div>
-                        </div>
-
-                        {/* Terminal Body with Split Screen */}
-                        <div className='terminal-split'>
-                            {/* Left Pane: Navigation & Info */}
-                            <div className='terminal-pane'>
-                                <div className='mb-12'>
-                                    <div className='flex items-center gap-2 mb-6 text-[var(--color-accent)]'>
-                                        <span className='terminal-prompt'>➜</span>
-                                        <span className='text-sm uppercase tracking-widest font-bold'>Menu</span>
-                                    </div>
-                                    <nav className='flex flex-col gap-4'>
-                                        <Link href='/' className='text-2xl hover:translate-x-3 transition-all inline-flex items-center gap-3 group whitespace-nowrap'>
-                                            <span className='text-[var(--color-accent)] opacity-0 group-hover:opacity-100 transition-opacity'>&lt;</span>
-                                            <span className='text-[var(--color-text-dim)] group-hover:text-[var(--color-text)] transition-colors'>Home</span>
-                                        </Link>
-                                        <Link href='/apps' className='text-2xl hover:translate-x-3 transition-all inline-flex items-center gap-3 group whitespace-nowrap text-[var(--color-accent)]'>
-                                            <span>&gt;</span>
-                                            Apps
-                                        </Link>
-                                        <Link href='/blog' className='text-2xl hover:translate-x-3 transition-all inline-flex items-center gap-3 group whitespace-nowrap'>
-                                            <span className='text-[var(--color-accent)] opacity-0 group-hover:opacity-100 transition-opacity'>&gt;</span>
-                                            <span className='text-[var(--color-text-dim)] group-hover:text-[var(--color-text)] transition-colors'>Blog</span>
-                                        </Link>
-                                        <Link href='/apps/resume' className='text-2xl hover:translate-x-3 transition-all inline-flex items-center gap-3 group whitespace-nowrap'>
-                                            <span className='text-[var(--color-accent)] opacity-0 group-hover:opacity-100 transition-opacity'>&gt;</span>
-                                            <span className='text-[var(--color-text-dim)] group-hover:text-[var(--color-text)] transition-colors'>Resume</span>
-                                        </Link>
-                                    </nav>
-                                </div>
-
-                                <div className='space-y-6 pt-8 border-t border-[var(--color-border)]'>
-                                    <div className='font-mono'>
-                                        <span className='text-[var(--color-text)] opacity-70'>$ cat README.md</span>
-                                        <div className='mt-4 text-sm text-[var(--color-text-dim)] leading-relaxed italic border-l-2 border-[var(--color-border)] pl-4'>
-                                            "A collection of experiments, prototypes, and production-ready tools built with various tech stacks."
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Right Pane: Content (App Entries) */}
-                            <div className='terminal-pane bg-[rgba(0,0,0,0.2)] scrollbar-hide'>
-                                <div className='flex items-center justify-between mb-8 text-[var(--color-accent)]'>
-                                    <div className='flex items-center gap-2'>
-                                        <span className='terminal-prompt'>$</span>
-                                        <span className='text-sm uppercase tracking-widest font-bold'>ls -F</span>
-                                    </div>
-                                    <span className='text-[10px] opacity-50 font-mono'>DRWX------</span>
-                                </div>
-
-                                <div className='flex flex-col gap-2'>
-                                    {apps.map((app) => (
-                                        <Link
-                                            key={app.title}
-                                            href={app.href}
-                                            className='group flex items-center justify-between p-3 border-b border-[var(--color-border)] hover:bg-[var(--color-accent)]/5 transition-all'
-                                        >
-                                            <div className='flex items-center gap-4 min-w-0'>
-                                                <span className='text-[var(--color-text-dim)] group-hover:text-[var(--color-accent)] transition-colors text-lg'>
-                                                    {app.emoji}
-                                                </span>
-                                                <div className='min-w-0'>
-                                                    <h2 className='text-md font-mono text-[var(--color-text)] group-hover:text-[var(--color-accent)] transition-colors flex items-center gap-2'>
-                                                        {app.title.toLowerCase().replace(/\s+/g, '_')}/
-                                                    </h2>
-                                                    <p className='text-xs text-[var(--color-text-dim)] truncate opacity-60'>
-                                                        {app.subtitle}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <div className='text-xs font-mono text-[var(--color-text-dim)] group-hover:text-[var(--color-accent)] opacity-40 group-hover:opacity-100 transition-all'>
-                                                [ENTER]
-                                            </div>
-                                        </Link>
-                                    ))}
-                                </div>
-
-                                {/* Footer Stats for Apps Page */}
-                                <div className='mt-12 pt-8 border-t border-[var(--color-border)]'>
-                                    <div className='flex items-center justify-between text-[10px] font-mono text-[var(--color-text-dim)] uppercase tracking-wider'>
-                                        <div className='flex gap-4'>
-                                            <span>STORAGE: 1.2GB USED</span>
-                                            <span>ITEMS: {apps.length}</span>
-                                        </div>
-                                        <div>
-                                            VER: 2025.12
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                {/* Header Navigation */}
+                <header className={`fixed top-0 left-0 right-0 z-50 px-6 py-4 transition-all duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
+                    <div className='max-w-6xl mx-auto flex justify-between items-center'>
+                        <Link href='/' className='text-sm font-bold uppercase tracking-widest text-[var(--fg-4)] hover:text-[var(--purple-4)] transition-colors'>
+                            {strings.NAME}
+                        </Link>
+                        <nav className='flex items-center gap-6 md:gap-10'>
+                            {[
+                                { label: 'Apps', href: '/apps' },
+                                { label: 'Blog', href: '/blog' },
+                                { label: 'Resume', href: '/apps/resume' },
+                            ].map((link) => (
+                                <Link
+                                    key={link.label}
+                                    href={link.href}
+                                    className={`text-[10px] font-bold uppercase tracking-[0.2em] transition-all ${link.href === '/apps' ? 'text-[var(--purple-4)]' : 'text-muted hover:text-[var(--purple-4)]'
+                                        }`}
+                                >
+                                    {link.label}
+                                </Link>
+                            ))}
+                        </nav>
                     </div>
-                    {/* Console decoration */}
-                    <div className='mt-6 px-4 flex items-center justify-between text-xs font-mono text-[var(--color-text-dim)] opacity-50'>
-                        <div className='flex items-center gap-4'>
-                            <div className='flex items-center gap-2'>
-                                <div className='w-2 h-2 rounded-full bg-[var(--color-accent)] animate-pulse' />
-                                PROCESS: ACTIVE
-                            </div>
-                            <div>CPU: 2.1%</div>
-                        </div>
-                        <div>PID: 48921</div>
+                </header>
+
+                <div className={`container mx-auto px-6 pt-32 pb-20 transition-all duration-1000 transform ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+
+                    {/* Header Section */}
+                    <div className='max-w-4xl mx-auto mb-16 text-center'>
+                        <h1 className='text-4xl md:text-5xl font-bold mb-4 text-[var(--fg-4)]'>
+                            Applications & Tools
+                        </h1>
+                        <p className='text-lg text-muted max-w-2xl mx-auto'>
+                            A collection of production-ready tools, prototypes, and experiments.
+                        </p>
                     </div>
+
+                    {/* Apps Grid */}
+                    <div className='grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6 max-w-6xl mx-auto'>
+                        {apps.map((app) => (
+                            <Link
+                                key={app.title}
+                                href={app.href}
+                                className='group'
+                            >
+                                <div className='card h-full p-4 md:p-8 hover:border-[var(--purple-2)] hover:shadow-lg transition-all duration-300 flex flex-col justify-between'>
+                                    <div>
+                                        <div className='flex items-start justify-between mb-3 md:mb-6'>
+                                            <span className='text-2xl md:text-4xl group-hover:scale-110 transition-transform duration-300'>
+                                                {app.emoji}
+                                            </span>
+                                            <div className='hidden md:block px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider bg-[var(--purple-1)] text-[var(--purple-4)]'>
+                                                Open
+                                            </div>
+                                        </div>
+
+                                        <h2 className='text-sm md:text-xl font-bold mb-1 md:mb-2 group-hover:text-[var(--purple-4)] transition-colors line-clamp-1'>
+                                            {app.title}
+                                        </h2>
+
+                                        <p className='text-muted text-[10px] md:text-sm leading-relaxed mb-0 md:mb-6 line-clamp-2 md:line-clamp-3'>
+                                            {app.subtitle}
+                                        </p>
+                                    </div>
+
+                                    <div className='hidden md:flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-[var(--purple-4)] opacity-0 group-hover:opacity-100 transition-all transform translate-y-2 group-hover:translate-y-0 mt-auto'>
+                                        <span>Launch App</span>
+                                        <span>→</span>
+                                    </div>
+                                </div>
+                            </Link>
+                        ))}
+                    </div>
+
+                    {/* Footer */}
+                    <footer className='py-20 text-center text-muted border-t border-[var(--border-light)] mt-20 max-w-4xl mx-auto'>
+                        <p className='text-[10px] font-bold uppercase tracking-[0.4em] opacity-30'>
+                            © 2026 {strings.NAME}
+                        </p>
+                    </footer>
                 </div>
             </main>
         </>
