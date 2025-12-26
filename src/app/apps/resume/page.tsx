@@ -6,26 +6,15 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 import CodeBlock from '@/components/CodeBlock';
+import MessageItem, { Message } from '@/components/chat/MessageItem';
+import ChatInput from '@/components/chat/ChatInput';
 import { WebVitals } from '@/components/SEO/WebVitals';
 
-type Message = {
-    content: string;
-    isUser: boolean;
-    model?: string;
-    usage?: {
-        prompt_tokens: number;
-        completion_tokens: number;
-        total_tokens: number;
-        tokens_per_second?: number;
-        estimated_cost?: number;
-        response_time_ms?: number;
-    };
-};
+
 
 export default function Resume() {
     const [messages, setMessages] = useState<Message[]>([]);
     const [showWelcome, setShowWelcome] = useState(true);
-    const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [isLoaded, setIsLoaded] = useState(false);
     const [streamingMessage, setStreamingMessage] = useState('');
@@ -73,7 +62,6 @@ export default function Resume() {
     const sendMessage = async (message: string) => {
         if (!message.trim() || isLoading) return;
 
-        setInput('');
         setShowWelcome(false);
         setIsMobileSuggestionsOpen(false);
         const updatedMessages = [...messages, { content: message, isUser: true }];
@@ -266,46 +254,7 @@ export default function Resume() {
                         )}
 
                         {messages.map((m, i) => (
-                            <div key={i} className={`flex ${m.isUser ? 'justify-end' : 'justify-start'} animate-fade-in-up`}>
-                                <div className={`max-w-[90%] md:max-w-3xl ${m.isUser
-                                    ? 'bg-[var(--fg-4)] text-white rounded-2xl rounded-tr-sm px-5 py-3 shadow-lg'
-                                    : 'bg-white rounded-2xl rounded-tl-sm px-6 py-5 shadow-sm border border-[var(--border-light)]'
-                                    }`}>
-                                    {!m.isUser && (
-                                        <div className='flex items-center gap-3 mb-3 pb-3 border-b border-gray-100'>
-                                            <span className='text-[10px] font-bold uppercase tracking-widest text-[var(--purple-4)]'>
-                                                Resume AI
-                                            </span>
-                                            {m.usage && (
-                                                <div className='flex items-center gap-3 text-[10px] text-muted opacity-60 font-medium'>
-                                                    <span>{m.usage.response_time_ms}ms</span>
-                                                    <span>{m.usage.tokens_per_second?.toFixed(1)} tok/s</span>
-                                                    <span>${m.usage.estimated_cost?.toFixed(5)}</span>
-                                                </div>
-                                            )}
-                                        </div>
-                                    )}
-                                    <div className={`prose prose-sm max-w-none ${m.isUser ? 'prose-invert' : 'blog-content'}`}>
-                                        {m.isUser ? (
-                                            <p className='whitespace-pre-wrap leading-relaxed'>{m.content}</p>
-                                        ) : (
-                                            <ReactMarkdown
-                                                remarkPlugins={[remarkGfm]}
-                                                rehypePlugins={[rehypeRaw]}
-                                                components={{
-                                                    code: CodeBlock as any,
-                                                    table: ({ children }) => <div className="table-wrapper"><table className="w-full">{children}</table></div>,
-                                                    thead: ({ children }) => <thead className="bg-[var(--gray-1)]">{children}</thead>,
-                                                    th: ({ children }) => <th className="p-3 text-left font-bold text-xs uppercase tracking-wider text-[var(--fg-4)] border-b border-[var(--border-light)]">{children}</th>,
-                                                    td: ({ children }) => <td className="p-3 border-b border-[var(--border-light)] text-sm">{children}</td>,
-                                                }}
-                                            >
-                                                {m.content}
-                                            </ReactMarkdown>
-                                        )}
-                                    </div>
-                                </div>
-                            </div>
+                            <MessageItem key={i} message={m} />
                         ))}
 
                         {streamingMessage && (
@@ -352,35 +301,11 @@ export default function Resume() {
 
                     {/* Input Area */}
                     <div className='p-4 md:p-6 bg-white/80 backdrop-blur-xl border-t border-[var(--border-light)] z-20'>
-                        <div className='max-w-3xl mx-auto'>
-                            <form
-                                onSubmit={(e) => { e.preventDefault(); sendMessage(input); }}
-                                className='relative group'
-                            >
-                                <input
-                                    type='text'
-                                    value={input}
-                                    onChange={(e) => setInput(e.target.value)}
-                                    placeholder='Ask about John...'
-                                    className='w-full bg-white border border-[var(--border-light)] rounded-full pl-6 pr-14 py-4 shadow-sm focus:shadow-lg focus:border-[var(--purple-4)] outline-none transition-all text-sm font-medium text-[var(--fg-4)] placeholder:text-muted/60'
-                                    disabled={isLoading}
-                                    autoFocus
-                                />
-                                <button
-                                    type='submit'
-                                    disabled={isLoading || !input.trim()}
-                                    className='absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-[var(--fg-4)] hover:bg-[var(--purple-4)] text-white rounded-full flex items-center justify-center transition-all disabled:opacity-50 disabled:hover:bg-[var(--fg-4)] shadow-md hover:shadow-lg hover:scale-105 active:scale-95'
-                                >
-                                    {isLoading ? (
-                                        <div className='w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin' />
-                                    ) : (
-                                        <svg width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2.5' strokeLinecap='round' strokeLinejoin='round'>
-                                            <path d='M5 12h14M12 5l7 7-7 7' />
-                                        </svg>
-                                    )}
-                                </button>
-                            </form>
-                        </div>
+                        <ChatInput
+                            onSend={sendMessage}
+                            isLoading={isLoading}
+                            placeholder='Ask about John...'
+                        />
                     </div>
                 </div>
 
