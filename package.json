@@ -21,6 +21,7 @@
         "better-sqlite3": "^12.2.0",
         "chart.js": "^4.5.0",
         "crypto": "^1.0.1",
+        "framer-motion": "^12.23.26",
         "mermaid": "^11.4.1",
         "nanoid": "^5.1.5",
         "next": "^16.1.0",

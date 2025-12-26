@@ -19,6 +19,12 @@ export const apps: MiniApp[] = [
         href: '/apps/resume',
     },
     {
+        title: 'Resume Screen',
+        subtitle: 'FOR RECRUITERS: Generate ungooglable screening questions from a resume.',
+        emoji: '🕵️',
+        href: '/apps/screen',
+    },
+    {
         title: 'LLM Leaderboard',
         subtitle: 'Vote on head-to-head LLM battles and see which models reign supreme.',
         emoji: '🏆',
