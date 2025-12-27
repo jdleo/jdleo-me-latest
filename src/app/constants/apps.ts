@@ -25,6 +25,12 @@ export const apps: MiniApp[] = [
         href: '/apps/screen',
     },
     {
+        title: 'PDF Chat',
+        subtitle: 'Upload any document and chat with it using AI semantic search.',
+        emoji: '📚',
+        href: '/apps/rag',
+    },
+    {
         title: 'LLM Leaderboard',
         subtitle: 'Vote on head-to-head LLM battles and see which models reign supreme.',
         emoji: '🏆',
