@@ -244,6 +244,7 @@ export default function Home() {
                                                 { name: 'Tale', desc: 'Story Generator', url: 'https://apps.apple.com/us/app/tale-ai-story-generator/id6753922553?ref=jdleo.me', color: 'bg-purple-400' },
                                                 { name: 'Grasp', desc: 'Learn Anything', url: 'https://apps.apple.com/us/app/grasp-learn-anything-with-ai/id6754008830?ref=jdleo.me', color: 'bg-emerald-400' },
                                                 { name: 'Wave', desc: 'Social Discovery', url: 'https://apps.apple.com/us/app/wave-meet-friends-chat/id6754500401?ref=jdleo.me', color: 'bg-pink-400' },
+                                                { name: 'Prism', desc: 'AI Photos & Art Edits', url: 'https://apps.apple.com/us/app/prism-ai-photos-art-edits/id6757168364?ref=jdleo.me', color: 'bg-cyan-400' },
                                             ].map((app) => (
                                                 <a
                                                     key={app.name}
