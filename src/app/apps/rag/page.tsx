@@ -227,7 +227,7 @@ export default function RagInspectorApp() {
                     <div className='p-6 border-b border-[var(--border-light)]'>
                         <div className='flex items-center gap-3 mb-6'>
                             <div className='w-3 h-3 rounded-full bg-[var(--purple-4)]' />
-                            <span className='font-bold uppercase tracking-widest text-sm text-[var(--fg-4)]'>PDF Inspector</span>
+                            <span className='font-bold uppercase tracking-widest text-sm text-[var(--fg-4)]'>PDF Chat (Embeddings)</span>
                         </div>
                         <nav className='flex flex-col gap-2'>
                             <Link href='/apps' className='text-xs font-bold uppercase tracking-wider text-muted hover:text-[var(--purple-4)] transition-colors flex items-center gap-2'>
@@ -341,7 +341,7 @@ export default function RagInspectorApp() {
                         {/* 1. Header & Input */}
                         <div className='space-y-6 text-center'>
                             <div className='space-y-2'>
-                                <h1 className='text-3xl font-bold text-[var(--fg-4)]'>Document Inspector</h1>
+                                <h1 className='text-3xl font-bold text-[var(--fg-4)]'>PDF Chat (Embeddings)</h1>
                                 <p className='text-muted'>Ask questions and trace the answers back to the source.</p>
                             </div>
 

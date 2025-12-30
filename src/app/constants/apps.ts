@@ -25,10 +25,16 @@ export const apps: MiniApp[] = [
         href: '/apps/screen',
     },
     {
-        title: 'PDF Chat',
+        title: 'PDF Chat (Embeddings)',
         subtitle: 'Upload any document and chat with it using AI semantic search.',
         emoji: '📚',
         href: '/apps/rag',
+    },
+    {
+        title: 'Knowledge Graph',
+        subtitle: 'Construct and chat with dynamic knowledge graphs from any body of text.',
+        emoji: '🕸️',
+        href: '/apps/knowledge-graph',
     },
     {
         title: 'LLM Leaderboard',
