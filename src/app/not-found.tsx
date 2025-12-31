@@ -4,10 +4,11 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { apps } from './constants/apps';
 import { WebVitals } from '@/components/SEO/WebVitals';
+import { motion } from 'framer-motion';
 
 export default function NotFound() {
     const [isLoaded, setIsLoaded] = useState(false);
-    const popularApps = apps.slice(0, 3);
+    const popularApps = apps.slice(0, 4);
 
     useEffect(() => {
         const timer = setTimeout(() => setIsLoaded(true), 100);
@@ -17,73 +18,109 @@ export default function NotFound() {
     return (
         <>
             <WebVitals />
-            <main className='min-h-screen bg-[var(--color-bg)] flex items-center justify-center p-4 md:p-8 selection:bg-[var(--color-accent)] selection:text-[var(--color-bg)]'>
-                <div className='fixed inset-0 overflow-hidden pointer-events-none'>
-                    <div className='absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(239,68,68,0.03),transparent_60%)]' />
-                    <div className='absolute inset-0' style={{
-                        backgroundImage: 'radial-gradient(rgba(255,255,255,0.01) 1px, transparent 1px)',
-                        backgroundSize: '32px 32px'
-                    }} />
-                </div>
+            <main className='min-h-screen bg-[#fafbff] flex items-center justify-center p-4 md:p-8 selection:bg-[var(--purple-2)] selection:text-[var(--purple-4)] relative overflow-hidden'>
+                {/* Background decorations */}
+                <div className='absolute top-0 right-0 w-[500px] h-[500px] bg-[var(--purple-1)] opacity-20 rounded-full blur-3xl pointer-events-none' />
+                <div className='absolute bottom-0 left-0 w-[400px] h-[400px] bg-red-100 opacity-30 rounded-full blur-3xl pointer-events-none' />
 
-                <div className={`w-full max-w-2xl transition-all duration-700 transform ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-                    <div className='terminal-window'>
-                        <div className='terminal-header border-red-500/20'>
-                            <div className='terminal-controls'>
-                                <div className='terminal-control red' />
-                                <div className='terminal-control yellow opacity-30 shadow-none' />
-                                <div className='terminal-control green opacity-30 shadow-none' />
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                    className='w-full max-w-2xl relative z-10'
+                >
+                    <div className='bg-white/80 backdrop-blur-xl border border-[var(--border-light)] rounded-3xl shadow-2xl overflow-hidden'>
+                        {/* Header */}
+                        <div className='bg-gradient-to-r from-red-500 to-red-400 p-6 border-b border-red-400/20'>
+                            <div className='flex items-center gap-3 mb-2'>
+                                <div className='w-12 h-12 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center text-2xl'>
+                                    🔍
+                                </div>
+                                <div>
+                                    <h1 className='text-2xl font-bold text-white'>404 - Page Not Found</h1>
+                                    <p className='text-white/80 text-sm'>The page you're looking for doesn't exist</p>
+                                </div>
                             </div>
-                            <div className='terminal-title text-red-500/50'>system_error — 404</div>
                         </div>
 
-                        <div className='p-8 md:p-12 font-mono'>
-                            <div className='flex items-center gap-3 mb-8 text-red-500'>
-                                <span className='text-2xl animate-pulse'>!</span>
-                                <h1 className='text-3xl font-bold tracking-tighter uppercase'>Error: Page Not Found</h1>
+                        {/* Content */}
+                        <div className='p-8 space-y-8'>
+                            {/* Error message */}
+                            <div className='p-4 bg-red-50 border border-red-200 rounded-xl'>
+                                <p className='text-sm text-red-800 leading-relaxed'>
+                                    The requested resource could not be found. It may have been moved, deleted, or the URL might be incorrect.
+                                </p>
                             </div>
 
-                            <div className='space-y-6 text-[var(--color-text-dim)]'>
-                                <div className='p-4 bg-red-500/5 border border-red-500/20 rounded text-sm leading-relaxed'>
-                                    <span className='text-red-500'>[FATAL]</span> The requested resource at segment <code className='text-[var(--color-text)] bg-white/5 px-1'>0xDEADBEEF</code> could not be located on this server. It may have been moved, deleted, or never existed in the current namespace.
+                            {/* Quick actions */}
+                            <div>
+                                <h3 className='text-[10px] font-bold uppercase tracking-[0.2em] text-muted mb-4'>Quick Actions</h3>
+                                <div className='grid grid-cols-1 sm:grid-cols-2 gap-3'>
+                                    <Link
+                                        href='/'
+                                        className='group flex items-center justify-between p-4 bg-white border border-[var(--border-light)] hover:border-[var(--purple-4)] hover:bg-[var(--purple-1)]/30 rounded-xl transition-all shadow-sm'
+                                    >
+                                        <div className='flex items-center gap-3'>
+                                            <span className='text-xl'>🏠</span>
+                                            <span className='text-sm font-bold text-[var(--fg-4)]'>Home</span>
+                                        </div>
+                                        <span className='text-[var(--purple-4)] opacity-0 group-hover:opacity-100 transition-opacity'>→</span>
+                                    </Link>
+                                    <Link
+                                        href='/apps'
+                                        className='group flex items-center justify-between p-4 bg-white border border-[var(--border-light)] hover:border-[var(--purple-4)] hover:bg-[var(--purple-1)]/30 rounded-xl transition-all shadow-sm'
+                                    >
+                                        <div className='flex items-center gap-3'>
+                                            <span className='text-xl'>🚀</span>
+                                            <span className='text-sm font-bold text-[var(--fg-4)]'>Apps</span>
+                                        </div>
+                                        <span className='text-[var(--purple-4)] opacity-0 group-hover:opacity-100 transition-opacity'>→</span>
+                                    </Link>
                                 </div>
+                            </div>
 
-                                <div className='space-y-2'>
-                                    <div className='text-[10px] uppercase tracking-widest opacity-40 mb-4'>Recovery Options</div>
-                                    <div className='grid grid-cols-1 sm:grid-cols-2 gap-3'>
-                                        <Link href='/' className='group flex items-center justify-between p-3 border border-[var(--color-border)] hover:border-[var(--color-accent)] hover:bg-[var(--color-accent)]/5 rounded transition-all'>
-                                            <span className='text-xs'>~/return_home</span>
-                                            <span className='text-[var(--color-accent)] opacity-0 group-hover:opacity-100 transition-opacity'>[ENTER]</span>
-                                        </Link>
-                                        <Link href='/apps' className='group flex items-center justify-between p-3 border border-[var(--color-border)] hover:border-[var(--color-accent)] hover:bg-[var(--color-accent)]/5 rounded transition-all'>
-                                            <span className='text-xs'>~/explore_apps</span>
-                                            <span className='text-[var(--color-accent)] opacity-0 group-hover:opacity-100 transition-opacity'>[ENTER]</span>
-                                        </Link>
-                                    </div>
-                                </div>
-
-                                <div className='pt-8 border-t border-[var(--color-border)]'>
-                                    <div className='text-[10px] uppercase tracking-widest opacity-40 mb-4'>Suggested Entrypoints</div>
-                                    <div className='space-y-2'>
-                                        {popularApps.map(app => (
-                                            <Link key={app.href} href={app.href} className='flex items-center justify-between text-xs hover:text-[var(--color-accent)] transition-colors py-1 group'>
-                                                <span className='flex items-center gap-2'>
-                                                    <span className='opacity-40 font-bold'>&gt;</span>
-                                                    {app.title.toLowerCase().replace(/\s+/g, '_')}/
-                                                </span>
-                                                <span className='text-[var(--color-text-dim)] group-hover:text-[var(--color-accent)] opacity-40'>{app.subtitle.slice(0, 30)}...</span>
+                            {/* Popular apps */}
+                            <div className='pt-6 border-t border-[var(--border-light)]'>
+                                <h3 className='text-[10px] font-bold uppercase tracking-[0.2em] text-muted mb-4'>Popular Apps</h3>
+                                <div className='grid grid-cols-1 gap-3'>
+                                    {popularApps.map((app, idx) => (
+                                        <motion.div
+                                            key={app.href}
+                                            initial={{ opacity: 0, x: -20 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            transition={{ delay: idx * 0.1 }}
+                                        >
+                                            <Link
+                                                href={app.href}
+                                                className='group flex items-center gap-4 p-4 bg-[var(--bg-2)] hover:bg-white border border-transparent hover:border-[var(--purple-4)] rounded-xl transition-all'
+                                            >
+                                                <div className='w-10 h-10 bg-white border border-[var(--border-light)] rounded-xl flex items-center justify-center text-xl group-hover:scale-110 transition-transform'>
+                                                    {app.emoji}
+                                                </div>
+                                                <div className='flex-grow'>
+                                                    <div className='text-sm font-bold text-[var(--fg-4)] group-hover:text-[var(--purple-4)] transition-colors'>
+                                                        {app.title}
+                                                    </div>
+                                                    <div className='text-xs text-muted line-clamp-1'>
+                                                        {app.subtitle}
+                                                    </div>
+                                                </div>
+                                                <span className='text-[var(--purple-4)] opacity-0 group-hover:opacity-100 transition-opacity'>→</span>
                                             </Link>
-                                        ))}
-                                    </div>
+                                        </motion.div>
+                                    ))}
                                 </div>
                             </div>
+                        </div>
 
-                            <div className='mt-12 text-[10px] opacity-20 text-center uppercase tracking-[0.2em]'>
-                                System status: degraded // Connection: stable
-                            </div>
+                        {/* Footer */}
+                        <div className='px-8 py-4 bg-[var(--bg-2)] border-t border-[var(--border-light)]'>
+                            <p className='text-[10px] text-muted text-center uppercase tracking-wider'>
+                                Error Code: 404 • Page Not Found
+                            </p>
                         </div>
                     </div>
-                </div>
+                </motion.div>
             </main>
         </>
     );

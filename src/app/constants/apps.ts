@@ -37,6 +37,12 @@ export const apps: MiniApp[] = [
         href: '/apps/knowledge-graph',
     },
     {
+        title: 'LLM Serialization',
+        subtitle: 'Compare token efficiency across different serialization formats for LLMs.',
+        emoji: '🔢',
+        href: '/apps/serialization',
+    },
+    {
         title: 'LLM Leaderboard',
         subtitle: 'Vote on head-to-head LLM battles and see which models reign supreme.',
         emoji: '🏆',
