@@ -1,12 +1,19 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import ReactConfetti from 'react-confetti';
 import crypto from 'crypto';
 import { ArcherContainer, ArcherElement } from 'react-archer';
-import { WebVitals } from '@/components/SEO/WebVitals';
 import { strings } from '../../constants/strings';
+import { WebVitals } from '@/components/SEO/WebVitals';
+import {
+    DevicePhoneMobileIcon,
+    PencilSquareIcon,
+    DocumentTextIcon,
+    CubeTransparentIcon,
+    CpuChipIcon,
+} from '@heroicons/react/24/outline';
 
 type Block = {
     data: string;
@@ -17,8 +24,6 @@ type Block = {
 };
 
 const GENESIS_HASH = '0'.repeat(64);
-
-
 
 export default function Blockchain() {
     const [blocks, setBlocks] = useState<Block[]>([
@@ -136,236 +141,216 @@ export default function Blockchain() {
         setTimeout(() => setShowConfetti(false), 3000);
     };
 
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
     return (
         <>
             <WebVitals />
             {showConfetti && <ReactConfetti style={{ zIndex: 100 }} />}
-            <main className='relative h-screen bg-[#fafbff] overflow-hidden selection:bg-[var(--purple-2)] selection:text-[var(--purple-4)] flex flex-col md:flex-row'>
-
-                {/* Mobile Header */}
-                <header className='md:hidden flex items-center justify-between p-4 border-b border-[var(--border-light)] bg-white/80 backdrop-blur-md z-50'>
-                    <Link href='/apps' className='text-sm font-bold uppercase tracking-widest text-muted hover:text-[var(--purple-4)]'>
-                        ← Apps
-                    </Link>
-                    <button
-                        onClick={() => setIsMobileMenuOpen(true)}
-                        className='px-3 py-1.5 bg-white border border-[var(--border-light)] rounded-full shadow-sm text-xs font-bold uppercase tracking-wider text-[var(--fg-4)] flex items-center gap-1.5'
-                    >
-                        <span>Protocol</span>
-                        <span className='text-[10px]'>▼</span>
-                    </button>
+            <main className='notion-page'>
+                <header className={`notion-header ${isLoaded ? 'loaded' : ''}`}>
+                    <div className='notion-nav' style={{ justifyContent: 'space-between', maxWidth: '1100px' }}>
+                        <Link href='/' className='notion-nav-link' style={{ fontWeight: 600 }}>
+                            {strings.NAME}
+                        </Link>
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                            <Link href='/apps' className='notion-nav-link'>
+                                <DevicePhoneMobileIcon className='notion-nav-icon' />
+                                Apps
+                            </Link>
+                            <Link href='/blog' className='notion-nav-link'>
+                                <PencilSquareIcon className='notion-nav-icon' />
+                                Blog
+                            </Link>
+                            <Link href='/apps/resume' className='notion-nav-link'>
+                                <DocumentTextIcon className='notion-nav-icon' />
+                                Resume
+                            </Link>
+                        </div>
+                    </div>
                 </header>
 
-                {/* Left Sidebar (Desktop) */}
-                <aside className='hidden md:flex flex-col w-80 h-full border-r border-[var(--border-light)] bg-white/50 backdrop-blur-xl z-20'>
-                    <div className='p-6 border-b border-[var(--border-light)]'>
-                        <div className='flex items-center gap-3 mb-6'>
-                            <div className='w-3 h-3 rounded-full bg-[var(--purple-4)]' />
-                            <span className='font-bold uppercase tracking-widest text-sm text-[var(--fg-4)]'>Blockchain Net</span>
-                        </div>
-                        <nav className='flex flex-col gap-2'>
-                            <Link href='/apps' className='text-xs font-bold uppercase tracking-wider text-muted hover:text-[var(--purple-4)] transition-colors flex items-center gap-2'>
-                                <span>←</span> Back to Apps
-                            </Link>
-                        </nav>
+                <div className={`notion-content ${isLoaded ? 'loaded' : ''}`} style={{ maxWidth: '1200px' }}>
+                    <div className='notion-title-block'>
+                        <h1 className='notion-title'>Blockchain 101</h1>
+                        <div className='notion-subtitle'>Interactive blockchain visualization with proof-of-work mining</div>
                     </div>
 
-                    <div className='flex-grow overflow-y-auto p-6 space-y-8'>
-                        <div>
-                            <h3 className='text-[10px] font-bold uppercase tracking-[0.2em] text-muted mb-4'>Protocol Difficulty</h3>
-                            <div className='bg-white p-4 rounded-xl border border-[var(--border-light)] shadow-sm'>
-                                <input
-                                    type='range'
-                                    min='1'
-                                    max='5' // Reduced max for better UX
-                                    value={difficulty}
-                                    onChange={e => setDifficulty(Number(e.target.value))}
-                                    className='w-full accent-[var(--purple-4)] h-2 bg-[var(--bg-2)] rounded-lg appearance-none cursor-pointer'
-                                />
-                                <div className='flex justify-between text-[10px] font-bold uppercase tracking-wider mt-3'>
-                                    <span className='text-muted'>Fast</span>
-                                    <span className='text-[var(--purple-4)] bg-[var(--purple-1)] px-2 py-0.5 rounded'>{difficulty} Zeros</span>
-                                    <span className='text-muted'>Secure</span>
-                                </div>
-                            </div>
-                        </div>
+                    <div className='notion-divider' />
 
-                        <div>
-                            <h3 className='text-[10px] font-bold uppercase tracking-[0.2em] text-muted mb-4'>Network Status</h3>
-                            <div className='space-y-3'>
-                                <div className='flex justify-between items-center p-3 bg-white border border-[var(--border-light)] rounded-xl'>
-                                    <span className='text-xs font-bold text-muted uppercase tracking-wider'>Hashrate</span>
-                                    <span className='text-xs font-bold text-[var(--purple-4)] font-mono'>{mining !== null ? `${hashRate.toLocaleString()} H/s` : 'IDLE'}</span>
-                                </div>
-                                <div className='flex justify-between items-center p-3 bg-white border border-[var(--border-light)] rounded-xl'>
-                                    <span className='text-xs font-bold text-muted uppercase tracking-wider'>Health</span>
-                                    <span className={`text-xs font-bold uppercase tracking-wider ${invalidBlocks.size > 0 ? 'text-red-500' : 'text-green-500'}`}>
-                                        {invalidBlocks.size > 0 ? 'Compromised' : 'Healthy'}
-                                    </span>
-                                </div>
-                                <div className='flex justify-between items-center p-3 bg-white border border-[var(--border-light)] rounded-xl'>
-                                    <span className='text-xs font-bold text-muted uppercase tracking-wider'>Height</span>
-                                    <span className='text-xs font-bold text-[var(--fg-4)] font-mono'>#{blocks.length}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </aside>
-
-                {/* Main Content Area */}
-                <div className='flex-grow flex flex-col h-full relative bg-[#fafbff] overflow-hidden'>
-                    {/* Floating decorations */}
-                    <div className='absolute top-0 right-0 w-[500px] h-[500px] bg-[var(--purple-1)] opacity-30 rounded-full blur-3xl pointer-events-none -translate-y-1/2 translate-x-1/2' />
-
-                    <div className='flex-grow overflow-x-auto overflow-y-hidden p-8 flex items-center z-10 custom-scrollbar'>
-                        <ArcherContainer
-                            strokeColor={invalidBlocks.size > 0 ? '#ef4444' : '#a78bfa'}
-                            strokeWidth={2}
-                            strokeDasharray={invalidBlocks.size > 0 ? '5,5' : '0'}
-                            endShape={{ arrow: { arrowLength: 4 } }}
-                            style={{ height: '100%', display: 'flex', alignItems: 'center' }}
-                        >
-                            <div className='inline-flex gap-12 items-center px-12 min-w-full'>
-                                {blocks.map((block, index) => {
-                                    const isValid = !invalidBlocks.has(index);
-                                    const needsRemining = blocksNeedingRemining.has(index);
-                                    const isMining = mining === index;
-
-                                    return (
-                                        <ArcherElement
-                                            key={index}
-                                            id={`block-${index}`}
-                                            relations={index < blocks.length - 1 ? [{ targetId: `block-${index + 1}`, targetAnchor: 'left', sourceAnchor: 'right' }] : []}
-                                        >
-                                            <div className='relative group'>
-                                                <div className={`w-[320px] bg-white rounded-2xl p-6 shadow-sm border-2 transition-all duration-300 flex flex-col gap-4 relative z-10 ${isValid ? 'border-transparent hover:border-[var(--purple-2)] hover:shadow-xl'
-                                                    : 'border-red-100 shadow-red-100/50 hover:shadow-red-200'
-                                                    }`}>
-                                                    {/* Header */}
-                                                    <div className='flex justify-between items-center pb-4 border-b border-[var(--border-light)]'>
-                                                        <div className='flex items-center gap-3'>
-                                                            <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs ${isValid ? 'bg-[var(--purple-1)] text-[var(--purple-4)]' : 'bg-red-50 text-red-500'}`}>
-                                                                {index}
-                                                            </div>
-                                                            <span className='text-xs font-bold uppercase tracking-wider text-[var(--fg-4)]'>Block</span>
-                                                        </div>
-                                                        {needsRemining && (
-                                                            <span className='px-2 py-1 bg-yellow-50 text-yellow-600 text-[10px] font-bold uppercase tracking-wider rounded-md border border-yellow-100'>
-                                                                Re-Mine Required
-                                                            </span>
-                                                        )}
-                                                    </div>
-
-                                                    {/* Data Payload */}
-                                                    <div className='space-y-1'>
-                                                        <label className='text-[10px] font-bold uppercase tracking-wider text-muted ml-1'>Data</label>
-                                                        <textarea
-                                                            value={block.data}
-                                                            onChange={e => handleDataChange(index, e.target.value)}
-                                                            placeholder='Enter transaction data...'
-                                                            className='w-full bg-[var(--bg-2)] border-2 border-transparent focus:border-[var(--purple-2)] rounded-xl p-3 text-xs font-medium text-[var(--fg-4)] outline-none transition-all resize-none h-24 placeholder:text-muted/50'
-                                                        />
-                                                    </div>
-
-                                                    {/* Meta Info */}
-                                                    <div className='grid grid-cols-2 gap-3'>
-                                                        <div className='bg-[var(--bg-2)] p-2 rounded-lg'>
-                                                            <span className='text-[8px] font-bold uppercase tracking-wider text-muted block mb-1'>Nonce</span>
-                                                            <span className='text-xs font-mono font-bold text-[var(--purple-4)]'>{block.nonce}</span>
-                                                        </div>
-                                                        <div className='bg-[var(--bg-2)] p-2 rounded-lg'>
-                                                            <span className='text-[8px] font-bold uppercase tracking-wider text-muted block mb-1'>Timestamp</span>
-                                                            <span className='text-[10px] font-mono font-medium text-[var(--fg-4)] opacity-70'>{new Date(block.timestamp).toLocaleTimeString()}</span>
-                                                        </div>
-                                                    </div>
-
-                                                    {/* Hashes */}
-                                                    <div className='space-y-2'>
-                                                        <div className='space-y-1'>
-                                                            <span className='text-[8px] font-bold uppercase tracking-wider text-muted ml-1'>Previous Hash</span>
-                                                            <div className='text-[9px] font-mono bg-[var(--bg-2)] p-2 rounded-lg text-muted truncate select-all'>
-                                                                {block.previousHash}
-                                                            </div>
-                                                        </div>
-                                                        <div className='space-y-1'>
-                                                            <span className='text-[8px] font-bold uppercase tracking-wider text-muted ml-1'>Current Hash</span>
-                                                            <div className={`text-[9px] font-mono p-2 rounded-lg truncate select-all font-bold transition-colors ${isValid ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-500'}`}>
-                                                                {block.hash}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    {/* Mine Button */}
-                                                    <button
-                                                        onClick={() => mineBlock(index)}
-                                                        disabled={isMining}
-                                                        className={`w-full py-3 rounded-xl font-bold text-xs uppercase tracking-widest transition-all shadow-md active:scale-95 flex items-center justify-center gap-2 ${isMining
-                                                            ? 'bg-[var(--bg-2)] text-muted cursor-wait'
-                                                            : isValid && !needsRemining
-                                                                ? 'bg-white border border-[var(--border-light)] text-[var(--fg-4)] hover:border-[var(--purple-4)] hover:text-[var(--purple-4)]'
-                                                                : 'bg-[var(--purple-4)] text-white hover:bg-[var(--purple-4)]/90 shadow-lg shadow-purple-200'
-                                                            }`}
-                                                    >
-                                                        {isMining ? (
-                                                            <>
-                                                                <div className='w-3 h-3 border-2 border-muted border-t-transparent rounded-full animate-spin' />
-                                                                <span>Mining...</span>
-                                                            </>
-                                                        ) : (
-                                                            <span>{isValid && !needsRemining ? 'Re-Mine' : 'Mine Block'}</span>
-                                                        )}
-                                                    </button>
-                                                </div>
-                                                {/* Connector Line Logic implied by Archer */}
-                                            </div>
-                                        </ArcherElement>
-                                    );
-                                })}
-                                {/* Add Block Ghost Card */}
-                                <div className='w-[100px] h-[400px] flex items-center justify-center opacity-0'>
-                                    {/* Spacer for scroll */}
-                                </div>
-                            </div>
-                        </ArcherContainer>
-                    </div>
-                </div>
-                {/* Mobile Menu Overlay */}
-                {isMobileMenuOpen && (
-                    <div className='fixed inset-0 z-[100] flex items-end justify-center bg-black/40 backdrop-blur-sm p-4 md:hidden' onClick={() => setIsMobileMenuOpen(false)}>
-                        <div className='w-full max-w-sm bg-white rounded-2xl shadow-2xl animate-slide-up overflow-hidden border border-[var(--border-light)]' onClick={e => e.stopPropagation()}>
-                            <div className='p-4 border-b border-[var(--border-light)] flex justify-between items-center bg-[var(--bg-2)]'>
-                                <span className='text-xs font-bold uppercase tracking-widest text-[var(--fg-4)]'>Protocol Settings</span>
-                                <button onClick={() => setIsMobileMenuOpen(false)} className='w-6 h-6 rounded-full bg-white border border-[var(--border-light)] flex items-center justify-center text-muted'>✕</button>
-                            </div>
-                            <div className='p-4 space-y-6'>
-                                <div>
-                                    <h3 className='text-[10px] font-bold uppercase tracking-[0.2em] text-muted mb-4'>Difficulty</h3>
+                    <div className='notion-section'>
+                        <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap', marginBottom: '24px' }}>
+                            <div className='notion-card' style={{ padding: '16px', flex: '1', minWidth: '200px' }}>
+                                <span style={{ fontSize: '11px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Difficulty</span>
+                                <div style={{ marginTop: '8px' }}>
                                     <input
                                         type='range'
                                         min='1'
                                         max='5'
                                         value={difficulty}
                                         onChange={e => setDifficulty(Number(e.target.value))}
-                                        className='w-full accent-[var(--purple-4)] h-2 bg-[var(--bg-2)] rounded-lg appearance-none'
+                                        style={{ width: '100%', accentColor: '#6366f1' }}
                                     />
-                                    <div className='text-center mt-2 text-xs font-bold text-[var(--purple-4)]'>{difficulty} Leading Zeros</div>
-                                </div>
-                                <div className='pt-4 border-t border-[var(--border-light)]'>
-                                    <h3 className='text-[10px] font-bold uppercase tracking-[0.2em] text-muted mb-4'>Status</h3>
-                                    <div className='flex justify-between items-center p-3 bg-[var(--bg-2)] rounded-xl'>
-                                        <span className='text-xs font-bold text-muted'>Hashrate</span>
-                                        <span className='text-xs font-bold text-[var(--fg-4)]'>{mining !== null ? `${hashRate.toLocaleString()} H/s` : 'IDLE'}</span>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '4px', fontSize: '11px', color: 'rgba(55, 53, 47, 0.5)' }}>
+                                        <span>Fast</span>
+                                        <span style={{ color: '#6366f1', fontWeight: 700 }}>{difficulty} Zeros</span>
+                                        <span>Secure</span>
                                     </div>
+                                </div>
+                            </div>
+                            <div className='notion-card' style={{ padding: '16px', flex: '1', minWidth: '150px' }}>
+                                <span style={{ fontSize: '11px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Hashrate</span>
+                                <div style={{ fontSize: '20px', fontWeight: 700, color: '#6366f1', marginTop: '4px' }}>
+                                    {mining !== null ? `${hashRate.toLocaleString()} H/s` : 'IDLE'}
+                                </div>
+                            </div>
+                            <div className='notion-card' style={{ padding: '16px', flex: '1', minWidth: '150px' }}>
+                                <span style={{ fontSize: '11px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Chain Health</span>
+                                <div style={{ fontSize: '20px', fontWeight: 700, color: invalidBlocks.size > 0 ? '#dc2626' : '#059669', marginTop: '4px' }}>
+                                    {invalidBlocks.size > 0 ? 'Compromised' : 'Healthy'}
+                                </div>
+                            </div>
+                            <div className='notion-card' style={{ padding: '16px', flex: '1', minWidth: '150px' }}>
+                                <span style={{ fontSize: '11px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Block Height</span>
+                                <div style={{ fontSize: '20px', fontWeight: 700, color: '#37352f', marginTop: '4px' }}>
+                                    #{blocks.length}
                                 </div>
                             </div>
                         </div>
                     </div>
-                )}
+
+                    <div className='notion-divider' />
+
+                    <div className='notion-section'>
+                        <div className='notion-section-title'>
+                            <CubeTransparentIcon className='notion-section-icon' />
+                            Blockchain
+                        </div>
+                        <div style={{ marginTop: '24px', overflowX: 'auto', paddingBottom: '24px' }}>
+                            <ArcherContainer
+                                strokeColor={invalidBlocks.size > 0 ? '#ef4444' : '#a78bfa'}
+                                strokeWidth={2}
+                                strokeDasharray={invalidBlocks.size > 0 ? '5,5' : '0'}
+                                endShape={{ arrow: { arrowLength: 4 } }}
+                            >
+                                <div style={{ display: 'inline-flex', gap: '48px', alignItems: 'flex-start', minWidth: 'max-content' }}>
+                                    {blocks.map((block, index) => {
+                                        const isValid = !invalidBlocks.has(index);
+                                        const needsRemining = blocksNeedingRemining.has(index);
+                                        const isMining = mining === index;
+
+                                        return (
+                                            <ArcherElement
+                                                key={index}
+                                                id={`block-${index}`}
+                                                relations={index < blocks.length - 1 ? [{ targetId: `block-${index + 1}`, targetAnchor: 'left', sourceAnchor: 'right' }] : []}
+                                            >
+                                                <div className='notion-card' style={{
+                                                    width: '320px',
+                                                    padding: '20px',
+                                                    borderColor: isValid ? 'rgba(55, 53, 47, 0.09)' : '#fecaca'
+                                                }}>
+                                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', paddingBottom: '12px', borderBottom: '1px solid rgba(55, 53, 47, 0.09)' }}>
+                                                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                                            <div style={{
+                                                                width: '32px',
+                                                                height: '32px',
+                                                                borderRadius: '8px',
+                                                                display: 'flex',
+                                                                alignItems: 'center',
+                                                                justifyContent: 'center',
+                                                                fontWeight: 700,
+                                                                fontSize: '12px',
+                                                                backgroundColor: isValid ? 'rgba(99, 102, 241, 0.1)' : 'rgba(239, 68, 68, 0.1)',
+                                                                color: isValid ? '#6366f1' : '#dc2626'
+                                                            }}>
+                                                                {index}
+                                                            </div>
+                                                            <span style={{ fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Block</span>
+                                                        </div>
+                                                        {needsRemining && (
+                                                            <span style={{ fontSize: '9px', fontWeight: 700, color: '#ca8a04', backgroundColor: 'rgba(234, 179, 8, 0.1)', padding: '4px 8px', borderRadius: '4px', textTransform: 'uppercase' }}>
+                                                                Re-Mine
+                                                            </span>
+                                                        )}
+                                                    </div>
+
+                                                    <div style={{ marginBottom: '12px' }}>
+                                                        <label style={{ fontSize: '10px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Data</label>
+                                                        <textarea
+                                                            value={block.data}
+                                                            onChange={e => handleDataChange(index, e.target.value)}
+                                                            placeholder='Enter transaction data...'
+                                                            style={{
+                                                                width: '100%',
+                                                                marginTop: '4px',
+                                                                padding: '12px',
+                                                                border: '1px solid rgba(55, 53, 47, 0.09)',
+                                                                borderRadius: '8px',
+                                                                fontSize: '12px',
+                                                                resize: 'none',
+                                                                height: '80px',
+                                                                backgroundColor: 'rgba(55, 53, 47, 0.03)'
+                                                            }}
+                                                        />
+                                                    </div>
+
+                                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '12px' }}>
+                                                        <div style={{ padding: '8px', backgroundColor: 'rgba(55, 53, 47, 0.03)', borderRadius: '6px' }}>
+                                                            <span style={{ fontSize: '9px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase' }}>Nonce</span>
+                                                            <div style={{ fontSize: '12px', fontWeight: 700, color: '#6366f1', fontFamily: 'monospace' }}>{block.nonce}</div>
+                                                        </div>
+                                                        <div style={{ padding: '8px', backgroundColor: 'rgba(55, 53, 47, 0.03)', borderRadius: '6px' }}>
+                                                            <span style={{ fontSize: '9px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase' }}>Timestamp</span>
+                                                            <div style={{ fontSize: '10px', fontFamily: 'monospace', color: 'rgba(55, 53, 47, 0.7)' }}>{new Date(block.timestamp).toLocaleTimeString()}</div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div style={{ marginBottom: '12px' }}>
+                                                        <span style={{ fontSize: '9px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase' }}>Previous Hash</span>
+                                                        <div style={{ fontSize: '9px', fontFamily: 'monospace', backgroundColor: 'rgba(55, 53, 47, 0.03)', padding: '8px', borderRadius: '6px', wordBreak: 'break-all', color: 'rgba(55, 53, 47, 0.6)', marginTop: '4px' }}>
+                                                            {block.previousHash.slice(0, 32)}...
+                                                        </div>
+                                                    </div>
+
+                                                    <div style={{ marginBottom: '16px' }}>
+                                                        <span style={{ fontSize: '9px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase' }}>Current Hash</span>
+                                                        <div style={{
+                                                            fontSize: '9px',
+                                                            fontFamily: 'monospace',
+                                                            padding: '8px',
+                                                            borderRadius: '6px',
+                                                            wordBreak: 'break-all',
+                                                            fontWeight: 600,
+                                                            marginTop: '4px',
+                                                            backgroundColor: isValid ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
+                                                            color: isValid ? '#059669' : '#dc2626'
+                                                        }}>
+                                                            {block.hash === 'N/A' ? 'N/A' : `${block.hash.slice(0, 32)}...`}
+                                                        </div>
+                                                    </div>
+
+                                                    <button
+                                                        onClick={() => mineBlock(index)}
+                                                        disabled={isMining}
+                                                        className={isValid && !needsRemining ? 'notion-action-btn' : 'notion-action-btn notion-action-primary'}
+                                                        style={{ width: '100%', justifyContent: 'center' }}
+                                                    >
+                                                        <CpuChipIcon className='notion-action-icon' />
+                                                        {isMining ? 'Mining...' : (isValid && !needsRemining ? 'Re-Mine' : 'Mine Block')}
+                                                    </button>
+                                                </div>
+                                            </ArcherElement>
+                                        );
+                                    })}
+                                </div>
+                            </ArcherContainer>
+                        </div>
+                    </div>
+
+                    <footer className='notion-footer'>
+                        © 2026 {strings.NAME}
+                    </footer>
+                </div>
             </main>
         </>
     );
 }
-
-

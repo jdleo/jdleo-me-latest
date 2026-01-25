@@ -3,7 +3,15 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
+import { strings } from '../../constants/strings';
 import { WebVitals } from '@/components/SEO/WebVitals';
+import {
+    DevicePhoneMobileIcon,
+    PencilSquareIcon,
+    DocumentTextIcon,
+    TrophyIcon,
+    BoltIcon,
+} from '@heroicons/react/24/outline';
 
 type LeaderboardEntry = {
     model_id: string;
@@ -39,7 +47,6 @@ export default function LLMLeaderboard() {
     const [isVoting, setIsVoting] = useState(false);
     const [votingComplete, setVotingComplete] = useState(false);
     const [revealedModels, setRevealedModels] = useState(false);
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     useEffect(() => {
         const timer = setTimeout(() => setIsLoaded(true), 100);
@@ -103,7 +110,7 @@ export default function LLMLeaderboard() {
                     }
                 }
             }
-        } catch (e) { setR({ content: 'GENERATION_ERROR', loading: false }); setSM(''); }
+        } catch (e) { setR({ content: 'Error generating response', loading: false }); setSM(''); }
     };
 
     const handleGenerate = async () => {
@@ -133,227 +140,158 @@ export default function LLMLeaderboard() {
     return (
         <>
             <WebVitals />
-            <main className='relative h-screen bg-[#fafbff] overflow-hidden selection:bg-[var(--purple-2)] selection:text-[var(--purple-4)] flex flex-col md:flex-row'>
-                {/* Mobile Header */}
-                <header className='md:hidden flex items-center justify-between p-4 border-b border-[var(--border-light)] bg-white/80 backdrop-blur-md z-50'>
-                    <Link href='/apps' className='text-sm font-bold uppercase tracking-widest text-muted hover:text-[var(--purple-4)]'>
-                        ← Apps
-                    </Link>
-                    <button
-                        onClick={() => setIsMobileMenuOpen(true)}
-                        className='px-3 py-1.5 bg-white border border-[var(--border-light)] rounded-full shadow-sm text-xs font-bold uppercase tracking-wider text-[var(--fg-4)] flex items-center gap-1.5'
-                    >
-                        <span>Menu</span>
-                        <span className='text-[10px]'>▼</span>
-                    </button>
+            <main className='notion-page'>
+                <header className={`notion-header ${isLoaded ? 'loaded' : ''}`}>
+                    <div className='notion-nav' style={{ justifyContent: 'space-between', maxWidth: '1100px' }}>
+                        <Link href='/' className='notion-nav-link' style={{ fontWeight: 600 }}>
+                            {strings.NAME}
+                        </Link>
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                            <Link href='/apps' className='notion-nav-link'>
+                                <DevicePhoneMobileIcon className='notion-nav-icon' />
+                                Apps
+                            </Link>
+                            <Link href='/blog' className='notion-nav-link'>
+                                <PencilSquareIcon className='notion-nav-icon' />
+                                Blog
+                            </Link>
+                            <Link href='/apps/resume' className='notion-nav-link'>
+                                <DocumentTextIcon className='notion-nav-icon' />
+                                Resume
+                            </Link>
+                        </div>
+                    </div>
                 </header>
 
-                {/* Left Sidebar (Desktop) */}
-                <aside className='hidden md:flex flex-col w-72 h-full border-r border-[var(--border-light)] bg-white/50 backdrop-blur-xl z-20'>
-                    <div className='p-6 border-b border-[var(--border-light)]'>
-                        <div className='flex items-center gap-3 mb-6'>
-                            <div className='w-3 h-3 rounded-full bg-[var(--purple-4)]' />
-                            <span className='font-bold uppercase tracking-widest text-sm text-[var(--fg-4)]'>LLM Arena</span>
-                        </div>
-                        <nav className='flex flex-col gap-2'>
-                            <Link href='/apps' className='text-xs font-bold uppercase tracking-wider text-muted hover:text-[var(--purple-4)] transition-colors flex items-center gap-2'>
-                                <span>←</span> Back to Apps
-                            </Link>
-                        </nav>
+                <div className={`notion-content ${isLoaded ? 'loaded' : ''}`} style={{ maxWidth: '1100px' }}>
+                    <div className='notion-title-block'>
+                        <h1 className='notion-title'>LLM Arena</h1>
+                        <div className='notion-subtitle'>Compare language models head-to-head and contribute to community rankings</div>
                     </div>
 
-                    <div className='flex-grow p-6 space-y-8'>
-                        <div>
-                            <h3 className='text-[10px] font-bold uppercase tracking-[0.2em] text-muted mb-4'>Mode</h3>
-                            <nav className='flex flex-col gap-2'>
-                                <button
-                                    onClick={() => setActiveTab('vote')}
-                                    className={`w-full p-3 text-left rounded-xl transition-all flex items-center gap-3 ${activeTab === 'vote'
-                                            ? 'bg-white shadow-md border border-[var(--purple-2)] text-[var(--purple-4)]'
-                                            : 'hover:bg-white/60 text-[var(--fg-4)]'
-                                        }`}
-                                >
-                                    <span className='text-lg'>⚔️</span>
-                                    <span className='text-xs font-bold uppercase tracking-wider'>Battle Arena</span>
-                                </button>
-                                <button
-                                    onClick={() => setActiveTab('leaderboard')}
-                                    className={`w-full p-3 text-left rounded-xl transition-all flex items-center gap-3 ${activeTab === 'leaderboard'
-                                            ? 'bg-white shadow-md border border-[var(--purple-2)] text-[var(--purple-4)]'
-                                            : 'hover:bg-white/60 text-[var(--fg-4)]'
-                                        }`}
-                                >
-                                    <span className='text-lg'>🏆</span>
-                                    <span className='text-xs font-bold uppercase tracking-wider'>Rankings</span>
-                                </button>
-                            </nav>
-                        </div>
+                    <div className='notion-divider' />
 
-                        <div>
-                            <h3 className='text-[10px] font-bold uppercase tracking-[0.2em] text-muted mb-4'>System Status</h3>
-                            <div className='p-4 bg-white border border-[var(--border-light)] rounded-xl shadow-sm'>
-                                <div className='flex items-center gap-2 mb-2'>
-                                    <div className='w-2 h-2 rounded-full bg-green-500 animate-pulse' />
-                                    <span className='text-[10px] font-bold uppercase tracking-wider text-[var(--fg-4)]'>Online</span>
-                                </div>
-                                <p className='text-[10px] text-muted leading-relaxed'>
-                                    Benchmarking via decentralized consensus and ELO evaluation.
-                                </p>
-                            </div>
-                        </div>
+                    <div style={{ display: 'flex', gap: '12px', marginBottom: '32px' }}>
+                        <button
+                            onClick={() => setActiveTab('vote')}
+                            className={activeTab === 'vote' ? 'notion-action-btn notion-action-primary' : 'notion-action-btn'}
+                        >
+                            <BoltIcon className='notion-action-icon' />
+                            Battle Arena
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('leaderboard')}
+                            className={activeTab === 'leaderboard' ? 'notion-action-btn notion-action-primary' : 'notion-action-btn'}
+                        >
+                            <TrophyIcon className='notion-action-icon' />
+                            Rankings
+                        </button>
                     </div>
-                </aside>
 
-                {/* Main Content Area */}
-                <div className='flex-grow flex flex-col h-full relative bg-[#fafbff] overflow-hidden'>
-                    {/* Floating decorations */}
-                    <div className='absolute top-0 right-0 w-[600px] h-[600px] bg-[var(--purple-1)] opacity-30 rounded-full blur-3xl pointer-events-none -translate-y-1/2 translate-x-1/2' />
-
-                    <div className='flex-grow overflow-y-auto p-4 md:p-8 scrollbar-hide z-10'>
-                        {activeTab === 'vote' ? (
-                            <div className='max-w-5xl mx-auto w-full space-y-8 pb-32'>
-                                <div className='text-center space-y-2 mb-8'>
-                                    <h1 className='text-2xl font-bold text-[var(--fg-4)]'>Battle Arena</h1>
-                                    <p className='text-muted text-sm'>Enter a prompt to compare two anonymous models.</p>
+                    {activeTab === 'vote' ? (
+                        <div className='notion-section'>
+                            {!showVoting && !responseA.loading ? (
+                                <div className='notion-card' style={{ padding: '24px', maxWidth: '700px', margin: '0 auto' }}>
+                                    <textarea
+                                        value={prompt}
+                                        onChange={e => setPrompt(e.target.value)}
+                                        placeholder='Enter a challenging prompt...'
+                                        className='notion-textarea'
+                                        style={{ height: '140px', marginBottom: '16px' }}
+                                    />
+                                    <button
+                                        onClick={handleGenerate}
+                                        disabled={!prompt.trim()}
+                                        className='notion-action-btn notion-action-primary'
+                                        style={{ width: '100%', justifyContent: 'center', padding: '16px' }}
+                                    >
+                                        <BoltIcon className='notion-action-icon' />
+                                        Initiate Battle
+                                    </button>
                                 </div>
-
-                                {!showVoting && !responseA.loading ? (
-                                    <div className='bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-[var(--border-light)] max-w-3xl mx-auto'>
-                                        <textarea
-                                            value={prompt}
-                                            onChange={e => setPrompt(e.target.value)}
-                                            placeholder='Enter a challenging prompt...'
-                                            className='w-full bg-[var(--bg-2)] border border-[var(--border-light)] rounded-xl p-4 text-sm text-[var(--fg-4)] focus:border-[var(--purple-4)] focus:ring-2 focus:ring-[var(--purple-1)] outline-none resize-none h-40 transition-all placeholder:text-muted/50 mb-6'
-                                        />
-                                        <button
-                                            onClick={handleGenerate}
-                                            disabled={!prompt.trim()}
-                                            className='w-full py-4 bg-[var(--fg-4)] hover:bg-[var(--purple-4)] text-white font-bold text-xs uppercase tracking-[0.2em] rounded-xl transition-all shadow-lg hover:shadow-xl hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:hover:bg-[var(--fg-4)] disabled:hover:scale-100 disabled:cursor-not-allowed'
-                                        >
-                                            Initiate Battle
-                                        </button>
-                                    </div>
-                                ) : (
-                                    <div className='space-y-8 animate-fade-in-up'>
-                                        <div className='grid md:grid-cols-2 gap-6'>
-                                            {[
-                                                { label: 'Model A', content: responseA.content, stream: streamingMessageA, loading: responseA.loading, model: battleModels?.modelA },
-                                                { label: 'Model B', content: responseB.content, stream: streamingMessageB, loading: responseB.loading, model: battleModels?.modelB }
-                                            ].map((node, i) => (
-                                                <div key={i} className='bg-white border border-[var(--border-light)] rounded-2xl p-6 shadow-sm flex flex-col h-[500px] overflow-hidden relative'>
-                                                    <div className='flex justify-between items-center mb-4 pb-4 border-b border-[var(--border-light)]'>
-                                                        <span className='text-xs font-bold uppercase tracking-widest text-[var(--purple-4)]'>{node.label}</span>
-                                                        {revealedModels && <span className='text-[10px] font-medium text-[var(--fg-4)] bg-[var(--purple-1)] px-2 py-1 rounded'>{node.model}</span>}
-                                                    </div>
-                                                    <div className='flex-grow overflow-y-auto pr-2 custom-scrollbar markdown-body text-sm text-[var(--fg-4)] leading-relaxed'>
-                                                        <div className='prose prose-sm max-w-none'>
-                                                            <ReactMarkdown>{node.loading ? node.stream : node.content}</ReactMarkdown>
-                                                            {node.loading && <span className='inline-block w-1.5 h-4 bg-[var(--purple-4)] ml-1 animate-pulse align-middle rounded-full' />}
-                                                        </div>
-                                                    </div>
+                            ) : (
+                                <>
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '24px', marginBottom: '24px' }}>
+                                        {[
+                                            { label: 'Model A', content: responseA.content, stream: streamingMessageA, loading: responseA.loading, model: battleModels?.modelA },
+                                            { label: 'Model B', content: responseB.content, stream: streamingMessageB, loading: responseB.loading, model: battleModels?.modelB }
+                                        ].map((node, i) => (
+                                            <div key={i} className='notion-card' style={{ padding: '20px', height: '450px', display: 'flex', flexDirection: 'column' }}>
+                                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', paddingBottom: '12px', borderBottom: '1px solid rgba(55, 53, 47, 0.09)' }}>
+                                                    <span style={{ fontSize: '12px', fontWeight: 700, color: '#6366f1', textTransform: 'uppercase', letterSpacing: '0.1em' }}>{node.label}</span>
+                                                    {revealedModels && <span style={{ fontSize: '10px', fontWeight: 500, color: '#37352f', backgroundColor: 'rgba(99, 102, 241, 0.1)', padding: '4px 8px', borderRadius: '4px' }}>{node.model}</span>}
                                                 </div>
-                                            ))}
-                                        </div>
-
-                                        {showVoting && !votingComplete && (
-                                            <div className='flex flex-col items-center gap-6 p-6 bg-white/80 backdrop-blur-xl border border-[var(--border-light)] rounded-2xl shadow-lg sticky bottom-6 max-w-2xl mx-auto'>
-                                                <span className='text-xs font-bold uppercase tracking-[0.2em] text-muted'>Select Winner</span>
-                                                <div className='flex gap-4 w-full'>
-                                                    <button onClick={() => handleVote('A')} className='flex-1 py-3 bg-white border border-[var(--border-light)] hover:border-[var(--purple-4)] hover:bg-[var(--purple-1)] text-[var(--fg-4)] hover:text-[var(--purple-4)] font-bold text-xs uppercase rounded-xl tracking-widest transition-all shadow-sm'>Model A</button>
-                                                    <button onClick={() => handleVote('tie')} className='flex-1 py-3 bg-[var(--bg-2)] border border-[var(--border-light)] hover:bg-[var(--border-light)] text-muted font-bold text-xs uppercase rounded-xl tracking-widest transition-all'>Tie</button>
-                                                    <button onClick={() => handleVote('B')} className='flex-1 py-3 bg-white border border-[var(--border-light)] hover:border-[var(--purple-4)] hover:bg-[var(--purple-1)] text-[var(--fg-4)] hover:text-[var(--purple-4)] font-bold text-xs uppercase rounded-xl tracking-widest transition-all shadow-sm'>Model B</button>
+                                                <div style={{ flex: 1, overflow: 'auto', fontSize: '14px', lineHeight: 1.7, color: '#37352f' }} className='prose prose-sm'>
+                                                    <ReactMarkdown>{node.loading ? node.stream : node.content}</ReactMarkdown>
+                                                    {node.loading && <span style={{ display: 'inline-block', width: '6px', height: '16px', backgroundColor: '#6366f1', marginLeft: '4px', borderRadius: '2px', animation: 'pulse 1s infinite' }} />}
                                                 </div>
                                             </div>
-                                        )}
+                                        ))}
+                                    </div>
 
-                                        {votingComplete && (
-                                            <div className='flex flex-col items-center gap-6 animate-fade-in-up'>
-                                                <div className='p-8 bg-white border border-[var(--purple-2)] rounded-2xl shadow-lg text-center max-w-md mx-auto'>
-                                                    <div className='w-12 h-12 bg-[var(--green-1)] text-[var(--green-4)] rounded-full flex items-center justify-center mx-auto mb-4 text-xl'>✓</div>
-                                                    <div className='text-xs font-bold text-[var(--purple-4)] uppercase tracking-widest mb-4'>Vote Committed</div>
-                                                    <button
-                                                        onClick={setupBattle}
-                                                        className='text-sm font-medium text-[var(--fg-4)] hover:text-[var(--purple-4)] underline underline-offset-4 transition-colors'
-                                                    >
-                                                        Start Next Battle
-                                                    </button>
-                                                </div>
+                                    {showVoting && !votingComplete && (
+                                        <div className='notion-card' style={{ padding: '20px', maxWidth: '600px', margin: '0 auto', textAlign: 'center' }}>
+                                            <span style={{ fontSize: '11px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: '16px' }}>Select Winner</span>
+                                            <div style={{ display: 'flex', gap: '12px' }}>
+                                                <button onClick={() => handleVote('A')} className='notion-action-btn' style={{ flex: 1, justifyContent: 'center', padding: '14px' }}>Model A</button>
+                                                <button onClick={() => handleVote('tie')} className='notion-action-btn' style={{ flex: 1, justifyContent: 'center', padding: '14px', backgroundColor: 'rgba(55, 53, 47, 0.04)' }}>Tie</button>
+                                                <button onClick={() => handleVote('B')} className='notion-action-btn' style={{ flex: 1, justifyContent: 'center', padding: '14px' }}>Model B</button>
                                             </div>
-                                        )}
-                                    </div>
-                                )}
-                            </div>
-                        ) : (
-                            <div className='max-w-5xl mx-auto w-full pb-32'>
-                                <div className='text-center space-y-2 mb-8'>
-                                    <h1 className='text-2xl font-bold text-[var(--fg-4)]'>Leaderboard</h1>
-                                    <p className='text-muted text-sm'>Top performing models based on community ELO ratings.</p>
-                                </div>
-
-                                <div className='bg-white border border-[var(--border-light)] rounded-2xl overflow-hidden shadow-sm'>
-                                    <div className='overflow-x-auto'>
-                                        <table className='w-full text-left'>
-                                            <thead>
-                                                <tr className='bg-[var(--gray-1)] border-b border-[var(--border-light)]'>
-                                                    <th className='p-4 text-[10px] font-bold uppercase tracking-widest text-muted'>Rank</th>
-                                                    <th className='p-4 text-[10px] font-bold uppercase tracking-widest text-muted'>Model</th>
-                                                    <th className='p-4 text-[10px] font-bold uppercase tracking-widest text-muted'>ELO</th>
-                                                    <th className='p-4 text-[10px] font-bold uppercase tracking-widest text-muted'>Votes</th>
-                                                    <th className='p-4 text-[10px] font-bold uppercase tracking-widest text-muted text-right'>W / L / T</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody className='text-sm'>
-                                                {leaderboard.map((e, i) => (
-                                                    <tr key={e.model_id} className='border-b border-[var(--border-light)] hover:bg-[var(--bg-2)] transition-colors'>
-                                                        <td className='p-4 font-mono text-muted text-xs'>#{String(i + 1).padStart(2, '0')}</td>
-                                                        <td className='p-4 font-medium text-[var(--fg-4)]'>{e.model_id}</td>
-                                                        <td className='p-4 font-bold text-[var(--purple-4)]'>{e.elo_rating}</td>
-                                                        <td className='p-4 text-muted'>{e.total_votes}</td>
-                                                        <td className='p-4 text-right font-mono text-xs text-muted'>{e.wins} / {e.losses} / {e.ties}</td>
-                                                    </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    {leaderboardLoading && (
-                                        <div className='p-12 text-center'>
-                                            <div className='w-6 h-6 border-2 border-[var(--border-light)] border-t-[var(--purple-4)] rounded-full animate-spin mx-auto mb-2'></div>
-                                            <span className='text-[10px] font-bold uppercase tracking-widest text-muted'>Loading Stats...</span>
                                         </div>
                                     )}
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                </div>
 
-                {/* Mobile Menu Overlay */}
-                {isMobileMenuOpen && (
-                    <div className='fixed inset-0 z-[100] flex items-end justify-center bg-black/40 backdrop-blur-sm p-4 md:hidden' onClick={() => setIsMobileMenuOpen(false)}>
-                        <div className='w-full max-w-sm bg-white rounded-2xl shadow-2xl animate-slide-up overflow-hidden border border-[var(--border-light)]' onClick={e => e.stopPropagation()}>
-                            <div className='p-4 border-b border-[var(--border-light)] flex justify-between items-center bg-[var(--bg-2)]'>
-                                <span className='text-xs font-bold uppercase tracking-widest text-[var(--fg-4)]'>Menu</span>
-                                <button onClick={() => setIsMobileMenuOpen(false)} className='w-6 h-6 rounded-full bg-white border border-[var(--border-light)] flex items-center justify-center text-muted'>✕</button>
-                            </div>
-                            <div className='p-2'>
-                                <button
-                                    onClick={() => { setActiveTab('vote'); setIsMobileMenuOpen(false); }}
-                                    className={`w-full p-3 text-left rounded-xl transition-all flex items-center gap-3 ${activeTab === 'vote' ? 'bg-[var(--purple-1)] text-[var(--purple-4)]' : 'hover:bg-[var(--bg-2)]'}`}
-                                >
-                                    <span className='text-lg'>⚔️</span>
-                                    <span className='text-xs font-bold uppercase tracking-wider'>Battle Arena</span>
-                                </button>
-                                <button
-                                    onClick={() => { setActiveTab('leaderboard'); setIsMobileMenuOpen(false); }}
-                                    className={`w-full p-3 text-left rounded-xl transition-all flex items-center gap-3 ${activeTab === 'leaderboard' ? 'bg-[var(--purple-1)] text-[var(--purple-4)]' : 'hover:bg-[var(--bg-2)]'}`}
-                                >
-                                    <span className='text-lg'>🏆</span>
-                                    <span className='text-xs font-bold uppercase tracking-wider'>Rankings</span>
-                                </button>
-                            </div>
+                                    {votingComplete && (
+                                        <div className='notion-card' style={{ padding: '32px', maxWidth: '400px', margin: '0 auto', textAlign: 'center' }}>
+                                            <div style={{ width: '48px', height: '48px', borderRadius: '50%', backgroundColor: 'rgba(16, 185, 129, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', color: '#059669', fontSize: '24px' }}>✓</div>
+                                            <div style={{ fontSize: '12px', fontWeight: 700, color: '#6366f1', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '16px' }}>Vote Recorded</div>
+                                            <button onClick={setupBattle} className='notion-action-btn notion-action-primary'>
+                                                Start Next Battle
+                                            </button>
+                                        </div>
+                                    )}
+                                </>
+                            )}
                         </div>
-                    </div>
-                )}
+                    ) : (
+                        <div className='notion-section'>
+                            {leaderboardLoading ? (
+                                <div style={{ textAlign: 'center', padding: '48px' }}>
+                                    <div style={{ width: '24px', height: '24px', border: '2px solid rgba(55, 53, 47, 0.09)', borderTopColor: '#6366f1', borderRadius: '50%', animation: 'spin 1s linear infinite', margin: '0 auto 12px' }} />
+                                    <span style={{ fontSize: '11px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Loading Rankings...</span>
+                                </div>
+                            ) : (
+                                <div className='notion-table-container'>
+                                    <table className='notion-table'>
+                                        <thead>
+                                            <tr>
+                                                <th>Rank</th>
+                                                <th>Model</th>
+                                                <th style={{ textAlign: 'right' }}>ELO</th>
+                                                <th style={{ textAlign: 'right' }}>Votes</th>
+                                                <th style={{ textAlign: 'right' }}>W / L / T</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {leaderboard.map((e, i) => (
+                                                <tr key={e.model_id}>
+                                                    <td style={{ fontFamily: 'monospace', color: 'rgba(55, 53, 47, 0.5)' }}>#{String(i + 1).padStart(2, '0')}</td>
+                                                    <td style={{ fontWeight: 500 }}>{e.model_id}</td>
+                                                    <td style={{ textAlign: 'right', fontWeight: 700, color: '#6366f1' }}>{e.elo_rating}</td>
+                                                    <td style={{ textAlign: 'right', color: 'rgba(55, 53, 47, 0.5)' }}>{e.total_votes}</td>
+                                                    <td style={{ textAlign: 'right', fontFamily: 'monospace', fontSize: '12px', color: 'rgba(55, 53, 47, 0.5)' }}>{e.wins} / {e.losses} / {e.ties}</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    <footer className='notion-footer'>
+                        © 2026 {strings.NAME}
+                    </footer>
+                </div>
             </main>
         </>
     );

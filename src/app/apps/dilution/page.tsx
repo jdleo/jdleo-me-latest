@@ -2,14 +2,24 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
+import { strings } from '../../constants/strings';
 import { WebVitals } from '@/components/SEO/WebVitals';
+import {
+    DevicePhoneMobileIcon,
+    PencilSquareIcon,
+    DocumentTextIcon,
+    ChartPieIcon,
+    PlusIcon,
+    ArrowPathIcon,
+    TrashIcon,
+} from '@heroicons/react/24/outline';
 
 interface Round {
     id: string;
     name: string;
     preMoneyValuation: number;
     amountRaised: number;
-    optionPoolPercent: number; // Percent of post-money to top up
+    optionPoolPercent: number;
     stockType: 'Preferred' | 'Common';
     isParticipating: boolean;
     liquidationPreference: number;
@@ -52,7 +62,7 @@ export default function DilutionCalculator() {
     const [isLoaded, setIsLoaded] = useState(false);
     const [rounds, setRounds] = useState<Round[]>([]);
     const [initialFoundersOwnership, setInitialFoundersOwnership] = useState<string>('100');
-    const [exitValuation, setExitValuation] = useState<string>('100000000'); // 100M default exit
+    const [exitValuation, setExitValuation] = useState<string>('100000000');
 
     useEffect(() => {
         const timer = setTimeout(() => setIsLoaded(true), 100);
@@ -99,7 +109,6 @@ export default function DilutionCalculator() {
             const investorEquity = round.amountRaised / postMoney;
             const poolEquity = round.optionPoolPercent / 100;
 
-            // Dilution factor (everyone except the new round gets diluted)
             const dilutionFactor = 1 - investorEquity - poolEquity;
 
             currentFounder *= dilutionFactor;
@@ -123,23 +132,16 @@ export default function DilutionCalculator() {
         const poolFinalPct = currentPool * 100;
         const investorFinalPct = currentInvestors * 100;
 
-        // Exit Logic
         let founderExitPayout = 0;
-
-        // Simplified multi-round liquidation preference
-        const investorPref = totalLiquidationPreference;
         const investorCommonValue = (investorFinalPct / 100) * exitValue;
-
         const totalParticipatingPref = rounds.reduce((acc, r) => r.isParticipating ? acc + (r.amountRaised * r.liquidationPreference) : acc, 0);
         const totalNonParticipatingPref = totalLiquidationPreference - totalParticipatingPref;
-
         let remainingExit = Math.max(0, exitValue - totalParticipatingPref);
 
         if (investorCommonValue > totalLiquidationPreference) {
             founderExitPayout = (founderFinalPct / 100) * exitValue;
         } else {
             remainingExit = Math.max(0, remainingExit - totalNonParticipatingPref);
-            // Actually, let's just do: Remaining * (FounderPct / (1 - NonParticipatingInvestorPct))
             const commonTotalPct = founderFinalPct + poolFinalPct;
             if (commonTotalPct > 0) {
                 founderExitPayout = remainingExit * (currentFounder / (1 - (totalNonParticipatingPref / (exitValue || 1))));
@@ -164,312 +166,232 @@ export default function DilutionCalculator() {
         }).format(val);
     };
 
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
     return (
         <>
             <WebVitals />
-            <main className='relative h-screen bg-[#fafbff] overflow-hidden selection:bg-[var(--purple-2)] selection:text-[var(--purple-4)] flex flex-col md:flex-row'>
-
-                {/* Mobile Header */}
-                <header className='md:hidden flex items-center justify-between p-4 border-b border-[var(--border-light)] bg-white/80 backdrop-blur-md z-50'>
-                    <Link href='/apps' className='text-sm font-bold uppercase tracking-widest text-muted hover:text-[var(--purple-4)]'>
-                        ← Apps
-                    </Link>
-                    <button
-                        onClick={() => setIsMobileMenuOpen(true)}
-                        className='px-3 py-1.5 bg-white border border-[var(--border-light)] rounded-full shadow-sm text-xs font-bold uppercase tracking-wider text-[var(--fg-4)] flex items-center gap-1.5'
-                    >
-                        <span>Config</span>
-                        <span className='text-[10px]'>▼</span>
-                    </button>
+            <main className='notion-page'>
+                <header className={`notion-header ${isLoaded ? 'loaded' : ''}`}>
+                    <div className='notion-nav' style={{ justifyContent: 'space-between', maxWidth: '1100px' }}>
+                        <Link href='/' className='notion-nav-link' style={{ fontWeight: 600 }}>
+                            {strings.NAME}
+                        </Link>
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                            <Link href='/apps' className='notion-nav-link'>
+                                <DevicePhoneMobileIcon className='notion-nav-icon' />
+                                Apps
+                            </Link>
+                            <Link href='/blog' className='notion-nav-link'>
+                                <PencilSquareIcon className='notion-nav-icon' />
+                                Blog
+                            </Link>
+                            <Link href='/apps/resume' className='notion-nav-link'>
+                                <DocumentTextIcon className='notion-nav-icon' />
+                                Resume
+                            </Link>
+                        </div>
+                    </div>
                 </header>
 
-                {/* Left Sidebar (Desktop) - Global Settings */}
-                <aside className='hidden md:flex flex-col w-80 h-full border-r border-[var(--border-light)] bg-white/50 backdrop-blur-xl z-20'>
-                    <div className='p-6 border-b border-[var(--border-light)]'>
-                        <div className='flex items-center gap-3 mb-6'>
-                            <div className='w-3 h-3 rounded-full bg-[var(--purple-4)]' />
-                            <span className='font-bold uppercase tracking-widest text-sm text-[var(--fg-4)]'>Dilution Engine</span>
-                        </div>
-                        <nav className='flex flex-col gap-2'>
-                            <Link href='/apps' className='text-xs font-bold uppercase tracking-wider text-muted hover:text-[var(--purple-4)] transition-colors flex items-center gap-2'>
-                                <span>←</span> Back to Apps
-                            </Link>
-                        </nav>
+                <div className={`notion-content ${isLoaded ? 'loaded' : ''}`} style={{ maxWidth: '1200px' }}>
+                    <div className='notion-title-block'>
+                        <h1 className='notion-title'>Startup Equity Calculator</h1>
+                        <div className='notion-subtitle'>Visualize dilution and exit scenarios across multiple funding rounds</div>
                     </div>
 
-                    <div className='flex-grow overflow-y-auto p-6 space-y-8'>
-                        <div>
-                            <h3 className='text-[10px] font-bold uppercase tracking-[0.2em] text-muted mb-4'>Global Scenarios</h3>
-                            <div className='space-y-4'>
-                                <div className='space-y-2'>
-                                    <label className='text-xs font-bold text-[var(--fg-4)]'>Exit Valuation ($)</label>
+                    <div className='notion-divider' />
+
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px', marginBottom: '32px' }}>
+                        <div className='notion-card' style={{ padding: '24px' }}>
+                            <span style={{ fontSize: '11px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Estimated Founder Payout</span>
+                            <div style={{ fontSize: '32px', fontWeight: 700, color: '#059669', marginTop: '8px' }}>
+                                {formatCurrency(results.founderExitPayout)}
+                            </div>
+                        </div>
+                        <div className='notion-card' style={{ padding: '24px' }}>
+                            <span style={{ fontSize: '11px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Final Ownership</span>
+                            <div style={{ fontSize: '32px', fontWeight: 700, color: '#6366f1', marginTop: '8px' }}>
+                                {results.founderFinalPct.toFixed(2)}%
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: '32px', alignItems: 'start' }} className="responsive-grid">
+                        <div className='notion-section'>
+                            <div className='notion-section-title'>
+                                <ChartPieIcon className='notion-section-icon' />
+                                Cap Table Scenarios
+                            </div>
+
+                            <div style={{ display: 'flex', gap: '24px', marginBottom: '24px', flexWrap: 'wrap' }}>
+                                <div style={{ flex: 1, minWidth: '200px' }}>
+                                    <label style={{ fontSize: '12px', fontWeight: 600, color: '#37352f', marginBottom: '8px', display: 'block' }}>Hypothetical Exit Valuation ($)</label>
                                     <input
                                         type='number'
                                         value={exitValuation}
                                         onChange={e => setExitValuation(e.target.value)}
-                                        className='w-full bg-white border border-[var(--border-light)] rounded-xl p-3 text-sm text-[var(--fg-4)] focus:border-[var(--purple-4)] focus:ring-2 focus:ring-[var(--purple-1)] outline-none transition-all'
+                                        className='notion-input'
+                                        style={{ width: '100%', padding: '10px 12px', borderRadius: '6px', border: '1px solid rgba(55, 53, 47, 0.16)' }}
                                     />
                                 </div>
-                                <div className='space-y-2'>
-                                    <label className='text-xs font-bold text-[var(--fg-4)]'>Initial Founder Equity (%)</label>
-                                    <div className='relative'>
-                                        <input
-                                            type='number'
-                                            value={initialFoundersOwnership}
-                                            onChange={e => setInitialFoundersOwnership(e.target.value)}
-                                            className='w-full bg-white border border-[var(--border-light)] rounded-xl p-3 text-sm text-[var(--fg-4)] focus:border-[var(--purple-4)] focus:ring-2 focus:ring-[var(--purple-1)] outline-none transition-all'
-                                        />
-                                        <div className='absolute right-3 top-1/2 -translate-y-1/2 text-muted text-xs font-bold'>%</div>
-                                    </div>
+                                <div style={{ flex: 1, minWidth: '200px' }}>
+                                    <label style={{ fontSize: '12px', fontWeight: 600, color: '#37352f', marginBottom: '8px', display: 'block' }}>Initial Founder Equity (%)</label>
+                                    <input
+                                        type='number'
+                                        value={initialFoundersOwnership}
+                                        onChange={e => setInitialFoundersOwnership(e.target.value)}
+                                        className='notion-input'
+                                        style={{ width: '100%', padding: '10px 12px', borderRadius: '6px', border: '1px solid rgba(55, 53, 47, 0.16)' }}
+                                    />
                                 </div>
+                            </div>
+
+                            <div style={{ display: 'flex', gap: '12px', marginBottom: '24px' }}>
+                                <button onClick={addRound} className='notion-action-btn notion-action-primary'>
+                                    <PlusIcon className='notion-action-icon' />
+                                    Add Funding Round
+                                </button>
+                                <button onClick={loadTypical} className='notion-action-btn'>
+                                    <ArrowPathIcon className='notion-action-icon' />
+                                    Load Silicon Valley Standards
+                                </button>
+                            </div>
+
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                                {rounds.map((round, idx) => (
+                                    <div key={round.id} className='notion-card' style={{ padding: '24px', position: 'relative' }}>
+                                        <button
+                                            onClick={() => removeRound(round.id)}
+                                            style={{ position: 'absolute', top: '16px', right: '16px', padding: '4px', color: 'rgba(55, 53, 47, 0.3)', cursor: 'pointer', border: 'none', background: 'transparent' }}
+                                        >
+                                            <TrashIcon style={{ width: '16px', height: '16px' }} />
+                                        </button>
+
+                                        <div style={{ marginBottom: '16px' }}>
+                                            <input
+                                                value={round.name}
+                                                onChange={e => updateRound(round.id, { name: e.target.value })}
+                                                className='notion-input'
+                                                style={{ fontSize: '16px', fontWeight: 600, border: 'none', background: 'transparent', padding: 0, width: '100%', color: '#37352f' }}
+                                                placeholder='Round Name'
+                                            />
+                                        </div>
+
+                                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '16px' }}>
+                                            <div>
+                                                <label style={{ fontSize: '10px', color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase', fontWeight: 600 }}>Amount Raised</label>
+                                                <input
+                                                    type='number'
+                                                    value={round.amountRaised}
+                                                    onChange={e => updateRound(round.id, { amountRaised: Number(e.target.value) })}
+                                                    className='notion-input'
+                                                    style={{ width: '100%', marginTop: '4px', padding: '8px', fontSize: '13px', borderRadius: '4px', border: '1px solid rgba(55, 53, 47, 0.16)' }}
+                                                />
+                                            </div>
+                                            <div>
+                                                <label style={{ fontSize: '10px', color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase', fontWeight: 600 }}>Pre-Money Val</label>
+                                                <input
+                                                    type='number'
+                                                    value={round.preMoneyValuation}
+                                                    onChange={e => updateRound(round.id, { preMoneyValuation: Number(e.target.value) })}
+                                                    className='notion-input'
+                                                    style={{ width: '100%', marginTop: '4px', padding: '8px', fontSize: '13px', borderRadius: '4px', border: '1px solid rgba(55, 53, 47, 0.16)' }}
+                                                />
+                                            </div>
+                                            <div>
+                                                <label style={{ fontSize: '10px', color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase', fontWeight: 600 }}>Option Pool %</label>
+                                                <input
+                                                    type='number'
+                                                    value={round.optionPoolPercent}
+                                                    onChange={e => updateRound(round.id, { optionPoolPercent: Number(e.target.value) })}
+                                                    className='notion-input'
+                                                    style={{ width: '100%', marginTop: '4px', padding: '8px', fontSize: '13px', borderRadius: '4px', border: '1px solid rgba(55, 53, 47, 0.16)' }}
+                                                />
+                                            </div>
+                                            <div>
+                                                <label style={{ fontSize: '10px', color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase', fontWeight: 600 }}>Liq. Pref (x)</label>
+                                                <input
+                                                    type='number'
+                                                    value={round.liquidationPreference}
+                                                    onChange={e => updateRound(round.id, { liquidationPreference: Number(e.target.value) })}
+                                                    className='notion-input'
+                                                    style={{ width: '100%', marginTop: '4px', padding: '8px', fontSize: '13px', borderRadius: '4px', border: '1px solid rgba(55, 53, 47, 0.16)' }}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                                {rounds.length === 0 && (
+                                    <div style={{ padding: '32px', textAlign: 'center', border: '2px dashed rgba(55, 53, 47, 0.16)', borderRadius: '8px', color: 'rgba(55, 53, 47, 0.5)' }}>
+                                        No rounds added. Start by adding a funding round.
+                                    </div>
+                                )}
                             </div>
                         </div>
 
-                        <div>
-                            <h3 className='text-[10px] font-bold uppercase tracking-[0.2em] text-muted mb-4'>Actions</h3>
-                            <div className='space-y-3'>
-                                <button
-                                    onClick={addRound}
-                                    className='w-full py-3 bg-[var(--fg-4)] hover:bg-[var(--purple-4)] text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-all shadow-md hover:shadow-lg'
-                                >
-                                    + Add Round
-                                </button>
-                                <button
-                                    onClick={loadTypical}
-                                    className='w-full py-3 bg-white border border-[var(--border-light)] hover:border-[var(--purple-4)] text-[var(--fg-4)] hover:text-[var(--purple-4)] font-bold text-xs uppercase tracking-widest rounded-xl transition-all shadow-sm hover:shadow-md'
-                                >
-                                    Load Defaults
-                                </button>
+                        <div className='notion-section' style={{ position: 'sticky', top: '24px' }}>
+                            <div className='notion-section-title'>
+                                <ChartPieIcon className='notion-section-icon' />
+                                Analysis
                             </div>
-                        </div>
-                    </div>
-                </aside>
 
-                {/* Main Content Area */}
-                <div className='flex-grow flex flex-col h-full relative bg-[#fafbff] overflow-hidden'>
-                    {/* Floating decorations */}
-                    <div className='absolute top-0 right-0 w-[600px] h-[600px] bg-[var(--purple-1)] opacity-30 rounded-full blur-3xl pointer-events-none -translate-y-1/2 translate-x-1/2' />
-
-                    <div className='flex-grow overflow-y-auto p-4 md:p-8 scrollbar-hide z-10'>
-                        <div className='max-w-6xl mx-auto space-y-8 animate-fade-in-up'>
-
-                            {/* Top Summary Cards */}
-                            <div className='grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8'>
-                                <div className='bg-white p-6 rounded-2xl border border-[var(--border-light)] shadow-sm relative overflow-hidden group hover:border-[var(--purple-4)] transition-colors'>
-                                    <div className='relative z-10'>
-                                        <span className='text-[10px] font-bold uppercase tracking-wider text-muted block mb-2'>Projected Founder Payout</span>
-                                        <div className='text-3xl md:text-5xl font-black text-[var(--purple-4)] tracking-tight'>
-                                            {formatCurrency(results.founderExitPayout)}
-                                        </div>
+                            <div className='notion-card' style={{ padding: '24px', marginBottom: '16px' }}>
+                                <h3 style={{ fontSize: '11px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '16px' }}>Ownership Split</h3>
+                                <div style={{ marginBottom: '16px' }}>
+                                    <div style={{ height: '24px', width: '100%', backgroundColor: 'rgba(55, 53, 47, 0.06)', borderRadius: '4px', overflow: 'hidden', display: 'flex' }}>
+                                        <div style={{ width: `${results.founderFinalPct}%`, backgroundColor: '#6366f1', height: '100%' }} />
+                                        <div style={{ width: `${results.investorFinalPct}%`, backgroundColor: '#3b82f6', height: '100%' }} />
+                                        <div style={{ width: `${results.poolFinalPct}%`, backgroundColor: '#94a3b8', height: '100%' }} />
                                     </div>
-                                    <div className='absolute right-0 bottom-0 opacity-5 transform translate-x-1/3 translate-y-1/3 text-[150px] leading-none text-[var(--purple-4)] group-hover:scale-110 transition-transform'>$</div>
                                 </div>
-                                <div className='bg-white p-6 rounded-2xl border border-[var(--border-light)] shadow-sm relative overflow-hidden group hover:border-blue-500 transition-colors'>
-                                    <div className='relative z-10'>
-                                        <span className='text-[10px] font-bold uppercase tracking-wider text-muted block mb-2'>Final Ownership</span>
-                                        <div className='text-3xl md:text-5xl font-black text-blue-500 tracking-tight'>
-                                            {results.founderFinalPct.toFixed(2)}%
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '13px' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                            <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#6366f1' }} />
+                                            <span>Founders</span>
                                         </div>
+                                        <span style={{ fontWeight: 600 }}>{results.founderFinalPct.toFixed(1)}%</span>
                                     </div>
-                                    <div className='absolute right-0 bottom-0 opacity-5 transform translate-x-1/4 translate-y-1/4 text-[150px] leading-none text-blue-500 group-hover:scale-110 transition-transform'>%</div>
+                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '13px' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                            <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#3b82f6' }} />
+                                            <span>Investors</span>
+                                        </div>
+                                        <span style={{ fontWeight: 600 }}>{results.investorFinalPct.toFixed(1)}%</span>
+                                    </div>
+                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '13px' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                            <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#94a3b8' }} />
+                                            <span>Option Pool</span>
+                                        </div>
+                                        <span style={{ fontWeight: 600 }}>{results.poolFinalPct.toFixed(1)}%</span>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div className='grid grid-cols-1 lg:grid-cols-3 gap-8'>
-                                {/* Left Column: Rounds Editor */}
-                                <div className='lg:col-span-2 space-y-6'>
-                                    <h2 className='text-lg font-bold text-[var(--fg-4)] flex items-center gap-2'>
-                                        <span className='w-2 h-2 rounded-full bg-[var(--purple-4)]' />
-                                        Investment Rounds
-                                    </h2>
-
-                                    {rounds.length === 0 ? (
-                                        <div className='bg-white rounded-2xl border border-dashed border-[var(--border-light)] p-12 text-center'>
-                                            <div className='w-16 h-16 bg-[var(--bg-2)] rounded-full flex items-center justify-center text-3xl mx-auto mb-4 text-muted'>∅</div>
-                                            <h3 className='font-bold text-[var(--fg-4)] mb-2'>No Rounds Defined</h3>
-                                            <p className='text-sm text-muted mb-6'>Add a financing round to calculate dilution effects.</p>
-                                            <button onClick={addRound} className='px-6 py-2 bg-[var(--purple-4)] text-white text-xs font-bold uppercase tracking-wider rounded-lg shadow-md hover:bg-[var(--purple-4)]/90'>
-                                                Add First Round
-                                            </button>
+                            <div className='notion-card' style={{ padding: '24px' }}>
+                                <h3 style={{ fontSize: '11px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '16px' }}>Dilution Ledger</h3>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                                    {results.roundDetails.map(rd => (
+                                        <div key={rd.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px', paddingBottom: '8px', borderBottom: '1px solid rgba(55, 53, 47, 0.06)' }}>
+                                            <span style={{ fontWeight: 500 }}>{rd.name}</span>
+                                            <div style={{ textAlign: 'right' }}>
+                                                <div style={{ fontWeight: 700, color: '#37352f' }}>{rd.founderOwnershipAfterRound.toFixed(1)}%</div>
+                                                <div style={{ fontSize: '10px', color: 'rgba(55, 53, 47, 0.4)' }}>You Own</div>
+                                            </div>
                                         </div>
-                                    ) : (
-                                        <div className='space-y-4'>
-                                            {rounds.map((round) => (
-                                                <div key={round.id} className='bg-white rounded-2xl border border-[var(--border-light)] p-6 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden'>
-                                                    {/* Header */}
-                                                    <div className='flex justify-between items-start mb-6'>
-                                                        <div className='flex-grow mr-4'>
-                                                            <label className='text-[10px] font-bold uppercase tracking-wider text-muted block mb-1'>Round Name</label>
-                                                            <input
-                                                                value={round.name}
-                                                                onChange={(e) => updateRound(round.id, { name: e.target.value })}
-                                                                className='text-lg font-bold text-[var(--fg-4)] bg-transparent border-b border-transparent hover:border-[var(--border-light)] focus:border-[var(--purple-4)] outline-none w-full transition-colors'
-                                                                placeholder='Series Name'
-                                                            />
-                                                        </div>
-                                                        <button
-                                                            onClick={() => removeRound(round.id)}
-                                                            className='w-8 h-8 rounded-full bg-[var(--bg-2)] text-muted hover:bg-red-50 hover:text-red-500 flex items-center justify-center transition-colors'
-                                                        >
-                                                            ✕
-                                                        </button>
-                                                    </div>
-
-                                                    {/* Inputs Grid */}
-                                                    <div className='grid grid-cols-2 md:grid-cols-4 gap-4'>
-                                                        <div>
-                                                            <label className='text-[10px] font-bold text-muted uppercase tracking-wider block mb-2'>Amount Raised</label>
-                                                            <input
-                                                                type='number'
-                                                                value={round.amountRaised}
-                                                                onChange={(e) => updateRound(round.id, { amountRaised: Number(e.target.value) })}
-                                                                className='w-full bg-[var(--bg-2)] border border-[var(--border-light)] rounded-lg p-2 text-sm text-[var(--fg-4)] focus:border-[var(--purple-4)] outline-none'
-                                                            />
-                                                        </div>
-                                                        <div>
-                                                            <label className='text-[10px] font-bold text-muted uppercase tracking-wider block mb-2'>Pre-Money Val</label>
-                                                            <input
-                                                                type='number'
-                                                                value={round.preMoneyValuation}
-                                                                onChange={(e) => updateRound(round.id, { preMoneyValuation: Number(e.target.value) })}
-                                                                className='w-full bg-[var(--bg-2)] border border-[var(--border-light)] rounded-lg p-2 text-sm text-[var(--fg-4)] focus:border-[var(--purple-4)] outline-none'
-                                                            />
-                                                        </div>
-                                                        <div>
-                                                            <label className='text-[10px] font-bold text-muted uppercase tracking-wider block mb-2'>Option Pool %</label>
-                                                            <input
-                                                                type='number'
-                                                                value={round.optionPoolPercent}
-                                                                onChange={(e) => updateRound(round.id, { optionPoolPercent: Number(e.target.value) })}
-                                                                className='w-full bg-[var(--bg-2)] border border-[var(--border-light)] rounded-lg p-2 text-sm text-[var(--fg-4)] focus:border-[var(--purple-4)] outline-none'
-                                                            />
-                                                        </div>
-                                                        <div>
-                                                            <label className='text-[10px] font-bold text-muted uppercase tracking-wider block mb-2'>Liq. Pref</label>
-                                                            <input
-                                                                type='number'
-                                                                value={round.liquidationPreference}
-                                                                onChange={(e) => updateRound(round.id, { liquidationPreference: Number(e.target.value) })}
-                                                                className='w-full bg-[var(--bg-2)] border border-[var(--border-light)] rounded-lg p-2 text-sm text-[var(--fg-4)] focus:border-[var(--purple-4)] outline-none'
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            ))}
-                                            <button
-                                                onClick={addRound}
-                                                className='w-full py-4 border-2 border-dashed border-[var(--border-light)] rounded-2xl text-[var(--fg-4)] font-bold text-sm hover:border-[var(--purple-4)] hover:text-[var(--purple-4)] hover:bg-[var(--purple-1)]/10 transition-all flex items-center justify-center gap-2'
-                                            >
-                                                <span>+</span> Add Another Round
-                                            </button>
-                                        </div>
+                                    ))}
+                                    {results.roundDetails.length === 0 && (
+                                        <span style={{ fontSize: '12px', color: 'rgba(55, 53, 47, 0.5)', fontStyle: 'italic' }}>No rounds yet</span>
                                     )}
                                 </div>
-
-                                {/* Right Column: Cap Table Visualization */}
-                                <div className='space-y-6'>
-                                    <h2 className='text-lg font-bold text-[var(--fg-4)] flex items-center gap-2'>
-                                        <span className='w-2 h-2 rounded-full bg-blue-500' />
-                                        Cap Table Analysis
-                                    </h2>
-
-                                    <div className='bg-white p-6 rounded-2xl border border-[var(--border-light)] shadow-sm sticky top-6'>
-                                        <div className='mb-6'>
-                                            <h3 className='text-xs font-bold uppercase tracking-wider text-muted mb-4'>Ownership Distribution</h3>
-                                            <div className='h-4 w-full bg-[var(--bg-2)] rounded-full overflow-hidden flex mb-3'>
-                                                <div className='h-full bg-[var(--purple-4)]' style={{ width: `${results.founderFinalPct}%` }} title='Founders' />
-                                                <div className='h-full bg-blue-500' style={{ width: `${results.investorFinalPct}%` }} title='Investors' />
-                                                <div className='h-full bg-gray-400' style={{ width: `${results.poolFinalPct}%` }} title='Option Pool' />
-                                            </div>
-                                            <div className='flex gap-4 flex-wrap'>
-                                                <div className='flex items-center gap-2 text-xs'>
-                                                    <div className='w-2 h-2 rounded-full bg-[var(--purple-4)]' />
-                                                    <span className='text-[var(--fg-4)] font-medium'>Founders ({results.founderFinalPct.toFixed(1)}%)</span>
-                                                </div>
-                                                <div className='flex items-center gap-2 text-xs'>
-                                                    <div className='w-2 h-2 rounded-full bg-blue-500' />
-                                                    <span className='text-[var(--fg-4)] font-medium'>Investors ({results.investorFinalPct.toFixed(1)}%)</span>
-                                                </div>
-                                                <div className='flex items-center gap-2 text-xs'>
-                                                    <div className='w-2 h-2 rounded-full bg-gray-400' />
-                                                    <span className='text-[var(--fg-4)] font-medium'>Pool ({results.poolFinalPct.toFixed(1)}%)</span>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div className='pt-6 border-t border-[var(--border-light)]'>
-                                            <h3 className='text-xs font-bold uppercase tracking-wider text-muted mb-4'>Round Ledger</h3>
-                                            <div className='space-y-4'>
-                                                {results.roundDetails.map((rd) => (
-                                                    <div key={rd.id} className='flex justify-between items-center text-sm'>
-                                                        <span className='font-bold text-[var(--fg-4)]'>{rd.name}</span>
-                                                        <div className='text-right'>
-                                                            <span className='block font-bold text-[var(--purple-4)]'>{rd.founderOwnershipAfterRound.toFixed(2)}%</span>
-                                                            <span className='text-[10px] text-muted uppercase tracking-wider'>Your Share</span>
-                                                        </div>
-                                                    </div>
-                                                ))}
-                                                {results.roundDetails.length === 0 && (
-                                                    <span className='text-sm text-muted italic'>No active rounds</span>
-                                                )}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
+
+                    <footer className='notion-footer'>
+                        © 2026 {strings.NAME}
+                    </footer>
                 </div>
-
-                {/* Mobile Menu Overlay */}
-                {isMobileMenuOpen && (
-                    <div className='fixed inset-0 z-[100] flex items-end justify-center bg-black/40 backdrop-blur-sm p-4 md:hidden' onClick={() => setIsMobileMenuOpen(false)}>
-                        <div className='w-full max-w-sm bg-white rounded-2xl shadow-2xl animate-slide-up overflow-hidden border border-[var(--border-light)]' onClick={e => e.stopPropagation()}>
-                            <div className='p-4 border-b border-[var(--border-light)] flex justify-between items-center bg-[var(--bg-2)]'>
-                                <span className='text-xs font-bold uppercase tracking-widest text-[var(--fg-4)]'>Configuration</span>
-                                <button onClick={() => setIsMobileMenuOpen(false)} className='w-6 h-6 rounded-full bg-white border border-[var(--border-light)] flex items-center justify-center text-muted'>✕</button>
-                            </div>
-                            <div className='p-4 space-y-6'>
-                                <div className='space-y-4'>
-                                    <div className='space-y-2'>
-                                        <label className='text-xs font-bold text-[var(--fg-4)]'>Exit Valuation ($)</label>
-                                        <input
-                                            type='number'
-                                            value={exitValuation}
-                                            onChange={e => setExitValuation(e.target.value)}
-                                            className='w-full bg-[var(--bg-2)] border border-[var(--border-light)] rounded-xl p-3 text-sm text-[var(--fg-4)] focus:border-[var(--purple-4)] outline-none'
-                                        />
-                                    </div>
-                                    <div className='space-y-2'>
-                                        <label className='text-xs font-bold text-[var(--fg-4)]'>Initial Founder Equity (%)</label>
-                                        <input
-                                            type='number'
-                                            value={initialFoundersOwnership}
-                                            onChange={e => setInitialFoundersOwnership(e.target.value)}
-                                            className='w-full bg-[var(--bg-2)] border border-[var(--border-light)] rounded-xl p-3 text-sm text-[var(--fg-4)] focus:border-[var(--purple-4)] outline-none'
-                                        />
-                                    </div>
-                                </div>
-                                <div className='space-y-3 pt-4 border-t border-[var(--border-light)]'>
-                                    <button
-                                        onClick={() => { addRound(); setIsMobileMenuOpen(false); }}
-                                        className='w-full py-3 bg-[var(--fg-4)] text-white font-bold text-xs uppercase tracking-widest rounded-xl shadow-md'
-                                    >
-                                        + Add Round
-                                    </button>
-                                    <button
-                                        onClick={() => { loadTypical(); setIsMobileMenuOpen(false); }}
-                                        className='w-full py-3 bg-white border border-[var(--border-light)] text-[var(--fg-4)] font-bold text-xs uppercase tracking-widest rounded-xl shadow-sm'
-                                    >
-                                        Load Defaults
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                )}
             </main>
         </>
     );

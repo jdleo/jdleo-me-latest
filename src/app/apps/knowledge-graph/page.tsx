@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import Link from 'next/link';
 import { WebVitals } from '@/components/SEO/WebVitals';
-import { motion, AnimatePresence } from 'framer-motion';
 import ReactFlow, {
     Node,
     Edge,
@@ -18,6 +17,16 @@ import ReactFlow, {
 } from 'reactflow';
 import dagre from 'dagre';
 import 'reactflow/dist/style.css';
+import { strings } from '../../constants/strings';
+import {
+    DevicePhoneMobileIcon,
+    PencilSquareIcon,
+    DocumentTextIcon,
+    ArrowPathIcon,
+    ChatBubbleLeftRightIcon,
+    ShareIcon,
+    CpuChipIcon,
+} from '@heroicons/react/24/outline';
 
 interface Relationship {
     subject: string;
@@ -25,7 +34,6 @@ interface Relationship {
     object: string;
 }
 
-// Dagre layout function
 const getLayoutedElements = (nodes: Node[], edges: Edge[], direction = 'TB') => {
     const dagreGraph = new dagre.graphlib.Graph();
     dagreGraph.setDefaultEdgeLabel(() => ({}));
@@ -57,7 +65,6 @@ const getLayoutedElements = (nodes: Node[], edges: Edge[], direction = 'TB') => 
 
 export default function KnowledgeGraph() {
     const [isLoaded, setIsLoaded] = useState(false);
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [text, setText] = useState('');
     const [isGenerating, setIsGenerating] = useState(false);
     const [progress, setProgress] = useState({ current: 0, total: 0 });
@@ -69,48 +76,17 @@ export default function KnowledgeGraph() {
     const [isAsking, setIsAsking] = useState(false);
     const [showAnswer, setShowAnswer] = useState(false);
 
-    const MAX_CHARS = 200000;
+    const MAX_CHARS = 20000;
 
     useEffect(() => {
         const timer = setTimeout(() => setIsLoaded(true), 100);
         return () => clearTimeout(timer);
     }, []);
 
-    const handleTextChange = (value: string) => {
-        if (value.length <= MAX_CHARS) {
-            setText(value);
-        }
-    };
-
-    const formatNumber = (num: number) => {
-        return num.toLocaleString('en-US');
-    };
-
     const onConnect = useCallback(
         (params: Connection) => setEdges((eds) => addEdge(params, eds)),
         [setEdges]
     );
-
-    // Memoize ReactFlow to prevent re-renders on query input changes
-    const reactFlowComponent = useMemo(() => (
-        <ReactFlow
-            nodes={nodes}
-            edges={edges}
-            onNodesChange={onNodesChange}
-            onEdgesChange={onEdgesChange}
-            onConnect={onConnect}
-            fitView
-            attributionPosition="bottom-left"
-        >
-            <Background color="#a195ff" gap={16} />
-            <Controls />
-            <MiniMap
-                nodeColor={(node) => highlightedPath.nodes.includes(node.id) ? '#33c758' : '#a195ff'}
-                maskColor="rgba(161, 149, 255, 0.1)"
-            />
-        </ReactFlow>
-    ), [nodes, edges, onNodesChange, onEdgesChange, onConnect, highlightedPath]);
-
 
     const generateGraph = async () => {
         if (!text.trim()) return;
@@ -156,7 +132,6 @@ export default function KnowledgeGraph() {
                                 setProgress({ current: 0, total: data.totalChunks });
                             } else if (data.type === 'relationships') {
                                 setProgress((prev) => ({ ...prev, current: data.chunkIndex + 1 }));
-
                                 const relationships: Relationship[] = data.relationships;
 
                                 relationships.forEach((rel) => {
@@ -165,62 +140,56 @@ export default function KnowledgeGraph() {
                                     const predicate = rel.predicate.toLowerCase().trim();
 
                                     if (!nodeMap.has(subject)) {
-                                        const subjectNode: Node = {
+                                        nodeMap.set(subject, {
                                             id: subject,
                                             data: { label: subject },
                                             position: { x: 0, y: 0 },
                                             type: 'default',
                                             style: {
                                                 background: '#fff',
-                                                border: '2px solid #a195ff',
-                                                borderRadius: '8px',
-                                                padding: '6px',
-                                                fontSize: '10px',
-                                                fontWeight: 'bold',
+                                                border: '1px solid #e5e7eb',
+                                                borderRadius: '4px',
+                                                padding: '8px 12px',
+                                                fontSize: '12px',
+                                                fontWeight: 600,
+                                                color: '#37352f',
+                                                boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
                                             },
-                                        };
-                                        nodeMap.set(subject, subjectNode);
+                                        });
                                     }
 
                                     if (!nodeMap.has(object)) {
-                                        const objectNode: Node = {
+                                        nodeMap.set(object, {
                                             id: object,
                                             data: { label: object },
                                             position: { x: 0, y: 0 },
                                             type: 'default',
                                             style: {
                                                 background: '#fff',
-                                                border: '2px solid #a195ff',
-                                                borderRadius: '8px',
-                                                padding: '6px',
-                                                fontSize: '10px',
-                                                fontWeight: 'bold',
+                                                border: '1px solid #e5e7eb',
+                                                borderRadius: '4px',
+                                                padding: '8px 12px',
+                                                fontSize: '12px',
+                                                fontWeight: 600,
+                                                color: '#37352f',
+                                                boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
                                             },
-                                        };
-                                        nodeMap.set(object, objectNode);
+                                        });
                                     }
 
                                     const edgeId = `${subject}-${predicate}-${object}`;
                                     if (!edgeMap.has(edgeId)) {
-                                        const edge: Edge = {
+                                        edgeMap.set(edgeId, {
                                             id: edgeId,
                                             source: subject,
                                             target: object,
                                             label: predicate.replace(/_/g, ' '),
                                             type: 'smoothstep',
                                             animated: false,
-                                            style: { stroke: '#a195ff' },
-                                            markerEnd: {
-                                                type: MarkerType.ArrowClosed,
-                                                color: '#a195ff',
-                                            },
-                                            labelStyle: {
-                                                fontSize: '10px',
-                                                fontWeight: 'bold',
-                                                fill: '#666',
-                                            },
-                                        };
-                                        edgeMap.set(edgeId, edge);
+                                            style: { stroke: '#9ca3af' },
+                                            markerEnd: { type: MarkerType.ArrowClosed, color: '#9ca3af' },
+                                            labelStyle: { fontSize: '10px', fill: '#6b7280' },
+                                        });
                                     }
                                 });
 
@@ -252,6 +221,10 @@ export default function KnowledgeGraph() {
         setShowAnswer(false);
         setHighlightedPath({ nodes: [], edges: [] });
 
+        // Reset styles first
+        setEdges(eds => eds.map(e => ({ ...e, animated: false, style: { ...e.style, stroke: '#9ca3af', strokeWidth: 1 } })));
+        setNodes(nds => nds.map(n => ({ ...n, style: { ...n.style, border: '1px solid #e5e7eb', background: '#fff' } })));
+
         try {
             const response = await fetch('/api/knowledge-graph/chat', {
                 method: 'POST',
@@ -269,329 +242,190 @@ export default function KnowledgeGraph() {
             });
 
             if (!response.ok) throw new Error('Failed to get answer');
-
             const data = await response.json();
             setAnswer(data.answer);
             setShowAnswer(true);
 
             if (data.path) {
                 setHighlightedPath(data.path);
-
-                setEdges(edges.map(edge => ({
+                setEdges(eds => eds.map(edge => ({
                     ...edge,
                     animated: data.path.edges.includes(edge.id),
                     style: {
                         ...edge.style,
-                        stroke: data.path.edges.includes(edge.id) ? '#33c758' : '#a195ff',
-                        strokeWidth: data.path.edges.includes(edge.id) ? 3 : 1,
+                        stroke: data.path.edges.includes(edge.id) ? '#6366f1' : '#e5e7eb',
+                        strokeWidth: data.path.edges.includes(edge.id) ? 2 : 1,
+                        opacity: data.path.edges.includes(edge.id) ? 1 : 0.3,
                     },
                 })));
-
-                setNodes(nodes.map(node => ({
+                setNodes(nds => nds.map(node => ({
                     ...node,
                     style: {
                         ...node.style,
-                        border: data.path.nodes.includes(node.id) ? '3px solid #33c758' : '2px solid #a195ff',
-                        background: data.path.nodes.includes(node.id) ? '#f0fff4' : '#fff',
+                        border: data.path.nodes.includes(node.id) ? '2px solid #6366f1' : '1px solid #e5e7eb',
+                        background: data.path.nodes.includes(node.id) ? '#e0e7ff' : '#fff',
+                        opacity: data.path.nodes.includes(node.id) ? 1 : 0.5,
                     },
                 })));
             }
         } catch (error) {
-            console.error('Question error:', error);
-            setAnswer('Sorry, I encountered an error answering your question.');
+            console.error(error);
+            setAnswer('Error generating answer.');
             setShowAnswer(true);
         } finally {
             setIsAsking(false);
         }
     };
 
-    const clearAnswer = () => {
-        setShowAnswer(false);
-        setAnswer('');
-        setQuery('');
-        setHighlightedPath({ nodes: [], edges: [] });
-
-        // Reset node and edge styles
-        setEdges(edges.map(edge => ({
-            ...edge,
-            animated: false,
-            style: {
-                ...edge.style,
-                stroke: '#a195ff',
-                strokeWidth: 1,
-            },
-        })));
-
-        setNodes(nodes.map(node => ({
-            ...node,
-            style: {
-                ...node.style,
-                border: '2px solid #a195ff',
-                background: '#fff',
-            },
-        })));
-    };
-
     return (
         <>
             <WebVitals />
-            <main className='relative h-screen bg-[#fafbff] overflow-hidden selection:bg-[var(--purple-2)] selection:text-[var(--purple-4)] flex flex-col md:flex-row'>
-
-                {/* Mobile Header */}
-                <header className='md:hidden flex items-center justify-between p-4 border-b border-[var(--border-light)] bg-white/80 backdrop-blur-md z-50'>
-                    <Link href='/apps' className='text-sm font-bold uppercase tracking-widest text-muted hover:text-[var(--purple-4)]'>
-                        ← Apps
-                    </Link>
-                    <button onClick={() => setIsMobileMenuOpen(true)} className='px-3 py-1.5 bg-white border border-[var(--border-light)] rounded-full text-xs font-bold uppercase text-[var(--fg-4)]'>Menu</button>
+            <main className='notion-page'>
+                <header className={`notion-header ${isLoaded ? 'loaded' : ''}`}>
+                    <div className='notion-nav' style={{ justifyContent: 'space-between', maxWidth: '1200px' }}>
+                        <Link href='/' className='notion-nav-link' style={{ fontWeight: 600 }}>
+                            {strings.NAME}
+                        </Link>
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                            <Link href='/apps' className='notion-nav-link'>
+                                <DevicePhoneMobileIcon className='notion-nav-icon' />
+                                Apps
+                            </Link>
+                            <Link href='/blog' className='notion-nav-link'>
+                                <PencilSquareIcon className='notion-nav-icon' />
+                                Blog
+                            </Link>
+                            <Link href='/apps/resume' className='notion-nav-link'>
+                                <DocumentTextIcon className='notion-nav-icon' />
+                                Resume
+                            </Link>
+                        </div>
+                    </div>
                 </header>
 
-                {/* Sidebar */}
-                <aside className='hidden md:flex flex-col w-80 h-full border-r border-[var(--border-light)] bg-white/50 backdrop-blur-xl z-20'>
-                    <div className='p-6 border-b border-[var(--border-light)]'>
-                        <div className='flex items-center gap-3 mb-6'>
-                            <div className='w-3 h-3 rounded-full bg-[var(--purple-4)]' />
-                            <span className='font-bold uppercase tracking-widest text-sm text-[var(--fg-4)]'>Knowledge Graph</span>
-                        </div>
-                        <nav className='flex flex-col gap-2'>
-                            <Link href='/apps' className='text-xs font-bold uppercase tracking-wider text-muted hover:text-[var(--purple-4)] transition-colors flex items-center gap-2'>
-                                <span>←</span> Back to Apps
-                            </Link>
-                        </nav>
+                <div className={`notion-content ${isLoaded ? 'loaded' : ''}`} style={{ maxWidth: '1200px' }}>
+                    <div className='notion-title-block'>
+                        <h1 className='notion-title'>Knowledge Graph</h1>
+                        <div className='notion-subtitle'>Convert raw text into an interactive, queriable knowledge graph</div>
                     </div>
 
-                    <div className='flex-grow overflow-y-auto p-6 space-y-8 custom-scrollbar'>
-                        {/* 1. Input Source */}
-                        <div>
-                            <div className='flex items-center justify-between mb-4'>
-                                <h3 className='text-[10px] font-bold uppercase tracking-[0.2em] text-muted'>1. Source Text</h3>
-                                <span className={`text-[9px] font-bold uppercase tracking-wider ${text.length > MAX_CHARS * 0.9 ? 'text-red-500' : 'text-muted'}`}>
-                                    {formatNumber(text.length)} / {formatNumber(MAX_CHARS)}
-                                </span>
-                            </div>
-                            <textarea
-                                value={text}
-                                onChange={(e) => handleTextChange(e.target.value)}
-                                placeholder="Paste your body of text here..."
-                                disabled={isGenerating}
-                                className='w-full h-40 p-4 bg-white border border-[var(--border-light)] rounded-2xl text-xs focus:ring-2 focus:ring-[var(--purple-1)] focus:border-[var(--purple-4)] outline-none transition-all resize-none shadow-sm disabled:opacity-50 disabled:cursor-not-allowed'
-                            />
-                        </div>
+                    <div className='notion-divider' />
 
-                        {/* 2. Construction */}
-                        <div>
-                            <h3 className='text-[10px] font-bold uppercase tracking-[0.2em] text-muted mb-4'>2. Graph Construction</h3>
-                            {isGenerating && progress.total > 0 && (
-                                <div className='mb-4 space-y-2'>
-                                    <div className='flex justify-between text-[10px] font-bold uppercase tracking-wider text-muted'>
-                                        <span>Processing</span>
-                                        <span>{progress.current} / {progress.total}</span>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 3fr', gap: '32px' }} className="responsive-grid">
+
+                        {/* Left Control Panel */}
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                            <div className='notion-section'>
+                                <div className='notion-section-title'>
+                                    <DocumentTextIcon className='notion-section-icon' />
+                                    Source Text
+                                </div>
+                                <div style={{ marginTop: '12px' }}>
+                                    <textarea
+                                        value={text}
+                                        onChange={(e) => setText(e.target.value)}
+                                        placeholder='Paste text here...'
+                                        className='notion-textarea'
+                                        disabled={isGenerating}
+                                        style={{ height: '200px', fontSize: '12px' }}
+                                    />
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '8px' }}>
+                                        <span style={{ fontSize: '10px', color: 'rgba(55, 53, 47, 0.5)' }}>
+                                            {text.length} / {MAX_CHARS}
+                                        </span>
+                                        <button
+                                            onClick={generateGraph}
+                                            disabled={!text.trim() || isGenerating}
+                                            className='notion-action-btn notion-action-primary'
+                                        >
+                                            <ShareIcon className='notion-action-icon' />
+                                            {isGenerating ? 'Building...' : 'Generate'}
+                                        </button>
                                     </div>
-                                    <div className='w-full h-2 bg-[var(--bg-2)] rounded-full overflow-hidden'>
-                                        <div
-                                            className='h-full bg-[var(--purple-4)] transition-all duration-300'
-                                            style={{ width: `${(progress.current / progress.total) * 100}%` }}
-                                        />
+                                </div>
+                            </div>
+
+                            {nodes.length > 0 && (
+                                <div className='notion-card' style={{ padding: '16px' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                                        <span style={{ fontSize: '11px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase' }}>Nodes</span>
+                                        <span style={{ fontSize: '12px', fontWeight: 600 }}>{nodes.length}</span>
+                                    </div>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                        <span style={{ fontSize: '11px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase' }}>Relationships</span>
+                                        <span style={{ fontSize: '12px', fontWeight: 600 }}>{edges.length}</span>
                                     </div>
                                 </div>
                             )}
-                            <button
-                                onClick={generateGraph}
-                                disabled={!text.trim() || isGenerating}
-                                className='w-full py-3 rounded-xl font-bold uppercase tracking-widest text-[10px] bg-[var(--purple-4)] text-white shadow-lg shadow-indigo-100 hover:bg-[#5b2ee0] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed'
-                            >
-                                {isGenerating ? 'Generating...' : 'Generate Graph'}
-                            </button>
-                        </div>
 
-                        {/* Graph Stats */}
-                        {nodes.length > 0 && (
-                            <div className='space-y-2'>
-                                <h3 className='text-[10px] font-bold uppercase tracking-[0.2em] text-muted mb-3'>Graph Statistics</h3>
-                                <div className='p-3 bg-[var(--bg-2)] rounded-lg flex justify-between items-center text-[10px] font-bold uppercase tracking-wider'>
-                                    <span className='text-muted'>Nodes</span>
-                                    <span className='text-[var(--fg-4)]'>{nodes.length}</span>
-                                </div>
-                                <div className='p-3 bg-[var(--bg-2)] rounded-lg flex justify-between items-center text-[10px] font-bold uppercase tracking-wider'>
-                                    <span className='text-muted'>Relationships</span>
-                                    <span className='text-[var(--fg-4)]'>{edges.length}</span>
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                </aside>
-
-                {/* Main Content Area */}
-                <div className='flex-grow flex flex-col h-full bg-[#fafbff] relative overflow-hidden'>
-                    {nodes.length === 0 ? (
-                        <div className='flex flex-col items-center justify-center h-full p-6'>
-                            <div className='max-w-2xl w-full space-y-6 text-center'>
-                                <div className='space-y-2'>
-                                    <h1 className='text-3xl font-bold text-[var(--fg-4)]'>Knowledge Graph</h1>
-                                    <p className='text-muted'>Visualize and analyze connections across your body of text.</p>
-                                </div>
-
-                                {/* Mobile Text Input */}
-                                <div className='md:hidden'>
-                                    <div className='bg-white p-4 rounded-xl border border-[var(--border-light)] shadow-sm'>
-                                        <div className='space-y-3'>
-                                            <div className='flex items-center justify-between'>
-                                                <label className='text-[10px] font-bold text-muted uppercase tracking-wider'>Source Text</label>
-                                                <span className={`text-[9px] font-bold uppercase tracking-wider ${text.length > MAX_CHARS * 0.9 ? 'text-red-500' : 'text-muted'}`}>
-                                                    {formatNumber(text.length)} / {formatNumber(MAX_CHARS)}
-                                                </span>
-                                            </div>
-                                            <textarea
-                                                value={text}
-                                                onChange={(e) => handleTextChange(e.target.value)}
-                                                placeholder="Paste your text here..."
-                                                disabled={isGenerating}
-                                                className='w-full h-32 p-3 bg-[var(--bg-2)] border border-[var(--border-light)] rounded-lg text-xs outline-none transition-all resize-none disabled:opacity-50'
-                                            />
-                                            <button
-                                                onClick={generateGraph}
-                                                disabled={!text.trim() || isGenerating}
-                                                className='w-full py-3 bg-[var(--purple-4)] text-white rounded-lg font-bold uppercase tracking-widest text-xs shadow-lg flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed'
-                                            >
-                                                {isGenerating ? 'Generating...' : 'Generate Graph'}
-                                            </button>
-                                        </div>
+                            {nodes.length > 0 && (
+                                <div className='notion-section'>
+                                    <div className='notion-section-title'>
+                                        <ChatBubbleLeftRightIcon className='notion-section-icon' />
+                                        Query Graph
                                     </div>
-                                </div>
-
-                                <div className='py-12 bg-white/40 rounded-3xl border border-dashed border-[var(--border-light)]'>
-                                    <div className='w-20 h-20 bg-[var(--purple-1)] rounded-full flex items-center justify-center text-3xl mb-4 animate-pulse mx-auto'>
-                                        🕸️
-                                    </div>
-                                    <h3 className='text-sm font-bold uppercase tracking-widest text-[var(--fg-4)] mb-2'>No Active Graph</h3>
-                                    <p className='text-xs text-muted max-w-xs text-center leading-relaxed mx-auto'>
-                                        Paste a body of text and generate a graph to visualize its knowledge structure.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    ) : (
-                        <div className='flex flex-col h-full relative'>
-                            <div className='flex-grow relative'>
-                                {reactFlowComponent}
-
-                                {/* Answer Overlay */}
-                                <AnimatePresence>
-                                    {showAnswer && (
-                                        <motion.div
-                                            initial={{ opacity: 0, y: 20, scale: 0.95 }}
-                                            animate={{ opacity: 1, y: 0, scale: 1 }}
-                                            exit={{ opacity: 0, y: 20, scale: 0.95 }}
-                                            transition={{ type: 'spring', damping: 20, stiffness: 300 }}
-                                            className='absolute inset-x-4 top-4 mx-auto w-auto max-w-2xl z-10'
+                                    <div style={{ marginTop: '12px' }}>
+                                        <input
+                                            value={query}
+                                            onChange={e => setQuery(e.target.value)}
+                                            onKeyDown={e => e.key === 'Enter' && askQuestion()}
+                                            disabled={isAsking}
+                                            placeholder='Ask a question...'
+                                            className='notion-input'
+                                            style={{ marginBottom: '8px', paddingRight: '30px' }}
+                                        />
+                                        <button
+                                            onClick={askQuestion}
+                                            disabled={!query.trim() || isAsking}
+                                            className='notion-action-btn'
+                                            style={{ width: '100%', justifyContent: 'center' }}
                                         >
-                                            <div className='relative bg-white/5 backdrop-blur-sm border border-white/20 rounded-3xl shadow-[0_8px_32px_0_rgba(161,149,255,0.1)] overflow-hidden'>
-                                                {/* Gradient overlay for depth */}
-                                                <div className='absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-purple-500/5 pointer-events-none' />
-
-                                                {/* Header */}
-                                                <div className='relative bg-white/10 backdrop-blur-sm p-4 flex items-center justify-between border-b border-white/20'>
-                                                    <div className='flex items-center gap-2'>
-                                                        <div className='w-2 h-2 rounded-full bg-white animate-pulse shadow-lg shadow-white/50' />
-                                                        <span className='text-black font-bold uppercase tracking-widest text-xs'>Answer</span>
-                                                    </div>
-                                                    <button
-                                                        onClick={clearAnswer}
-                                                        className='w-8 h-8 rounded-full bg-white hover:bg-white/90 flex items-center justify-center text-[var(--purple-4)] transition-all hover:scale-110 active:scale-95 shadow-lg'
-                                                    >
-                                                        ✕
-                                                    </button>
-                                                </div>
-
-                                                {/* Content */}
-                                                <div className='relative p-6'>
-                                                    <div className='text-base text-[var(--fg-4)] leading-relaxed bg-white/10 backdrop-blur-sm p-4 rounded-2xl border border-white/20'>{answer}</div>
-
-                                                    {highlightedPath.nodes.length > 0 && (
-                                                        <div className='mt-4'>
-                                                            <div className='text-[10px] font-bold uppercase tracking-wider text-[var(--fg-4)] bg-white/10 backdrop-blur-sm px-3 py-2 rounded-lg inline-block border border-white/20'>
-                                                                Traversed {highlightedPath.nodes.length} nodes • {highlightedPath.edges.length} relationships
-                                                            </div>
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        </motion.div>
-                                    )}
-                                </AnimatePresence>
-                            </div>
-
-                            {/* Question Input */}
-                            <div className='p-4 bg-white/80 backdrop-blur-xl border-t border-[var(--border-light)]'>
-                                <div className='max-w-3xl mx-auto relative'>
-                                    <input
-                                        type="text"
-                                        value={query}
-                                        onChange={(e) => setQuery(e.target.value)}
-                                        onKeyDown={(e) => e.key === 'Enter' && askQuestion()}
-                                        disabled={isAsking}
-                                        placeholder="Ask a question about your knowledge graph..."
-                                        className='w-full p-4 pr-14 bg-white border border-[var(--border-light)] rounded-2xl shadow-sm text-sm focus:outline-none focus:border-[var(--purple-4)] focus:ring-2 focus:ring-[var(--purple-1)] transition-all disabled:opacity-50 disabled:cursor-not-allowed'
-                                    />
-                                    <button
-                                        onClick={askQuestion}
-                                        disabled={!query.trim() || isAsking}
-                                        className='absolute right-2 top-2 bottom-2 aspect-square bg-[var(--purple-4)] text-white rounded-xl flex items-center justify-center hover:bg-[#5b2ee0] disabled:opacity-50 disabled:cursor-not-allowed transition-all'
-                                    >
-                                        {isAsking ? '⏳' : '🔍'}
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-                </div>
-
-                {/* Mobile Menu Backdrop */}
-                <AnimatePresence>
-                    {isMobileMenuOpen && (
-                        <div className='fixed inset-0 z-[100] flex items-end justify-center' onClick={() => setIsMobileMenuOpen(false)}>
-                            <motion.div
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                                className='absolute inset-0 bg-black/40 backdrop-blur-sm'
-                            />
-                            <motion.div
-                                initial={{ y: '100%' }}
-                                animate={{ y: 0 }}
-                                exit={{ y: '100%' }}
-                                transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                                className='relative w-full bg-white rounded-t-2xl p-6 shadow-2xl overflow-hidden max-h-[80vh] overflow-y-auto'
-                                onClick={e => e.stopPropagation()}
-                            >
-                                <div className='flex items-center justify-between mb-8'>
-                                    <div className='flex items-center gap-3'>
-                                        <div className='w-2 h-2 rounded-full bg-[var(--purple-4)]' />
-                                        <span className='text-xs font-bold uppercase tracking-widest text-[var(--fg-4)]'>Knowledge Graph</span>
+                                            {isAsking ? 'Thinking...' : 'Ask'}
+                                        </button>
                                     </div>
-                                    <button onClick={() => setIsMobileMenuOpen(false)} className='w-8 h-8 rounded-full bg-[var(--bg-2)] flex items-center justify-center text-muted'>✕</button>
                                 </div>
-                                <div className='space-y-6'>
-                                    {nodes.length > 0 && (
-                                        <div className='space-y-2'>
-                                            <h3 className='text-[10px] font-bold uppercase tracking-[0.2em] text-muted mb-3'>Graph Statistics</h3>
-                                            <div className='p-3 bg-[var(--bg-2)] rounded-lg flex justify-between items-center text-[10px] font-bold uppercase tracking-wider'>
-                                                <span className='text-muted'>Nodes</span>
-                                                <span className='text-[var(--fg-4)]'>{nodes.length}</span>
-                                            </div>
-                                            <div className='p-3 bg-[var(--bg-2)] rounded-lg flex justify-between items-center text-[10px] font-bold uppercase tracking-wider'>
-                                                <span className='text-muted'>Relationships</span>
-                                                <span className='text-[var(--fg-4)]'>{edges.length}</span>
-                                            </div>
-                                        </div>
-                                    )}
-                                    <button onClick={() => setIsMobileMenuOpen(false)} className='w-full py-4 bg-[var(--fg-4)] text-white rounded-2xl font-bold uppercase tracking-widest text-xs shadow-lg'>
-                                        Done
-                                    </button>
+                            )}
+
+                            {showAnswer && answer && (
+                                <div className='notion-card' style={{ padding: '16px', backgroundColor: 'rgba(99, 102, 241, 0.05)', border: '1px solid rgba(99, 102, 241, 0.2)' }}>
+                                    <h3 style={{ fontSize: '11px', fontWeight: 700, color: '#6366f1', textTransform: 'uppercase', marginBottom: '8px' }}>Answer</h3>
+                                    <p style={{ fontSize: '13px', lineHeight: 1.6, color: '#37352f' }}>{answer}</p>
                                 </div>
-                            </motion.div>
+                            )}
                         </div>
-                    )}
-                </AnimatePresence>
+
+                        {/* Right Graph Area */}
+                        <div style={{ height: '600px', backgroundColor: '#f9f9fb', borderRadius: '12px', border: '1px solid rgba(55, 53, 47, 0.09)', position: 'relative', overflow: 'hidden' }}>
+                            <ReactFlow
+                                nodes={nodes}
+                                edges={edges}
+                                onNodesChange={onNodesChange}
+                                onEdgesChange={onEdgesChange}
+                                onConnect={onConnect}
+                                fitView
+                                attributionPosition="bottom-left"
+                            >
+                                <Background color="#e5e5e5" gap={16} />
+                                <Controls />
+                                <MiniMap
+                                    nodeColor={(node) => highlightedPath.nodes.includes(node.id) ? '#6366f1' : '#d1d5db'}
+                                    maskColor="rgba(240, 240, 240, 0.6)"
+                                />
+                            </ReactFlow>
+
+                            {!nodes.length && !isGenerating && (
+                                <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', opacity: 0.5 }}>
+                                    <CpuChipIcon style={{ width: '48px', height: '48px', color: 'rgba(55, 53, 47, 0.3)', marginBottom: '16px' }} />
+                                    <span style={{ fontSize: '14px', fontWeight: 500, color: 'rgba(55, 53, 47, 0.5)' }}>Generate a graph to visualize data</span>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    <footer className='notion-footer'>
+                        © 2026 {strings.NAME}
+                    </footer>
+                </div>
             </main>
         </>
     );

@@ -3,32 +3,19 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import crypto from 'crypto';
+import { strings } from '../../constants/strings';
 import { WebVitals } from '@/components/SEO/WebVitals';
-
-const HashCard = ({ name, hash }: { name: string; hash: string }) => (
-    <div className='w-full p-4 rounded-xl border border-[var(--border-light)] bg-white hover:border-[var(--purple-2)] hover:shadow-md transition-all group'>
-        <div className='text-[10px] font-bold text-[var(--purple-4)] mb-2 uppercase tracking-widest flex justify-between items-center'>
-            <div className='flex items-center gap-2'>
-                <div className='w-1.5 h-1.5 rounded-full bg-[var(--purple-4)]' />
-                <span>{name}</span>
-            </div>
-            <button
-                onClick={() => navigator.clipboard.writeText(hash)}
-                className='text-[9px] text-muted font-bold opacity-0 group-hover:opacity-100 hover:text-[var(--purple-4)] transition-all bg-[var(--bg-2)] px-2 py-1 rounded-md'
-            >
-                COPY HASH
-            </button>
-        </div>
-        <div className='font-mono text-[11px] break-all text-[var(--fg-4)] leading-relaxed bg-[var(--bg-2)] p-3 rounded-lg border border-transparent group-hover:bg-white group-hover:border-[var(--purple-1)] transition-colors select-all'>
-            {hash}
-        </div>
-    </div>
-);
+import {
+    DevicePhoneMobileIcon,
+    PencilSquareIcon,
+    DocumentTextIcon,
+    LockClosedIcon,
+    ClipboardIcon,
+} from '@heroicons/react/24/outline';
 
 export default function Hash() {
     const [input, setInput] = useState('');
     const [isLoaded, setIsLoaded] = useState(false);
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     useEffect(() => {
         const timer = setTimeout(() => setIsLoaded(true), 100);
@@ -45,127 +32,115 @@ export default function Hash() {
         { name: 'SHA224', value: crypto.createHash('sha224').update(input).digest('hex') },
     ];
 
+    const copyToClipboard = (text: string) => {
+        navigator.clipboard.writeText(text);
+    };
+
     return (
         <>
             <WebVitals />
-            <main className='relative h-screen bg-[#fafbff] overflow-hidden selection:bg-[var(--purple-2)] selection:text-[var(--purple-4)] flex flex-col md:flex-row'>
-
-                {/* Mobile Header */}
-                <header className='md:hidden flex items-center justify-between p-4 border-b border-[var(--border-light)] bg-white/80 backdrop-blur-md z-50'>
-                    <Link href='/apps' className='text-sm font-bold uppercase tracking-widest text-muted hover:text-[var(--purple-4)]'>
-                        ← Apps
-                    </Link>
-                    <button
-                        onClick={() => setIsMobileMenuOpen(true)}
-                        className='px-3 py-1.5 bg-white border border-[var(--border-light)] rounded-full shadow-sm text-xs font-bold uppercase tracking-wider text-[var(--fg-4)] flex items-center gap-1.5'
-                    >
-                        <span>Algorithms</span>
-                        <span className='text-[10px]'>▼</span>
-                    </button>
+            <main className='notion-page'>
+                <header className={`notion-header ${isLoaded ? 'loaded' : ''}`}>
+                    <div className='notion-nav' style={{ justifyContent: 'space-between', maxWidth: '1100px' }}>
+                        <Link href='/' className='notion-nav-link' style={{ fontWeight: 600 }}>
+                            {strings.NAME}
+                        </Link>
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                            <Link href='/apps' className='notion-nav-link'>
+                                <DevicePhoneMobileIcon className='notion-nav-icon' />
+                                Apps
+                            </Link>
+                            <Link href='/blog' className='notion-nav-link'>
+                                <PencilSquareIcon className='notion-nav-icon' />
+                                Blog
+                            </Link>
+                            <Link href='/apps/resume' className='notion-nav-link'>
+                                <DocumentTextIcon className='notion-nav-icon' />
+                                Resume
+                            </Link>
+                        </div>
+                    </div>
                 </header>
 
-                {/* Left Sidebar (Desktop) */}
-                <aside className='hidden md:flex flex-col w-80 h-full border-r border-[var(--border-light)] bg-white/50 backdrop-blur-xl z-20'>
-                    <div className='p-6 border-b border-[var(--border-light)]'>
-                        <div className='flex items-center gap-3 mb-6'>
-                            <div className='w-3 h-3 rounded-full bg-[var(--purple-4)]' />
-                            <span className='font-bold uppercase tracking-widest text-sm text-[var(--fg-4)]'>Hash Studio</span>
-                        </div>
-                        <nav className='flex flex-col gap-2'>
-                            <Link href='/apps' className='text-xs font-bold uppercase tracking-wider text-muted hover:text-[var(--purple-4)] transition-colors flex items-center gap-2'>
-                                <span>←</span> Back to Apps
-                            </Link>
-                        </nav>
+                <div className={`notion-content ${isLoaded ? 'loaded' : ''}`} style={{ maxWidth: '900px' }}>
+                    <div className='notion-title-block'>
+                        <h1 className='notion-title'>Hash Lab</h1>
+                        <div className='notion-subtitle'>Generate cryptographic hashes in real-time using multiple algorithms</div>
                     </div>
 
-                    <div className='flex-grow overflow-y-auto p-6 space-y-8'>
-                        <div>
-                            <h3 className='text-[10px] font-bold uppercase tracking-[0.2em] text-muted mb-4'>Algorithm Suite</h3>
-                            <div className='space-y-2'>
-                                {hashes.map(h => (
-                                    <div key={h.name} className='flex items-center gap-3 p-2 rounded-lg hover:bg-[var(--bg-2)] transition-colors group cursor-default'>
-                                        <div className='w-1.5 h-1.5 rounded-full bg-[var(--line-color)] group-hover:bg-[var(--purple-4)] transition-colors' />
-                                        <span className='text-xs font-bold text-[var(--fg-4)] opacity-70 group-hover:opacity-100 transition-opacity'>{h.name}</span>
-                                    </div>
-                                ))}
-                            </div>
+                    <div className='notion-divider' />
+
+                    <div className='notion-section'>
+                        <div className='notion-section-title'>
+                            <LockClosedIcon className='notion-section-icon' />
+                            Input
                         </div>
-
-                        <div className='pt-6 border-t border-[var(--border-light)]'>
-                            <h3 className='text-[10px] font-bold uppercase tracking-[0.2em] text-muted mb-4'>Info</h3>
-                            <p className='text-[10px] text-muted leading-relaxed'>
-                                Cryptographic hash functions map data of arbitrary size to fixed-size values. They are one-way functions, making it practically impossible to invert.
-                            </p>
-                        </div>
-                    </div>
-                </aside>
-
-                {/* Main Content Area */}
-                <div className='flex-grow flex flex-col h-full relative bg-[#fafbff] overflow-hidden'>
-                    {/* Floating decorations */}
-                    <div className='absolute top-0 right-0 w-[500px] h-[500px] bg-[var(--purple-1)] opacity-30 rounded-full blur-3xl pointer-events-none -translate-y-1/2 translate-x-1/2' />
-
-                    <div className='flex-grow overflow-auto p-4 md:p-8 z-10 custom-scrollbar'>
-                        <div className='max-w-3xl mx-auto w-full space-y-8 animate-fade-in-up'>
-
-                            {/* Input Section */}
-                            <div className='space-y-4'>
-                                <div className='flex items-center gap-2'>
-                                    <div className='w-2 h-2 rounded-full bg-[var(--purple-4)]' />
-                                    <span className='text-[10px] font-bold uppercase tracking-widest text-muted'>Input Payload</span>
-                                </div>
-                                <div className='relative group'>
-                                    <div className='absolute -inset-0.5 bg-gradient-to-r from-[var(--purple-2)] to-blue-200 rounded-2xl opacity-30 group-hover:opacity-50 transition duration-500 blur-sm' />
-                                    <textarea
-                                        value={input}
-                                        onChange={e => setInput(e.target.value)}
-                                        placeholder='Enter text to generate hashes...'
-                                        className='relative w-full bg-white border border-[var(--border-light)] rounded-xl p-6 font-medium text-sm text-[var(--fg-4)] focus:border-[var(--purple-4)] outline-none resize-none h-32 transition-all placeholder:text-muted/50 shadow-sm'
-                                        spellCheck={false}
-                                    />
-                                </div>
-                            </div>
-
-                            {/* Output Section */}
-                            <div className='space-y-6'>
-                                <div className='flex items-center justify-between border-b border-[var(--border-light)] pb-4'>
-                                    <div className='flex items-center gap-2'>
-                                        <div className='w-2 h-2 rounded-full bg-blue-400' />
-                                        <span className='text-[10px] font-bold uppercase tracking-widest text-muted'>Generated Digests</span>
-                                    </div>
-                                    <span className='text-[10px] font-mono text-[var(--purple-4)] bg-[var(--purple-1)] px-2 py-0.5 rounded-full'>
-                                        LIVE_COMPUTE
-                                    </span>
-                                </div>
-
-                                <div className='grid gap-4'>
-                                    {hashes.map(h => (
-                                        <HashCard key={h.name} name={h.name} hash={h.value} />
-                                    ))}
-                                </div>
-                            </div>
+                        <div style={{ marginTop: '16px' }}>
+                            <textarea
+                                value={input}
+                                onChange={e => setInput(e.target.value)}
+                                placeholder='Enter text to generate hashes...'
+                                className='notion-textarea'
+                                style={{ height: '120px' }}
+                            />
                         </div>
                     </div>
 
-                    {/* Mobile Menu Overlay */}
-                    {isMobileMenuOpen && (
-                        <div className='fixed inset-0 z-[100] flex items-end justify-center bg-black/40 backdrop-blur-sm p-4 md:hidden' onClick={() => setIsMobileMenuOpen(false)}>
-                            <div className='w-full max-w-sm bg-white rounded-2xl shadow-2xl animate-slide-up overflow-hidden border border-[var(--border-light)]' onClick={e => e.stopPropagation()}>
-                                <div className='p-4 border-b border-[var(--border-light)] flex justify-between items-center bg-[var(--bg-2)]'>
-                                    <span className='text-xs font-bold uppercase tracking-widest text-[var(--fg-4)]'>Algorithm Suite</span>
-                                    <button onClick={() => setIsMobileMenuOpen(false)} className='w-6 h-6 rounded-full bg-white border border-[var(--border-light)] flex items-center justify-center text-muted'>✕</button>
-                                </div>
-                                <div className='p-4 grid grid-cols-2 gap-3'>
-                                    {hashes.map(h => (
-                                        <div key={h.name} className='flex items-center gap-2 p-3 bg-[var(--bg-2)] rounded-lg border border-[var(--border-light)]'>
-                                            <div className='w-1.5 h-1.5 rounded-full bg-[var(--purple-4)]' />
-                                            <span className='text-xs font-bold text-[var(--fg-4)]'>{h.name}</span>
+                    <div className='notion-divider' />
+
+                    <div className='notion-section'>
+                        <div className='notion-section-title'>
+                            <DocumentTextIcon className='notion-section-icon' />
+                            Generated Digests
+                            <span style={{ marginLeft: 'auto', fontSize: '10px', fontWeight: 600, color: '#6366f1', backgroundColor: 'rgba(99, 102, 241, 0.1)', padding: '4px 8px', borderRadius: '12px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                                Live Compute
+                            </span>
+                        </div>
+                        <div style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                            {hashes.map(h => (
+                                <div key={h.name} className='notion-card' style={{ padding: '16px' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                            <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#6366f1' }} />
+                                            <span style={{ fontSize: '11px', fontWeight: 700, color: '#6366f1', textTransform: 'uppercase', letterSpacing: '0.1em' }}>{h.name}</span>
                                         </div>
-                                    ))}
+                                        <button
+                                            onClick={() => copyToClipboard(h.value)}
+                                            className='notion-action-btn'
+                                            style={{ padding: '4px 8px', fontSize: '10px' }}
+                                        >
+                                            <ClipboardIcon style={{ width: '12px', height: '12px' }} />
+                                            Copy
+                                        </button>
+                                    </div>
+                                    <div style={{
+                                        fontFamily: 'monospace',
+                                        fontSize: '12px',
+                                        wordBreak: 'break-all',
+                                        color: '#37352f',
+                                        backgroundColor: 'rgba(55, 53, 47, 0.04)',
+                                        padding: '12px',
+                                        borderRadius: '8px',
+                                        lineHeight: 1.6
+                                    }}>
+                                        {h.value}
+                                    </div>
                                 </div>
-                            </div>
+                            ))}
                         </div>
-                    )}
+                    </div>
+
+                    <div className='notion-divider' />
+
+                    <div className='notion-section'>
+                        <p style={{ fontSize: '13px', color: 'rgba(55, 53, 47, 0.6)', lineHeight: 1.7 }}>
+                            Cryptographic hash functions map data of arbitrary size to fixed-size values. They are one-way functions, making it practically impossible to invert. These are commonly used for data integrity verification, password storage, and digital signatures.
+                        </p>
+                    </div>
+
+                    <footer className='notion-footer'>
+                        © 2026 {strings.NAME}
+                    </footer>
                 </div>
             </main>
         </>

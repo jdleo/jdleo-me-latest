@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { strings } from '../../constants/strings';
 import { WebVitals } from '@/components/SEO/WebVitals';
-import { motion } from 'framer-motion';
 import { encode as encodeToon } from '@toon-format/toon';
 import yaml from 'js-yaml';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
@@ -11,6 +11,17 @@ import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import * as toml from '@iarna/toml';
 import { encodeSmart as encodeTonl } from 'tonl';
 import { TRON } from '@tron-format/tron';
+import {
+    DevicePhoneMobileIcon,
+    PencilSquareIcon,
+    DocumentTextIcon,
+    ChartBarIcon,
+    ArrowPathIcon,
+    ChevronDownIcon,
+    ChevronRightIcon,
+    ClipboardIcon,
+    TrophyIcon,
+} from '@heroicons/react/24/outline';
 
 interface SerializationResult {
     format: string;
@@ -126,225 +137,6 @@ export default function Serialization() {
         );
     };
 
-    const serialize = () => {
-        setError('');
-        setResults([]);
-
-        try {
-            const data = JSON.parse(input);
-            const newResults: SerializationResult[] = [];
-
-            // BASELINE: JSON (minified)
-            const jsonMinified = JSON.stringify(data);
-            const baselineTokens = estimateTokens(jsonMinified);
-            newResults.push({
-                format: 'JSON (Minified) [BASELINE]',
-                output: jsonMinified,
-                tokens: baselineTokens,
-                bytes: new Blob([jsonMinified]).size,
-                savings: 0,
-                language: 'json',
-            });
-
-            // JSON (pretty-printed)
-            const jsonPretty = JSON.stringify(data, null, 2);
-            const jsonPrettyTokens = estimateTokens(jsonPretty);
-            newResults.push({
-                format: 'JSON (Pretty)',
-                output: jsonPretty,
-                tokens: jsonPrettyTokens,
-                bytes: new Blob([jsonPretty]).size,
-                savings: ((baselineTokens - jsonPrettyTokens) / baselineTokens) * 100,
-                language: 'json',
-            });
-
-            // 3. TOON
-            try {
-                const toonStr = encodeToon(data);
-                const toonTokens = estimateTokens(toonStr);
-                newResults.push({
-                    format: 'TOON',
-                    output: toonStr,
-                    tokens: toonTokens,
-                    bytes: new Blob([toonStr]).size,
-                    savings: ((baselineTokens - toonTokens) / baselineTokens) * 100,
-                    language: 'text',
-                });
-            } catch (e) {
-                console.error('TOON encoding failed:', e);
-            }
-
-            // 4. TONL
-            try {
-                const tonlStr = encodeTonl(data);
-                const tonlTokens = estimateTokens(tonlStr);
-                newResults.push({
-                    format: 'TONL',
-                    output: tonlStr,
-                    tokens: tonlTokens,
-                    bytes: new Blob([tonlStr]).size,
-                    savings: ((baselineTokens - tonlTokens) / baselineTokens) * 100,
-                    language: 'text',
-                });
-            } catch (e) {
-                console.error('TONL encoding failed:', e);
-            }
-
-            // 5. TRON
-            try {
-                const tronStr = TRON.stringify(data);
-                const tronTokens = estimateTokens(tronStr);
-                newResults.push({
-                    format: 'TRON',
-                    output: tronStr,
-                    tokens: tronTokens,
-                    bytes: new Blob([tronStr]).size,
-                    savings: ((baselineTokens - tronTokens) / baselineTokens) * 100,
-                    language: 'text',
-                });
-            } catch (e) {
-                console.error('TRON encoding failed:', e);
-            }
-
-            // 4. YAML
-            try {
-                const yamlStr = yaml.dump(data);
-                const yamlTokens = estimateTokens(yamlStr);
-                newResults.push({
-                    format: 'YAML',
-                    output: yamlStr,
-                    tokens: yamlTokens,
-                    bytes: new Blob([yamlStr]).size,
-                    savings: ((baselineTokens - yamlTokens) / baselineTokens) * 100,
-                    language: 'yaml',
-                });
-            } catch (e) {
-                console.error('YAML encoding failed:', e);
-            }
-
-            // 5. TOML
-            try {
-                const tomlStr = toml.stringify(data as any);
-                const tomlTokens = estimateTokens(tomlStr);
-                newResults.push({
-                    format: 'TOML',
-                    output: tomlStr,
-                    tokens: tomlTokens,
-                    bytes: new Blob([tomlStr]).size,
-                    savings: ((baselineTokens - tomlTokens) / baselineTokens) * 100,
-                    language: 'toml',
-                });
-            } catch (e) {
-                console.error('TOML encoding failed:', e);
-            }
-
-            // 6. XML
-            try {
-                const xmlStr = jsonToXml(data);
-                const xmlTokens = estimateTokens(xmlStr);
-                newResults.push({
-                    format: 'XML',
-                    output: xmlStr,
-                    tokens: xmlTokens,
-                    bytes: new Blob([xmlStr]).size,
-                    savings: ((baselineTokens - xmlTokens) / baselineTokens) * 100,
-                    language: 'xml',
-                });
-            } catch (e) {
-                console.error('XML encoding failed:', e);
-            }
-
-
-
-            // 10. CSV (flattened)
-            try {
-                const csvStr = jsonToCsv(data);
-                const csvTokens = estimateTokens(csvStr);
-                newResults.push({
-                    format: 'CSV',
-                    output: csvStr,
-                    tokens: csvTokens,
-                    bytes: new Blob([csvStr]).size,
-                    savings: ((baselineTokens - csvTokens) / baselineTokens) * 100,
-                    language: 'text',
-                });
-            } catch (e) {
-                console.error('CSV encoding failed:', e);
-            }
-
-            // 11. TSV (tab-separated)
-            try {
-                const tsvStr = jsonToCsv(data, '\t');
-                const tsvTokens = estimateTokens(tsvStr);
-                newResults.push({
-                    format: 'TSV',
-                    output: tsvStr,
-                    tokens: tsvTokens,
-                    bytes: new Blob([tsvStr]).size,
-                    savings: ((baselineTokens - tsvTokens) / baselineTokens) * 100,
-                    language: 'text',
-                });
-            } catch (e) {
-                console.error('TSV encoding failed:', e);
-            }
-
-            // 12. URL Query Params (flattened)
-            try {
-                const urlParams = jsonToUrlParams(data);
-                const urlTokens = estimateTokens(urlParams);
-                newResults.push({
-                    format: 'URL Query Params',
-                    output: urlParams,
-                    tokens: urlTokens,
-                    bytes: new Blob([urlParams]).size,
-                    savings: ((baselineTokens - urlTokens) / baselineTokens) * 100,
-                    language: 'text',
-                });
-            } catch (e) {
-                console.error('URL params encoding failed:', e);
-            }
-
-            // 14. Compact Key-Value
-            try {
-                const kvStr = jsonToKeyValue(data);
-                const kvTokens = estimateTokens(kvStr);
-                newResults.push({
-                    format: 'Key-Value Pairs',
-                    output: kvStr,
-                    tokens: kvTokens,
-                    bytes: new Blob([kvStr]).size,
-                    savings: ((baselineTokens - kvTokens) / baselineTokens) * 100,
-                    language: 'text',
-                });
-            } catch (e) {
-                console.error('Key-Value encoding failed:', e);
-            }
-
-            // 15. S-Expression
-            try {
-                const sexprStr = jsonToSexpr(data);
-                const sexprTokens = estimateTokens(sexprStr);
-                newResults.push({
-                    format: 'S-Expression',
-                    output: sexprStr,
-                    tokens: sexprTokens,
-                    bytes: new Blob([sexprStr]).size,
-                    savings: ((baselineTokens - sexprTokens) / baselineTokens) * 100,
-                    language: 'lisp',
-                });
-            } catch (e) {
-                console.error('S-Expression encoding failed:', e);
-            }
-
-            // Sort by tokens (ascending)
-            newResults.sort((a, b) => a.tokens - b.tokens);
-
-            setResults(newResults);
-        } catch (e: any) {
-            setError(e.message || 'Invalid JSON');
-        }
-    };
-
     const jsonToXml = (obj: any, rootName = 'root'): string => {
         const toXml = (data: any, name: string): string => {
             if (Array.isArray(data)) {
@@ -441,6 +233,208 @@ export default function Serialization() {
         return convert(obj);
     };
 
+    const serialize = () => {
+        setError('');
+        setResults([]);
+
+        try {
+            const data = JSON.parse(input);
+            const newResults: SerializationResult[] = [];
+
+            const jsonMinified = JSON.stringify(data);
+            const baselineTokens = estimateTokens(jsonMinified);
+            newResults.push({
+                format: 'JSON (Minified) [BASELINE]',
+                output: jsonMinified,
+                tokens: baselineTokens,
+                bytes: new Blob([jsonMinified]).size,
+                savings: 0,
+                language: 'json',
+            });
+
+            const jsonPretty = JSON.stringify(data, null, 2);
+            const jsonPrettyTokens = estimateTokens(jsonPretty);
+            newResults.push({
+                format: 'JSON (Pretty)',
+                output: jsonPretty,
+                tokens: jsonPrettyTokens,
+                bytes: new Blob([jsonPretty]).size,
+                savings: ((baselineTokens - jsonPrettyTokens) / baselineTokens) * 100,
+                language: 'json',
+            });
+
+            try {
+                const toonStr = encodeToon(data);
+                const toonTokens = estimateTokens(toonStr);
+                newResults.push({
+                    format: 'TOON',
+                    output: toonStr,
+                    tokens: toonTokens,
+                    bytes: new Blob([toonStr]).size,
+                    savings: ((baselineTokens - toonTokens) / baselineTokens) * 100,
+                    language: 'text',
+                });
+            } catch (e) {
+                console.error('TOON encoding failed:', e);
+            }
+
+            try {
+                const tonlStr = encodeTonl(data);
+                const tonlTokens = estimateTokens(tonlStr);
+                newResults.push({
+                    format: 'TONL',
+                    output: tonlStr,
+                    tokens: tonlTokens,
+                    bytes: new Blob([tonlStr]).size,
+                    savings: ((baselineTokens - tonlTokens) / baselineTokens) * 100,
+                    language: 'text',
+                });
+            } catch (e) {
+                console.error('TONL encoding failed:', e);
+            }
+
+            try {
+                const tronStr = TRON.stringify(data);
+                const tronTokens = estimateTokens(tronStr);
+                newResults.push({
+                    format: 'TRON',
+                    output: tronStr,
+                    tokens: tronTokens,
+                    bytes: new Blob([tronStr]).size,
+                    savings: ((baselineTokens - tronTokens) / baselineTokens) * 100,
+                    language: 'text',
+                });
+            } catch (e) {
+                console.error('TRON encoding failed:', e);
+            }
+
+            try {
+                const yamlStr = yaml.dump(data);
+                const yamlTokens = estimateTokens(yamlStr);
+                newResults.push({
+                    format: 'YAML',
+                    output: yamlStr,
+                    tokens: yamlTokens,
+                    bytes: new Blob([yamlStr]).size,
+                    savings: ((baselineTokens - yamlTokens) / baselineTokens) * 100,
+                    language: 'yaml',
+                });
+            } catch (e) {
+                console.error('YAML encoding failed:', e);
+            }
+
+            try {
+                const tomlStr = toml.stringify(data as any);
+                const tomlTokens = estimateTokens(tomlStr);
+                newResults.push({
+                    format: 'TOML',
+                    output: tomlStr,
+                    tokens: tomlTokens,
+                    bytes: new Blob([tomlStr]).size,
+                    savings: ((baselineTokens - tomlTokens) / baselineTokens) * 100,
+                    language: 'toml',
+                });
+            } catch (e) {
+                console.error('TOML encoding failed:', e);
+            }
+
+            try {
+                const xmlStr = jsonToXml(data);
+                const xmlTokens = estimateTokens(xmlStr);
+                newResults.push({
+                    format: 'XML',
+                    output: xmlStr,
+                    tokens: xmlTokens,
+                    bytes: new Blob([xmlStr]).size,
+                    savings: ((baselineTokens - xmlTokens) / baselineTokens) * 100,
+                    language: 'xml',
+                });
+            } catch (e) {
+                console.error('XML encoding failed:', e);
+            }
+
+            try {
+                const csvStr = jsonToCsv(data);
+                const csvTokens = estimateTokens(csvStr);
+                newResults.push({
+                    format: 'CSV',
+                    output: csvStr,
+                    tokens: csvTokens,
+                    bytes: new Blob([csvStr]).size,
+                    savings: ((baselineTokens - csvTokens) / baselineTokens) * 100,
+                    language: 'text',
+                });
+            } catch (e) {
+                console.error('CSV encoding failed:', e);
+            }
+
+            try {
+                const tsvStr = jsonToCsv(data, '\t');
+                const tsvTokens = estimateTokens(tsvStr);
+                newResults.push({
+                    format: 'TSV',
+                    output: tsvStr,
+                    tokens: tsvTokens,
+                    bytes: new Blob([tsvStr]).size,
+                    savings: ((baselineTokens - tsvTokens) / baselineTokens) * 100,
+                    language: 'text',
+                });
+            } catch (e) {
+                console.error('TSV encoding failed:', e);
+            }
+
+            try {
+                const urlParams = jsonToUrlParams(data);
+                const urlTokens = estimateTokens(urlParams);
+                newResults.push({
+                    format: 'URL Query Params',
+                    output: urlParams,
+                    tokens: urlTokens,
+                    bytes: new Blob([urlParams]).size,
+                    savings: ((baselineTokens - urlTokens) / baselineTokens) * 100,
+                    language: 'text',
+                });
+            } catch (e) {
+                console.error('URL params encoding failed:', e);
+            }
+
+            try {
+                const kvStr = jsonToKeyValue(data);
+                const kvTokens = estimateTokens(kvStr);
+                newResults.push({
+                    format: 'Key-Value Pairs',
+                    output: kvStr,
+                    tokens: kvTokens,
+                    bytes: new Blob([kvStr]).size,
+                    savings: ((baselineTokens - kvTokens) / baselineTokens) * 100,
+                    language: 'text',
+                });
+            } catch (e) {
+                console.error('Key-Value encoding failed:', e);
+            }
+
+            try {
+                const sexprStr = jsonToSexpr(data);
+                const sexprTokens = estimateTokens(sexprStr);
+                newResults.push({
+                    format: 'S-Expression',
+                    output: sexprStr,
+                    tokens: sexprTokens,
+                    bytes: new Blob([sexprStr]).size,
+                    savings: ((baselineTokens - sexprTokens) / baselineTokens) * 100,
+                    language: 'lisp',
+                });
+            } catch (e) {
+                console.error('S-Expression encoding failed:', e);
+            }
+
+            newResults.sort((a, b) => a.tokens - b.tokens);
+            setResults(newResults);
+        } catch (e: any) {
+            setError(e.message || 'Invalid JSON');
+        }
+    };
+
     useEffect(() => {
         serialize();
     }, []);
@@ -448,125 +442,104 @@ export default function Serialization() {
     return (
         <>
             <WebVitals />
-            <main className='relative min-h-screen bg-[#fafbff] overflow-hidden selection:bg-[var(--purple-2)] selection:text-[var(--purple-4)] flex flex-col md:flex-row'>
-
-                {/* Mobile Header */}
-                <header className='md:hidden flex items-center justify-between p-4 border-b border-[var(--border-light)] bg-white/80 backdrop-blur-md z-50'>
-                    <Link href='/apps' className='text-sm font-bold uppercase tracking-widest text-muted hover:text-[var(--purple-4)]'>
-                        ← Apps
-                    </Link>
+            <main className='notion-page'>
+                <header className={`notion-header ${isLoaded ? 'loaded' : ''}`}>
+                    <div className='notion-nav' style={{ justifyContent: 'space-between', maxWidth: '1100px' }}>
+                        <Link href='/' className='notion-nav-link' style={{ fontWeight: 600 }}>
+                            {strings.NAME}
+                        </Link>
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                            <Link href='/apps' className='notion-nav-link'>
+                                <DevicePhoneMobileIcon className='notion-nav-icon' />
+                                Apps
+                            </Link>
+                            <Link href='/blog' className='notion-nav-link'>
+                                <PencilSquareIcon className='notion-nav-icon' />
+                                Blog
+                            </Link>
+                            <Link href='/apps/resume' className='notion-nav-link'>
+                                <DocumentTextIcon className='notion-nav-icon' />
+                                Resume
+                            </Link>
+                        </div>
+                    </div>
                 </header>
 
-                {/* Sidebar */}
-                <aside className='hidden md:flex flex-col w-80 h-screen border-r border-[var(--border-light)] bg-white/50 backdrop-blur-xl z-20 sticky top-0'>
-                    <div className='p-6 border-b border-[var(--border-light)]'>
-                        <div className='flex items-center gap-3 mb-6'>
-                            <div className='w-3 h-3 rounded-full bg-[var(--purple-4)]' />
-                            <span className='font-bold uppercase tracking-widest text-sm text-[var(--fg-4)]'>LLM Serialization</span>
-                        </div>
-                        <nav className='flex flex-col gap-2'>
-                            <Link href='/apps' className='text-xs font-bold uppercase tracking-wider text-muted hover:text-[var(--purple-4)] transition-colors flex items-center gap-2'>
-                                <span>←</span> Back to Apps
-                            </Link>
-                        </nav>
+                <div className={`notion-content ${isLoaded ? 'loaded' : ''}`} style={{ maxWidth: '1100px' }}>
+                    <div className='notion-title-block'>
+                        <h1 className='notion-title'>LLM Serialization Comparison</h1>
+                        <div className='notion-subtitle'>Compare token efficiency across different serialization formats for LLM contexts</div>
                     </div>
 
-                    <div className='flex-grow overflow-y-auto p-6 space-y-6 custom-scrollbar'>
-                        <div>
-                            <h3 className='text-[10px] font-bold uppercase tracking-[0.2em] text-muted mb-4'>Input JSON</h3>
+                    <div className='notion-divider' />
+
+                    <div className='notion-section'>
+                        <div className='notion-section-title'>
+                            <ChartBarIcon className='notion-section-icon' />
+                            Input JSON
+                        </div>
+                        <div style={{ marginTop: '16px' }}>
                             <textarea
                                 value={input}
                                 onChange={(e) => setInput(e.target.value)}
-                                className='w-full h-64 p-4 bg-white border border-[var(--border-light)] rounded-2xl text-xs font-mono focus:ring-2 focus:ring-[var(--purple-1)] focus:border-[var(--purple-4)] outline-none transition-all resize-none shadow-sm'
+                                className='notion-textarea'
                                 placeholder='Paste JSON here...'
+                                style={{ height: '200px', fontFamily: 'monospace', fontSize: '12px', width: '100%' }}
                             />
-                        </div>
-
-                        <button
-                            onClick={serialize}
-                            className='w-full py-3 rounded-xl font-bold uppercase tracking-widest text-[10px] bg-[var(--purple-4)] text-white shadow-lg shadow-indigo-100 hover:bg-[#5b2ee0] active:scale-[0.98] transition-all'
-                        >
-                            Serialize
-                        </button>
-
-                        {error && (
-                            <div className='p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-600'>
-                                {error}
-                            </div>
-                        )}
-                    </div>
-                </aside>
-
-                {/* Main Content */}
-                <div className='flex-grow overflow-auto p-6'>
-                    <div className='max-w-6xl mx-auto'>
-                        <div className='mb-8'>
-                            <h1 className='text-3xl font-bold text-[var(--fg-4)] mb-2'>LLM Serialization Comparison</h1>
-                            <p className='text-muted'>Compare token efficiency across different serialization formats</p>
-                        </div>
-
-                        {/* Mobile Input */}
-                        <div className='md:hidden mb-6'>
-                            <div className='bg-white p-4 rounded-xl border border-[var(--border-light)] shadow-sm space-y-3'>
-                                <label className='text-[10px] font-bold text-muted uppercase tracking-wider'>Input JSON</label>
-                                <textarea
-                                    value={input}
-                                    onChange={(e) => setInput(e.target.value)}
-                                    className='w-full h-32 p-3 bg-[var(--bg-2)] border border-[var(--border-light)] rounded-lg text-xs font-mono outline-none transition-all resize-none'
-                                    placeholder='Paste JSON here...'
-                                />
-                                <button
-                                    onClick={serialize}
-                                    className='w-full py-3 bg-[var(--purple-4)] text-white rounded-lg font-bold uppercase tracking-widest text-xs shadow-lg'
-                                >
+                            <div style={{ marginTop: '12px', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                                <button onClick={serialize} className='notion-action-btn notion-action-primary'>
+                                    <ArrowPathIcon className='notion-action-icon' />
                                     Serialize
                                 </button>
+                                {error && (
+                                    <span style={{ color: '#dc2626', fontSize: '14px', display: 'flex', alignItems: 'center' }}>
+                                        {error}
+                                    </span>
+                                )}
                             </div>
                         </div>
+                    </div>
 
-                        {/* Results Table */}
-                        {results.length > 0 && (
-                            <div className='bg-white rounded-2xl border border-[var(--border-light)] shadow-sm overflow-hidden mb-6'>
-                                <div className='overflow-x-auto'>
-                                    <table className='w-full'>
-                                        <thead className='bg-[var(--bg-2)] border-b border-[var(--border-light)]'>
+                    {results.length > 0 && (
+                        <>
+                            <div className='notion-divider' />
+
+                            <div className='notion-section'>
+                                <div className='notion-section-title'>
+                                    <TrophyIcon className='notion-section-icon' />
+                                    Results (Sorted by Token Count)
+                                </div>
+
+                                <div className='notion-table-container' style={{ marginTop: '16px' }}>
+                                    <table className='notion-table'>
+                                        <thead>
                                             <tr>
-                                                <th className='text-left p-4 text-xs font-bold uppercase tracking-wider text-muted'>Rank</th>
-                                                <th className='text-left p-4 text-xs font-bold uppercase tracking-wider text-muted'>Format</th>
-                                                <th className='text-right p-4 text-xs font-bold uppercase tracking-wider text-muted'>Tokens</th>
-                                                <th className='text-right p-4 text-xs font-bold uppercase tracking-wider text-muted'>Bytes</th>
-                                                <th className='text-right p-4 text-xs font-bold uppercase tracking-wider text-muted'>vs Baseline</th>
+                                                <th style={{ padding: '12px 16px' }}>Rank</th>
+                                                <th style={{ padding: '12px 16px' }}>Format</th>
+                                                <th style={{ textAlign: 'right', padding: '12px 16px' }}>Tokens</th>
+                                                <th style={{ textAlign: 'right', padding: '12px 16px' }}>Bytes</th>
+                                                <th style={{ textAlign: 'right', padding: '12px 16px' }}>vs Baseline</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {results.map((result, idx) => (
                                                 <tr
                                                     key={result.format}
-                                                    className='border-b border-[var(--border-light)] last:border-0 hover:bg-[var(--bg-1)] transition-colors cursor-pointer'
                                                     onClick={() => toggleExpand(result.format)}
+                                                    style={{ cursor: 'pointer' }}
                                                 >
-                                                    <td className='p-4'>
+                                                    <td style={{ padding: '12px 16px' }}>
                                                         {idx === 0 ? (
-                                                            <span className='inline-flex items-center justify-center w-6 h-6 rounded-full bg-[var(--purple-4)] text-white text-xs font-bold'>
-                                                                🏆
-                                                            </span>
+                                                            <span style={{ fontSize: '16px' }}>🏆</span>
                                                         ) : (
-                                                            <span className='text-sm text-muted font-bold'>#{idx + 1}</span>
+                                                            <span style={{ color: 'rgba(55, 53, 47, 0.5)' }}>#{idx + 1}</span>
                                                         )}
                                                     </td>
-                                                    <td className='p-4'>
-                                                        <span className='text-sm font-bold text-[var(--fg-4)]'>{result.format}</span>
-                                                    </td>
-                                                    <td className='p-4 text-right'>
-                                                        <span className='text-sm font-mono text-[var(--fg-4)]'>{result.tokens.toLocaleString()}</span>
-                                                    </td>
-                                                    <td className='p-4 text-right'>
-                                                        <span className='text-sm font-mono text-muted'>{result.bytes.toLocaleString()}</span>
-                                                    </td>
-                                                    <td className='p-4 text-right'>
-                                                        <span className={`text-sm font-bold ${result.savings > 0 ? 'text-green-600' : result.savings < 0 ? 'text-red-600' : 'text-muted'}`}>
-                                                            {result.savings > 0 ? '-' : result.savings < 0 ? '+' : ''}{Math.abs(result.savings).toFixed(1)}%
-                                                        </span>
+                                                    <td style={{ fontWeight: 500, padding: '12px 16px' }}>{result.format}</td>
+                                                    <td style={{ textAlign: 'right', fontFamily: 'monospace', padding: '12px 16px' }}>{result.tokens.toLocaleString()}</td>
+                                                    <td style={{ textAlign: 'right', fontFamily: 'monospace', color: 'rgba(55, 53, 47, 0.5)', padding: '12px 16px' }}>{result.bytes.toLocaleString()}</td>
+                                                    <td style={{ textAlign: 'right', fontWeight: 600, color: result.savings > 0 ? '#059669' : result.savings < 0 ? '#dc2626' : 'rgba(55, 53, 47, 0.5)', padding: '12px 16px' }}>
+                                                        {result.savings > 0 ? '-' : result.savings < 0 ? '+' : ''}{Math.abs(result.savings).toFixed(1)}%
                                                     </td>
                                                 </tr>
                                             ))}
@@ -574,42 +547,64 @@ export default function Serialization() {
                                     </table>
                                 </div>
                             </div>
-                        )}
 
-                        {/* Output Preview */}
-                        {results.length > 0 && (
-                            <div className='space-y-4'>
-                                <h2 className='text-lg font-bold text-[var(--fg-4)]'>Output Preview (Click to expand)</h2>
-                                {results.map((result) => (
-                                    <div key={result.format} className='bg-white rounded-xl border border-[var(--border-light)] overflow-hidden'>
-                                        <div
-                                            className='bg-[var(--bg-2)] px-4 py-3 border-b border-[var(--border-light)] cursor-pointer hover:bg-[var(--bg-1)] transition-colors flex items-center justify-between'
-                                            onClick={() => toggleExpand(result.format)}
-                                        >
-                                            <span className='text-xs font-bold uppercase tracking-wider text-[var(--fg-4)]'>{result.format}</span>
-                                            <span className='text-xs text-muted'>{expandedFormats.includes(result.format) ? '▼' : '▶'}</span>
-                                        </div>
-                                        {expandedFormats.includes(result.format) && (
-                                            <div className='p-4 max-h-96 overflow-auto custom-scrollbar'>
-                                                <SyntaxHighlighter
-                                                    language={result.language}
-                                                    style={vscDarkPlus}
-                                                    customStyle={{
-                                                        margin: 0,
-                                                        borderRadius: '8px',
-                                                        fontSize: '12px',
-                                                    }}
-                                                    wrapLongLines
-                                                >
-                                                    {result.output}
-                                                </SyntaxHighlighter>
+                            <div className='notion-divider' />
+
+                            <div className='notion-section'>
+                                <div className='notion-section-title'>
+                                    <DocumentTextIcon className='notion-section-icon' />
+                                    Output Preview
+                                </div>
+                                <div style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                                    {results.map((result) => (
+                                        <div key={result.format} className='notion-card' style={{ padding: 0, overflow: 'hidden' }}>
+                                            <div
+                                                onClick={() => toggleExpand(result.format)}
+                                                style={{
+                                                    padding: '12px 16px',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'space-between',
+                                                    cursor: 'pointer',
+                                                    backgroundColor: 'rgba(55, 53, 47, 0.03)',
+                                                    borderBottom: expandedFormats.includes(result.format) ? '1px solid rgba(55, 53, 47, 0.09)' : 'none'
+                                                }}
+                                            >
+                                                <span style={{ fontWeight: 600, fontSize: '14px' }}>{result.format}</span>
+                                                {expandedFormats.includes(result.format) ? (
+                                                    <ChevronDownIcon style={{ width: '16px', height: '16px', color: 'rgba(55, 53, 47, 0.5)' }} />
+                                                ) : (
+                                                    <ChevronRightIcon style={{ width: '16px', height: '16px', color: 'rgba(55, 53, 47, 0.5)' }} />
+                                                )}
                                             </div>
-                                        )}
-                                    </div>
-                                ))}
+                                            {expandedFormats.includes(result.format) && (
+                                                <div style={{ maxHeight: '400px', overflow: 'auto', backgroundColor: '#1e1e1e' }}>
+                                                    <SyntaxHighlighter
+                                                        language={result.language}
+                                                        style={vscDarkPlus}
+                                                        customStyle={{
+                                                            margin: 0,
+                                                            padding: '16px',
+                                                            borderRadius: 0,
+                                                            fontSize: '12px',
+                                                            backgroundColor: '#1e1e1e', // Force background
+                                                        }}
+                                                        wrapLongLines={true}
+                                                    >
+                                                        {result.output}
+                                                    </SyntaxHighlighter>
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
-                        )}
-                    </div>
+                        </>
+                    )}
+
+                    <footer className='notion-footer'>
+                        © 2026 {strings.NAME}
+                    </footer>
                 </div>
             </main>
         </>

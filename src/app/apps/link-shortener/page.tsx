@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { strings } from '../../constants/strings';
 import { WebVitals } from '@/components/SEO/WebVitals';
 import { Line } from 'react-chartjs-2';
 import {
@@ -14,6 +15,14 @@ import {
     Tooltip as ChartTooltip,
     Legend,
 } from 'chart.js';
+import {
+    DevicePhoneMobileIcon,
+    PencilSquareIcon,
+    DocumentTextIcon,
+    LinkIcon,
+    ChartBarIcon,
+    ClipboardIcon,
+} from '@heroicons/react/24/outline';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, ChartTooltip, Legend);
 
@@ -28,7 +37,6 @@ export default function LinkShortener() {
     const [analyticsData, setAnalyticsData] = useState<any[]>([]);
     const [analyticsAuthenticated, setAnalyticsAuthenticated] = useState(false);
     const [analyticsOriginalUrl, setAnalyticsOriginalUrl] = useState<string | null>(null);
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     useEffect(() => {
         const timer = setTimeout(() => setIsLoaded(true), 100);
@@ -71,7 +79,7 @@ export default function LinkShortener() {
                 setAnalyticsData(data.visitData || []);
                 setAnalyticsOriginalUrl(data.url || null);
                 setAnalyticsAuthenticated(true);
-                setShortenedUrl(null); // Clear shorten result view if switch to analytics
+                setShortenedUrl(null);
             }
         } catch (error) {
             console.error(error);
@@ -85,13 +93,13 @@ export default function LinkShortener() {
         datasets: [{
             label: 'Clicks',
             data: analyticsData.map(d => d.clicks),
-            borderColor: '#8b5cf6', // purple-500
-            backgroundColor: 'rgba(139, 92, 246, 0.1)',
+            borderColor: '#6366f1',
+            backgroundColor: 'rgba(99, 102, 241, 0.1)',
             fill: true,
             tension: 0.4,
             borderWidth: 2,
             pointRadius: 4,
-            pointBackgroundColor: '#8b5cf6',
+            pointBackgroundColor: '#6366f1',
         }]
     };
 
@@ -111,267 +119,219 @@ export default function LinkShortener() {
         }
     };
 
+    const copyToClipboard = (text: string) => {
+        navigator.clipboard.writeText(text);
+    };
+
     return (
         <>
             <WebVitals />
-            <main className='relative h-screen bg-[#fafbff] overflow-hidden selection:bg-[var(--purple-2)] selection:text-[var(--purple-4)] flex flex-col md:flex-row'>
-
-                {/* Mobile Header */}
-                <header className='md:hidden flex items-center justify-between p-4 border-b border-[var(--border-light)] bg-white/80 backdrop-blur-md z-50'>
-                    <Link href='/apps' className='text-sm font-bold uppercase tracking-widest text-muted hover:text-[var(--purple-4)]'>
-                        ← Apps
-                    </Link>
-                    <button
-                        onClick={() => setIsMobileMenuOpen(true)}
-                        className='px-3 py-1.5 bg-white border border-[var(--border-light)] rounded-full shadow-sm text-xs font-bold uppercase tracking-wider text-[var(--fg-4)] flex items-center gap-1.5'
-                    >
-                        <span>Menu</span>
-                        <span className='text-[10px]'>▼</span>
-                    </button>
+            <main className='notion-page'>
+                <header className={`notion-header ${isLoaded ? 'loaded' : ''}`}>
+                    <div className='notion-nav' style={{ justifyContent: 'space-between', maxWidth: '1100px' }}>
+                        <Link href='/' className='notion-nav-link' style={{ fontWeight: 600 }}>
+                            {strings.NAME}
+                        </Link>
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                            <Link href='/apps' className='notion-nav-link'>
+                                <DevicePhoneMobileIcon className='notion-nav-icon' />
+                                Apps
+                            </Link>
+                            <Link href='/blog' className='notion-nav-link'>
+                                <PencilSquareIcon className='notion-nav-icon' />
+                                Blog
+                            </Link>
+                            <Link href='/apps/resume' className='notion-nav-link'>
+                                <DocumentTextIcon className='notion-nav-icon' />
+                                Resume
+                            </Link>
+                        </div>
+                    </div>
                 </header>
 
-                {/* Left Sidebar (Desktop) */}
-                <aside className='hidden md:flex flex-col w-80 h-full border-r border-[var(--border-light)] bg-white/50 backdrop-blur-xl z-20'>
-                    <div className='p-6 border-b border-[var(--border-light)]'>
-                        <div className='flex items-center gap-3 mb-6'>
-                            <div className='w-3 h-3 rounded-full bg-[var(--purple-4)]' />
-                            <span className='font-bold uppercase tracking-widest text-sm text-[var(--fg-4)]'>Control Center</span>
-                        </div>
-                        <nav className='flex flex-col gap-2'>
-                            <Link href='/apps' className='text-xs font-bold uppercase tracking-wider text-muted hover:text-[var(--purple-4)] transition-colors flex items-center gap-2'>
-                                <span>←</span> Back to Apps
-                            </Link>
-                        </nav>
+                <div className={`notion-content ${isLoaded ? 'loaded' : ''}`} style={{ maxWidth: '900px' }}>
+                    <div className='notion-title-block'>
+                        <h1 className='notion-title'>Link Shortener</h1>
+                        <div className='notion-subtitle'>Create short links with built-in analytics tracking</div>
                     </div>
 
-                    <div className='flex-grow overflow-y-auto p-6 space-y-8'>
-                        <div>
-                            <h3 className='text-[10px] font-bold uppercase tracking-[0.2em] text-muted mb-4'>Create Link</h3>
-                            <div className='space-y-3'>
-                                <input
-                                    value={url}
-                                    onChange={e => setUrl(e.target.value)}
-                                    placeholder='Enter URL to shorten...'
-                                    className='w-full bg-white border border-[var(--border-light)] rounded-xl p-3 text-sm text-[var(--fg-4)] focus:border-[var(--purple-4)] focus:ring-2 focus:ring-[var(--purple-1)] outline-none transition-all placeholder:text-muted/50'
-                                />
-                                <button
-                                    onClick={handleShorten}
-                                    disabled={isShortening || !url.trim()}
-                                    className='w-full py-3 bg-[var(--fg-4)] hover:bg-[var(--purple-4)] text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed'
-                                >
-                                    {isShortening ? 'Shortening...' : 'Generate Link'}
-                                </button>
-                            </div>
-                        </div>
+                    <div className='notion-divider' />
 
-                        <div className='pt-6 border-t border-[var(--border-light)]'>
-                            <h3 className='text-[10px] font-bold uppercase tracking-[0.2em] text-muted mb-4'>Analytics Access</h3>
-                            <div className='space-y-3'>
-                                <input
-                                    type='password'
-                                    value={analyticsPasswordInput}
-                                    onChange={e => setAnalyticsPasswordInput(e.target.value)}
-                                    placeholder='Enter access key...'
-                                    className='w-full bg-white border border-[var(--border-light)] rounded-xl p-3 text-sm text-[var(--fg-4)] focus:border-[var(--purple-4)] focus:ring-2 focus:ring-[var(--purple-1)] outline-none transition-all placeholder:text-muted/50'
-                                />
-                                <button
-                                    onClick={handleViewAnalytics}
-                                    disabled={analyticsLoading || !analyticsPasswordInput.trim()}
-                                    className='w-full py-3 bg-white border border-[var(--border-light)] hover:border-[var(--purple-4)] text-[var(--fg-4)] hover:text-[var(--purple-4)] font-bold text-xs uppercase tracking-widest rounded-xl transition-all shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed'
-                                >
-                                    {analyticsLoading ? 'Loading...' : 'View Stats'}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className='p-4 border-t border-[var(--border-light)]'>
-                        <div className='p-4 bg-[var(--bg-2)] rounded-xl'>
-                            <div className='text-[10px] text-muted uppercase tracking-wider font-bold mb-1'>Service Status</div>
-                            <div className='flex items-center gap-2'>
-                                <div className='w-2 h-2 rounded-full bg-green-500 animate-pulse' />
-                                <span className='text-xs font-medium text-[var(--fg-4)]'>Operational</span>
-                            </div>
-                        </div>
-                    </div>
-                </aside>
-
-                {/* Main Content Area */}
-                <div className='flex-grow flex flex-col h-full relative bg-[#fafbff] overflow-hidden'>
-                    {/* Floating decorations */}
-                    <div className='absolute top-0 right-0 w-[500px] h-[500px] bg-[var(--purple-1)] opacity-40 rounded-full blur-3xl pointer-events-none -translate-y-1/2 translate-x-1/2' />
-
-                    <div className='flex-grow overflow-y-auto p-4 md:p-8 scrollbar-hide z-10'>
-                        {/* Empty State */}
-                        {!shortenedUrl && !analyticsAuthenticated && (
-                            <div className='h-full flex flex-col items-center justify-center opacity-100 text-center max-w-sm mx-auto p-8'>
-                                <div className='w-20 h-20 bg-[var(--purple-1)] rounded-full flex items-center justify-center mb-6 text-4xl opacity-40'>🔗</div>
-                                <h2 className='text-3xl font-bold text-[var(--fg-4)] mb-2'>Ready to Shorten</h2>
-                                <p className='text-muted max-w-sm font-medium mb-8'>Use the sidebar to create new short links or view analytics for existing ones.</p>
-
-                                {/* Mobile Input Card (Visible only on mobile/empty state) */}
-                                <div className='block md:hidden w-full bg-white p-6 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border-2 border-[var(--purple-4)] relative overflow-hidden'>
-                                    <div className="absolute top-0 left-0 w-full h-1 bg-[var(--purple-4)]" />
+                    {!shortenedUrl && !analyticsAuthenticated && (
+                        <>
+                            <div className='notion-section'>
+                                <div className='notion-section-title'>
+                                    <LinkIcon className='notion-section-icon' />
+                                    Create Short Link
+                                </div>
+                                <div style={{ marginTop: '16px' }}>
                                     <input
                                         value={url}
                                         onChange={e => setUrl(e.target.value)}
-                                        placeholder='Paste URL here...'
-                                        className='w-full bg-[var(--bg-2)] border border-[var(--border-light)] rounded-xl p-3 text-sm text-[var(--fg-4)] focus:border-[var(--purple-4)] focus:ring-2 focus:ring-[var(--purple-1)] outline-none mb-3 placeholder:text-muted/50'
+                                        placeholder='Enter URL to shorten...'
+                                        className='notion-input'
+                                        style={{
+                                            marginBottom: '12px',
+                                            width: '100%',
+                                            padding: '10px 12px',
+                                            borderRadius: '6px',
+                                            border: '1px solid rgba(55, 53, 47, 0.16)',
+                                            backgroundColor: 'rgba(255, 255, 255, 0.6)',
+                                            fontSize: '14px',
+                                            lineHeight: '20px',
+                                            color: '#37352f',
+                                            outline: 'none',
+                                            transition: 'border-color 0.2s',
+                                        }}
+                                        onFocus={(e) => e.target.style.borderColor = '#a78bfa'}
+                                        onBlur={(e) => e.target.style.borderColor = 'rgba(55, 53, 47, 0.16)'}
                                     />
                                     <button
-                                        onClick={() => handleShorten()}
+                                        onClick={handleShorten}
                                         disabled={isShortening || !url.trim()}
-                                        className='w-full py-3 bg-[var(--purple-4)] text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-all shadow-md active:scale-95 disabled:opacity-50'
+                                        className='notion-action-btn notion-action-primary'
                                     >
-                                        {isShortening ? 'Shortening...' : 'Generate Short Link'}
+                                        <LinkIcon className='notion-action-icon' />
+                                        {isShortening ? 'Shortening...' : 'Generate Link'}
                                     </button>
                                 </div>
                             </div>
-                        )}
 
-                        {/* Result View */}
-                        {shortenedUrl && !analyticsAuthenticated && (
-                            <div className='max-w-2xl mx-auto w-full animate-fade-in-up pt-12'>
-                                <div className='bg-white rounded-2xl shadow-lg border border-[var(--border-light)] overflow-hidden'>
-                                    <div className='p-6 border-b border-[var(--border-light)] bg-[var(--bg-2)] flex justify-between items-center'>
-                                        <div className='flex items-center gap-3'>
-                                            <div className='w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-600 font-bold'>✓</div>
-                                            <span className='text-sm font-bold uppercase tracking-widest text-[var(--fg-4)]'>Link Created</span>
-                                        </div>
-                                    </div>
+                            <div className='notion-divider' />
 
-                                    <div className='p-8 space-y-8'>
-                                        <div className='space-y-2'>
-                                            <label className='text-xs font-bold uppercase tracking-wider text-muted'>Short Link</label>
-                                            <div className='flex items-center gap-3'>
-                                                <div className='flex-grow bg-[var(--bg-2)] p-4 rounded-xl border border-[var(--border-light)] text-[var(--purple-4)] font-medium font-mono text-sm break-all'>
-                                                    {shortenedUrl}
-                                                </div>
-                                                <button
-                                                    onClick={() => navigator.clipboard.writeText(shortenedUrl)}
-                                                    className='p-4 bg-[var(--fg-4)] hover:bg-[var(--purple-4)] text-white rounded-xl transition-all shadow-md active:scale-95'
-                                                >
-                                                    Copy
-                                                </button>
-                                            </div>
-                                        </div>
-
-                                        <div className='space-y-2'>
-                                            <div className='flex justify-between items-center'>
-                                                <label className='text-xs font-bold uppercase tracking-wider text-muted'>Analytics Key</label>
-                                                <span className='text-[10px] font-bold text-red-500 bg-red-50 px-2 py-0.5 rounded-full uppercase tracking-wider'>Save This</span>
-                                            </div>
-                                            <div className='flex items-center gap-3'>
-                                                <div className='flex-grow bg-red-50 p-4 rounded-xl border border-red-100 text-red-600 font-bold font-mono text-sm break-all'>
-                                                    {analyticsPassword}
-                                                </div>
-                                                <button
-                                                    onClick={() => navigator.clipboard.writeText(analyticsPassword!)}
-                                                    className='p-4 bg-white border border-[var(--border-light)] hover:border-red-200 text-red-500 rounded-xl transition-all shadow-sm active:scale-95 hover:bg-red-50'
-                                                >
-                                                    Copy
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
+                            <div className='notion-section'>
+                                <div className='notion-section-title'>
+                                    <ChartBarIcon className='notion-section-icon' />
+                                    View Analytics
                                 </div>
-                            </div>
-                        )}
-
-                        {/* Analytics Dashboard */}
-                        {analyticsAuthenticated && (
-                            <div className='max-w-4xl mx-auto w-full space-y-8 animate-fade-in-up pb-12'>
-                                <div className='flex items-center justify-between'>
-                                    <div>
-                                        <h1 className='text-2xl font-bold text-[var(--fg-4)]'>Analytics Dashboard</h1>
-                                        <p className='text-sm text-muted mt-1 truncate max-w-md'>{analyticsOriginalUrl}</p>
-                                    </div>
+                                <div style={{ marginTop: '16px' }}>
+                                    <input
+                                        type='password'
+                                        value={analyticsPasswordInput}
+                                        onChange={e => setAnalyticsPasswordInput(e.target.value)}
+                                        placeholder='Enter access key...'
+                                        className='notion-input'
+                                        style={{
+                                            marginBottom: '12px',
+                                            width: '100%',
+                                            padding: '10px 12px',
+                                            borderRadius: '6px',
+                                            border: '1px solid rgba(55, 53, 47, 0.16)',
+                                            backgroundColor: 'rgba(255, 255, 255, 0.6)',
+                                            fontSize: '14px',
+                                            lineHeight: '20px',
+                                            color: '#37352f',
+                                            outline: 'none',
+                                            transition: 'border-color 0.2s',
+                                        }}
+                                        onFocus={(e) => e.target.style.borderColor = '#a78bfa'}
+                                        onBlur={(e) => e.target.style.borderColor = 'rgba(55, 53, 47, 0.16)'}
+                                    />
                                     <button
-                                        onClick={() => { setAnalyticsAuthenticated(false); setAnalyticsData([]); }}
-                                        className='px-4 py-2 bg-white border border-[var(--border-light)] rounded-lg text-xs font-bold uppercase tracking-wider text-muted hover:text-red-500 hover:border-red-100 transition-colors'
+                                        onClick={handleViewAnalytics}
+                                        disabled={analyticsLoading || !analyticsPasswordInput.trim()}
+                                        className='notion-action-btn'
                                     >
-                                        Close
+                                        <ChartBarIcon className='notion-action-icon' />
+                                        {analyticsLoading ? 'Loading...' : 'View Stats'}
                                     </button>
                                 </div>
+                            </div>
+                        </>
+                    )}
 
-                                <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-                                    <div className='bg-white p-6 rounded-2xl border border-[var(--border-light)] shadow-sm'>
-                                        <span className='text-[10px] font-bold uppercase tracking-wider text-muted block mb-2'>Total Clicks</span>
-                                        <div className='text-4xl font-bold text-[var(--purple-4)]'>
-                                            {analyticsData.reduce((s, d) => s + d.clicks, 0).toLocaleString()}
-                                        </div>
-                                    </div>
-                                    <div className='bg-white p-6 rounded-2xl border border-[var(--border-light)] shadow-sm'>
-                                        <span className='text-[10px] font-bold uppercase tracking-wider text-muted block mb-2'>Avg. Daily</span>
-                                        <div className='text-4xl font-bold text-[var(--fg-4)]'>
-                                            {(analyticsData.reduce((s, d) => s + d.clicks, 0) / (analyticsData.length || 1)).toFixed(1)}
-                                        </div>
-                                    </div>
+                    {shortenedUrl && !analyticsAuthenticated && (
+                        <div className='notion-section'>
+                            <div className='notion-card' style={{ padding: '24px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px', paddingBottom: '16px', borderBottom: '1px solid rgba(55, 53, 47, 0.09)' }}>
+                                    <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: 'rgba(16, 185, 129, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#059669', fontWeight: 700 }}>✓</div>
+                                    <span style={{ fontSize: '14px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Link Created</span>
                                 </div>
 
-                                <div className='bg-white p-6 md:p-8 rounded-2xl border border-[var(--border-light)] shadow-sm'>
-                                    <div className='mb-6'>
-                                        <h3 className='text-sm font-bold uppercase tracking-wider text-[var(--fg-4)]'>Click Activity (30 Days)</h3>
-                                    </div>
-                                    <div className='h-72'>
-                                        <Line data={chartData} options={chartOptions} />
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                </div>
-
-                {/* Mobile Menu Overlay */}
-                {isMobileMenuOpen && (
-                    <div className='fixed inset-0 z-[100] flex items-end justify-center bg-black/40 backdrop-blur-sm p-4 md:hidden' onClick={() => setIsMobileMenuOpen(false)}>
-                        <div className='w-full max-w-sm bg-white rounded-2xl shadow-2xl animate-slide-up overflow-hidden border border-[var(--border-light)]' onClick={e => e.stopPropagation()}>
-                            <div className='p-4 border-b border-[var(--border-light)] flex justify-between items-center bg-[var(--bg-2)]'>
-                                <span className='text-xs font-bold uppercase tracking-widest text-[var(--fg-4)]'>Control Center</span>
-                                <button onClick={() => setIsMobileMenuOpen(false)} className='w-6 h-6 rounded-full bg-white border border-[var(--border-light)] flex items-center justify-center text-muted'>✕</button>
-                            </div>
-                            <div className='p-4 space-y-6'>
-                                <div>
-                                    <h3 className='text-[10px] font-bold uppercase tracking-[0.2em] text-muted mb-4'>Create Link</h3>
-                                    <div className='space-y-3'>
-                                        <input
-                                            value={url}
-                                            onChange={e => setUrl(e.target.value)}
-                                            placeholder='Enter URL to shorten...'
-                                            className='w-full bg-[var(--bg-2)] border border-[var(--border-light)] rounded-xl p-3 text-sm text-[var(--fg-4)] outline-none'
-                                        />
+                                <div style={{ marginBottom: '20px' }}>
+                                    <label style={{ fontSize: '11px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Short Link</label>
+                                    <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+                                        <div style={{ flex: 1, padding: '12px 16px', backgroundColor: 'rgba(55, 53, 47, 0.04)', borderRadius: '8px', fontFamily: 'monospace', fontSize: '14px', color: '#6366f1', fontWeight: 500, wordBreak: 'break-all' }}>
+                                            {shortenedUrl}
+                                        </div>
                                         <button
-                                            onClick={() => { handleShorten(); setIsMobileMenuOpen(false); }}
-                                            disabled={isShortening || !url.trim()}
-                                            className='w-full py-3 bg-[var(--fg-4)] text-white font-bold text-xs uppercase tracking-widest rounded-xl shadow-md'
+                                            onClick={() => copyToClipboard(shortenedUrl)}
+                                            className='notion-action-btn notion-action-primary'
+                                            style={{ padding: '12px 16px' }}
                                         >
-                                            Generate
+                                            <ClipboardIcon className='notion-action-icon' />
+                                            Copy
                                         </button>
                                     </div>
                                 </div>
-                                <div className='pt-6 border-t border-[var(--border-light)]'>
-                                    <h3 className='text-[10px] font-bold uppercase tracking-[0.2em] text-muted mb-4'>Analytics</h3>
-                                    <div className='space-y-3'>
-                                        <input
-                                            type='password'
-                                            value={analyticsPasswordInput}
-                                            onChange={e => setAnalyticsPasswordInput(e.target.value)}
-                                            placeholder='Enter access key...'
-                                            className='w-full bg-[var(--bg-2)] border border-[var(--border-light)] rounded-xl p-3 text-sm text-[var(--fg-4)] outline-none'
-                                        />
+
+                                <div>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                                        <label style={{ fontSize: '11px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Analytics Key</label>
+                                        <span style={{ fontSize: '9px', fontWeight: 700, color: '#dc2626', backgroundColor: 'rgba(239, 68, 68, 0.1)', padding: '4px 8px', borderRadius: '4px', textTransform: 'uppercase' }}>Save This</span>
+                                    </div>
+                                    <div style={{ display: 'flex', gap: '12px' }}>
+                                        <div style={{ flex: 1, padding: '12px 16px', backgroundColor: 'rgba(239, 68, 68, 0.05)', border: '1px solid rgba(239, 68, 68, 0.2)', borderRadius: '8px', fontFamily: 'monospace', fontSize: '14px', color: '#dc2626', fontWeight: 600, wordBreak: 'break-all' }}>
+                                            {analyticsPassword}
+                                        </div>
                                         <button
-                                            onClick={() => { handleViewAnalytics(); setIsMobileMenuOpen(false); }}
-                                            disabled={analyticsLoading || !analyticsPasswordInput.trim()}
-                                            className='w-full py-3 bg-white border border-[var(--border-light)] text-[var(--fg-4)] font-bold text-xs uppercase tracking-widest rounded-xl shadow-sm'
+                                            onClick={() => copyToClipboard(analyticsPassword!)}
+                                            className='notion-action-btn'
+                                            style={{ padding: '12px 16px', color: '#dc2626' }}
                                         >
-                                            View Stats
+                                            <ClipboardIcon className='notion-action-icon' />
+                                            Copy
                                         </button>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                )}
+                    )}
+
+                    {analyticsAuthenticated && (
+                        <div className='notion-section'>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+                                <div>
+                                    <h2 style={{ fontSize: '20px', fontWeight: 700, color: '#37352f', marginBottom: '4px' }}>Analytics Dashboard</h2>
+                                    <p style={{ fontSize: '13px', color: 'rgba(55, 53, 47, 0.6)', maxWidth: '400px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{analyticsOriginalUrl}</p>
+                                </div>
+                                <button
+                                    onClick={() => { setAnalyticsAuthenticated(false); setAnalyticsData([]); }}
+                                    className='notion-action-btn'
+                                    style={{ color: '#dc2626' }}
+                                >
+                                    Close
+                                </button>
+                            </div>
+
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '24px' }}>
+                                <div className='notion-card' style={{ padding: '20px' }}>
+                                    <span style={{ fontSize: '10px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Total Clicks</span>
+                                    <div style={{ fontSize: '32px', fontWeight: 700, color: '#6366f1', marginTop: '4px' }}>
+                                        {analyticsData.reduce((s, d) => s + d.clicks, 0).toLocaleString()}
+                                    </div>
+                                </div>
+                                <div className='notion-card' style={{ padding: '20px' }}>
+                                    <span style={{ fontSize: '10px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Daily Average</span>
+                                    <div style={{ fontSize: '32px', fontWeight: 700, color: '#37352f', marginTop: '4px' }}>
+                                        {(analyticsData.reduce((s, d) => s + d.clicks, 0) / (analyticsData.length || 1)).toFixed(1)}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className='notion-card' style={{ padding: '24px' }}>
+                                <h3 style={{ fontSize: '13px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'rgba(55, 53, 47, 0.5)', marginBottom: '16px' }}>Click Activity (30 Days)</h3>
+                                <div style={{ height: '280px' }}>
+                                    <Line data={chartData} options={chartOptions} />
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    <footer className='notion-footer'>
+                        © 2026 {strings.NAME}
+                    </footer>
+                </div>
             </main>
         </>
     );

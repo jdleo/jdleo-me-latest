@@ -3,7 +3,16 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import FingerprintJS from '@fingerprintjs/fingerprintjs';
+import { strings } from '../../constants/strings';
 import { WebVitals } from '@/components/SEO/WebVitals';
+import {
+    DevicePhoneMobileIcon,
+    PencilSquareIcon,
+    DocumentTextIcon,
+    ShieldCheckIcon,
+    GlobeAmericasIcon,
+    ComputerDesktopIcon,
+} from '@heroicons/react/24/outline';
 
 type IPInfo = {
     ip: string;
@@ -14,9 +23,9 @@ type IPInfo = {
 };
 
 export default function Privacy() {
+    const [isLoaded, setIsLoaded] = useState(false);
     const [fingerprint, setFingerprint] = useState<string | null>(null);
     const [ipInfo, setIpInfo] = useState<IPInfo | null>(null);
-    const [isLoaded, setIsLoaded] = useState(false);
     const [browserInfo, setBrowserInfo] = useState({
         screen: { width: 0, height: 0, colorDepth: 0 },
         platform: '',
@@ -26,7 +35,6 @@ export default function Privacy() {
         memory: 'Not Available',
         cores: 0,
     });
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     useEffect(() => {
         const timer = setTimeout(() => setIsLoaded(true), 100);
@@ -57,150 +65,133 @@ export default function Privacy() {
     }, []);
 
     const metaItems = [
-        { label: 'Device Platform', value: browserInfo.platform, icon: '💻' },
-        { label: 'Locale / Language', value: browserInfo.language, icon: '🌐' },
+        { label: 'Platform', value: browserInfo.platform, icon: '💻' },
+        { label: 'Language', value: browserInfo.language, icon: '🗣️' },
         { label: 'Timezone', value: browserInfo.timezone, icon: '🕒' },
-        { label: 'Display Resolution', value: `${browserInfo.screen.width}x${browserInfo.screen.height}`, icon: '🖥️' },
-        { label: 'Color Depth', value: `${browserInfo.screen.colorDepth}-bit`, icon: '🎨' },
-        { label: 'CPU Cores', value: `${browserInfo.cores} Cores`, icon: '⚙️' },
-        { label: 'Memory (RAM)', value: browserInfo.memory, icon: '💾' },
-        { label: 'Fingerprint Hash', value: fingerprint || 'GENERATING...', icon: '🆔' },
+        { label: 'Screen', value: `${browserInfo.screen.width}x${browserInfo.screen.height}`, icon: '🖥️' },
+        { label: 'Cores', value: `${browserInfo.cores}`, icon: '⚡' },
+        { label: 'Memory', value: browserInfo.memory, icon: '💾' },
     ];
 
     return (
         <>
             <WebVitals />
-            <main className='relative h-screen bg-[#fafbff] overflow-hidden selection:bg-[var(--purple-2)] selection:text-[var(--purple-4)] flex flex-col md:flex-row'>
-
-                {/* Mobile Header */}
-                <header className='md:hidden flex items-center justify-between p-4 border-b border-[var(--border-light)] bg-white/80 backdrop-blur-md z-50'>
-                    <Link href='/apps' className='text-sm font-bold uppercase tracking-widest text-muted hover:text-[var(--purple-4)]'>
-                        ← Apps
-                    </Link>
-                    <button
-                        onClick={() => setIsMobileMenuOpen(true)}
-                        className='px-3 py-1.5 bg-white border border-[var(--border-light)] rounded-full shadow-sm text-xs font-bold uppercase tracking-wider text-[var(--fg-4)] flex items-center gap-1.5'
-                    >
-                        <span>Status</span>
-                        <span className='text-[10px]'>▼</span>
-                    </button>
+            <main className='notion-page'>
+                <header className={`notion-header ${isLoaded ? 'loaded' : ''}`}>
+                    <div className='notion-nav' style={{ justifyContent: 'space-between', maxWidth: '1100px' }}>
+                        <Link href='/' className='notion-nav-link' style={{ fontWeight: 600 }}>
+                            {strings.NAME}
+                        </Link>
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                            <Link href='/apps' className='notion-nav-link'>
+                                <DevicePhoneMobileIcon className='notion-nav-icon' />
+                                Apps
+                            </Link>
+                            <Link href='/blog' className='notion-nav-link'>
+                                <PencilSquareIcon className='notion-nav-icon' />
+                                Blog
+                            </Link>
+                            <Link href='/apps/resume' className='notion-nav-link'>
+                                <DocumentTextIcon className='notion-nav-icon' />
+                                Resume
+                            </Link>
+                        </div>
+                    </div>
                 </header>
 
-                {/* Left Sidebar (Desktop) */}
-                <aside className='hidden md:flex flex-col w-80 h-full border-r border-[var(--border-light)] bg-white/50 backdrop-blur-xl z-20'>
-                    <div className='p-6 border-b border-[var(--border-light)]'>
-                        <div className='flex items-center gap-3 mb-6'>
-                            <div className='w-3 h-3 rounded-full bg-[var(--purple-4)]' />
-                            <span className='font-bold uppercase tracking-widest text-sm text-[var(--fg-4)]'>Privacy Scan</span>
-                        </div>
-                        <nav className='flex flex-col gap-2'>
-                            <Link href='/apps' className='text-xs font-bold uppercase tracking-wider text-muted hover:text-[var(--purple-4)] transition-colors flex items-center gap-2'>
-                                <span>←</span> Back to Apps
-                            </Link>
-                        </nav>
+                <div className={`notion-content ${isLoaded ? 'loaded' : ''}`} style={{ maxWidth: '1000px' }}>
+                    <div className='notion-title-block'>
+                        <h1 className='notion-title'>Privacy Scan</h1>
+                        <div className='notion-subtitle'>See what websites can learn about you just by visiting</div>
                     </div>
 
-                    <div className='flex-grow overflow-y-auto p-6 space-y-8'>
-                        <div>
-                            <h3 className='text-[10px] font-bold uppercase tracking-[0.2em] text-muted mb-4'>Exposure Status</h3>
-                            <div className='space-y-4'>
-                                <div className='bg-red-50 border border-red-100 p-4 rounded-xl'>
-                                    <span className='text-[10px] font-bold uppercase tracking-wider text-red-500 block mb-2'>Public IP Address</span>
-                                    <div className='text-xl font-bold text-red-600 font-mono tracking-tight'>
-                                        {ipInfo?.ip || 'SCANNING...'}
-                                    </div>
+                    <div className='notion-divider' />
+
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px', marginBottom: '32px' }}>
+
+                        <div className='notion-card' style={{ padding: '24px' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <GlobeAmericasIcon style={{ width: '20px', height: '20px', color: '#ef4444' }} />
+                                    <span style={{ fontSize: '14px', fontWeight: 600 }}>Network Identity</span>
                                 </div>
-                                <div className='bg-white border border-[var(--border-light)] p-4 rounded-xl shadow-sm'>
-                                    <span className='text-[10px] font-bold uppercase tracking-wider text-muted block mb-2'>Approximate Location</span>
-                                    <div className='text-sm font-bold text-[var(--fg-4)]'>
-                                        {ipInfo ? `${ipInfo.city}, ${ipInfo.country}` : 'LOCATING...'}
-                                    </div>
-                                    <div className='text-xs text-muted mt-1'>{ipInfo?.region}</div>
-                                </div>
+                                <span style={{ fontSize: '10px', fontWeight: 700, color: '#ef4444', backgroundColor: 'rgba(239, 68, 68, 0.1)', padding: '4px 8px', borderRadius: '4px', textTransform: 'uppercase' }}>
+                                    Exposed
+                                </span>
                             </div>
-                        </div>
-
-
-                    </div>
-                </aside>
-
-                {/* Main Content Area */}
-                <div className='flex-grow flex flex-col h-full relative bg-[#fafbff] overflow-hidden'>
-                    {/* Floating decorations */}
-                    <div className='absolute top-0 right-0 w-[500px] h-[500px] bg-[var(--purple-1)] opacity-30 rounded-full blur-3xl pointer-events-none -translate-y-1/2 translate-x-1/2' />
-
-                    <div className='flex-grow overflow-auto p-4 md:p-8 z-10 custom-scrollbar'>
-                        <div className='max-w-4xl mx-auto w-full space-y-8 animate-fade-in-up'>
-
-                            {/* Header Section */}
-                            <div className='flex items-center justify-between'>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                                 <div>
-                                    <h2 className='text-2xl font-bold text-[var(--fg-4)]'>Digital Fingerprint</h2>
-                                    <p className='text-sm text-muted mt-1'>Data exposed to every website you visit.</p>
-                                </div>
-                                <div className='px-3 py-1 bg-red-50 text-red-500 border border-red-100 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-2'>
-                                    <span className='relative flex h-2 w-2'>
-                                        <span className='animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75'></span>
-                                        <span className='relative inline-flex rounded-full h-2 w-2 bg-red-500'></span>
-                                    </span>
-                                    Detected
-                                </div>
-                            </div>
-
-                            {/* Artifact Grid */}
-                            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-                                {metaItems.map(item => (
-                                    <div key={item.label} className='bg-white p-5 rounded-2xl border border-[var(--border-light)] shadow-sm hover:shadow-md hover:border-[var(--purple-2)] transition-all group'>
-                                        <div className='flex items-start justify-between mb-3'>
-                                            <span className='text-2xl opacity-50 grayscale group-hover:grayscale-0 transition-all'>{item.icon}</span>
-                                            <span className='text-[10px] font-bold uppercase tracking-wider text-muted'>{item.label}</span>
-                                        </div>
-                                        <div className='text-sm font-bold text-[var(--fg-4)] font-mono break-all'>
-                                            {item.value}
-                                        </div>
+                                    <span style={{ fontSize: '11px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase' }}>IP Address</span>
+                                    <div style={{ fontSize: '20px', fontWeight: 700, color: '#37352f', fontFamily: 'monospace' }}>
+                                        {ipInfo?.ip || 'Scanning...'}
                                     </div>
-                                ))}
+                                </div>
+                                <div style={{ height: '1px', backgroundColor: 'rgba(55, 53, 47, 0.09)' }} />
+                                <div>
+                                    <span style={{ fontSize: '11px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase' }}>Location</span>
+                                    <div style={{ fontSize: '14px', fontWeight: 600, color: '#37352f' }}>
+                                        {ipInfo ? `${ipInfo.city}, ${ipInfo.region}, ${ipInfo.country}` : 'Locating...'}
+                                    </div>
+                                </div>
                             </div>
+                        </div>
 
-                            {/* User Agent Block */}
-                            <div className='bg-white p-6 rounded-2xl border border-[var(--border-light)] shadow-sm'>
-                                <span className='text-[10px] font-bold uppercase tracking-wider text-muted block mb-3'>User Agent String</span>
-                                <div className='p-4 bg-[var(--bg-2)] rounded-xl border border-[var(--border-light)]'>
-                                    <code className='text-xs font-mono text-[var(--fg-4)] break-all leading-relaxed'>
-                                        {browserInfo.userAgent}
-                                    </code>
+                        <div className='notion-card' style={{ padding: '24px' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <ShieldCheckIcon style={{ width: '20px', height: '20px', color: '#6366f1' }} />
+                                    <span style={{ fontSize: '14px', fontWeight: 600 }}>Digital Fingerprint</span>
+                                </div>
+                                <span style={{ fontSize: '10px', fontWeight: 700, color: '#6366f1', backgroundColor: 'rgba(99, 102, 241, 0.1)', padding: '4px 8px', borderRadius: '4px', textTransform: 'uppercase' }}>
+                                    Unique ID
+                                </span>
+                            </div>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                                <div>
+                                    <span style={{ fontSize: '11px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase' }}>Canvas Hash</span>
+                                    <div style={{ fontSize: '16px', fontWeight: 600, color: '#37352f', fontFamily: 'monospace', wordBreak: 'break-all' }}>
+                                        {fingerprint || 'Generating...'}
+                                    </div>
+                                </div>
+                                <div style={{ marginTop: '8px', fontSize: '12px', color: 'rgba(55, 53, 47, 0.5)', lineHeight: 1.5 }}>
+                                    Your browser's unique rendering behavior creates a permanent ID used to track you across the web, even in Incognito mode.
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    {/* Mobile Menu Overlay */}
-                    {isMobileMenuOpen && (
-                        <div className='fixed inset-0 z-[100] flex items-end justify-center bg-black/40 backdrop-blur-sm p-4 md:hidden' onClick={() => setIsMobileMenuOpen(false)}>
-                            <div className='w-full max-w-sm bg-white rounded-2xl shadow-2xl animate-slide-up overflow-hidden border border-[var(--border-light)]' onClick={e => e.stopPropagation()}>
-                                <div className='p-4 border-b border-[var(--border-light)] flex justify-between items-center bg-[var(--bg-2)]'>
-                                    <span className='text-xs font-bold uppercase tracking-widest text-[var(--fg-4)]'>Exposure Data</span>
-                                    <button onClick={() => setIsMobileMenuOpen(false)} className='w-6 h-6 rounded-full bg-white border border-[var(--border-light)] flex items-center justify-center text-muted'>✕</button>
-                                </div>
-                                <div className='p-4 space-y-4'>
-                                    <div className='bg-red-50 p-4 rounded-xl border border-red-100 text-center'>
-                                        <span className='text-[10px] font-bold uppercase tracking-wider text-red-500 block mb-1'>IP Address</span>
-                                        <span className='text-lg font-bold text-red-600 font-mono'>{ipInfo?.ip || '...'}</span>
-                                    </div>
-                                    <div className='grid grid-cols-2 gap-3'>
-                                        <div className='bg-[var(--bg-2)] p-3 rounded-xl border border-[var(--border-light)]'>
-                                            <span className='text-[10px] font-bold uppercase tracking-wider text-muted block mb-1'>Platform</span>
-                                            <span className='text-xs font-bold text-[var(--fg-4)]'>{browserInfo.platform}</span>
-                                        </div>
-                                        <div className='bg-[var(--bg-2)] p-3 rounded-xl border border-[var(--border-light)]'>
-                                            <span className='text-[10px] font-bold uppercase tracking-wider text-muted block mb-1'>Cores</span>
-                                            <span className='text-xs font-bold text-[var(--fg-4)]'>{browserInfo.cores}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                    <div className='notion-section'>
+                        <div className='notion-section-title'>
+                            <ComputerDesktopIcon className='notion-section-icon' />
+                            Device Leaks
                         </div>
-                    )}
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px', marginTop: '16px' }}>
+                            {metaItems.map((item) => (
+                                <div key={item.label} className='notion-card' style={{ padding: '16px' }}>
+                                    <div style={{ fontSize: '24px', marginBottom: '12px' }}>{item.icon}</div>
+                                    <div style={{ fontSize: '11px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase', marginBottom: '4px' }}>
+                                        {item.label}
+                                    </div>
+                                    <div style={{ fontSize: '14px', fontWeight: 600, color: '#37352f', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                        {item.value}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className='notion-section'>
+                        <div className='notion-card' style={{ padding: '24px', backgroundColor: '#f8fafc' }}>
+                            <span style={{ fontSize: '11px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase', display: 'block', marginBottom: '12px' }}>User Agent String</span>
+                            <code style={{ fontSize: '12px', fontFamily: 'monospace', color: '#37352f', lineHeight: 1.6, wordBreak: 'break-all' }}>
+                                {browserInfo.userAgent}
+                            </code>
+                        </div>
+                    </div>
+
+                    <footer className='notion-footer'>
+                        © 2026 {strings.NAME}
+                    </footer>
                 </div>
             </main>
         </>

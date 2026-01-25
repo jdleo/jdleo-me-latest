@@ -4,7 +4,28 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { apps } from './constants/apps';
 import { WebVitals } from '@/components/SEO/WebVitals';
-import { HomeIcon, RocketLaunchIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import {
+    HomeIcon,
+    RocketLaunchIcon,
+    MagnifyingGlassIcon,
+    ChatBubbleLeftRightIcon,
+    UserIcon,
+    BookOpenIcon,
+    CircleStackIcon,
+    DocumentTextIcon,
+} from '@heroicons/react/24/outline';
+
+// Map apps to their icons
+const getAppIcon = (title: string) => {
+    const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+        'AI Chat': ChatBubbleLeftRightIcon,
+        'Chat w/ John': UserIcon,
+        'Resume Screen': MagnifyingGlassIcon,
+        'PDF Chat (Embeddings)': BookOpenIcon,
+        'Knowledge Graph': CircleStackIcon,
+    };
+    return iconMap[title] || DocumentTextIcon;
+};
 
 export default function NotFound() {
     const [isLoaded, setIsLoaded] = useState(false);
@@ -62,23 +83,26 @@ export default function NotFound() {
                                     Popular Apps
                                 </div>
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                                    {popularApps.map((app, idx) => (
-                                        <Link
-                                            key={app.href}
-                                            href={app.href}
-                                            className='notion-app-item'
-                                            style={{ animationDelay: `${idx * 50}ms` }}
-                                        >
-                                            <div className='notion-app-icon-wrapper' style={{ width: '36px', height: '36px' }}>
-                                                <span style={{ fontSize: '20px' }}>{app.emoji}</span>
-                                            </div>
-                                            <div className='notion-app-info'>
-                                                <div className='notion-app-name'>{app.title}</div>
-                                                <div className='notion-app-desc'>{app.subtitle}</div>
-                                            </div>
-                                            <div className='notion-app-arrow'>→</div>
-                                        </Link>
-                                    ))}
+                                    {popularApps.map((app, idx) => {
+                                        const IconComponent = getAppIcon(app.title);
+                                        return (
+                                            <Link
+                                                key={app.href}
+                                                href={app.href}
+                                                className='notion-app-item'
+                                                style={{ animationDelay: `${idx * 50}ms` }}
+                                            >
+                                                <div className='notion-app-icon-wrapper' style={{ width: '36px', height: '36px' }}>
+                                                    <IconComponent className='notion-app-icon' />
+                                                </div>
+                                                <div className='notion-app-info'>
+                                                    <div className='notion-app-name'>{app.title}</div>
+                                                    <div className='notion-app-desc'>{app.subtitle}</div>
+                                                </div>
+                                                <div className='notion-app-arrow'>→</div>
+                                            </Link>
+                                        );
+                                    })}
                                 </div>
                             </div>
                         </>
