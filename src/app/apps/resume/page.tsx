@@ -9,8 +9,8 @@ import CodeBlock from '@/components/CodeBlock';
 import MessageItem, { Message } from '@/components/chat/MessageItem';
 import ChatInput from '@/components/chat/ChatInput';
 import { WebVitals } from '@/components/SEO/WebVitals';
-
-
+import { strings } from '../../constants/strings';
+import { ArrowLeftIcon, SparklesIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 
 export default function Resume() {
     const [messages, setMessages] = useState<Message[]>([]);
@@ -128,7 +128,7 @@ export default function Resume() {
                                         {
                                             content: accumulatedContent,
                                             isUser: false,
-                                            model: "johns_resume_ai",
+                                            model: "John's Resume AI",
                                             usage: processedUsage,
                                         },
                                     ]);
@@ -162,172 +162,168 @@ export default function Resume() {
     return (
         <>
             <WebVitals />
-            <main className='relative h-screen bg-[#fafbff] overflow-hidden selection:bg-[var(--purple-2)] selection:text-[var(--purple-4)] flex flex-col md:flex-row'>
-
-                {/* Mobile Header */}
-                <header className='md:hidden flex items-center justify-between p-4 border-b border-[var(--border-light)] bg-white/80 backdrop-blur-md z-50'>
-                    <Link href='/apps' className='text-sm font-bold uppercase tracking-widest text-muted hover:text-[var(--purple-4)]'>
-                        ← Apps
-                    </Link>
-                    <button
-                        onClick={() => setIsMobileSuggestionsOpen(true)}
-                        className='px-3 py-1.5 bg-white border border-[var(--border-light)] rounded-full shadow-sm text-xs font-bold uppercase tracking-wider text-[var(--fg-4)] flex items-center gap-1.5'
-                    >
-                        <span>Suggestions</span>
-                        <span className='text-[10px]'>▼</span>
-                    </button>
+            <main className='notion-page' style={{ height: '100vh', overflow: 'hidden' }}>
+                {/* Header */}
+                <header className='notion-header loaded' style={{ position: 'sticky' }}>
+                    <div className='notion-nav' style={{ justifyContent: 'space-between', maxWidth: '100%' }}>
+                        <Link href='/apps' className='notion-nav-link'>
+                            <ArrowLeftIcon className='notion-nav-icon' />
+                            <span className='hidden sm:inline'>Back to Apps</span>
+                            <span className='sm:hidden'>Apps</span>
+                        </Link>
+                        <button
+                            onClick={() => setIsMobileSuggestionsOpen(true)}
+                            className='md:hidden notion-nav-link'
+                            style={{ padding: '4px 10px' }}
+                        >
+                            <span className='text-xs'>Suggestions</span>
+                            <ChevronDownIcon className='notion-nav-icon' style={{ width: '12px', height: '12px' }} />
+                        </button>
+                        <Link href='/' className='notion-nav-link hidden md:flex' style={{ fontWeight: 600 }}>
+                            {strings.NAME}
+                        </Link>
+                    </div>
                 </header>
 
-                {/* Left Sidebar (Desktop) */}
-                <aside className='hidden md:flex flex-col w-80 h-full border-r border-[var(--border-light)] bg-white/50 backdrop-blur-xl z-20'>
-                    <div className='p-6 border-b border-[var(--border-light)]'>
-                        <div className='flex items-center gap-3 mb-6'>
-                            <div className='w-3 h-3 rounded-full bg-[var(--purple-4)]' />
-                            <span className='font-bold uppercase tracking-widest text-sm text-[var(--fg-4)]'>Resume Bot</span>
-                        </div>
-                        <nav className='flex flex-col gap-2'>
-                            <Link href='/apps' className='text-xs font-bold uppercase tracking-wider text-muted hover:text-[var(--purple-4)] transition-colors flex items-center gap-2'>
-                                <span>←</span> Back to Apps
-                            </Link>
-                        </nav>
-                    </div>
-
-                    <div className='flex-grow overflow-y-auto p-4 space-y-6'>
-                        <div>
-                            <h3 className='text-[10px] font-bold uppercase tracking-[0.2em] text-muted mb-4 px-2'>Suggested Queries</h3>
-                            <div className='space-y-2'>
+                <div style={{ display: 'flex', height: 'calc(100vh - 57px)', overflow: 'hidden' }}>
+                    {/* Left Sidebar (Desktop) */}
+                    <aside className='hidden md:flex flex-col' style={{ width: '280px', borderRight: '1px solid rgba(55, 53, 47, 0.09)', backgroundColor: '#ffffff' }}>
+                        <div style={{ padding: '20px 16px', borderBottom: '1px solid rgba(55, 53, 47, 0.09)' }}>
+                            <div style={{ fontSize: '12px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '12px' }}>
+                                Suggested Questions
+                            </div>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                                 {suggestedQueries.map((q, i) => (
                                     <button
                                         key={i}
                                         onClick={() => sendMessage(q)}
-                                        className='w-full p-3 text-left rounded-xl hover:bg-white/60 border border-transparent hover:border-[var(--border-light)] transition-all flex items-center gap-2 group'
+                                        className='notion-chat-model-btn'
+                                        style={{ backgroundColor: 'transparent', borderColor: 'transparent' }}
                                     >
-                                        <div className='w-6 h-6 rounded-full bg-[var(--bg-2)] flex items-center justify-center text-[var(--purple-4)] text-[10px] font-bold group-hover:bg-[var(--purple-1)] transition-colors'>
-                                            ?
+                                        <div style={{ width: '18px', height: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                                            <SparklesIcon style={{ width: '16px', height: '16px', color: 'rgba(55, 53, 47, 0.5)', strokeWidth: 2 }} />
                                         </div>
-                                        <span className='text-xs font-medium text-[var(--fg-4)]'>{q}</span>
+                                        <div style={{ flex: 1, textAlign: 'left', minWidth: 0 }}>
+                                            <div style={{ fontSize: '13px', fontWeight: 500, color: '#37352f' }}>
+                                                {q}
+                                            </div>
+                                        </div>
                                     </button>
                                 ))}
                             </div>
                         </div>
-                    </div>
 
-                    <div className='p-4 border-t border-[var(--border-light)]'>
-                        <button
-                            onClick={() => { setMessages([]); setShowWelcome(true); }}
-                            className='w-full py-2 px-4 rounded-lg border border-red-100 hover:bg-red-50 text-red-500 text-xs font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-2'
-                        >
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
-                            </svg>
-                            Clear Conversation
-                        </button>
-                    </div>
-                </aside>
+                        <div style={{ padding: '16px', marginTop: 'auto', borderTop: '1px solid rgba(55, 53, 47, 0.09)' }}>
+                            <button
+                                onClick={() => { setMessages([]); setShowWelcome(true); }}
+                                className='notion-chat-clear-btn'
+                            >
+                                Clear Conversation
+                            </button>
+                        </div>
+                    </aside>
 
-                {/* Main Chat Area */}
-                <div className='flex-grow flex flex-col h-full relative bg-[#fafbff]'>
-                    {/* Floating decorations for main area */}
-                    <div className='absolute top-0 right-0 w-[500px] h-[500px] bg-[var(--purple-1)] opacity-40 rounded-full blur-3xl pointer-events-none -translate-y-1/2 translate-x-1/2' />
-
-                    <div className='flex-grow overflow-y-auto p-4 md:p-8 scrollbar-hide space-y-8 pb-32 z-10'>
-                        {showWelcome && (
-                            <div className='flex flex-col items-center justify-center h-full text-center space-y-6 opacity-0 animate-fade-in-up' style={{ animationFillMode: 'forwards' }}>
-                                <div>
-                                    <h1 className='text-2xl font-bold text-[var(--fg-4)] mb-2'>Hi! I know everything about John.</h1>
-                                    <p className='text-muted max-w-md mx-auto'>
-                                        Ask me anything about his experience, skills, projects, or background.
-                                    </p>
+                    {/* Main Chat Area */}
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', backgroundColor: '#ffffff', overflow: 'hidden' }}>
+                        <div className='scrollbar-hide' style={{ flex: 1, overflowY: 'auto', padding: '24px', paddingBottom: '120px' }}>
+                            {showWelcome && (
+                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', textAlign: 'center', gap: '16px' }}>
+                                    <div>
+                                        <h1 style={{ fontSize: '24px', fontWeight: 700, color: '#37352f', marginBottom: '8px', letterSpacing: '-0.02em' }}>
+                                            Hi! I know everything about John.
+                                        </h1>
+                                        <p style={{ fontSize: '15px', color: 'rgba(55, 53, 47, 0.6)', maxWidth: '500px', margin: '0 auto', lineHeight: '1.6' }}>
+                                            Ask me anything about his experience, skills, projects, or background.
+                                        </p>
+                                    </div>
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px', maxWidth: '600px', width: '100%' }}>
+                                        {suggestedQueries.slice(0, 4).map((q, i) => (
+                                            <button
+                                                key={i}
+                                                onClick={() => sendMessage(q)}
+                                                style={{ padding: '14px 16px', background: 'rgba(55, 53, 47, 0.04)', border: '1px solid rgba(55, 53, 47, 0.08)', borderRadius: '8px', fontSize: '13px', fontWeight: 500, color: '#37352f', textAlign: 'left', cursor: 'pointer', transition: 'all 0.15s ease' }}
+                                                onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(55, 53, 47, 0.06)'; e.currentTarget.style.borderColor = 'rgba(55, 53, 47, 0.12)'; }}
+                                                onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(55, 53, 47, 0.04)'; e.currentTarget.style.borderColor = 'rgba(55, 53, 47, 0.08)'; }}
+                                            >
+                                                {q}
+                                            </button>
+                                        ))}
+                                    </div>
                                 </div>
-                                <div className='grid grid-cols-1 md:grid-cols-2 gap-3 max-w-lg w-full px-4'>
-                                    {suggestedQueries.slice(0, 4).map((q, i) => (
-                                        <button
-                                            key={i}
-                                            onClick={() => sendMessage(q)}
-                                            className='p-4 bg-white border border-[var(--border-light)] rounded-xl text-xs font-medium text-[var(--fg-4)] hover:border-[var(--purple-2)] hover:shadow-sm transition-all text-left'
-                                        >
-                                            {q}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
+                            )}
 
-                        {messages.map((m, i) => (
-                            <MessageItem key={i} message={m} />
-                        ))}
+                            {messages.map((m, i) => (
+                                <MessageItem key={i} message={m} />
+                            ))}
 
-                        {streamingMessage && (
-                            <div className='flex justify-start animate-fade-in-up'>
-                                <div className='max-w-[90%] md:max-w-3xl bg-white rounded-2xl rounded-tl-sm px-6 py-5 shadow-sm border border-[var(--border-light)]'>
-                                    <div className='flex items-center gap-2 mb-3 pb-3 border-b border-gray-100'>
-                                        <span className='text-[10px] font-bold uppercase tracking-widest text-[var(--purple-4)]'>
+                            {streamingMessage && (
+                                <div className='notion-chat-message-wrapper'>
+                                    <div className='notion-chat-message notion-chat-message-ai'>
+                                        <div style={{ fontSize: '11px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.4)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '12px', paddingBottom: '8px', borderBottom: '1px solid rgba(55, 53, 47, 0.06)' }}>
                                             Thinking...
-                                        </span>
-                                    </div>
-                                    <div className='prose prose-sm max-w-none blog-content'>
-                                        <ReactMarkdown
-                                            remarkPlugins={[remarkGfm]}
-                                            rehypePlugins={[rehypeRaw]}
-                                            components={{
-                                                code: CodeBlock as any,
-                                                table: ({ children }) => <div className="table-wrapper"><table className="w-full">{children}</table></div>,
-                                                thead: ({ children }) => <thead className="bg-[var(--gray-1)]">{children}</thead>,
-                                                th: ({ children }) => <th className="p-3 text-left font-bold text-xs uppercase tracking-wider text-[var(--fg-4)] border-b border-[var(--border-light)]">{children}</th>,
-                                                td: ({ children }) => <td className="p-3 border-b border-[var(--border-light)] text-sm">{children}</td>,
-                                            }}
-                                        >
-                                            {streamingMessage}
-                                        </ReactMarkdown>
-                                        <span className='inline-block w-1.5 h-4 bg-[var(--purple-4)] ml-1 animate-pulse align-middle rounded-full' />
+                                        </div>
+                                        <div className='notion-blog-content'>
+                                            <ReactMarkdown
+                                                remarkPlugins={[remarkGfm]}
+                                                rehypePlugins={[rehypeRaw]}
+                                                components={{
+                                                    code: CodeBlock as any,
+                                                    table: ({ children }) => <div className="table-wrapper"><table>{children}</table></div>,
+                                                }}
+                                            >
+                                                {streamingMessage}
+                                            </ReactMarkdown>
+                                            <span className='notion-chat-cursor' />
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        )}
+                            )}
 
-                        {isLoading && !streamingMessage && (
-                            <div className='flex justify-start animate-fade-in-up'>
-                                <div className='max-w-[90%] md:max-w-3xl bg-white rounded-2xl rounded-tl-sm px-6 py-4 shadow-sm border border-[var(--border-light)]'>
-                                    <div className='flex items-center gap-1.5'>
-                                        <div className='w-2 h-2 rounded-full bg-[var(--purple-4)] animate-bounce' style={{ animationDelay: '0ms' }} />
-                                        <div className='w-2 h-2 rounded-full bg-[var(--purple-4)] animate-bounce' style={{ animationDelay: '150ms' }} />
-                                        <div className='w-2 h-2 rounded-full bg-[var(--purple-4)] animate-bounce' style={{ animationDelay: '300ms' }} />
+                            {isLoading && !streamingMessage && (
+                                <div className='notion-chat-message-wrapper'>
+                                    <div className='notion-chat-message notion-chat-message-ai'>
+                                        <div className='notion-chat-loading'>
+                                            <div className='notion-chat-loading-dot' style={{ animationDelay: '0ms' }} />
+                                            <div className='notion-chat-loading-dot' style={{ animationDelay: '150ms' }} />
+                                            <div className='notion-chat-loading-dot' style={{ animationDelay: '300ms' }} />
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        )}
-                        <div ref={messagesEndRef} />
-                    </div>
+                            )}
+                            <div ref={messagesEndRef} />
+                        </div>
 
-                    {/* Input Area */}
-                    <div className='p-4 md:p-6 bg-white/80 backdrop-blur-xl border-t border-[var(--border-light)] z-20'>
-                        <ChatInput
-                            onSend={sendMessage}
-                            isLoading={isLoading}
-                            placeholder='Ask about John...'
-                        />
+                        {/* Input Area */}
+                        <div style={{ padding: '16px 24px', borderTop: '1px solid rgba(55, 53, 47, 0.09)', backgroundColor: '#ffffff' }}>
+                            <ChatInput
+                                onSend={sendMessage}
+                                isLoading={isLoading}
+                                placeholder='Ask about John...'
+                            />
+                        </div>
                     </div>
                 </div>
 
                 {/* Mobile Suggestions Overlay */}
                 {isMobileSuggestionsOpen && (
-                    <div className='fixed inset-0 z-[100] flex items-end justify-center bg-black/40 backdrop-blur-sm p-4 md:hidden' onClick={() => setIsMobileSuggestionsOpen(false)}>
-                        <div className='w-full max-w-sm bg-white rounded-2xl shadow-2xl animate-slide-up overflow-hidden border border-[var(--border-light)]' onClick={e => e.stopPropagation()}>
-                            <div className='p-4 border-b border-[var(--border-light)] flex justify-between items-center bg-[var(--bg-2)]'>
-                                <span className='text-xs font-bold uppercase tracking-widest text-[var(--fg-4)]'>Suggested Queries</span>
-                                <button onClick={() => setIsMobileSuggestionsOpen(false)} className='w-6 h-6 rounded-full bg-white border border-[var(--border-light)] flex items-center justify-center text-muted'>✕</button>
+                    <div className='notion-mobile-overlay' onClick={() => setIsMobileSuggestionsOpen(false)}>
+                        <div className='notion-mobile-panel' onClick={e => e.stopPropagation()}>
+                            <div className='notion-mobile-panel-header'>
+                                <span>Suggested Questions</span>
+                                <button onClick={() => setIsMobileSuggestionsOpen(false)} className='notion-mobile-close'>✕</button>
                             </div>
-                            <div className='p-2 max-h-[60vh] overflow-y-auto'>
+                            <div style={{ padding: '12px', maxHeight: '60vh', overflowY: 'auto' }}>
                                 {suggestedQueries.map((q, i) => (
                                     <button
                                         key={i}
                                         onClick={() => sendMessage(q)}
-                                        className='w-full p-3 text-left rounded-xl hover:bg-[var(--bg-2)] border border-transparent transition-all flex items-center gap-3'
+                                        className='notion-chat-model-btn'
+                                        style={{ backgroundColor: 'transparent', borderColor: 'transparent', marginBottom: '6px' }}
                                     >
-                                        <div className='w-6 h-6 rounded-full bg-[var(--purple-1)] flex items-center justify-center text-[var(--purple-4)] text-[10px] font-bold'>
-                                            ?
+                                        <SparklesIcon style={{ width: '18px', height: '18px', color: 'rgba(55, 53, 47, 0.5)', strokeWidth: 2 }} />
+                                        <div style={{ flex: 1, textAlign: 'left' }}>
+                                            <div style={{ fontSize: '13px', fontWeight: 500, color: '#37352f' }}>{q}</div>
                                         </div>
-                                        <span className='text-xs font-medium text-[var(--fg-4)]'>{q}</span>
                                     </button>
                                 ))}
                             </div>
@@ -338,4 +334,3 @@ export default function Resume() {
         </>
     );
 }
-

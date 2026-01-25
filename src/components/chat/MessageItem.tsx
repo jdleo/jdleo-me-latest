@@ -3,7 +3,6 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 import CodeBlock from '@/components/CodeBlock';
-import Image from 'next/image';
 
 export type Message = {
     content: string;
@@ -25,38 +24,29 @@ interface MessageItemProps {
 
 const MessageItem = memo(({ message }: MessageItemProps) => {
     return (
-        <div className={`flex ${message.isUser ? 'justify-end' : 'justify-start'} animate-fade-in-up`}>
-            <div className={`max-w-[90%] md:max-w-3xl ${message.isUser
-                ? 'bg-[var(--fg-4)] text-white rounded-2xl rounded-tr-sm px-5 py-3 shadow-lg'
-                : 'bg-white rounded-2xl rounded-tl-sm px-6 py-5 shadow-sm border border-[var(--border-light)]'
-                }`}>
-                {!message.isUser && (
-                    <div className='flex items-center gap-2 mb-3 pb-3 border-b border-gray-100'>
-                        <span className='text-[10px] font-bold uppercase tracking-widest text-[var(--purple-4)]'>
-                            {message.model || 'AI Assistant'}
-                        </span>
+        <div className={`notion-chat-message-wrapper ${message.isUser ? 'justify-end' : 'justify-start'}`}>
+            <div className={`notion-chat-message ${message.isUser ? 'notion-chat-message-user' : 'notion-chat-message-ai'}`}>
+                {!message.isUser && message.model && (
+                    <div style={{ fontSize: '11px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.4)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '12px', paddingBottom: '8px', borderBottom: '1px solid rgba(55, 53, 47, 0.06)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <span>{message.model}</span>
                         {message.usage && (
-                            <div className='flex items-center gap-3 text-[10px] text-muted opacity-60 font-medium'>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '10px', color: 'rgba(55, 53, 47, 0.3)' }}>
                                 <span>{message.usage.response_time_ms}ms</span>
                                 <span>{message.usage.tokens_per_second?.toFixed(1)} tok/s</span>
-                                <span>${message.usage.estimated_cost?.toFixed(5)}</span>
                             </div>
                         )}
                     </div>
                 )}
-                <div className={`prose prose-sm max-w-none ${message.isUser ? 'prose-invert' : 'blog-content'}`}>
+                <div className='notion-blog-content'>
                     {message.isUser ? (
-                        <p className='whitespace-pre-wrap leading-relaxed'>{message.content}</p>
+                        <p style={{ margin: 0, whiteSpace: 'pre-wrap', lineHeight: '1.6' }}>{message.content}</p>
                     ) : (
                         <ReactMarkdown
                             remarkPlugins={[remarkGfm]}
                             rehypePlugins={[rehypeRaw]}
                             components={{
                                 code: CodeBlock as any,
-                                table: ({ children }) => <div className="table-wrapper"><table className="w-full">{children}</table></div>,
-                                thead: ({ children }) => <thead className="bg-[var(--gray-1)]">{children}</thead>,
-                                th: ({ children }) => <th className="p-3 text-left font-bold text-xs uppercase tracking-wider text-[var(--fg-4)] border-b border-[var(--border-light)]">{children}</th>,
-                                td: ({ children }) => <td className="p-3 border-b border-[var(--border-light)] text-sm">{children}</td>,
+                                table: ({ children }) => <div className="table-wrapper"><table>{children}</table></div>,
                             }}
                         >
                             {message.content}

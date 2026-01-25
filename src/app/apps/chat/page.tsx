@@ -11,6 +11,7 @@ import MessageItem, { Message } from '@/components/chat/MessageItem';
 import ChatInput from '@/components/chat/ChatInput';
 import { WebVitals } from '@/components/SEO/WebVitals';
 import { strings } from '../../constants/strings';
+import { ArrowLeftIcon, Cog6ToothIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 
 export default function Chat() {
     const [messages, setMessages] = useState<Message[]>([]);
@@ -34,16 +35,10 @@ export default function Chat() {
             if (streamBufferRef.current && streamingMessage !== streamBufferRef.current) {
                 setStreamingMessage(prev => {
                     const diff = streamBufferRef.current.length - prev.length;
-                    if (diff <= 0) return streamBufferRef.current; // Catch up if buffer reset or smaller (shouldn't happen usually)
-
-                    // Throttling logic: larger jump if falling behind
+                    if (diff <= 0) return streamBufferRef.current;
                     const jump = Math.max(1, Math.min(diff, Math.ceil(diff / 8)));
                     return streamBufferRef.current.slice(0, prev.length + jump);
                 });
-            } else if (!streamBufferRef.current && streamingMessage) {
-                // Buffer cleared but message exists (e.g. finished), clear it? 
-                // Handled by sendMessage finally block usually, but let's be safe
-                // setStreamingMessage('');
             }
             animationFrameId = requestAnimationFrame(animate);
         };
@@ -180,68 +175,62 @@ export default function Chat() {
     return (
         <>
             <WebVitals />
-            <main className='relative h-screen bg-[#fafbff] overflow-hidden selection:bg-[var(--purple-2)] selection:text-[var(--purple-4)] flex flex-col md:flex-row'>
-
-                {/* Mobile Header */}
-                <header className='md:hidden flex items-center justify-between p-4 border-b border-[var(--border-light)] bg-white/80 backdrop-blur-md z-50'>
-                    <Link href='/apps' className='text-sm font-bold uppercase tracking-widest text-muted hover:text-[var(--purple-4)]'>
-                        ← Apps
-                    </Link>
-                    <div className='flex items-center gap-2'>
-                        <button
-                            onClick={() => setIsMobileModelSelectorOpen(true)}
-                            className='flex items-center gap-1.5 px-3 py-1.5 bg-white border border-[var(--border-light)] rounded-full shadow-sm text-xs font-bold uppercase tracking-wider text-[var(--fg-4)]'
-                        >
-                            <span>{availableModels.find(m => m.id === selectedModel)?.name}</span>
-                            <span className='text-[10px]'>▼</span>
-                        </button>
-                        <button
-                            onClick={() => setIsMobileSettingsOpen(true)}
-                            className='w-8 h-8 rounded-full bg-white border border-[var(--border-light)] flex items-center justify-center text-[var(--fg-4)] shadow-sm'
-                        >
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.74v-.47a2 2 0 0 1 1-1.74l.15-.1a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
-                                <circle cx="12" cy="12" r="3" />
-                            </svg>
-                        </button>
+            <main className='notion-page' style={{ height: '100vh', overflow: 'hidden' }}>
+                {/* Header */}
+                <header className='notion-header loaded' style={{ position: 'sticky' }}>
+                    <div className='notion-nav' style={{ justifyContent: 'space-between', maxWidth: '100%' }}>
+                        <Link href='/apps' className='notion-nav-link'>
+                            <ArrowLeftIcon className='notion-nav-icon' />
+                            <span className='hidden sm:inline'>Back to Apps</span>
+                            <span className='sm:hidden'>Apps</span>
+                        </Link>
+                        <div className='md:hidden flex items-center gap-1.5'>
+                            <button
+                                onClick={() => setIsMobileModelSelectorOpen(true)}
+                                className='notion-nav-link'
+                                style={{ padding: '4px 8px' }}
+                            >
+                                <span className='text-xs'>{availableModels.find(m => m.id === selectedModel)?.name.split(' ')[0]}</span>
+                                <ChevronDownIcon className='notion-nav-icon' style={{ width: '12px', height: '12px' }} />
+                            </button>
+                            <button
+                                onClick={() => setIsMobileSettingsOpen(true)}
+                                className='notion-nav-link'
+                                style={{ padding: '6px' }}
+                            >
+                                <Cog6ToothIcon className='notion-nav-icon' />
+                            </button>
+                        </div>
+                        <Link href='/' className='notion-nav-link hidden md:flex' style={{ fontWeight: 600 }}>
+                            {strings.NAME}
+                        </Link>
                     </div>
                 </header>
 
-                {/* Left Sidebar (Desktop) */}
-                <aside className='hidden md:flex flex-col w-80 h-full border-r border-[var(--border-light)] bg-white/50 backdrop-blur-xl z-20'>
-                    <div className='p-6 border-b border-[var(--border-light)]'>
-                        <div className='flex items-center gap-3 mb-6'>
-                            <div className='w-3 h-3 rounded-full bg-[var(--purple-4)]' />
-                            <span className='font-bold uppercase tracking-widest text-sm text-[var(--fg-4)]'>AI Studio</span>
-                        </div>
-                        <nav className='flex flex-col gap-2'>
-                            <Link href='/apps' className='text-xs font-bold uppercase tracking-wider text-muted hover:text-[var(--purple-4)] transition-colors flex items-center gap-2'>
-                                <span>←</span> Back to Apps
-                            </Link>
-                        </nav>
-                    </div>
-
-                    <div className='flex-grow overflow-y-auto p-4 space-y-6'>
-                        <div>
-                            <h3 className='text-[10px] font-bold uppercase tracking-[0.2em] text-muted mb-4 px-2'>Select Model</h3>
-                            <div className='space-y-2'>
+                <div style={{ display: 'flex', height: 'calc(100vh - 57px)', overflow: 'hidden' }}>
+                    {/* Left Sidebar (Desktop) */}
+                    <aside className='hidden md:flex flex-col' style={{ width: '280px', borderRight: '1px solid rgba(55, 53, 47, 0.09)', backgroundColor: '#ffffff' }}>
+                        <div style={{ padding: '20px 16px', borderBottom: '1px solid rgba(55, 53, 47, 0.09)' }}>
+                            <div style={{ fontSize: '12px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '12px' }}>
+                                Select Model
+                            </div>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                                 {availableModels.map(m => (
                                     <button
                                         key={m.id}
                                         onClick={() => setSelectedModel(m.id)}
-                                        className={`w-full p-3 text-left rounded-xl transition-all flex items-center gap-3 group ${selectedModel === m.id
-                                            ? 'bg-white shadow-md border border-[var(--purple-2)] ring-1 ring-[var(--purple-2)]'
-                                            : 'hover:bg-white/60 border border-transparent hover:border-[var(--border-light)]'
-                                            }`}
+                                        className='notion-chat-model-btn'
+                                        style={{
+                                            backgroundColor: selectedModel === m.id ? 'rgba(55, 53, 47, 0.06)' : 'transparent',
+                                            borderColor: selectedModel === m.id ? 'rgba(55, 53, 47, 0.12)' : 'transparent',
+                                        }}
                                     >
-                                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center p-1 transition-colors ${selectedModel === m.id ? 'bg-[var(--purple-1)]' : 'bg-white border border-[var(--border-light)]'}`}>
-                                            <Image src={m.icon} alt={m.name} width={20} height={20} className='object-contain' />
-                                        </div>
-                                        <div>
-                                            <div className={`text-xs font-bold uppercase tracking-wider ${selectedModel === m.id ? 'text-[var(--purple-4)]' : 'text-[var(--fg-4)]'}`}>
+                                        <Image src={m.icon} alt={m.name} width={18} height={18} className='object-contain' />
+                                        <div style={{ flex: 1, textAlign: 'left', minWidth: 0 }}>
+                                            <div style={{ fontSize: '13px', fontWeight: 500, color: '#37352f', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                                 {m.name}
                                             </div>
-                                            <div className='text-[10px] text-muted font-medium opacity-70'>
+                                            <div style={{ fontSize: '11px', color: 'rgba(55, 53, 47, 0.5)' }}>
                                                 {m.description}
                                             </div>
                                         </div>
@@ -250,115 +239,108 @@ export default function Chat() {
                             </div>
                         </div>
 
-                        <div>
-                            <h3 className='text-[10px] font-bold uppercase tracking-[0.2em] text-muted mb-4 px-2'>System Configuration</h3>
+                        <div style={{ padding: '20px 16px', flex: 1, overflowY: 'auto' }}>
+                            <div style={{ fontSize: '12px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '12px' }}>
+                                System Prompt
+                            </div>
                             <textarea
                                 value={systemPrompt}
                                 onChange={e => setSystemPrompt(e.target.value)}
-                                className='w-full bg-white border border-[var(--border-light)] p-3 text-xs rounded-xl focus:border-[var(--purple-4)] focus:ring-2 focus:ring-[var(--purple-1)] outline-none transition-all resize-none shadow-sm text-muted font-medium leading-relaxed'
-                                rows={6}
+                                className='notion-chat-textarea'
+                                rows={8}
                                 placeholder="Enter system prompt..."
                             />
                         </div>
-                    </div>
 
-                    <div className='p-4 border-t border-[var(--border-light)]'>
-                        <button
-                            onClick={() => setMessages([])}
-                            className='w-full py-2 px-4 rounded-lg border border-red-100 hover:bg-red-50 text-red-500 text-xs font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-2'
-                        >
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
-                            </svg>
-                            Clear History
-                        </button>
-                    </div>
-                </aside>
+                        <div style={{ padding: '16px', borderTop: '1px solid rgba(55, 53, 47, 0.09)' }}>
+                            <button
+                                onClick={() => setMessages([])}
+                                className='notion-chat-clear-btn'
+                            >
+                                Clear History
+                            </button>
+                        </div>
+                    </aside>
 
-                {/* Main Chat Area */}
-                <div className='flex-grow flex flex-col h-full relative bg-[#fafbff]'>
-                    {/* Floating decorations for main area */}
-                    <div className='absolute top-0 right-0 w-[600px] h-[600px] bg-[var(--purple-1)] opacity-30 rounded-full blur-3xl pointer-events-none -translate-y-1/2 translate-x-1/2' />
-
-                    <div className='flex-grow overflow-y-auto p-4 md:p-8 scrollbar-hide space-y-6 pb-32 z-10'>
-                        {showWelcome && (
-                            <div className='flex flex-col items-center justify-center h-full text-center space-y-6 opacity-0 animate-fade-in-up' style={{ animationFillMode: 'forwards' }}>
-                                <div>
-                                    <h1 className='text-2xl font-bold text-[var(--fg-4)] mb-2'>Feel free to chat and ask anything!</h1>
-                                    <p className='text-muted max-w-lg mx-auto leading-relaxed'>
-                                        Your chats are <span className='font-bold text-[var(--purple-4)]'>NEVER EVER</span> saved anywhere.
-                                        <br />
-                                        This is totally free (for now), so have fun! ✨
-                                    </p>
+                    {/* Main Chat Area */}
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', backgroundColor: '#ffffff', overflow: 'hidden' }}>
+                        <div className='scrollbar-hide' style={{ flex: 1, overflowY: 'auto', padding: '24px', paddingBottom: '120px' }}>
+                            {showWelcome && (
+                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', textAlign: 'center', gap: '16px' }}>
+                                    <div>
+                                        <h1 style={{ fontSize: '24px', fontWeight: 700, color: '#37352f', marginBottom: '8px', letterSpacing: '-0.02em' }}>
+                                            Feel free to chat and ask anything!
+                                        </h1>
+                                        <p style={{ fontSize: '15px', color: 'rgba(55, 53, 47, 0.6)', maxWidth: '500px', margin: '0 auto', lineHeight: '1.6' }}>
+                                            Your chats are <span style={{ fontWeight: 600, color: '#37352f' }}>NEVER EVER</span> saved anywhere.
+                                            <br />
+                                            This is totally free (for now), so have fun!
+                                        </p>
+                                    </div>
                                 </div>
-                            </div>
-                        )}
+                            )}
 
-                        {messages.map((m, i) => (
-                            <MessageItem key={i} message={m} />
-                        ))}
+                            {messages.map((m, i) => (
+                                <MessageItem key={i} message={m} />
+                            ))}
 
-                        {streamingMessage && (
-                            <div className='flex justify-start animate-fade-in-up'>
-                                <div className='max-w-[90%] md:max-w-3xl bg-white rounded-2xl rounded-tl-sm px-6 py-5 shadow-sm border border-[var(--border-light)]'>
-                                    <div className='flex items-center gap-2 mb-3 pb-3 border-b border-gray-100'>
-                                        <span className='text-[10px] font-bold uppercase tracking-widest text-[var(--purple-4)]'>
+                            {streamingMessage && (
+                                <div className='notion-chat-message-wrapper'>
+                                    <div className='notion-chat-message notion-chat-message-ai'>
+                                        <div style={{ fontSize: '11px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.4)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '12px', paddingBottom: '8px', borderBottom: '1px solid rgba(55, 53, 47, 0.06)' }}>
                                             Thinking...
-                                        </span>
-                                    </div>
-                                    <div className='prose prose-sm max-w-none blog-content'>
-                                        <ReactMarkdown
-                                            remarkPlugins={[remarkGfm]}
-                                            rehypePlugins={[rehypeRaw]}
-                                            components={{
-                                                code: CodeBlock as any,
-                                                table: ({ children }) => <div className="table-wrapper"><table className="w-full">{children}</table></div>,
-                                                thead: ({ children }) => <thead className="bg-[var(--gray-1)]">{children}</thead>,
-                                                th: ({ children }) => <th className="p-3 text-left font-bold text-xs uppercase tracking-wider text-[var(--fg-4)] border-b border-[var(--border-light)]">{children}</th>,
-                                                td: ({ children }) => <td className="p-3 border-b border-[var(--border-light)] text-sm">{children}</td>,
-                                            }}
-                                        >
-                                            {streamingMessage}
-                                        </ReactMarkdown>
-                                        <span className='inline-block w-1.5 h-4 bg-[var(--purple-4)] ml-1 animate-pulse align-middle rounded-full' />
+                                        </div>
+                                        <div className='notion-blog-content'>
+                                            <ReactMarkdown
+                                                remarkPlugins={[remarkGfm]}
+                                                rehypePlugins={[rehypeRaw]}
+                                                components={{
+                                                    code: CodeBlock as any,
+                                                    table: ({ children }) => <div className="table-wrapper"><table>{children}</table></div>,
+                                                }}
+                                            >
+                                                {streamingMessage}
+                                            </ReactMarkdown>
+                                            <span className='notion-chat-cursor' />
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        )}
+                            )}
 
-                        {isLoading && !streamingMessage && (
-                            <div className='flex justify-start animate-fade-in-up'>
-                                <div className='max-w-[90%] md:max-w-3xl bg-white rounded-2xl rounded-tl-sm px-6 py-4 shadow-sm border border-[var(--border-light)]'>
-                                    <div className='flex items-center gap-1.5'>
-                                        <div className='w-2 h-2 rounded-full bg-[var(--purple-4)] animate-bounce' style={{ animationDelay: '0ms' }} />
-                                        <div className='w-2 h-2 rounded-full bg-[var(--purple-4)] animate-bounce' style={{ animationDelay: '150ms' }} />
-                                        <div className='w-2 h-2 rounded-full bg-[var(--purple-4)] animate-bounce' style={{ animationDelay: '300ms' }} />
+                            {isLoading && !streamingMessage && (
+                                <div className='notion-chat-message-wrapper'>
+                                    <div className='notion-chat-message notion-chat-message-ai'>
+                                        <div className='notion-chat-loading'>
+                                            <div className='notion-chat-loading-dot' style={{ animationDelay: '0ms' }} />
+                                            <div className='notion-chat-loading-dot' style={{ animationDelay: '150ms' }} />
+                                            <div className='notion-chat-loading-dot' style={{ animationDelay: '300ms' }} />
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        )}
-                        <div ref={messagesEndRef} />
-                    </div>
+                            )}
+                            <div ref={messagesEndRef} />
+                        </div>
 
-                    {/* Input Area */}
-                    <div className='p-4 md:p-6 bg-white/80 backdrop-blur-xl border-t border-[var(--border-light)] z-20'>
-                        <ChatInput
-                            onSend={sendMessage}
-                            isLoading={isLoading}
-                            modelName={availableModels.find(m => m.id === selectedModel)?.name}
-                        />
+                        {/* Input Area */}
+                        <div style={{ padding: '16px 24px', borderTop: '1px solid rgba(55, 53, 47, 0.09)', backgroundColor: '#ffffff' }}>
+                            <ChatInput
+                                onSend={sendMessage}
+                                isLoading={isLoading}
+                                modelName={availableModels.find(m => m.id === selectedModel)?.name}
+                            />
+                        </div>
                     </div>
                 </div>
 
                 {/* Mobile Model Selector Overlay */}
                 {isMobileModelSelectorOpen && (
-                    <div className='fixed inset-0 z-[100] flex items-end justify-center bg-black/40 backdrop-blur-sm p-4 md:hidden' onClick={() => setIsMobileModelSelectorOpen(false)}>
-                        <div className='w-full max-w-sm bg-white rounded-2xl shadow-2xl animate-slide-up overflow-hidden border border-[var(--border-light)]' onClick={e => e.stopPropagation()}>
-                            <div className='p-4 border-b border-[var(--border-light)] flex justify-between items-center bg-[var(--bg-2)]'>
-                                <span className='text-xs font-bold uppercase tracking-widest text-[var(--fg-4)]'>Select Model</span>
-                                <button onClick={() => setIsMobileModelSelectorOpen(false)} className='w-6 h-6 rounded-full bg-white border border-[var(--border-light)] flex items-center justify-center text-muted'>✕</button>
+                    <div className='notion-mobile-overlay' onClick={() => setIsMobileModelSelectorOpen(false)}>
+                        <div className='notion-mobile-panel' onClick={e => e.stopPropagation()}>
+                            <div className='notion-mobile-panel-header'>
+                                <span>Select Model</span>
+                                <button onClick={() => setIsMobileModelSelectorOpen(false)} className='notion-mobile-close'>✕</button>
                             </div>
-                            <div className='p-2 max-h-[60vh] overflow-y-auto'>
+                            <div style={{ padding: '12px', maxHeight: '60vh', overflowY: 'auto' }}>
                                 {availableModels.map(m => (
                                     <button
                                         key={m.id}
@@ -366,12 +348,17 @@ export default function Chat() {
                                             setSelectedModel(m.id);
                                             setIsMobileModelSelectorOpen(false);
                                         }}
-                                        className={`w-full p-3 text-left rounded-xl transition-all flex items-center gap-3 ${selectedModel === m.id ? 'bg-[var(--purple-1)] border border-[var(--purple-2)]' : 'hover:bg-[var(--bg-2)] border border-transparent'}`}
+                                        className='notion-chat-model-btn'
+                                        style={{
+                                            backgroundColor: selectedModel === m.id ? 'rgba(55, 53, 47, 0.06)' : 'transparent',
+                                            borderColor: selectedModel === m.id ? 'rgba(55, 53, 47, 0.12)' : 'transparent',
+                                            marginBottom: '6px',
+                                        }}
                                     >
-                                        <Image src={m.icon} alt={m.name} width={24} height={24} className='object-contain bg-white rounded-md p-0.5 border border-[var(--border-light)]' />
-                                        <div className='flex flex-col'>
-                                            <span className={`text-xs font-bold uppercase tracking-wider ${selectedModel === m.id ? 'text-[var(--purple-4)]' : 'text-[var(--fg-4)]'}`}>{m.name}</span>
-                                            <span className='text-[10px] text-muted'>{m.description}</span>
+                                        <Image src={m.icon} alt={m.name} width={20} height={20} className='object-contain' />
+                                        <div style={{ flex: 1, textAlign: 'left' }}>
+                                            <div style={{ fontSize: '13px', fontWeight: 500, color: '#37352f' }}>{m.name}</div>
+                                            <div style={{ fontSize: '11px', color: 'rgba(55, 53, 47, 0.5)' }}>{m.description}</div>
                                         </div>
                                     </button>
                                 ))}
@@ -382,32 +369,34 @@ export default function Chat() {
 
                 {/* Mobile Settings Overlay */}
                 {isMobileSettingsOpen && (
-                    <div className='fixed inset-0 z-[100] flex items-end justify-center bg-black/40 backdrop-blur-sm p-4 md:hidden' onClick={() => setIsMobileSettingsOpen(false)}>
-                        <div className='w-full max-w-sm bg-white rounded-2xl shadow-2xl animate-slide-up overflow-hidden border border-[var(--border-light)]' onClick={e => e.stopPropagation()}>
-                            <div className='p-4 border-b border-[var(--border-light)] flex justify-between items-center bg-[var(--bg-2)]'>
-                                <span className='text-xs font-bold uppercase tracking-widest text-[var(--fg-4)]'>System Configuration</span>
-                                <button onClick={() => setIsMobileSettingsOpen(false)} className='w-6 h-6 rounded-full bg-white border border-[var(--border-light)] flex items-center justify-center text-muted'>✕</button>
+                    <div className='notion-mobile-overlay' onClick={() => setIsMobileSettingsOpen(false)}>
+                        <div className='notion-mobile-panel' onClick={e => e.stopPropagation()}>
+                            <div className='notion-mobile-panel-header'>
+                                <span>System Prompt</span>
+                                <button onClick={() => setIsMobileSettingsOpen(false)} className='notion-mobile-close'>✕</button>
                             </div>
-                            <div className='p-4'>
+                            <div style={{ padding: '16px' }}>
                                 <textarea
                                     value={systemPrompt}
                                     onChange={e => setSystemPrompt(e.target.value)}
-                                    className='w-full bg-[var(--bg-2)] border border-[var(--border-light)] p-3 text-xs rounded-xl focus:border-[var(--purple-4)] focus:ring-2 focus:ring-[var(--purple-1)] outline-none transition-all resize-none shadow-sm text-muted font-medium leading-relaxed'
+                                    className='notion-chat-textarea'
                                     rows={8}
                                     placeholder="Enter system prompt..."
                                 />
-                                <div className='mt-4 flex justify-end gap-2'>
+                                <div style={{ marginTop: '16px', display: 'flex', gap: '8px' }}>
                                     <button
                                         onClick={() => setMessages([])}
-                                        className='py-2 px-4 rounded-lg border border-red-100 bg-red-50 text-red-500 text-xs font-bold uppercase tracking-wider transition-colors'
+                                        className='notion-chat-clear-btn'
+                                        style={{ flex: 1 }}
                                     >
                                         Clear History
                                     </button>
                                     <button
                                         onClick={() => setIsMobileSettingsOpen(false)}
-                                        className='py-2 px-4 rounded-lg bg-[var(--fg-4)] text-white text-xs font-bold uppercase tracking-wider transition-colors shadow-md'
+                                        className='notion-action-btn notion-action-primary'
+                                        style={{ flex: 1 }}
                                     >
-                                        Save & Close
+                                        Done
                                     </button>
                                 </div>
                             </div>

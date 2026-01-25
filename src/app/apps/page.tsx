@@ -5,6 +5,51 @@ import Link from 'next/link';
 import { strings } from '../constants/strings';
 import { apps } from '../constants/apps';
 import { WebVitals } from '@/components/SEO/WebVitals';
+import {
+    DevicePhoneMobileIcon,
+    PencilSquareIcon,
+    DocumentTextIcon,
+    ChatBubbleLeftRightIcon,
+    UserIcon,
+    MagnifyingGlassIcon,
+    BookOpenIcon,
+    CircleStackIcon,
+    ChartBarIcon,
+    TrophyIcon,
+    LinkIcon,
+    SparklesIcon,
+    CommandLineIcon,
+    CubeIcon,
+    CubeTransparentIcon,
+    LockClosedIcon,
+    EyeIcon,
+    CalculatorIcon,
+    ArrowTrendingUpIcon,
+} from '@heroicons/react/24/outline';
+
+// Map apps to their icons
+const getAppIcon = (title: string) => {
+    const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+        'AI Chat': ChatBubbleLeftRightIcon,
+        'Chat w/ John': UserIcon,
+        'Resume Screen': MagnifyingGlassIcon,
+        'PDF Chat (Embeddings)': BookOpenIcon,
+        'Knowledge Graph': CircleStackIcon,
+        'LLM Serialization': ChartBarIcon,
+        'LLM Leaderboard': TrophyIcon,
+        'Link Shortener': LinkIcon,
+        'AI Diagram Generator': SparklesIcon,
+        'Resume Parser': DocumentTextIcon,
+        'Color Gamble': CubeIcon,
+        'Sort Viz': CommandLineIcon,
+        'Blockchain 101': CubeTransparentIcon,
+        'Hash Lab': LockClosedIcon,
+        'Privacy Scanner': EyeIcon,
+        'California Tax Calculator': CalculatorIcon,
+        'Founder Dilution': ArrowTrendingUpIcon,
+    };
+    return iconMap[title] || DocumentTextIcon;
+};
 
 export default function Apps() {
     const [isLoaded, setIsLoaded] = useState(false);
@@ -17,90 +62,59 @@ export default function Apps() {
     return (
         <>
             <WebVitals />
-            <main className='relative min-h-screen bg-[#fafbff] overflow-hidden selection:bg-[var(--purple-2)] selection:text-[var(--purple-4)]'>
-                {/* Floating Decorations */}
-                <div className='absolute top-0 right-0 w-[600px] h-[600px] bg-[var(--purple-1)] opacity-40 rounded-full blur-3xl pointer-events-none -translate-y-1/2 translate-x-1/2' />
-                <div className='absolute bottom-0 left-0 w-[400px] h-[400px] bg-blue-100 opacity-40 rounded-full blur-3xl pointer-events-none translate-y-1/2 -translate-x-1/2' />
-
-                {/* Header Navigation */}
-                <header className={`fixed top-0 left-0 right-0 z-50 px-6 py-4 transition-all duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
-                    <div className='max-w-6xl mx-auto flex justify-between items-center'>
-                        <Link href='/' className='text-sm font-bold uppercase tracking-widest text-[var(--fg-4)] hover:text-[var(--purple-4)] transition-colors'>
+            <main className='notion-page'>
+                {/* Header */}
+                <header className={`notion-header ${isLoaded ? 'loaded' : ''}`}>
+                    <div className='notion-nav' style={{ justifyContent: 'space-between', maxWidth: '1100px' }}>
+                        <Link href='/' className='notion-nav-link' style={{ fontWeight: 600 }}>
                             {strings.NAME}
                         </Link>
-                        <nav className='flex items-center gap-6 md:gap-10'>
-                            {[
-                                { label: 'Apps', href: '/apps' },
-                                { label: 'Blog', href: '/blog' },
-                                { label: 'Resume', href: '/apps/resume' },
-                            ].map((link) => (
-                                <Link
-                                    key={link.label}
-                                    href={link.href}
-                                    className={`text-[10px] font-bold uppercase tracking-[0.2em] transition-all ${link.href === '/apps' ? 'text-[var(--purple-4)]' : 'text-muted hover:text-[var(--purple-4)]'
-                                        }`}
-                                >
-                                    {link.label}
-                                </Link>
-                            ))}
-                        </nav>
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                            <Link href='/apps' className='notion-nav-link' style={{ color: '#37352f' }}>
+                                <DevicePhoneMobileIcon className='notion-nav-icon' />
+                                Apps
+                            </Link>
+                            <Link href='/blog' className='notion-nav-link'>
+                                <PencilSquareIcon className='notion-nav-icon' />
+                                Blog
+                            </Link>
+                            <Link href='/apps/resume' className='notion-nav-link'>
+                                <DocumentTextIcon className='notion-nav-icon' />
+                                Resume
+                            </Link>
+                        </div>
                     </div>
                 </header>
 
-                <div className={`container mx-auto px-6 pt-32 pb-20 transition-all duration-1000 transform ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-
-                    {/* Header Section */}
-                    <div className='max-w-4xl mx-auto mb-16 text-center'>
-                        <h1 className='text-4xl md:text-5xl font-bold mb-4 text-[var(--fg-4)]'>
-                            Applications & Tools
-                        </h1>
-                        <p className='text-lg text-muted max-w-2xl mx-auto'>
-                            A collection of production-ready tools, prototypes, and experiments.
-                        </p>
+                <div className={`notion-content ${isLoaded ? 'loaded' : ''}`} style={{ maxWidth: '1100px' }}>
+                    {/* Title Section */}
+                    <div className='notion-title-block'>
+                        <h1 className='notion-title'>Applications & Tools</h1>
+                        <div className='notion-subtitle'>Random apps I made that might have some value to somebody</div>
                     </div>
 
-                    {/* Apps Grid */}
-                    <div className='grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6 max-w-6xl mx-auto'>
-                        {apps.map((app) => (
-                            <Link
-                                key={app.title}
-                                href={app.href}
-                                className='group'
-                            >
-                                <div className='card h-full p-4 md:p-8 hover:border-[var(--purple-2)] hover:shadow-lg transition-all duration-300 flex flex-col justify-between'>
-                                    <div>
-                                        <div className='flex items-start justify-between mb-3 md:mb-6'>
-                                            <span className='text-2xl md:text-4xl group-hover:scale-110 transition-transform duration-300'>
-                                                {app.emoji}
-                                            </span>
-                                            <div className='hidden md:block px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider bg-[var(--purple-1)] text-[var(--purple-4)]'>
-                                                Open
-                                            </div>
-                                        </div>
-
-                                        <h2 className={`font-bold mb-1 md:mb-2 group-hover:text-[var(--purple-4)] transition-colors truncate ${app.title.length > 18 ? 'text-xs md:text-lg' : 'text-sm md:text-xl'}`}>
-                                            {app.title}
-                                        </h2>
-
-                                        <p className='text-muted text-[10px] md:text-sm leading-relaxed mb-0 md:mb-6 line-clamp-2 md:line-clamp-3'>
-                                            {app.subtitle}
-                                        </p>
+                    {/* All Apps List */}
+                    <div className='notion-apps-list'>
+                        {apps.map((app) => {
+                            const IconComponent = getAppIcon(app.title);
+                            return (
+                                <Link key={app.title} href={app.href} className='notion-app-item'>
+                                    <div className='notion-app-icon-wrapper'>
+                                        <IconComponent className='notion-app-icon' />
                                     </div>
-
-                                    <div className='hidden md:flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-[var(--purple-4)] opacity-0 group-hover:opacity-100 transition-all transform translate-y-2 group-hover:translate-y-0 mt-auto'>
-                                        <span>Launch App</span>
-                                        <span>→</span>
+                                    <div className='notion-app-info'>
+                                        <div className='notion-app-name'>{app.title}</div>
+                                        <div className='notion-app-desc'>{app.subtitle}</div>
                                     </div>
-                                </div>
-                            </Link>
-                        ))}
+                                    <div className='notion-app-arrow'>→</div>
+                                </Link>
+                            );
+                        })}
                     </div>
 
                     {/* Footer */}
-                    <footer className='py-20 text-center text-muted border-t border-[var(--border-light)] mt-20 max-w-4xl mx-auto'>
-                        <p className='text-[10px] font-bold uppercase tracking-[0.4em] opacity-30'>
-                            © 2026 {strings.NAME}
-                        </p>
+                    <footer className='notion-footer'>
+                        © 2026 {strings.NAME}
                     </footer>
                 </div>
             </main>

@@ -5,6 +5,13 @@ import Link from 'next/link';
 import { getAllBlogPosts } from '@/blog/registry';
 import { WebVitals } from '@/components/SEO/WebVitals';
 import { strings } from '../constants/strings';
+import {
+    DevicePhoneMobileIcon,
+    PencilSquareIcon,
+    DocumentTextIcon,
+    EyeIcon,
+    CalendarIcon,
+} from '@heroicons/react/24/outline';
 
 async function getAllBlogViewCounts(): Promise<Record<string, number>> {
     try {
@@ -39,7 +46,6 @@ export default function BlogPage() {
         return () => clearTimeout(timer);
     }, []);
 
-    // Format number helper
     const formatNumber = (num: number) => {
         return num.toLocaleString('en-US');
     };
@@ -47,110 +53,81 @@ export default function BlogPage() {
     return (
         <>
             <WebVitals />
-            <main className='relative min-h-screen overflow-hidden selection:bg-[var(--purple-2)] selection:text-[var(--purple-4)]'>
-                {/* Floating Decorations */}
-                <div className='float-decoration float-1' />
-                <div className='float-decoration float-2' />
-
-                {/* Header Navigation */}
-                <header className={`fixed top-0 left-0 right-0 z-50 px-6 py-4 transition-all duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
-                    <div className='max-w-6xl mx-auto flex justify-between items-center'>
-                        <Link href='/' className='text-sm font-bold uppercase tracking-widest text-[var(--fg-4)] hover:text-[var(--purple-4)] transition-colors'>
+            <main className='notion-page'>
+                {/* Header */}
+                <header className={`notion-header ${isLoaded ? 'loaded' : ''}`}>
+                    <div className='notion-nav' style={{ justifyContent: 'space-between', maxWidth: '1100px' }}>
+                        <Link href='/' className='notion-nav-link' style={{ fontWeight: 600 }}>
                             {strings.NAME}
                         </Link>
-                        <nav className='flex items-center gap-6 md:gap-10'>
-                            {[
-                                { label: 'Apps', href: '/apps' },
-                                { label: 'Blog', href: '/blog' },
-                                { label: 'Resume', href: '/apps/resume' },
-                            ].map((link) => (
-                                <Link
-                                    key={link.label}
-                                    href={link.href}
-                                    className={`text-[10px] font-bold uppercase tracking-[0.2em] transition-all ${link.href === '/blog' ? 'text-[var(--purple-4)]' : 'text-muted hover:text-[var(--purple-4)]'
-                                        }`}
-                                >
-                                    {link.label}
-                                </Link>
-                            ))}
-                        </nav>
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                            <Link href='/apps' className='notion-nav-link'>
+                                <DevicePhoneMobileIcon className='notion-nav-icon' />
+                                Apps
+                            </Link>
+                            <Link href='/blog' className='notion-nav-link' style={{ color: '#37352f' }}>
+                                <PencilSquareIcon className='notion-nav-icon' />
+                                Blog
+                            </Link>
+                            <Link href='/apps/resume' className='notion-nav-link'>
+                                <DocumentTextIcon className='notion-nav-icon' />
+                                Resume
+                            </Link>
+                        </div>
                     </div>
                 </header>
 
-                <div className={`container mx-auto px-6 pt-32 pb-20 transition-all duration-1000 transform ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-
-                    {/* Header Section */}
-                    <div className='max-w-4xl mx-auto mb-16 text-center'>
-                        <h1 className='text-4xl md:text-5xl font-bold mb-4 text-[var(--fg-4)]'>
-                            Thoughts & Notes
-                        </h1>
-                        <p className='text-lg text-muted max-w-2xl mx-auto'>
-                            Exploring distributed systems, AI engineering, and interface design.
-                        </p>
+                <div className={`notion-content ${isLoaded ? 'loaded' : ''}`} style={{ maxWidth: '1100px' }}>
+                    {/* Title Section */}
+                    <div className='notion-title-block'>
+                        <h1 className='notion-title'>Thoughts & Notes</h1>
+                        <div className='notion-subtitle'>Exploring distributed systems, AI engineering, and interface design</div>
                     </div>
 
-                    {/* Blog Grid */}
-                    <div className='grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto'>
-                        {posts.map((post) => (
-                            <Link
-                                key={post.slug}
-                                href={`/blog/${post.slug}`}
-                                className='group'
-                            >
-                                <div className='card h-full p-8 hover:border-[var(--purple-2)] hover:shadow-lg transition-all duration-300 flex flex-col'>
-                                    <div className='flex items-center justify-between mb-4'>
-                                        <div className='flex items-center gap-2'>
-                                            <span className='px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider bg-[var(--purple-1)] text-[var(--purple-4)]'>
-                                                Article
-                                            </span>
-                                            <span className='text-[10px] text-muted font-bold uppercase tracking-wider'>
-                                                {post.date}
-                                            </span>
+                    {/* Blog Posts List */}
+                    {posts.length > 0 ? (
+                        <div className='notion-blog-list'>
+                            {posts.map((post) => (
+                                <Link key={post.slug} href={`/blog/${post.slug}`} className='notion-blog-item'>
+                                    <div className='notion-blog-main'>
+                                        <div className='notion-blog-title'>{post.title}</div>
+                                        <div className='notion-blog-desc'>{post.description}</div>
+                                        <div className='notion-blog-meta'>
+                                            <div className='notion-blog-meta-item'>
+                                                <CalendarIcon className='notion-blog-meta-icon' />
+                                                <span>{post.date}</span>
+                                            </div>
+                                            {viewCounts[post.slug] > 0 && (
+                                                <div className='notion-blog-meta-item'>
+                                                    <EyeIcon className='notion-blog-meta-icon' />
+                                                    <span>{formatNumber(viewCounts[post.slug])} views</span>
+                                                </div>
+                                            )}
                                         </div>
-                                        {viewCounts[post.slug] > 0 && (
-                                            <div className='flex items-center gap-1 text-[10px] font-bold text-muted'>
-                                                <span>{formatNumber(viewCounts[post.slug])}</span>
-                                                <span>views</span>
+                                        {post.tags.length > 0 && (
+                                            <div className='notion-blog-tags'>
+                                                {post.tags.map((tag) => (
+                                                    <span key={tag} className='notion-blog-tag'>
+                                                        {tag}
+                                                    </span>
+                                                ))}
                                             </div>
                                         )}
                                     </div>
-
-                                    <h2 className='text-2xl font-bold mb-4 group-hover:text-[var(--purple-4)] transition-colors'>
-                                        {post.title}
-                                    </h2>
-
-                                    <p className='text-muted leading-relaxed mb-6 flex-grow'>
-                                        {post.description}
-                                    </p>
-
-                                    <div className='flex flex-wrap gap-2 mt-auto'>
-                                        {post.tags.map((tag) => (
-                                            <span
-                                                key={tag}
-                                                className='text-[10px] font-bold uppercase tracking-wider text-muted opacity-60 group-hover:opacity-100 transition-opacity'
-                                            >
-                                                #{tag}
-                                            </span>
-                                        ))}
-                                    </div>
-                                </div>
-                            </Link>
-                        ))}
-
-                        {posts.length === 0 && (
-                            <div className='col-span-full text-center py-20'>
-                                <div className='text-6xl mb-4'>📭</div>
-                                <h3 className='text-xl font-bold mb-2'>No posts found</h3>
-                                <p className='text-muted'>Check back soon for new content.</p>
-                            </div>
-                        )}
-                    </div>
+                                </Link>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className='notion-empty-state'>
+                            <div className='notion-empty-icon'>📭</div>
+                            <div className='notion-empty-title'>No posts yet</div>
+                            <div className='notion-empty-desc'>Check back soon for new content</div>
+                        </div>
+                    )}
 
                     {/* Footer */}
-                    <footer className='py-20 text-center text-muted border-t border-[var(--border-light)] mt-20 max-w-4xl mx-auto'>
-                        <p className='text-[10px] font-bold uppercase tracking-[0.4em] opacity-30'>
-                            © 2026 {strings.NAME}
-                        </p>
+                    <footer className='notion-footer'>
+                        © 2026 {strings.NAME}
                     </footer>
                 </div>
             </main>
