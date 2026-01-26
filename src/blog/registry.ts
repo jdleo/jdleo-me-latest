@@ -78,6 +78,22 @@ export const blogRegistry: BlogPost[] = [
         ],
         description: 'A speculative deep dive on whether AI will augment or replace new software engineers.',
     },
+    {
+        slug: 'ai-political-compass',
+        title: 'Which AI Models Lean in Which Political Direction?',
+        date: '2026-01-25',
+        tags: [
+            'ai',
+            'llm',
+            'political compass',
+            'bias',
+            'experiment',
+            'politics',
+            'alignment',
+        ],
+        description:
+            'I asked the top LLMs 20 different political compass questions to figure out how left/right/libertarian/authoritarian they were.',
+    },
 ];
 
 export function getBlogPost(slug: string): BlogPost | undefined {
