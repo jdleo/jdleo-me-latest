@@ -208,6 +208,13 @@ export default function Home() {
                                         <div className='notion-project-desc'>Fastest Link Shortener</div>
                                     </div>
                                 </a>
+                                <a href='https://stockquantai.com?ref=jdleo.me' target='_blank' className='notion-project-item'>
+                                    <span className='notion-project-dot' style={{ backgroundColor: '#7c3aed' }} />
+                                    <div className='notion-project-info'>
+                                        <div className='notion-project-name'>Stock Quant AI</div>
+                                        <div className='notion-project-desc'>AI-Powered Equity Research</div>
+                                    </div>
+                                </a>
                             </div>
                         </div>
 
