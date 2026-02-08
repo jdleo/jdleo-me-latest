@@ -2,7 +2,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-const RICKROLL = 'https://www.youtube.com/watch?v=dQw4w9WcXcQ';
+const RICKROLL = 'https://youtu.be/0q6yphdZhUA?si=ij56TT_N7iX1D4sv';
 
 const SCANNER_PREFIXES = [
     '/wp-', '/wordpress', '/wp2',
