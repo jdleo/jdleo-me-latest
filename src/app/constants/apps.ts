@@ -43,12 +43,6 @@ export const apps: MiniApp[] = [
         href: '/apps/serialization',
     },
     {
-        title: 'LLM Leaderboard',
-        subtitle: 'Vote on head-to-head LLM battles and see which models reign supreme.',
-        emoji: '🏆',
-        href: '/apps/llm-leaderboard',
-    },
-    {
         title: 'Link Shortener',
         subtitle: 'Create short links for your URLs with free analytics.',
         emoji: '🔗',
