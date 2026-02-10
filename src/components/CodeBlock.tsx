@@ -1,5 +1,5 @@
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { oneDark } from 'react-syntax-highlighter/dist/cjs/styles/prism';
+import { oneLight } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 
 interface CodeBlockProps {
     inline?: boolean;
@@ -12,21 +12,29 @@ const CodeBlock = ({ inline, className, children, ...props }: CodeBlockProps) =>
     const language = match ? match[1] : '';
 
     return !inline && match ? (
-        <div className='relative rounded-xl overflow-hidden my-6 border border-[var(--gray-4)] shadow-sm bg-[#1e1e2e]'>
-            <div className='absolute top-0 right-0 px-3 py-1 bg-white/5 rounded-bl-lg border-b border-l border-white/5 z-10'>
-                <span className='text-[10px] font-mono text-white/30 uppercase tracking-widest'>{language}</span>
+        <div className='relative rounded-lg overflow-hidden my-6 bg-[#fafafa] border border-gray-200'>
+            <div className='absolute top-3 right-3 px-2 py-1 bg-black/5 rounded text-[10px] font-mono text-gray-500 uppercase tracking-wider'>
+                {language}
             </div>
             <SyntaxHighlighter
-                style={oneDark}
+                style={oneLight}
                 language={language}
                 PreTag="div"
+                showLineNumbers={false}
+                wrapLines={false}
                 customStyle={{
                     margin: 0,
                     background: 'transparent',
                     padding: '1.5rem',
-                    fontSize: '0.9rem',
+                    fontSize: '14px',
                     lineHeight: '1.6',
                     fontFamily: 'var(--font-family-mono)',
+                }}
+                codeTagProps={{
+                    style: {
+                        background: 'transparent',
+                        fontFamily: 'var(--font-family-mono)',
+                    }
                 }}
                 {...props}
             >
@@ -34,7 +42,7 @@ const CodeBlock = ({ inline, className, children, ...props }: CodeBlockProps) =>
             </SyntaxHighlighter>
         </div>
     ) : (
-        <code className='bg-[var(--purple-1)] text-[var(--purple-4)] px-1.5 py-0.5 rounded-md text-[0.9em] font-mono border border-[var(--purple-2)] align-middle' {...props}>
+        <code className='bg-[var(--purple-1)] text-[var(--purple-4)] px-1.5 py-0.5 rounded text-[0.9em] font-mono border border-[var(--purple-2)]' {...props}>
             {children}
         </code>
     );

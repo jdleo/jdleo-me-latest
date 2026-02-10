@@ -20,11 +20,18 @@ export async function POST(req: Request) {
 
         // Check if model is in the allowed list
         if (!ALLOWED_MODELS.includes(model)) {
+            // Get IP address from headers
+            const forwarded = req.headers.get('x-forwarded-for');
+            const ip = forwarded ? forwarded.split(',')[0].trim() : req.headers.get('x-real-ip') || 'unknown';
+
+            // Log the unauthorized attempt
+            console.log(`[UNAUTHORIZED MODEL] IP: ${ip}, Model: ${model}`);
+
             const stream = new ReadableStream({
                 start(controller) {
                     const contentChunk = `data: ${JSON.stringify({
                         type: 'content',
-                        content: "bro, don't be cheap",
+                        content: `bro, don't be cheap. IP = ${ip}`,
                     })}\n\n`;
                     controller.enqueue(new TextEncoder().encode(contentChunk));
 
