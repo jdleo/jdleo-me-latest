@@ -1,11 +1,48 @@
 import { NextResponse } from 'next/server';
 
+const ALLOWED_MODELS = [
+    'openai/gpt-oss-120b',
+    'anthropic/claude-sonnet-4.5',
+    'openai/gpt-5.2-chat',
+    'openai/o4-mini',
+    'google/gemini-3-pro-preview',
+    'google/gemini-3-flash-preview',
+    'x-ai/grok-4',
+];
+
 export async function POST(req: Request) {
     try {
         const { messages, model, systemPrompt } = await req.json();
 
         if (!process.env.OPENROUTER_API_KEY) {
             return NextResponse.json({ error: 'OpenRouter API key not configured' }, { status: 500 });
+        }
+
+        // Check if model is in the allowed list
+        if (!ALLOWED_MODELS.includes(model)) {
+            const stream = new ReadableStream({
+                start(controller) {
+                    const contentChunk = `data: ${JSON.stringify({
+                        type: 'content',
+                        content: "bro, don't be cheap",
+                    })}\n\n`;
+                    controller.enqueue(new TextEncoder().encode(contentChunk));
+
+                    const doneChunk = `data: ${JSON.stringify({
+                        type: 'done',
+                    })}\n\n`;
+                    controller.enqueue(new TextEncoder().encode(doneChunk));
+                    controller.close();
+                },
+            });
+
+            return new Response(stream, {
+                headers: {
+                    'Content-Type': 'text/plain; charset=utf-8',
+                    'Cache-Control': 'no-cache',
+                    Connection: 'keep-alive',
+                },
+            });
         }
 
         // Convert messages to OpenAI format (OpenRouter uses OpenAI-compatible API)
