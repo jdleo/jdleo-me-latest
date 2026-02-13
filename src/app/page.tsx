@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 import { strings } from './constants/strings';
 import { WebVitals } from '@/components/SEO/WebVitals';
 import { getAllBlogPosts, BlogPost } from '@/blog/registry';
@@ -35,10 +34,10 @@ export default function Home() {
     useEffect(() => {
         const timer = setTimeout(() => setIsLoaded(true), 100);
 
-        axios
-            .get('/api/view')
-            .then(res => {
-                const views = Number(res.data.views) || 0;
+        fetch('/api/view')
+            .then(res => res.json())
+            .then(data => {
+                const views = Number(data.views) || 0;
                 setPageViewCount(views);
             })
             .catch(error => {

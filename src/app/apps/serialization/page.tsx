@@ -4,13 +4,8 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { strings } from '../../constants/strings';
 import { WebVitals } from '@/components/SEO/WebVitals';
-import { encode as encodeToon } from '@toon-format/toon';
-import yaml from 'js-yaml';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import * as toml from '@iarna/toml';
-import { encodeSmart as encodeTonl } from 'tonl';
-import { TRON } from '@tron-format/tron';
 import {
     DevicePhoneMobileIcon,
     PencilSquareIcon,
@@ -233,7 +228,7 @@ export default function Serialization() {
         return convert(obj);
     };
 
-    const serialize = () => {
+    const serialize = async () => {
         setError('');
         setResults([]);
 
@@ -263,8 +258,22 @@ export default function Serialization() {
                 language: 'json',
             });
 
+            const [
+                toonMod,
+                tonlMod,
+                tronMod,
+                yamlMod,
+                tomlMod,
+            ] = await Promise.all([
+                import('@toon-format/toon'),
+                import('tonl'),
+                import('@tron-format/tron'),
+                import('js-yaml'),
+                import('@iarna/toml'),
+            ]);
+
             try {
-                const toonStr = encodeToon(data);
+                const toonStr = toonMod.encode(data);
                 const toonTokens = estimateTokens(toonStr);
                 newResults.push({
                     format: 'TOON',
@@ -279,7 +288,7 @@ export default function Serialization() {
             }
 
             try {
-                const tonlStr = encodeTonl(data);
+                const tonlStr = tonlMod.encodeSmart(data);
                 const tonlTokens = estimateTokens(tonlStr);
                 newResults.push({
                     format: 'TONL',
@@ -294,7 +303,7 @@ export default function Serialization() {
             }
 
             try {
-                const tronStr = TRON.stringify(data);
+                const tronStr = tronMod.TRON.stringify(data);
                 const tronTokens = estimateTokens(tronStr);
                 newResults.push({
                     format: 'TRON',
@@ -309,7 +318,7 @@ export default function Serialization() {
             }
 
             try {
-                const yamlStr = yaml.dump(data);
+                const yamlStr = yamlMod.default.dump(data);
                 const yamlTokens = estimateTokens(yamlStr);
                 newResults.push({
                     format: 'YAML',
@@ -324,7 +333,7 @@ export default function Serialization() {
             }
 
             try {
-                const tomlStr = toml.stringify(data as any);
+                const tomlStr = tomlMod.stringify(data as any);
                 const tomlTokens = estimateTokens(tomlStr);
                 newResults.push({
                     format: 'TOML',

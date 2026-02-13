@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
+import { Geist, Geist_Mono, Inter } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import './globals.css';
@@ -15,6 +15,13 @@ const geistSans = Geist({
 
 const geistMono = Geist_Mono({
     variable: '--font-geist-mono',
+    subsets: ['latin'],
+    display: 'swap',
+    preload: false,
+});
+
+const inter = Inter({
+    variable: '--font-inter',
     subsets: ['latin'],
     display: 'swap',
     preload: false,
@@ -40,8 +47,6 @@ export default function RootLayout({
             <head>
                 <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: personStructuredData }} />
                 <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: websiteStructuredData }} />
-                <link rel='preconnect' href='https://fonts.googleapis.com' />
-                <link rel='preconnect' href='https://fonts.gstatic.com' crossOrigin='anonymous' />
                 <link rel='dns-prefetch' href='https://vercel.com' />
                 <link rel='dns-prefetch' href='https://vitals.vercel-analytics.com' />
                 <link rel='manifest' href='/manifest.json' />
@@ -50,7 +55,7 @@ export default function RootLayout({
                 <meta name='apple-mobile-web-app-status-bar-style' content='default' />
                 <meta name='mobile-web-app-capable' content='yes' />
             </head>
-            <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+            <body className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} antialiased`}>
                 <GhostBio />
                 {children}
                 <Analytics />

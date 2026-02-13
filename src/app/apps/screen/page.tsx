@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useDropzone } from 'react-dropzone';
-import * as pdfjsLib from 'pdfjs-dist';
 import { strings } from '../../constants/strings';
 import { WebVitals } from '@/components/SEO/WebVitals';
 import {
@@ -16,7 +15,11 @@ import {
     ExclamationTriangleIcon,
 } from '@heroicons/react/24/outline';
 
-pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
+const loadPdfJs = async () => {
+    const pdfjs = await import('pdfjs-dist');
+    pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
+    return pdfjs;
+};
 
 interface Question {
     id: number;
@@ -46,6 +49,7 @@ export default function ScreenApp() {
         try {
             setLoading(true);
             const arrayBuffer = await file.arrayBuffer();
+            const pdfjsLib = await loadPdfJs();
             const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
             let fullText = '';
 
