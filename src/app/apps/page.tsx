@@ -25,6 +25,7 @@ import {
     EyeIcon,
     CalculatorIcon,
     ArrowTrendingUpIcon,
+    SignalIcon,
 } from '@heroicons/react/24/outline';
 
 // Map apps to their icons
@@ -47,6 +48,7 @@ const getAppIcon = (title: string) => {
         'Privacy Scanner': EyeIcon,
         'California Tax Calculator': CalculatorIcon,
         'Founder Dilution': ArrowTrendingUpIcon,
+        'AI Sentiment': SignalIcon,
     };
     return iconMap[title] || DocumentTextIcon;
 };

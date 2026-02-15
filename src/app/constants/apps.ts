@@ -19,6 +19,12 @@ export const apps: MiniApp[] = [
         href: '/apps/resume',
     },
     {
+        title: 'AI Sentiment',
+        subtitle: 'Track how public sentiment toward AI shifts week by week across 250 news articles.',
+        emoji: '🌡️',
+        href: '/apps/sentiment',
+    },
+    {
         title: 'Resume Screen',
         subtitle: 'FOR RECRUITERS: Generate ungooglable screening questions from a resume.',
         emoji: '🕵️',
