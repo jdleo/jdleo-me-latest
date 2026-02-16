@@ -80,7 +80,7 @@ export default function Resume() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     messages: apiMessages,
-                    model: 'openai/gpt-5.2-chat',
+                    model: 'anthropic/claude-sonnet-4.5',
                     systemPrompt: resumeSystemPrompt,
                 }),
             });
