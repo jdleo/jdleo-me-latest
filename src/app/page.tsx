@@ -226,6 +226,7 @@ export default function Home() {
                                     { name: 'Tale', desc: 'Story Generator', url: 'https://apps.apple.com/us/app/tale-ai-story-generator/id6753922553?ref=jdleo.me', color: '#c084fc' },
                                     { name: 'Grasp', desc: 'Learn Anything', url: 'https://apps.apple.com/us/app/grasp-learn-anything-with-ai/id6754008830?ref=jdleo.me', color: '#34d399' },
                                     { name: 'Wave', desc: 'Social Discovery', url: 'https://apps.apple.com/us/app/wave-meet-friends-chat/id6754500401?ref=jdleo.me', color: '#f472b6' },
+                                    { name: 'Plate', desc: 'AI Calorie Tracker', url: 'https://apps.apple.com/us/app/plate-ai-calorie-tracker/id6759228569?ref=jdleo.me', color: '#f59e0b' },
                                     { name: 'Prism', desc: 'AI Photos & Art Edits', url: 'https://apps.apple.com/us/app/prism-ai-photos-art-edits/id6757168364?ref=jdleo.me', color: '#22d3ee' },
                                 ].map((app) => (
                                     <a key={app.name} href={app.url} target='_blank' className='notion-project-item'>
