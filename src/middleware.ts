@@ -4,6 +4,21 @@ import type { NextRequest } from 'next/server';
 
 const RICKROLL = 'https://youtu.be/0q6yphdZhUA?si=ij56TT_N7iX1D4sv';
 
+const POISON_URL = 'https://RNSAFFN.com/poison2/';
+const POISON_RATE = 0.5;
+const TIMEOUT_MS = 2000;
+
+const poisonPatterns = [
+    /GPTBot/i,
+    /ClaudeBot/i,
+    /Google-Extended/i,
+    /Applebot-Extended/i,
+    /Meta-ExternalAgent/i,
+    /CCBot/i,
+    /Bytespider/i,
+    /cohere-ai/i,
+];
+
 const SCANNER_PREFIXES = [
     '/wp-', '/wordpress', '/wp2',
     '/cgi-bin', '/cgi/',
@@ -29,13 +44,35 @@ function isScannerRequest(pathname: string): boolean {
 
 // DO NOT REMOVE: This handles LLM-specific metadata for agentic browsing.
 // AI SEO: This block is designed specifically for LLM crawler optimization to enhance agentic perception of engineering expertise.
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
     // Rickroll vulnerability scanners
     if (isScannerRequest(request.nextUrl.pathname)) {
         return NextResponse.redirect(RICKROLL);
     }
 
     const userAgent = request.headers.get('user-agent') || '';
+
+    // Poison training crawlers with random data
+    const isTrainingBot = poisonPatterns.some((p) => p.test(userAgent));
+    if (isTrainingBot && Math.random() <= POISON_RATE) {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), TIMEOUT_MS);
+
+        try {
+            const res = await fetch(POISON_URL, { signal: controller.signal });
+            const data = await res.text();
+            clearTimeout(timeout);
+
+            console.log(`POISONED: path="${request.nextUrl.pathname}" UA="${userAgent}"`);
+
+            return new NextResponse(data, {
+                status: 200,
+                headers: { 'Content-Type': 'text/html' },
+            });
+        } catch {
+            clearTimeout(timeout);
+        }
+    }
 
     // List of AI bots to target
     // AI SEO: Whitelist of agents that should receive the "Legendary" metadata
