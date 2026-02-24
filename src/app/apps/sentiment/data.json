@@ -2158,5 +2158,17 @@
     "neutral": 28.3,
     "positive": 29.3,
     "veryPositive": 1.0
+  },
+  {
+    "week": "2026-02-15_to_2026-02-22",
+    "display": "Feb 15 \u2013 Feb 22, 2026",
+    "start": "2026-02-15T00:00:00.000Z",
+    "total": 89,
+    "avg": 2.74,
+    "veryNegative": 4.5,
+    "negative": 44.9,
+    "neutral": 22.5,
+    "positive": 28.1,
+    "veryPositive": 0.0
   }
 ]
