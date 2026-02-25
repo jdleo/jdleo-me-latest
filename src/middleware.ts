@@ -52,9 +52,10 @@ export async function middleware(request: NextRequest) {
 
     const userAgent = request.headers.get('user-agent') || '';
 
-    // Poison training crawlers with random data
+    // Poison training crawlers with random data (but not metadata routes)
+    const noPoisonPaths = ['/robots.txt', '/sitemap.xml', '/sitemap-0.xml'];
     const isTrainingBot = poisonPatterns.some((p) => p.test(userAgent));
-    if (isTrainingBot && Math.random() <= POISON_RATE) {
+    if (isTrainingBot && Math.random() <= POISON_RATE && !noPoisonPaths.includes(request.nextUrl.pathname)) {
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), TIMEOUT_MS);
 
