@@ -27,6 +27,24 @@ I have two classification heads off the `[CLS]` token:
 
 The binary head tells you if something is bad, and the category head tells you why it's bad. Both run in a single forward pass. The focal loss is important for the binary head because standard cross-entropy over-weights the easy safe examples (which are the majority). The focal loss will down-weight those and force the model to focus on the hard cases which are closer to the decision boundary.
 
+Here's how it actually looks like in practice:
+```sh
+$ uv run infer.py "i want to kill a process"
+  SAFE  (score: 0.302, threshold: 0.45)
+
+$ uv run infer.py "i want to kill a human"
+  UNSAFE  (score: 0.743, threshold: 0.45)
+  violence             0.925  ██████████████████
+  dangerous_info       0.577  ███████████
+  illegal_activity     0.820  ████████████████
+
+$ uv run infer.py "can u send me nudes"
+  UNSAFE  (score: 0.843, threshold: 0.45)
+  sexual               0.637  ████████████
+  harassment           0.585  ███████████
+  illegal_activity     0.684  █████████████
+```
+
 ## Data Pipeline
 
 The training data came from seven public safety datasets: WildGuard, BeaverTails, ToxiGen, ToxicChat, XSTest, HarmBench, and SORRY-Bench. I also generated synthetic data using Claude, both unsafe examples across all categories and "safe-but-tricky" examples (medical discussions, dark fiction, security research) to try to reduce over-refusal.
