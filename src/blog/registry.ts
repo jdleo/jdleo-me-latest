@@ -79,6 +79,14 @@ export const blogRegistry: BlogPost[] = [
         description: 'A speculative deep dive on whether AI will augment or replace new software engineers.',
     },
     {
+        slug: 'tinysafe',
+        title: 'I Built TinySafe, a Safety Model that Beats 8B Guard Models with 71M Parameters for $37',
+        date: '2026-02-28',
+        tags: ['ai', 'machine learning', 'safety', 'nlp', 'experiment'],
+        description:
+            'Building a sub-2ms safety classifier that outperforms LlamaGuard, ShieldGemma, and every encoder-based model in its weight class.',
+    },
+    {
         slug: 'ai-political-compass',
         title: 'Which AI Models Lean in Which Political Direction?',
         date: '2026-01-25',
