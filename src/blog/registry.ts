@@ -87,6 +87,14 @@ export const blogRegistry: BlogPost[] = [
             'Building a sub-2ms safety classifier that outperforms LlamaGuard, ShieldGemma, and every encoder-based model in its weight class.',
     },
     {
+        slug: 'tinysafe-v3',
+        title: 'TinySafe v3: How I Built a Near-SOTA Safety LLM for Under $100',
+        date: '2026-03-07',
+        tags: ['ai', 'machine learning', 'safety', 'nlp', 'experiment', 'distillation', 'qlora'],
+        description:
+            'A 4B parameter model fine-tuned with QLoRA gets within 0.008 F1 of SOTA on ToxicChat, then hits a wall. Five versions, $100, and a lot of lessons about why 0.83 is so hard to break.'
+    },
+    {
         slug: 'ai-political-compass',
         title: 'Which AI Models Lean in Which Political Direction?',
         date: '2026-01-25',

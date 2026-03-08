@@ -24,6 +24,18 @@
     "veryPositive": 0.9
   },
   {
+    "week": "2022-09-13_to_2022-09-20",
+    "display": "Sep 13 \u2013 Sep 20, 2022",
+    "start": "2022-09-13T05:56:32.000Z",
+    "total": 108,
+    "avg": 3.08,
+    "veryNegative": 0.9,
+    "negative": 21.3,
+    "neutral": 48.1,
+    "positive": 27.8,
+    "veryPositive": 1.9
+  },
+  {
     "week": "2022-09-18_to_2022-09-25",
     "display": "Sep 18 \u2013 Sep 25, 2022",
     "start": "2022-09-18T10:22:45.000Z",
@@ -33,6 +45,18 @@
     "negative": 17.8,
     "neutral": 57.0,
     "positive": 24.3,
+    "veryPositive": 0.0
+  },
+  {
+    "week": "2022-09-20_to_2022-09-27",
+    "display": "Sep 20 \u2013 Sep 27, 2022",
+    "start": "2022-09-20T05:56:32.000Z",
+    "total": 104,
+    "avg": 3.09,
+    "veryNegative": 1.0,
+    "negative": 21.2,
+    "neutral": 46.2,
+    "positive": 31.7,
     "veryPositive": 0.0
   },
   {
@@ -48,6 +72,18 @@
     "veryPositive": 1.7
   },
   {
+    "week": "2022-09-27_to_2022-10-04",
+    "display": "Sep 27 \u2013 Oct 04, 2022",
+    "start": "2022-09-27T05:56:32.000Z",
+    "total": 115,
+    "avg": 3.29,
+    "veryNegative": 0.0,
+    "negative": 20.9,
+    "neutral": 33.0,
+    "positive": 42.6,
+    "veryPositive": 3.5
+  },
+  {
     "week": "2022-10-02_to_2022-10-09",
     "display": "Oct 02 \u2013 Oct 09, 2022",
     "start": "2022-10-02T10:22:45.000Z",
@@ -58,6 +94,18 @@
     "neutral": 48.9,
     "positive": 28.3,
     "veryPositive": 3.3
+  },
+  {
+    "week": "2022-10-04_to_2022-10-11",
+    "display": "Oct 04 \u2013 Oct 11, 2022",
+    "start": "2022-10-04T05:56:32.000Z",
+    "total": 103,
+    "avg": 3.26,
+    "veryNegative": 0.0,
+    "negative": 16.5,
+    "neutral": 44.7,
+    "positive": 35.0,
+    "veryPositive": 3.9
   },
   {
     "week": "2022-10-09_to_2022-10-16",
@@ -72,6 +120,18 @@
     "veryPositive": 0.9
   },
   {
+    "week": "2022-10-11_to_2022-10-18",
+    "display": "Oct 11 \u2013 Oct 18, 2022",
+    "start": "2022-10-11T05:56:32.000Z",
+    "total": 102,
+    "avg": 3.15,
+    "veryNegative": 0.0,
+    "negative": 25.5,
+    "neutral": 37.3,
+    "positive": 34.3,
+    "veryPositive": 2.9
+  },
+  {
     "week": "2022-10-16_to_2022-10-23",
     "display": "Oct 16 \u2013 Oct 23, 2022",
     "start": "2022-10-16T10:22:45.000Z",
@@ -82,6 +142,18 @@
     "neutral": 38.5,
     "positive": 33.9,
     "veryPositive": 1.8
+  },
+  {
+    "week": "2022-10-18_to_2022-10-25",
+    "display": "Oct 18 \u2013 Oct 25, 2022",
+    "start": "2022-10-18T05:56:32.000Z",
+    "total": 115,
+    "avg": 3.17,
+    "veryNegative": 0.0,
+    "negative": 25.2,
+    "neutral": 35.7,
+    "positive": 36.5,
+    "veryPositive": 2.6
   },
   {
     "week": "2022-10-23_to_2022-10-30",
@@ -96,6 +168,18 @@
     "veryPositive": 1.8
   },
   {
+    "week": "2022-10-25_to_2022-11-01",
+    "display": "Oct 25 \u2013 Nov 01, 2022",
+    "start": "2022-10-25T05:56:32.000Z",
+    "total": 121,
+    "avg": 2.98,
+    "veryNegative": 0.8,
+    "negative": 25.6,
+    "neutral": 49.6,
+    "positive": 22.3,
+    "veryPositive": 1.7
+  },
+  {
     "week": "2022-10-30_to_2022-11-06",
     "display": "Oct 30 \u2013 Nov 06, 2022",
     "start": "2022-10-30T10:22:45.000Z",
@@ -106,6 +190,18 @@
     "neutral": 41.3,
     "positive": 37.6,
     "veryPositive": 3.7
+  },
+  {
+    "week": "2022-11-01_to_2022-11-08",
+    "display": "Nov 01 \u2013 Nov 08, 2022",
+    "start": "2022-11-01T05:56:32.000Z",
+    "total": 100,
+    "avg": 3.31,
+    "veryNegative": 0.0,
+    "negative": 17.0,
+    "neutral": 36.0,
+    "positive": 46.0,
+    "veryPositive": 1.0
   },
   {
     "week": "2022-11-06_to_2022-11-13",
@@ -120,6 +216,18 @@
     "veryPositive": 2.6
   },
   {
+    "week": "2022-11-08_to_2022-11-15",
+    "display": "Nov 08 \u2013 Nov 15, 2022",
+    "start": "2022-11-08T05:56:32.000Z",
+    "total": 124,
+    "avg": 3.21,
+    "veryNegative": 0.0,
+    "negative": 11.3,
+    "neutral": 59.7,
+    "positive": 25.8,
+    "veryPositive": 3.2
+  },
+  {
     "week": "2022-11-13_to_2022-11-20",
     "display": "Nov 13 \u2013 Nov 20, 2022",
     "start": "2022-11-13T10:22:45.000Z",
@@ -130,6 +238,18 @@
     "neutral": 47.8,
     "positive": 29.6,
     "veryPositive": 0.9
+  },
+  {
+    "week": "2022-11-15_to_2022-11-22",
+    "display": "Nov 15 \u2013 Nov 22, 2022",
+    "start": "2022-11-15T05:56:32.000Z",
+    "total": 112,
+    "avg": 3.08,
+    "veryNegative": 0.0,
+    "negative": 22.3,
+    "neutral": 47.3,
+    "positive": 30.4,
+    "veryPositive": 0.0
   },
   {
     "week": "2022-11-20_to_2022-11-27",
@@ -144,6 +264,18 @@
     "veryPositive": 1.7
   },
   {
+    "week": "2022-11-22_to_2022-11-29",
+    "display": "Nov 22 \u2013 Nov 29, 2022",
+    "start": "2022-11-22T05:56:32.000Z",
+    "total": 118,
+    "avg": 3.04,
+    "veryNegative": 0.8,
+    "negative": 25.4,
+    "neutral": 45.8,
+    "positive": 24.6,
+    "veryPositive": 3.4
+  },
+  {
     "week": "2022-11-27_to_2022-12-04",
     "display": "Nov 27 \u2013 Dec 04, 2022",
     "start": "2022-11-27T10:22:45.000Z",
@@ -154,6 +286,18 @@
     "neutral": 49.6,
     "positive": 25.6,
     "veryPositive": 1.6
+  },
+  {
+    "week": "2022-11-29_to_2022-12-06",
+    "display": "Nov 29 \u2013 Dec 06, 2022",
+    "start": "2022-11-29T05:56:32.000Z",
+    "total": 102,
+    "avg": 2.92,
+    "veryNegative": 5.9,
+    "negative": 28.4,
+    "neutral": 37.3,
+    "positive": 24.5,
+    "veryPositive": 3.9
   },
   {
     "week": "2022-12-04_to_2022-12-11",
@@ -168,6 +312,18 @@
     "veryPositive": 1.9
   },
   {
+    "week": "2022-12-06_to_2022-12-13",
+    "display": "Dec 06 \u2013 Dec 13, 2022",
+    "start": "2022-12-06T05:56:32.000Z",
+    "total": 108,
+    "avg": 2.71,
+    "veryNegative": 0.9,
+    "negative": 49.1,
+    "neutral": 28.7,
+    "positive": 20.4,
+    "veryPositive": 0.9
+  },
+  {
     "week": "2022-12-11_to_2022-12-18",
     "display": "Dec 11 \u2013 Dec 18, 2022",
     "start": "2022-12-11T10:22:45.000Z",
@@ -177,6 +333,18 @@
     "negative": 38.0,
     "neutral": 38.8,
     "positive": 21.7,
+    "veryPositive": 0.8
+  },
+  {
+    "week": "2022-12-13_to_2022-12-20",
+    "display": "Dec 13 \u2013 Dec 20, 2022",
+    "start": "2022-12-13T05:56:32.000Z",
+    "total": 126,
+    "avg": 2.89,
+    "veryNegative": 0.8,
+    "negative": 27.8,
+    "neutral": 54.0,
+    "positive": 16.7,
     "veryPositive": 0.8
   },
   {
@@ -192,6 +360,18 @@
     "veryPositive": 0.0
   },
   {
+    "week": "2022-12-20_to_2022-12-27",
+    "display": "Dec 20 \u2013 Dec 27, 2022",
+    "start": "2022-12-20T05:56:32.000Z",
+    "total": 113,
+    "avg": 2.99,
+    "veryNegative": 0.0,
+    "negative": 28.3,
+    "neutral": 44.2,
+    "positive": 27.4,
+    "veryPositive": 0.0
+  },
+  {
     "week": "2022-12-25_to_2023-01-01",
     "display": "Dec 25 \u2013 Jan 01, 2023",
     "start": "2022-12-25T10:22:45.000Z",
@@ -202,6 +382,18 @@
     "neutral": 42.6,
     "positive": 25.5,
     "veryPositive": 1.1
+  },
+  {
+    "week": "2022-12-27_to_2023-01-03",
+    "display": "Dec 27 \u2013 Jan 03, 2023",
+    "start": "2022-12-27T05:56:32.000Z",
+    "total": 98,
+    "avg": 3.04,
+    "veryNegative": 0.0,
+    "negative": 21.4,
+    "neutral": 53.1,
+    "positive": 25.5,
+    "veryPositive": 0.0
   },
   {
     "week": "2023-01-01_to_2023-01-08",
@@ -216,6 +408,18 @@
     "veryPositive": 0.0
   },
   {
+    "week": "2023-01-03_to_2023-01-10",
+    "display": "Jan 03 \u2013 Jan 10, 2023",
+    "start": "2023-01-03T05:56:32.000Z",
+    "total": 114,
+    "avg": 3.11,
+    "veryNegative": 0.0,
+    "negative": 32.5,
+    "neutral": 26.3,
+    "positive": 38.6,
+    "veryPositive": 2.6
+  },
+  {
     "week": "2023-01-08_to_2023-01-15",
     "display": "Jan 08 \u2013 Jan 15, 2023",
     "start": "2023-01-08T10:22:45.000Z",
@@ -228,6 +432,18 @@
     "veryPositive": 2.6
   },
   {
+    "week": "2023-01-10_to_2023-01-17",
+    "display": "Jan 10 \u2013 Jan 17, 2023",
+    "start": "2023-01-10T05:56:32.000Z",
+    "total": 114,
+    "avg": 2.97,
+    "veryNegative": 0.9,
+    "negative": 29.8,
+    "neutral": 41.2,
+    "positive": 27.2,
+    "veryPositive": 0.9
+  },
+  {
     "week": "2023-01-15_to_2023-01-22",
     "display": "Jan 15 \u2013 Jan 22, 2023",
     "start": "2023-01-15T10:22:45.000Z",
@@ -237,6 +453,18 @@
     "negative": 43.7,
     "neutral": 38.1,
     "positive": 17.5,
+    "veryPositive": 0.0
+  },
+  {
+    "week": "2023-01-17_to_2023-01-24",
+    "display": "Jan 17 \u2013 Jan 24, 2023",
+    "start": "2023-01-17T05:56:32.000Z",
+    "total": 113,
+    "avg": 2.82,
+    "veryNegative": 5.3,
+    "negative": 38.9,
+    "neutral": 23.9,
+    "positive": 31.9,
     "veryPositive": 0.0
   },
   {
@@ -252,6 +480,18 @@
     "veryPositive": 1.0
   },
   {
+    "week": "2023-01-24_to_2023-01-31",
+    "display": "Jan 24 \u2013 Jan 31, 2023",
+    "start": "2023-01-24T05:56:32.000Z",
+    "total": 116,
+    "avg": 3.04,
+    "veryNegative": 0.9,
+    "negative": 29.3,
+    "neutral": 35.3,
+    "positive": 33.6,
+    "veryPositive": 0.9
+  },
+  {
     "week": "2023-01-29_to_2023-02-05",
     "display": "Jan 29 \u2013 Feb 05, 2023",
     "start": "2023-01-29T10:22:45.000Z",
@@ -262,6 +502,18 @@
     "neutral": 33.3,
     "positive": 30.1,
     "veryPositive": 3.3
+  },
+  {
+    "week": "2023-01-31_to_2023-02-07",
+    "display": "Jan 31 \u2013 Feb 07, 2023",
+    "start": "2023-01-31T05:56:32.000Z",
+    "total": 132,
+    "avg": 2.95,
+    "veryNegative": 5.3,
+    "negative": 24.2,
+    "neutral": 40.9,
+    "positive": 28.8,
+    "veryPositive": 0.8
   },
   {
     "week": "2023-02-05_to_2023-02-12",
@@ -276,6 +528,18 @@
     "veryPositive": 1.6
   },
   {
+    "week": "2023-02-07_to_2023-02-14",
+    "display": "Feb 07 \u2013 Feb 14, 2023",
+    "start": "2023-02-07T05:56:32.000Z",
+    "total": 120,
+    "avg": 2.79,
+    "veryNegative": 0.8,
+    "negative": 44.2,
+    "neutral": 31.7,
+    "positive": 21.7,
+    "veryPositive": 1.7
+  },
+  {
     "week": "2023-02-12_to_2023-02-19",
     "display": "Feb 12 \u2013 Feb 19, 2023",
     "start": "2023-02-12T10:22:45.000Z",
@@ -284,6 +548,18 @@
     "veryNegative": 8.5,
     "negative": 41.9,
     "neutral": 32.6,
+    "positive": 17.1,
+    "veryPositive": 0.0
+  },
+  {
+    "week": "2023-02-14_to_2023-02-21",
+    "display": "Feb 14 \u2013 Feb 21, 2023",
+    "start": "2023-02-14T05:56:32.000Z",
+    "total": 123,
+    "avg": 2.63,
+    "veryNegative": 2.4,
+    "negative": 48.8,
+    "neutral": 31.7,
     "positive": 17.1,
     "veryPositive": 0.0
   },
@@ -300,6 +576,18 @@
     "veryPositive": 0.0
   },
   {
+    "week": "2023-02-21_to_2023-02-28",
+    "display": "Feb 21 \u2013 Feb 28, 2023",
+    "start": "2023-02-21T05:56:32.000Z",
+    "total": 113,
+    "avg": 2.7,
+    "veryNegative": 2.7,
+    "negative": 44.2,
+    "neutral": 33.6,
+    "positive": 19.5,
+    "veryPositive": 0.0
+  },
+  {
     "week": "2023-02-26_to_2023-03-05",
     "display": "Feb 26 \u2013 Mar 05, 2023",
     "start": "2023-02-26T10:22:45.000Z",
@@ -310,6 +598,18 @@
     "neutral": 37.5,
     "positive": 24.2,
     "veryPositive": 1.7
+  },
+  {
+    "week": "2023-02-28_to_2023-03-07",
+    "display": "Feb 28 \u2013 Mar 07, 2023",
+    "start": "2023-02-28T05:56:32.000Z",
+    "total": 126,
+    "avg": 3.11,
+    "veryNegative": 4.8,
+    "negative": 23.0,
+    "neutral": 32.5,
+    "positive": 35.7,
+    "veryPositive": 4.0
   },
   {
     "week": "2023-03-05_to_2023-03-12",
@@ -324,6 +624,18 @@
     "veryPositive": 2.5
   },
   {
+    "week": "2023-03-07_to_2023-03-14",
+    "display": "Mar 07 \u2013 Mar 14, 2023",
+    "start": "2023-03-07T05:56:32.000Z",
+    "total": 109,
+    "avg": 2.92,
+    "veryNegative": 3.7,
+    "negative": 33.9,
+    "neutral": 30.3,
+    "positive": 31.2,
+    "veryPositive": 0.9
+  },
+  {
     "week": "2023-03-12_to_2023-03-19",
     "display": "Mar 12 \u2013 Mar 19, 2023",
     "start": "2023-03-12T10:22:45.000Z",
@@ -334,6 +646,18 @@
     "neutral": 33.0,
     "positive": 38.4,
     "veryPositive": 0.0
+  },
+  {
+    "week": "2023-03-14_to_2023-03-21",
+    "display": "Mar 14 \u2013 Mar 21, 2023",
+    "start": "2023-03-14T05:56:32.000Z",
+    "total": 119,
+    "avg": 3.22,
+    "veryNegative": 1.7,
+    "negative": 25.2,
+    "neutral": 25.2,
+    "positive": 45.4,
+    "veryPositive": 2.5
   },
   {
     "week": "2023-03-19_to_2023-03-26",
@@ -348,6 +672,18 @@
     "veryPositive": 5.6
   },
   {
+    "week": "2023-03-21_to_2023-03-28",
+    "display": "Mar 21 \u2013 Mar 28, 2023",
+    "start": "2023-03-21T05:56:32.000Z",
+    "total": 118,
+    "avg": 2.84,
+    "veryNegative": 4.2,
+    "negative": 31.4,
+    "neutral": 41.5,
+    "positive": 22.0,
+    "veryPositive": 0.8
+  },
+  {
     "week": "2023-03-26_to_2023-04-02",
     "display": "Mar 26 \u2013 Apr 02, 2023",
     "start": "2023-03-26T10:22:45.000Z",
@@ -357,6 +693,18 @@
     "negative": 54.8,
     "neutral": 32.2,
     "positive": 11.3,
+    "veryPositive": 0.0
+  },
+  {
+    "week": "2023-03-28_to_2023-04-04",
+    "display": "Mar 28 \u2013 Apr 04, 2023",
+    "start": "2023-03-28T05:56:32.000Z",
+    "total": 108,
+    "avg": 2.46,
+    "veryNegative": 0.0,
+    "negative": 60.2,
+    "neutral": 33.3,
+    "positive": 6.5,
     "veryPositive": 0.0
   },
   {
@@ -372,6 +720,18 @@
     "veryPositive": 0.0
   },
   {
+    "week": "2023-04-04_to_2023-04-11",
+    "display": "Apr 04 \u2013 Apr 11, 2023",
+    "start": "2023-04-04T05:56:32.000Z",
+    "total": 117,
+    "avg": 2.77,
+    "veryNegative": 1.7,
+    "negative": 45.3,
+    "neutral": 27.4,
+    "positive": 25.6,
+    "veryPositive": 0.0
+  },
+  {
     "week": "2023-04-09_to_2023-04-16",
     "display": "Apr 09 \u2013 Apr 16, 2023",
     "start": "2023-04-09T10:22:45.000Z",
@@ -382,6 +742,18 @@
     "neutral": 47.6,
     "positive": 15.3,
     "veryPositive": 0.0
+  },
+  {
+    "week": "2023-04-11_to_2023-04-18",
+    "display": "Apr 11 \u2013 Apr 18, 2023",
+    "start": "2023-04-11T05:56:32.000Z",
+    "total": 133,
+    "avg": 2.81,
+    "veryNegative": 3.0,
+    "negative": 33.8,
+    "neutral": 43.6,
+    "positive": 18.0,
+    "veryPositive": 1.5
   },
   {
     "week": "2023-04-16_to_2023-04-23",
@@ -396,6 +768,18 @@
     "veryPositive": 1.7
   },
   {
+    "week": "2023-04-18_to_2023-04-25",
+    "display": "Apr 18 \u2013 Apr 25, 2023",
+    "start": "2023-04-18T05:56:32.000Z",
+    "total": 123,
+    "avg": 2.85,
+    "veryNegative": 2.4,
+    "negative": 39.8,
+    "neutral": 30.9,
+    "positive": 24.4,
+    "veryPositive": 2.4
+  },
+  {
     "week": "2023-04-23_to_2023-04-30",
     "display": "Apr 23 \u2013 Apr 30, 2023",
     "start": "2023-04-23T10:22:45.000Z",
@@ -408,6 +792,18 @@
     "veryPositive": 0.8
   },
   {
+    "week": "2023-04-25_to_2023-05-02",
+    "display": "Apr 25 \u2013 May 02, 2023",
+    "start": "2023-04-25T05:56:32.000Z",
+    "total": 128,
+    "avg": 2.6,
+    "veryNegative": 4.7,
+    "negative": 51.6,
+    "neutral": 25.0,
+    "positive": 16.4,
+    "veryPositive": 2.3
+  },
+  {
     "week": "2023-04-30_to_2023-05-07",
     "display": "Apr 30 \u2013 May 07, 2023",
     "start": "2023-04-30T10:22:45.000Z",
@@ -417,6 +813,18 @@
     "negative": 59.0,
     "neutral": 26.2,
     "positive": 10.7,
+    "veryPositive": 0.0
+  },
+  {
+    "week": "2023-05-02_to_2023-05-09",
+    "display": "May 02 \u2013 May 09, 2023",
+    "start": "2023-05-02T05:56:32.000Z",
+    "total": 125,
+    "avg": 2.46,
+    "veryNegative": 8.0,
+    "negative": 52.8,
+    "neutral": 24.0,
+    "positive": 15.2,
     "veryPositive": 0.0
   },
   {
@@ -432,6 +840,18 @@
     "veryPositive": 0.8
   },
   {
+    "week": "2023-05-09_to_2023-05-16",
+    "display": "May 09 \u2013 May 16, 2023",
+    "start": "2023-05-09T05:56:32.000Z",
+    "total": 130,
+    "avg": 2.98,
+    "veryNegative": 3.8,
+    "negative": 29.2,
+    "neutral": 32.3,
+    "positive": 34.6,
+    "veryPositive": 0.0
+  },
+  {
     "week": "2023-05-14_to_2023-05-21",
     "display": "May 14 \u2013 May 21, 2023",
     "start": "2023-05-14T10:22:45.000Z",
@@ -441,6 +861,18 @@
     "negative": 44.1,
     "neutral": 33.1,
     "positive": 18.6,
+    "veryPositive": 0.0
+  },
+  {
+    "week": "2023-05-16_to_2023-05-23",
+    "display": "May 16 \u2013 May 23, 2023",
+    "start": "2023-05-16T05:56:32.000Z",
+    "total": 119,
+    "avg": 2.48,
+    "veryNegative": 4.2,
+    "negative": 52.9,
+    "neutral": 33.6,
+    "positive": 9.2,
     "veryPositive": 0.0
   },
   {
@@ -456,6 +888,18 @@
     "veryPositive": 0.0
   },
   {
+    "week": "2023-05-23_to_2023-05-30",
+    "display": "May 23 \u2013 May 30, 2023",
+    "start": "2023-05-23T05:56:32.000Z",
+    "total": 113,
+    "avg": 2.71,
+    "veryNegative": 11.5,
+    "negative": 30.1,
+    "neutral": 34.5,
+    "positive": 23.9,
+    "veryPositive": 0.0
+  },
+  {
     "week": "2023-05-28_to_2023-06-04",
     "display": "May 28 \u2013 Jun 04, 2023",
     "start": "2023-05-28T10:22:45.000Z",
@@ -465,6 +909,18 @@
     "negative": 34.0,
     "neutral": 20.0,
     "positive": 10.0,
+    "veryPositive": 0.0
+  },
+  {
+    "week": "2023-05-30_to_2023-06-06",
+    "display": "May 30 \u2013 Jun 06, 2023",
+    "start": "2023-05-30T05:56:32.000Z",
+    "total": 99,
+    "avg": 2.23,
+    "veryNegative": 28.3,
+    "negative": 35.4,
+    "neutral": 21.2,
+    "positive": 15.2,
     "veryPositive": 0.0
   },
   {
@@ -480,6 +936,18 @@
     "veryPositive": 1.7
   },
   {
+    "week": "2023-06-06_to_2023-06-13",
+    "display": "Jun 06 \u2013 Jun 13, 2023",
+    "start": "2023-06-06T05:56:32.000Z",
+    "total": 120,
+    "avg": 2.73,
+    "veryNegative": 6.7,
+    "negative": 38.3,
+    "neutral": 32.5,
+    "positive": 20.8,
+    "veryPositive": 1.7
+  },
+  {
     "week": "2023-06-11_to_2023-06-18",
     "display": "Jun 11 \u2013 Jun 18, 2023",
     "start": "2023-06-11T10:22:45.000Z",
@@ -489,6 +957,18 @@
     "negative": 47.5,
     "neutral": 20.5,
     "positive": 29.5,
+    "veryPositive": 0.8
+  },
+  {
+    "week": "2023-06-13_to_2023-06-20",
+    "display": "Jun 13 \u2013 Jun 20, 2023",
+    "start": "2023-06-13T05:56:32.000Z",
+    "total": 120,
+    "avg": 2.8,
+    "veryNegative": 0.0,
+    "negative": 50.0,
+    "neutral": 20.8,
+    "positive": 28.3,
     "veryPositive": 0.8
   },
   {
@@ -502,6 +982,18 @@
     "neutral": 29.3,
     "positive": 29.3,
     "veryPositive": 1.7
+  },
+  {
+    "week": "2023-06-20_to_2023-06-27",
+    "display": "Jun 20 \u2013 Jun 27, 2023",
+    "start": "2023-06-20T05:56:32.000Z",
+    "total": 112,
+    "avg": 3.04,
+    "veryNegative": 3.6,
+    "negative": 25.0,
+    "neutral": 36.6,
+    "positive": 33.0,
+    "veryPositive": 1.8
   },
   {
     "week": "2023-06-25_to_2023-07-02",
@@ -2170,5 +2662,29 @@
     "neutral": 22.5,
     "positive": 28.1,
     "veryPositive": 0.0
+  },
+  {
+    "week": "2026-02-22_to_2026-03-01",
+    "display": "Feb 22 \u2013 Mar 01, 2026",
+    "start": "2026-02-22T00:00:00.000Z",
+    "total": 105,
+    "avg": 3.06,
+    "veryNegative": 1.9,
+    "negative": 32.4,
+    "neutral": 23.8,
+    "positive": 41.9,
+    "veryPositive": 0.0
+  },
+  {
+    "week": "2026-03-01_to_2026-03-08",
+    "display": "Mar 01 \u2013 Mar 08, 2026",
+    "start": "2026-03-01T00:00:00.000Z",
+    "total": 132,
+    "avg": 2.96,
+    "veryNegative": 3.8,
+    "negative": 34.8,
+    "neutral": 23.5,
+    "positive": 37.1,
+    "veryPositive": 0.8
   }
 ]
