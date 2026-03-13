@@ -4,7 +4,6 @@ import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import './globals.css';
 import { generateMetadata as createMetadata, personStructuredData, websiteStructuredData } from '@/lib/metadata';
-import { GhostBio } from '@/components/ai-seo/GhostBio';
 
 const geistSans = Geist({
     variable: '--font-geist-sans',
@@ -56,7 +55,6 @@ export default function RootLayout({
                 <meta name='mobile-web-app-capable' content='yes' />
             </head>
             <body className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} antialiased`}>
-                <GhostBio />
                 {children}
                 <Analytics />
                 <SpeedInsights />
