@@ -144,11 +144,6 @@ export default function Home() {
                     </section>
 
                     <section className='obsidian-section'>
-                        <h2>About</h2>
-                        <p>{strings.SUBTITLE}</p>
-                    </section>
-
-                    <section className='obsidian-section'>
                         <h2>Elsewhere</h2>
                         <p className='obsidian-inline-list'>
                             <a href={strings.GITHUB_URL} target='_blank' rel='noreferrer'>
@@ -188,13 +183,14 @@ export default function Home() {
                     )}
 
                     <section className='obsidian-section'>
-                        <h2>Things I&apos;m Building -</h2>
+                        <h2>Things I&apos;m Building</h2>
                         <ul className='obsidian-list'>
                             {featuredProjects.map((project) => (
                                 <li key={project.label}>
                                     <a href={project.href} target='_blank' rel='noreferrer'>
                                         {project.label}
                                     </a>{' '}
+                                    <span>- </span>
                                     <span>{project.description}</span>
                                 </li>
                             ))}
@@ -202,13 +198,14 @@ export default function Home() {
                     </section>
 
                     <section className='obsidian-section'>
-                        <h2>iPhone Apps -</h2>
+                        <h2>iPhone Apps</h2>
                         <ul className='obsidian-list obsidian-list-compact'>
                             {iosApps.map((app) => (
                                 <li key={app.label}>
                                     <a href={app.href} target='_blank' rel='noreferrer'>
                                         {app.label}
                                     </a>{' '}
+                                    <span>- </span>
                                     <span>{app.description}</span>
                                 </li>
                             ))}
