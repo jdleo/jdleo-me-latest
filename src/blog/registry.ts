@@ -110,6 +110,13 @@ export const blogRegistry: BlogPost[] = [
         description:
             'I asked the top LLMs 20 different political compass questions to figure out how left/right/libertarian/authoritarian they were.',
     },
+    {
+        slug: 'current-ai-opinions',
+        title: 'My Current AI Opinions',
+        date: '2026-03-15',
+        tags: ['ai', 'opinions', 'current'],
+        description: 'My current thoughts on AI and how to be good at it.',
+    },
 ];
 
 export function getBlogPost(slug: string): BlogPost | undefined {
