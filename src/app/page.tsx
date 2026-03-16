@@ -1,46 +1,85 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { strings } from './constants/strings';
+import { useEffect, useState } from 'react';
+import {
+    ArrowUpRightIcon,
+    EyeIcon,
+    PencilSquareIcon,
+} from '@heroicons/react/24/outline';
 import { WebVitals } from '@/components/SEO/WebVitals';
 import { getAllBlogPosts, BlogPost } from '@/blog/registry';
-import {
-    DevicePhoneMobileIcon,
-    PencilSquareIcon,
-    DocumentTextIcon,
-    UserIcon,
-    MapPinIcon,
-    BriefcaseIcon,
-    EyeIcon,
-    LinkIcon,
-    EnvelopeIcon,
-    CalendarDaysIcon,
-    ArrowRightIcon,
-    RocketLaunchIcon,
-    SparklesIcon,
-    ChatBubbleLeftRightIcon,
-} from '@heroicons/react/24/outline';
+import { strings } from './constants/strings';
+
+const featuredProjects = [
+    {
+        label: 'Resume Rodeo',
+        description: 'AI resume analysis and optimization.',
+        href: 'https://resume.rodeo?ref=jdleo.me',
+    },
+    {
+        label: 'Lite.fyi',
+        description: 'A stripped-down link shortener built for speed.',
+        href: 'https://lite.fyi?ref=jdleo.me',
+    },
+    {
+        label: 'Stock Quant AI',
+        description: 'Equity research workflows with AI in the loop.',
+        href: 'https://stockquantai.com?ref=jdleo.me',
+    },
+];
+
+const iosApps = [
+    {
+        label: 'Convo',
+        description: 'AI chat agents.',
+        href: 'https://apps.apple.com/us/app/convo-ai-chat-agents/id6753784349?ref=jdleo.me',
+    },
+    {
+        label: 'Tale',
+        description: 'A story generator for quick narrative experiments.',
+        href: 'https://apps.apple.com/us/app/tale-ai-story-generator/id6753922553?ref=jdleo.me',
+    },
+    {
+        label: 'Grasp',
+        description: 'Learn-anything prompts and explanations.',
+        href: 'https://apps.apple.com/us/app/grasp-learn-anything-with-ai/id6754008830?ref=jdleo.me',
+    },
+    {
+        label: 'Plate',
+        description: 'AI-assisted calorie tracking.',
+        href: 'https://apps.apple.com/us/app/plate-ai-calorie-tracker/id6759228569?ref=jdleo.me',
+    },
+    {
+        label: 'Prism',
+        description: 'Photo and art edits with AI.',
+        href: 'https://apps.apple.com/us/app/prism-ai-photos-art-edits/id6757168364?ref=jdleo.me',
+    },
+];
+
+const notebookLinks = [
+    { label: 'Apps', href: '/apps' },
+    { label: 'Blog', href: '/blog' },
+    { label: 'Resume', href: '/apps/resume' },
+    { label: 'GitHub', href: strings.GITHUB_URL, external: true },
+    { label: 'LinkedIn', href: strings.LINKEDIN_URL, external: true },
+    { label: 'Email', href: `mailto:${strings.EMAIL}` },
+];
 
 export default function Home() {
     const [pageViewCount, setPageViewCount] = useState(0);
     const [isLoaded, setIsLoaded] = useState(false);
     const [latestPost, setLatestPost] = useState<BlogPost | null>(null);
 
-    const formatNumber = (num: number | string) => {
-        const number = Number(num) || 0;
-        return number.toLocaleString('en-US');
-    };
-
     useEffect(() => {
-        const timer = setTimeout(() => setIsLoaded(true), 100);
+        const timer = setTimeout(() => setIsLoaded(true), 80);
 
         fetch('/api/view')
-            .then(res => res.json())
-            .then(data => {
+            .then((res) => res.json())
+            .then((data) => {
                 const views = Number(data.views) || 0;
                 setPageViewCount(views);
             })
-            .catch(error => {
+            .catch((error) => {
                 console.error('Failed to fetch view count:', error);
                 setPageViewCount(0);
             });
@@ -53,211 +92,146 @@ export default function Home() {
         return () => clearTimeout(timer);
     }, []);
 
+    const formatNumber = (num: number | string) => {
+        const number = Number(num) || 0;
+        return number.toLocaleString('en-US');
+    };
+
+    const formatDate = (date: string) =>
+        new Intl.DateTimeFormat('en-US', {
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric',
+        }).format(new Date(date));
+
     return (
         <>
             <WebVitals />
-            <main className='notion-page'>
-                {/* Notion-style Header */}
-                <header className={`notion-header ${isLoaded ? 'loaded' : ''}`}>
-                    <div className='notion-nav'>
-                        <a href='/apps' className='notion-nav-link'>
-                            <DevicePhoneMobileIcon className='notion-nav-icon' />
-                            Apps
-                        </a>
-                        <a href='/blog' className='notion-nav-link'>
-                            <PencilSquareIcon className='notion-nav-icon' />
-                            Blog
-                        </a>
-                        <a href='/apps/resume' className='notion-nav-link'>
-                            <DocumentTextIcon className='notion-nav-icon' />
-                            Resume
-                        </a>
-                    </div>
-                </header>
+            <main className='obsidian-home'>
+                <div className='obsidian-orb obsidian-orb-left' />
+                <div className='obsidian-orb obsidian-orb-right' />
 
-                <div className={`notion-content ${isLoaded ? 'loaded' : ''}`}>
-                    {/* Title Section */}
-                    <div className='notion-title-block'>
-                        <h1 className='notion-title'>{strings.NAME}</h1>
-                        <div className='notion-subtitle'>Senior Software Engineer</div>
-                    </div>
+                <article className={`obsidian-sheet ${isLoaded ? 'is-loaded' : ''}`}>
+                    <header className='obsidian-topbar obsidian-topbar-home'>
+                        <nav className='obsidian-nav' aria-label='Primary'>
+                            {notebookLinks.map((link) => (
+                                <a
+                                    key={link.label}
+                                    href={link.href}
+                                    target={link.external ? '_blank' : undefined}
+                                    rel={link.external ? 'noreferrer' : undefined}
+                                    className='obsidian-nav-link'
+                                >
+                                    {link.label}
+                                </a>
+                            ))}
+                        </nav>
+                    </header>
 
-                    {/* About Line */}
-                    <div className='notion-line'>
-                        <div className='notion-line-icon-wrapper'>
-                            <UserIcon className='notion-line-icon' />
-                        </div>
-                        <div className='notion-line-content'>
-                            <div className='notion-line-label'>About</div>
-                            <div className='notion-line-text'>{strings.SUBTITLE}</div>
-                        </div>
-                    </div>
+                    <section className='obsidian-intro'>
+                        <h1 className='obsidian-title'>{strings.NAME}</h1>
+                        <p className='obsidian-subtitle'>Senior Software Engineer</p>
+                        <p className='obsidian-lede'>{strings.SUBTITLE}</p>
 
-                    {/* Location & Role Lines */}
-                    <div className='notion-line'>
-                        <div className='notion-line-icon-wrapper'>
-                            <MapPinIcon className='notion-line-icon' />
+                        <div className='obsidian-meta'>
+                            <span>SF Bay Area</span>
+                            <span>Senior Engineer at Roblox</span>
+                            <span className='obsidian-meta-views'>
+                                <EyeIcon className='obsidian-meta-icon' />
+                                {formatNumber(pageViewCount)} page views
+                            </span>
                         </div>
-                        <div className='notion-line-content'>
-                            <div className='notion-line-label'>Location</div>
-                            <div className='notion-line-text'>SF Bay Area</div>
-                        </div>
-                    </div>
+                    </section>
 
-                    <div className='notion-line'>
-                        <div className='notion-line-icon-wrapper'>
-                            <BriefcaseIcon className='notion-line-icon' />
-                        </div>
-                        <div className='notion-line-content'>
-                            <div className='notion-line-label'>Currently</div>
-                            <div className='notion-line-text'>Senior Engineer @ Roblox</div>
-                        </div>
-                    </div>
+                    <section className='obsidian-section'>
+                        <h2>About</h2>
+                        <p>{strings.SUBTITLE}</p>
+                    </section>
 
-                    {/* Visitors Line */}
-                    <div className='notion-line notion-line-visitors'>
-                        <div className='notion-line-icon-wrapper'>
-                            <EyeIcon className='notion-line-icon' />
-                        </div>
-                        <div className='notion-line-content'>
-                            <div className='notion-line-label'>Visitors</div>
-                            <div className='notion-line-text'>
-                                <span className='notion-visitors-count'>{formatNumber(pageViewCount)}</span> total views
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Divider */}
-                    <div className='notion-divider' />
-
-                    {/* Connect Section */}
-                    <div className='notion-section'>
-                        <div className='notion-section-title'>
-                            <LinkIcon className='notion-section-icon' />
-                            Connect
-                        </div>
-                        <div className='notion-links-grid'>
-                            <a href={strings.GITHUB_URL} target='_blank' className='notion-link-item'>
-                                <svg className='notion-link-icon' viewBox='0 0 24 24' fill='currentColor'>
-                                    <path d='M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z' />
-                                </svg>
-                                <span className='notion-link-label'>GitHub</span>
+                    <section className='obsidian-section'>
+                        <h2>Elsewhere</h2>
+                        <p className='obsidian-inline-list'>
+                            <a href={strings.GITHUB_URL} target='_blank' rel='noreferrer'>
+                                GitHub
                             </a>
-                            <a href={strings.LINKEDIN_URL} target='_blank' className='notion-link-item'>
-                                <svg className='notion-link-icon' viewBox='0 0 24 24' fill='currentColor'>
-                                    <path d='M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z' />
-                                </svg>
-                                <span className='notion-link-label'>LinkedIn</span>
+                            <span>/</span>
+                            <a href={strings.LINKEDIN_URL} target='_blank' rel='noreferrer'>
+                                LinkedIn
                             </a>
-                            <a href={`mailto:${strings.EMAIL}`} className='notion-link-item'>
-                                <EnvelopeIcon className='notion-link-icon' />
-                                <span className='notion-link-label'>Email</span>
+                            <span>/</span>
+                            <a href={`mailto:${strings.EMAIL}`}>Email</a>
+                            <span>/</span>
+                            <a href='https://calendly.com/jleonardo-roblox?ref=jdleo.me' target='_blank' rel='noreferrer'>
+                                Mentorship
                             </a>
-                            <a href='https://calendly.com/jleonardo-roblox?ref=jdleo.me' target='_blank' className='notion-link-item'>
-                                <CalendarDaysIcon className='notion-link-icon' />
-                                <span className='notion-link-label'>Mentorship</span>
-                            </a>
-                        </div>
-                    </div>
+                        </p>
+                    </section>
 
-                    {/* Writing Section */}
                     {latestPost && (
-                        <>
-                            <div className='notion-divider' />
-                            <div className='notion-section'>
-                                <div className='notion-section-title'>
-                                    <PencilSquareIcon className='notion-section-icon' />
-                                    Latest Writing
-                                    <a href='/blog' className='notion-section-action'>
-                                        View all
-                                        <ArrowRightIcon className='notion-action-arrow' />
-                                    </a>
-                                </div>
-                                <a href={`/blog/${latestPost.slug}`} className='notion-post-line'>
-                                    <div className='notion-post-title'>{latestPost.title}</div>
-                                    <div className='notion-post-desc'>{latestPost.description}</div>
+                        <section className='obsidian-section'>
+                            <div className='obsidian-section-heading'>
+                                <h2>Latest Writing</h2>
+                                <a href='/blog' className='obsidian-section-link'>
+                                    All posts
+                                    <ArrowUpRightIcon className='obsidian-inline-icon' />
                                 </a>
                             </div>
-                        </>
+                            <a href={`/blog/${latestPost.slug}`} className='obsidian-entry-link'>
+                                <div className='obsidian-entry-header'>
+                                    <PencilSquareIcon className='obsidian-entry-icon' />
+                                    <span>{formatDate(latestPost.date)}</span>
+                                </div>
+                                <h3>{latestPost.title}</h3>
+                                <p>{latestPost.description}</p>
+                            </a>
+                        </section>
                     )}
 
-                    {/* Projects Section */}
-                    <div className='notion-divider' />
-                    <div className='notion-section'>
-                        <div className='notion-section-title'>
-                            <RocketLaunchIcon className='notion-section-icon' />
-                            Active Projects
-                        </div>
+                    <section className='obsidian-section'>
+                        <h2>Things I&apos;m Building -</h2>
+                        <ul className='obsidian-list'>
+                            {featuredProjects.map((project) => (
+                                <li key={project.label}>
+                                    <a href={project.href} target='_blank' rel='noreferrer'>
+                                        {project.label}
+                                    </a>{' '}
+                                    <span>{project.description}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    </section>
 
-                        {/* Web Projects */}
-                        <div className='notion-subsection'>
-                            <div className='notion-subsection-title'>Web</div>
-                            <div className='notion-project-list'>
-                                <a href='https://resume.rodeo?ref=jdleo.me' target='_blank' className='notion-project-item'>
-                                    <span className='notion-project-dot' style={{ backgroundColor: '#fb923c' }} />
-                                    <div className='notion-project-info'>
-                                        <div className='notion-project-name'>Resume Rodeo</div>
-                                        <div className='notion-project-desc'>AI Resume Analysis & Optimization</div>
-                                    </div>
-                                </a>
-                                <a href='https://lite.fyi?ref=jdleo.me' target='_blank' className='notion-project-item'>
-                                    <span className='notion-project-dot' style={{ backgroundColor: '#60a5fa' }} />
-                                    <div className='notion-project-info'>
-                                        <div className='notion-project-name'>Lite.fyi</div>
-                                        <div className='notion-project-desc'>Fastest Link Shortener</div>
-                                    </div>
-                                </a>
-                                <a href='https://stockquantai.com?ref=jdleo.me' target='_blank' className='notion-project-item'>
-                                    <span className='notion-project-dot' style={{ backgroundColor: '#7c3aed' }} />
-                                    <div className='notion-project-info'>
-                                        <div className='notion-project-name'>Stock Quant AI</div>
-                                        <div className='notion-project-desc'>AI-Powered Equity Research</div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
+                    <section className='obsidian-section'>
+                        <h2>iPhone Apps -</h2>
+                        <ul className='obsidian-list obsidian-list-compact'>
+                            {iosApps.map((app) => (
+                                <li key={app.label}>
+                                    <a href={app.href} target='_blank' rel='noreferrer'>
+                                        {app.label}
+                                    </a>{' '}
+                                    <span>{app.description}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    </section>
 
-                        {/* iOS Projects */}
-                        <div className='notion-subsection'>
-                            <div className='notion-subsection-title'>iOS</div>
-                            <div className='notion-project-list'>
-                                {[
-                                    { name: 'Convo', desc: 'AI Chat Agents', url: 'https://apps.apple.com/us/app/convo-ai-chat-agents/id6753784349?ref=jdleo.me', color: '#818cf8' },
-                                    { name: 'Tale', desc: 'Story Generator', url: 'https://apps.apple.com/us/app/tale-ai-story-generator/id6753922553?ref=jdleo.me', color: '#c084fc' },
-                                    { name: 'Grasp', desc: 'Learn Anything', url: 'https://apps.apple.com/us/app/grasp-learn-anything-with-ai/id6754008830?ref=jdleo.me', color: '#34d399' },
-                                    { name: 'Plate', desc: 'AI Calorie Tracker', url: 'https://apps.apple.com/us/app/plate-ai-calorie-tracker/id6759228569?ref=jdleo.me', color: '#f59e0b' },
-                                    { name: 'Prism', desc: 'AI Photos & Art Edits', url: 'https://apps.apple.com/us/app/prism-ai-photos-art-edits/id6757168364?ref=jdleo.me', color: '#22d3ee' },
-                                ].map((app) => (
-                                    <a key={app.name} href={app.url} target='_blank' className='notion-project-item'>
-                                        <span className='notion-project-dot' style={{ backgroundColor: app.color }} />
-                                        <div className='notion-project-info'>
-                                            <div className='notion-project-name'>{app.name}</div>
-                                            <div className='notion-project-desc'>{app.desc}</div>
-                                        </div>
-                                    </a>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
+                    <section className='obsidian-section obsidian-section-closing'>
+                        <h2>Open Tabs</h2>
+                        <p>
+                            If you want the broader catalog, the apps index is the fastest path. If you want
+                            the thinking behind the work, the blog is where I put the longer writeups.
+                        </p>
+                        <p className='obsidian-inline-list'>
+                            <a href='/apps'>Browse apps</a>
+                            <span>/</span>
+                            <a href='/blog'>Read the blog</a>
+                            <span>/</span>
+                            <a href={`mailto:${strings.EMAIL}`}>Start a conversation</a>
+                        </p>
+                    </section>
 
-                    {/* Quick Actions */}
-                    <div className='notion-divider' />
-                    <div className='notion-actions'>
-                        <a href='/apps' className='notion-action-btn notion-action-primary'>
-                            <SparklesIcon className='notion-action-icon' />
-                            View All Projects
-                        </a>
-                        <a href={`mailto:${strings.EMAIL}`} className='notion-action-btn'>
-                            <ChatBubbleLeftRightIcon className='notion-action-icon' />
-                            Get in Touch
-                        </a>
-                    </div>
-
-                    {/* Footer */}
-                    <footer className='notion-footer'>
-                        © 2026 {strings.NAME}
-                    </footer>
-                </div>
+                    <footer className='obsidian-footer'>© 2026 {strings.NAME}</footer>
+                </article>
             </main>
         </>
     );

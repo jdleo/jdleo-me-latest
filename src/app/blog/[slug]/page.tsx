@@ -5,13 +5,13 @@ import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
+import { ArrowLeftIcon, CalendarIcon, EyeIcon } from '@heroicons/react/24/outline';
+import { sql } from '@vercel/postgres';
 import CodeBlock from '@/components/CodeBlock';
 import { getBlogPost } from '@/blog/registry';
 import { strings } from '../../constants/strings';
 import { WebVitals } from '@/components/SEO/WebVitals';
 import ViewTracker from '@/components/ViewTracker';
-import { sql } from '@vercel/postgres';
-import { ArrowLeftIcon, EyeIcon, CalendarIcon } from '@heroicons/react/24/outline';
 
 async function getBlogViewCount(slug: string): Promise<number> {
     try {
@@ -56,55 +56,73 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         url: `https://jdleo.me/blog/${slug}`,
     };
 
+    const formatDate = (date: string) =>
+        new Intl.DateTimeFormat('en-US', {
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric',
+        }).format(new Date(date));
+
     return (
         <>
             <WebVitals />
             <ViewTracker slug={slug} />
             <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
 
-            <main className='notion-page'>
-                {/* Header */}
-                <header className='notion-header loaded'>
-                    <div className='notion-nav' style={{ justifyContent: 'space-between', maxWidth: '900px' }}>
-                        <Link href='/blog' className='notion-nav-link'>
-                            <ArrowLeftIcon className='notion-nav-icon' />
-                            Back to Blog
-                        </Link>
-                        <Link href='/' className='notion-nav-link' style={{ fontWeight: 600 }}>
+            <main className='obsidian-home obsidian-home-blog'>
+                <div className='obsidian-orb obsidian-orb-left' />
+                <div className='obsidian-orb obsidian-orb-right' />
+
+                <article className='obsidian-sheet is-loaded'>
+                    <header className='obsidian-topbar'>
+                        <Link href='/' className='obsidian-wordmark'>
                             {strings.NAME}
                         </Link>
-                    </div>
-                </header>
+                        <nav className='obsidian-nav' aria-label='Post navigation'>
+                            <Link href='/blog' className='obsidian-nav-link'>
+                                Blog
+                            </Link>
+                            <Link href='/apps' className='obsidian-nav-link'>
+                                Apps
+                            </Link>
+                            <Link href='/apps/resume' className='obsidian-nav-link'>
+                                Resume
+                            </Link>
+                        </nav>
+                    </header>
 
-                <article className='notion-content loaded' style={{ maxWidth: '900px' }}>
-                    {/* Article Header */}
-                    <div className='notion-blog-post-header'>
-                        <h1 className='notion-blog-post-title'>{post.title}</h1>
-                        <div className='notion-blog-post-meta'>
-                            <div className='notion-blog-post-meta-item'>
-                                <CalendarIcon className='notion-blog-post-meta-icon' />
-                                <span>{post.date}</span>
-                            </div>
-                            <div className='notion-blog-post-meta-item'>
-                                <EyeIcon className='notion-blog-post-meta-icon' />
-                                <span>{displayViewCount.toLocaleString()} views</span>
-                            </div>
+                    <div className='obsidian-back-row'>
+                        <Link href='/blog' className='obsidian-back-link'>
+                            <ArrowLeftIcon className='obsidian-inline-icon' />
+                            Back to blog
+                        </Link>
+                    </div>
+
+                    <header className='obsidian-post-header'>
+                        <h1 className='obsidian-post-title'>{post.title}</h1>
+                        <div className='obsidian-entry-header'>
+                            <span className='obsidian-post-meta-item'>
+                                <CalendarIcon className='obsidian-entry-icon' />
+                                {formatDate(post.date)}
+                            </span>
+                            <span className='obsidian-post-meta-item'>
+                                <EyeIcon className='obsidian-entry-icon' />
+                                {displayViewCount.toLocaleString('en-US')} views
+                            </span>
                         </div>
+                        {post.description && <p className='obsidian-post-description'>{post.description}</p>}
                         {post.tags.length > 0 && (
-                            <div className='notion-blog-post-tags'>
+                            <div className='obsidian-tag-row'>
                                 {post.tags.map((tag: string) => (
-                                    <span key={tag} className='notion-blog-post-tag'>
+                                    <span key={tag} className='obsidian-tag'>
                                         {tag}
                                     </span>
                                 ))}
                             </div>
                         )}
-                    </div>
+                    </header>
 
-                    <div className='notion-divider' />
-
-                    {/* Article Content */}
-                    <div className='notion-blog-content'>
+                    <div className='obsidian-prose'>
                         <ReactMarkdown
                             remarkPlugins={[remarkGfm]}
                             rehypePlugins={[rehypeRaw]}
@@ -121,18 +139,14 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                         </ReactMarkdown>
                     </div>
 
-                    {/* Footer */}
-                    <div className='notion-divider' style={{ marginTop: '48px' }} />
-                    <div style={{ textAlign: 'center', padding: '32px 0' }}>
-                        <Link href='/blog' className='notion-action-btn'>
-                            <ArrowLeftIcon className='notion-action-icon' />
-                            Back to All Posts
+                    <div className='obsidian-post-footer'>
+                        <Link href='/blog' className='obsidian-back-link'>
+                            <ArrowLeftIcon className='obsidian-inline-icon' />
+                            Back to all posts
                         </Link>
                     </div>
 
-                    <footer className='notion-footer'>
-                        © 2026 {strings.NAME}
-                    </footer>
+                    <footer className='obsidian-footer'>© 2026 {strings.NAME}</footer>
                 </article>
             </main>
         </>
