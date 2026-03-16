@@ -2479,6 +2479,10 @@
   color: #161b25;
 }
 
+.obsidian-post-header .obsidian-entry-header {
+  margin-top: 0.85rem;
+}
+
 .obsidian-post-description {
   width: min(100%, 42rem);
   margin: 1rem 0 0;
