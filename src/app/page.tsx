@@ -60,9 +60,6 @@ const notebookLinks = [
     { label: 'Apps', href: '/apps' },
     { label: 'Blog', href: '/blog' },
     { label: 'Resume', href: '/apps/resume' },
-    { label: 'GitHub', href: strings.GITHUB_URL, external: true },
-    { label: 'LinkedIn', href: strings.LINKEDIN_URL, external: true },
-    { label: 'Email', href: `mailto:${strings.EMAIL}` },
 ];
 
 export default function Home() {
