@@ -115,8 +115,6 @@ export default function Home() {
                                 <a
                                     key={link.label}
                                     href={link.href}
-                                    target={link.external ? '_blank' : undefined}
-                                    rel={link.external ? 'noreferrer' : undefined}
                                     className='obsidian-nav-link'
                                 >
                                     {link.label}
