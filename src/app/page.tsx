@@ -12,6 +12,11 @@ import { strings } from './constants/strings';
 
 const featuredProjects = [
     {
+        label: 'WeirdBench',
+        description: 'Unconventional LLM benchmarks for modern frontier models.',
+        href: 'https://weirdbench.com?ref=jdleo.me',
+    },
+    {
         label: 'Resume Rodeo',
         description: 'AI resume analysis and optimization.',
         href: 'https://resume.rodeo?ref=jdleo.me',
