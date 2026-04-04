@@ -72,8 +72,6 @@ export default function Resume() {
         const startTime = Date.now();
         try {
             const apiMessages = updatedMessages.slice(-10);
-            const systemPromptResponse = await fetch('/api/resume-prompt');
-            const { systemPrompt: resumeSystemPrompt } = await systemPromptResponse.json();
 
             const response = await fetch('/api/chat-openrouter', {
                 method: 'POST',
@@ -81,7 +79,7 @@ export default function Resume() {
                 body: JSON.stringify({
                     messages: apiMessages,
                     model: 'anthropic/claude-sonnet-4.5',
-                    systemPrompt: resumeSystemPrompt,
+                    promptVariant: 'resume',
                 }),
             });
 

@@ -10,9 +10,28 @@ const ALLOWED_MODELS = [
     'x-ai/grok-4',
 ];
 
+function buildResumeSystemPrompt() {
+    const currentDate = new Date().toLocaleDateString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+    });
+
+    const baseInstructions = `
+-The current date is ${currentDate}
+-(IMPORTANT!) Keep responses concise and conversational. The chat UI supports markdown formatting.`;
+
+    return process.env.RESUME_SYSTEM_PROMPT
+        ? `${process.env.RESUME_SYSTEM_PROMPT}${baseInstructions}`
+        : `You are John's personal AI assistant. You have detailed knowledge of his professional background, skills, and experience. Answer questions about John in a helpful, conversational way.${baseInstructions}
+
+Please provide accurate information about John's background when asked.`;
+}
+
 export async function POST(req: Request) {
     try {
-        const { messages, model, systemPrompt } = await req.json();
+        const { messages, model, systemPrompt, promptVariant } = await req.json();
 
         if (!process.env.OPENROUTER_API_KEY) {
             return NextResponse.json({ error: 'OpenRouter API key not configured' }, { status: 500 });
@@ -68,7 +87,10 @@ export async function POST(req: Request) {
             day: 'numeric',
         });
 
-        const systemContent = systemPrompt || `You are a helpful AI assistant. Today's date is ${currentDate}.`;
+        const systemContent =
+            promptVariant === 'resume'
+                ? buildResumeSystemPrompt()
+                : systemPrompt || `You are a helpful AI assistant. Today's date is ${currentDate}.`;
 
         const systemMessage = {
             role: 'system',
