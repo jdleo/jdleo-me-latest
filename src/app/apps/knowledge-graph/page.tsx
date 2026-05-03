@@ -280,17 +280,17 @@ export default function KnowledgeGraph() {
     return (
         <>
             <WebVitals />
-            <main className={`resend-home resend-apps-home ${isLoaded ? 'is-loaded' : ''}`}>
-                <header className='resend-nav-wrap'>
-                    <Link href='/' className='resend-logo'>{strings.NAME}</Link>
-                    <nav className='resend-nav' aria-label='Primary navigation'>
-                        <Link href='/apps' className='resend-nav-link'>Apps</Link>
-                        <Link href='/blog' className='resend-nav-link'>Blog</Link>
-                        <Link href='/apps/resume' className='resend-nav-link'>Resume</Link>
+            <main className={`jd-home jd-apps-home ${isLoaded ? 'is-loaded' : ''}`}>
+                <header className='jd-nav-wrap'>
+                    <Link href='/' className='jd-logo'>{strings.NAME}</Link>
+                    <nav className='jd-nav' aria-label='Primary navigation'>
+                        <Link href='/apps' className='jd-nav-link'>Apps</Link>
+                        <Link href='/blog' className='jd-nav-link'>Blog</Link>
+                        <Link href='/apps/resume' className='jd-nav-link'>Resume</Link>
                     </nav>
-                    <div className='resend-nav-actions'>
-                        <Link href='/apps/chat' className='resend-login'>Chat</Link>
-                        <Link href='/' className='resend-top-cta'>Home</Link>
+                    <div className='jd-nav-actions'>
+                        <Link href='/apps/chat' className='jd-login'>Chat</Link>
+                        <Link href='/' className='jd-top-cta'>Home</Link>
                     </div>
                 </header>
 
@@ -316,7 +316,7 @@ export default function KnowledgeGraph() {
                                         value={text}
                                         onChange={(e) => setText(e.target.value)}
                                         placeholder='Paste text here...'
-                                        className='notion-textarea resend-tool-textarea'
+                                        className='notion-textarea jd-tool-textarea'
                                         disabled={isGenerating}
                                         style={{ height: '240px' }}
                                     />
@@ -362,7 +362,7 @@ export default function KnowledgeGraph() {
                                             onKeyDown={e => e.key === 'Enter' && askQuestion()}
                                             disabled={isAsking}
                                             placeholder='Ask a question...'
-                                            className='notion-input resend-tool-input'
+                                            className='notion-input jd-tool-input'
                                             style={{ marginBottom: '8px', paddingRight: '30px' }}
                                         />
                                         <button
@@ -386,7 +386,7 @@ export default function KnowledgeGraph() {
                         </div>
 
                         {/* Right Graph Area */}
-                        <div className='resend-graph-canvas'>
+                        <div className='jd-graph-canvas'>
                             <ReactFlow
                                 nodes={nodes}
                                 edges={edges}

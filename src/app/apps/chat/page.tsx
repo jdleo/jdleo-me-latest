@@ -176,46 +176,46 @@ export default function Chat() {
     return (
         <>
             <WebVitals />
-            <main className={`resend-home resend-app-runtime ${isLoaded ? 'is-loaded' : ''}`}>
-                <header className='resend-nav-wrap resend-app-runtime-nav'>
-                    <Link href='/apps' className='resend-logo resend-back-logo'>
+            <main className={`jd-home jd-app-runtime ${isLoaded ? 'is-loaded' : ''}`}>
+                <header className='jd-nav-wrap jd-app-runtime-nav'>
+                    <Link href='/apps' className='jd-logo jd-back-logo'>
                         <ArrowLeftIcon />
                         <span>Apps</span>
                     </Link>
-                    <nav className='resend-nav' aria-label='Primary navigation'>
-                        <Link href='/' className='resend-nav-link'>Home</Link>
-                        <Link href='/blog' className='resend-nav-link'>Blog</Link>
-                        <Link href='/apps/resume' className='resend-nav-link'>Resume</Link>
+                    <nav className='jd-nav' aria-label='Primary navigation'>
+                        <Link href='/' className='jd-nav-link'>Home</Link>
+                        <Link href='/blog' className='jd-nav-link'>Blog</Link>
+                        <Link href='/apps/resume' className='jd-nav-link'>Resume</Link>
                     </nav>
-                    <div className='resend-nav-actions'>
+                    <div className='jd-nav-actions'>
                         <button
                             onClick={() => setIsMobileModelSelectorOpen(true)}
-                            className='resend-runtime-suggestions-btn md:hidden'
+                            className='jd-runtime-suggestions-btn md:hidden'
                         >
                             <span>{currentModel?.name.split(' ')[0]}</span>
                             <ChevronDownIcon />
                         </button>
                         <button
                             onClick={() => setIsMobileSettingsOpen(true)}
-                            className='resend-runtime-icon-btn md:hidden'
+                            className='jd-runtime-icon-btn md:hidden'
                             aria-label='Open chat settings'
                         >
                             <Cog6ToothIcon />
                         </button>
-                        <Link href='/' className='resend-top-cta'>John Leonardo</Link>
+                        <Link href='/' className='jd-top-cta'>John Leonardo</Link>
                     </div>
                 </header>
 
-                <div className='resend-runtime-layout'>
-                    <aside className='hidden md:flex resend-runtime-sidebar resend-runtime-sidebar-wide'>
-                        <div className='resend-runtime-sidebar-main'>
-                            <div className='resend-runtime-eyebrow'>Select Model</div>
-                            <div className='resend-runtime-question-list'>
+                <div className='jd-runtime-layout'>
+                    <aside className='hidden md:flex jd-runtime-sidebar jd-runtime-sidebar-wide'>
+                        <div className='jd-runtime-sidebar-main'>
+                            <div className='jd-runtime-eyebrow'>Select Model</div>
+                            <div className='jd-runtime-question-list'>
                                 {availableModels.map(m => (
                                     <button
                                         key={m.id}
                                         onClick={() => setSelectedModel(m.id)}
-                                        className={`resend-runtime-question resend-runtime-model-option ${selectedModel === m.id ? 'is-selected' : ''}`}
+                                        className={`jd-runtime-question jd-runtime-model-option ${selectedModel === m.id ? 'is-selected' : ''}`}
                                     >
                                         <Image src={m.icon} alt={m.name} width={20} height={20} className='object-contain' />
                                         <span>
@@ -227,8 +227,8 @@ export default function Chat() {
                             </div>
                         </div>
 
-                        <div className='resend-runtime-system'>
-                            <div className='resend-runtime-eyebrow'>System Prompt</div>
+                        <div className='jd-runtime-system'>
+                            <div className='jd-runtime-eyebrow'>System Prompt</div>
                             <textarea
                                 value={systemPrompt}
                                 onChange={e => setSystemPrompt(e.target.value)}
@@ -238,19 +238,19 @@ export default function Chat() {
                             />
                         </div>
 
-                        <div className='resend-runtime-sidebar-footer'>
+                        <div className='jd-runtime-sidebar-footer'>
                             <button onClick={() => setMessages([])} className='notion-chat-clear-btn'>
                                 Clear History
                             </button>
                         </div>
                     </aside>
 
-                    <section className='resend-runtime-chat'>
-                        <div className='resend-runtime-scroll scrollbar-hide'>
+                    <section className='jd-runtime-chat'>
+                        <div className='jd-runtime-scroll scrollbar-hide'>
                             {showWelcome && (
-                                <div className='resend-runtime-welcome resend-chat-welcome'>
+                                <div className='jd-runtime-welcome jd-chat-welcome'>
                                     <div>
-                                        <p className='resend-runtime-kicker'>AI Chat</p>
+                                        <p className='jd-runtime-kicker'>AI Chat</p>
                                         <h1>Feel free to chat and ask anything.</h1>
                                         <p>
                                             Your chats are <strong>never saved</strong> anywhere. This is totally free for now, so have fun.
@@ -266,7 +266,7 @@ export default function Chat() {
                             {streamingMessage && (
                                 <div className='notion-chat-message-wrapper'>
                                     <div className='notion-chat-message notion-chat-message-ai'>
-                                        <div className='resend-runtime-message-label'>Thinking...</div>
+                                        <div className='jd-runtime-message-label'>Thinking...</div>
                                         <div className='notion-blog-content'>
                                             <ReactMarkdown
                                                 remarkPlugins={[remarkGfm]}
@@ -298,7 +298,7 @@ export default function Chat() {
                             <div ref={messagesEndRef} />
                         </div>
 
-                        <div className='resend-runtime-input'>
+                        <div className='jd-runtime-input'>
                             <ChatInput
                                 onSend={sendMessage}
                                 isLoading={isLoading}
@@ -310,12 +310,12 @@ export default function Chat() {
 
                 {isMobileModelSelectorOpen && (
                     <div className='notion-mobile-overlay' onClick={() => setIsMobileModelSelectorOpen(false)}>
-                        <div className='notion-mobile-panel resend-runtime-panel' onClick={e => e.stopPropagation()}>
-                            <div className='notion-mobile-panel-header resend-runtime-panel-header'>
+                        <div className='notion-mobile-panel jd-runtime-panel' onClick={e => e.stopPropagation()}>
+                            <div className='notion-mobile-panel-header jd-runtime-panel-header'>
                                 <span>Select Model</span>
                                 <button onClick={() => setIsMobileModelSelectorOpen(false)} className='notion-mobile-close'>x</button>
                             </div>
-                            <div className='resend-runtime-panel-body'>
+                            <div className='jd-runtime-panel-body'>
                                 {availableModels.map(m => (
                                     <button
                                         key={m.id}
@@ -323,7 +323,7 @@ export default function Chat() {
                                             setSelectedModel(m.id);
                                             setIsMobileModelSelectorOpen(false);
                                         }}
-                                        className={`resend-runtime-question resend-runtime-model-option ${selectedModel === m.id ? 'is-selected' : ''}`}
+                                        className={`jd-runtime-question jd-runtime-model-option ${selectedModel === m.id ? 'is-selected' : ''}`}
                                     >
                                         <Image src={m.icon} alt={m.name} width={20} height={20} className='object-contain' />
                                         <span>
@@ -339,12 +339,12 @@ export default function Chat() {
 
                 {isMobileSettingsOpen && (
                     <div className='notion-mobile-overlay' onClick={() => setIsMobileSettingsOpen(false)}>
-                        <div className='notion-mobile-panel resend-runtime-panel' onClick={e => e.stopPropagation()}>
-                            <div className='notion-mobile-panel-header resend-runtime-panel-header'>
+                        <div className='notion-mobile-panel jd-runtime-panel' onClick={e => e.stopPropagation()}>
+                            <div className='notion-mobile-panel-header jd-runtime-panel-header'>
                                 <span>System Prompt</span>
                                 <button onClick={() => setIsMobileSettingsOpen(false)} className='notion-mobile-close'>x</button>
                             </div>
-                            <div className='resend-runtime-panel-body resend-runtime-settings-body'>
+                            <div className='jd-runtime-panel-body jd-runtime-settings-body'>
                                 <textarea
                                     value={systemPrompt}
                                     onChange={e => setSystemPrompt(e.target.value)}
@@ -352,11 +352,11 @@ export default function Chat() {
                                     rows={8}
                                     placeholder='Enter system prompt...'
                                 />
-                                <div className='resend-runtime-settings-actions'>
+                                <div className='jd-runtime-settings-actions'>
                                     <button onClick={() => setMessages([])} className='notion-chat-clear-btn'>
                                         Clear History
                                     </button>
-                                    <button onClick={() => setIsMobileSettingsOpen(false)} className='resend-action-btn'>
+                                    <button onClick={() => setIsMobileSettingsOpen(false)} className='jd-action-btn'>
                                         Done
                                     </button>
                                 </div>

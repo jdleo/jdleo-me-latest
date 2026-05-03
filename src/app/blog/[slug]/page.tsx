@@ -72,49 +72,49 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             <ViewTracker slug={slug} />
             <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
 
-            <main className='resend-home resend-blog-home is-loaded'>
-                <header className='resend-nav-wrap'>
-                    <Link href='/' className='resend-logo' aria-label='John Leonardo home'>
+            <main className='jd-home jd-blog-home is-loaded'>
+                <header className='jd-nav-wrap'>
+                    <Link href='/' className='jd-logo' aria-label='John Leonardo home'>
                         {strings.NAME}
                     </Link>
-                    <nav className='resend-nav' aria-label='Post navigation'>
-                        <Link href='/blog' className='resend-nav-link'>
+                    <nav className='jd-nav' aria-label='Post navigation'>
+                        <Link href='/blog' className='jd-nav-link'>
                             Blog
                         </Link>
-                        <Link href='/apps' className='resend-nav-link'>
+                        <Link href='/apps' className='jd-nav-link'>
                             Apps
                         </Link>
-                        <Link href='/apps/resume' className='resend-nav-link'>
+                        <Link href='/apps/resume' className='jd-nav-link'>
                             Resume
                         </Link>
-                        <a href={strings.GITHUB_URL} target='_blank' rel='noreferrer' className='resend-nav-link'>
+                        <a href={strings.GITHUB_URL} target='_blank' rel='noreferrer' className='jd-nav-link'>
                             GitHub
                         </a>
                     </nav>
-                    <div className='resend-nav-actions'>
-                        <a href={strings.LINKEDIN_URL} target='_blank' rel='noreferrer' className='resend-login'>
+                    <div className='jd-nav-actions'>
+                        <a href={strings.LINKEDIN_URL} target='_blank' rel='noreferrer' className='jd-login'>
                             LinkedIn
                         </a>
-                        <a href={`mailto:${strings.EMAIL}`} className='resend-top-cta'>
+                        <a href={`mailto:${strings.EMAIL}`} className='jd-top-cta'>
                             Contact
                         </a>
                     </div>
                 </header>
 
-                <article className='resend-article-shell'>
-                    <div className='resend-back-row'>
-                        <Link href='/blog' className='resend-back-link'>
+                <article className='jd-article-shell'>
+                    <div className='jd-back-row'>
+                        <Link href='/blog' className='jd-back-link'>
                             <ArrowLeftIcon aria-hidden='true' />
                             Back to blog
                         </Link>
                     </div>
 
-                    <header className='resend-article-header'>
-                        <Link href='/blog' className='resend-pill'>
+                    <header className='jd-article-header'>
+                        <Link href='/blog' className='jd-pill'>
                             Blog
                         </Link>
                         <h1>{post.title}</h1>
-                        <div className='resend-post-meta'>
+                        <div className='jd-post-meta'>
                             <span>
                                 <CalendarIcon aria-hidden='true' />
                                 {formatDate(post.date)}
@@ -126,9 +126,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                         </div>
                         {post.description && <p>{post.description}</p>}
                         {post.tags.length > 0 && (
-                            <div className='resend-tag-row'>
+                            <div className='jd-tag-row'>
                                 {post.tags.map((tag: string) => (
-                                    <span key={tag} className='resend-tag'>
+                                    <span key={tag} className='jd-tag'>
                                         {tag}
                                     </span>
                                 ))}
@@ -136,7 +136,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                         )}
                     </header>
 
-                    <div className='resend-prose'>
+                    <div className='jd-prose'>
                         <ReactMarkdown
                             remarkPlugins={[remarkGfm]}
                             rehypePlugins={[rehypeRaw]}
@@ -153,14 +153,14 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                         </ReactMarkdown>
                     </div>
 
-                    <div className='resend-post-footer'>
-                        <Link href='/blog' className='resend-back-link'>
+                    <div className='jd-post-footer'>
+                        <Link href='/blog' className='jd-back-link'>
                             <ArrowLeftIcon aria-hidden='true' />
                             Back to all posts
                         </Link>
                     </div>
 
-                    <footer className='resend-footer resend-article-footer'>
+                    <footer className='jd-footer jd-article-footer'>
                         <span>© 2026 {strings.NAME}</span>
                         <a href={`mailto:${strings.EMAIL}`}>{strings.EMAIL}</a>
                     </footer>

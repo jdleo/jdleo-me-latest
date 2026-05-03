@@ -98,22 +98,22 @@ export default function ScreenApp() {
     return (
         <>
             <WebVitals />
-            <main className={`resend-home resend-apps-home ${isLoaded ? 'is-loaded' : ''}`}>
-                <header className='resend-nav-wrap'>
-                    <Link href='/' className='resend-logo'>{strings.NAME}</Link>
-                    <nav className='resend-nav' aria-label='Primary navigation'>
-                        <Link href='/apps' className='resend-nav-link'>Apps</Link>
-                        <Link href='/blog' className='resend-nav-link'>Blog</Link>
-                        <Link href='/apps/resume' className='resend-nav-link'>Resume</Link>
+            <main className={`jd-home jd-apps-home ${isLoaded ? 'is-loaded' : ''}`}>
+                <header className='jd-nav-wrap'>
+                    <Link href='/' className='jd-logo'>{strings.NAME}</Link>
+                    <nav className='jd-nav' aria-label='Primary navigation'>
+                        <Link href='/apps' className='jd-nav-link'>Apps</Link>
+                        <Link href='/blog' className='jd-nav-link'>Blog</Link>
+                        <Link href='/apps/resume' className='jd-nav-link'>Resume</Link>
                     </nav>
-                    <div className='resend-nav-actions'>
-                        <Link href='/apps/chat' className='resend-login'>Chat</Link>
-                        <Link href='/' className='resend-top-cta'>Home</Link>
+                    <div className='jd-nav-actions'>
+                        <Link href='/apps/chat' className='jd-login'>Chat</Link>
+                        <Link href='/' className='jd-top-cta'>Home</Link>
                     </div>
                 </header>
 
-                <div className='resend-blog-shell resend-tool-shell'>
-                    <section className='resend-blog-hero resend-tool-hero'>
+                <div className='jd-blog-shell jd-tool-shell'>
+                    <section className='jd-blog-hero jd-tool-hero'>
                         <h1>Resume Screener</h1>
                         <p>Generate tailored interview questions from a candidate resume.</p>
                     </section>
@@ -121,23 +121,23 @@ export default function ScreenApp() {
                     {!fileName ? (
                         <section
                             {...getRootProps()}
-                            className={`resend-dropzone ${isDragActive ? 'is-active' : ''}`}
+                            className={`jd-dropzone ${isDragActive ? 'is-active' : ''}`}
                         >
                             <input {...getInputProps()} />
-                            <div className='resend-dropzone-icon'>
+                            <div className='jd-dropzone-icon'>
                                 <DocumentMagnifyingGlassIcon />
                             </div>
                             <h2>{isDragActive ? 'Drop the PDF here' : 'Click or drop resume PDF'}</h2>
                             <p>Upload a resume and I'll turn it into focused interview questions with signal to watch for.</p>
                         </section>
                     ) : (
-                        <section className='resend-form-card'>
-                            <div className='resend-file-row'>
+                        <section className='jd-form-card'>
+                            <div className='jd-file-row'>
                                 <span>
                                     <DocumentTextIcon />
                                     {fileName}
                                 </span>
-                                <button onClick={() => { setFileName(null); setResumeText(null); setQuestions(null); }} className='resend-secondary-btn'>
+                                <button onClick={() => { setFileName(null); setResumeText(null); setQuestions(null); }} className='jd-secondary-btn'>
                                     Change
                                 </button>
                             </div>
@@ -145,37 +145,37 @@ export default function ScreenApp() {
                                 value={jobDescription}
                                 onChange={e => setJobDescription(e.target.value)}
                                 placeholder='Optional: paste the job description to tailor the questions...'
-                                className='resend-textarea'
+                                className='jd-textarea'
                             />
-                            <button onClick={handleGenerate} disabled={loading} className='resend-action-btn'>
+                            <button onClick={handleGenerate} disabled={loading} className='jd-action-btn'>
                                 {loading ? 'Analyzing...' : 'Generate Questions'}
                             </button>
-                            {error && <div className='resend-error-text'>{error}</div>}
+                            {error && <div className='jd-error-text'>{error}</div>}
                         </section>
                     )}
 
                     {questions && (
-                        <section className='resend-question-section'>
-                            <div className='resend-section-title'>
+                        <section className='jd-question-section'>
+                            <div className='jd-section-title'>
                                 <span><ClipboardDocumentListIcon /> Screening Questions</span>
                             </div>
-                            <div className='resend-question-list'>
+                            <div className='jd-question-list'>
                                 {questions.map((q) => (
                                     <article
                                         key={q.id}
-                                        className='resend-question-card'
+                                        className='jd-question-card'
                                         onClick={() => setExpandedQuestion(expandedQuestion === q.id ? null : q.id)}
                                     >
-                                        <div className='resend-question-number'>{q.id}</div>
+                                        <div className='jd-question-number'>{q.id}</div>
                                         <div>
-                                            <span className='resend-tag'>{q.topic}</span>
+                                            <span className='jd-tag'>{q.topic}</span>
                                             <h3>{q.question}</h3>
                                             <p>Context: {q.context}</p>
 
                                             {expandedQuestion === q.id && (
-                                                <div className='resend-flag-grid'>
+                                                <div className='jd-flag-grid'>
                                                     <div>
-                                                        <h4 className='resend-green'><CheckCircleIcon /> Green Flags</h4>
+                                                        <h4 className='jd-green'><CheckCircleIcon /> Green Flags</h4>
                                                         <ul>
                                                             {q.greenFlags.map((flag, i) => (
                                                                 <li key={i}>{flag}</li>
@@ -183,7 +183,7 @@ export default function ScreenApp() {
                                                         </ul>
                                                     </div>
                                                     <div>
-                                                        <h4 className='resend-red'><ExclamationTriangleIcon /> Red Flags</h4>
+                                                        <h4 className='jd-red'><ExclamationTriangleIcon /> Red Flags</h4>
                                                         <p>{q.redFlags}</p>
                                                     </div>
                                                 </div>
@@ -196,7 +196,7 @@ export default function ScreenApp() {
                     )}
                 </div>
 
-                <footer className='resend-footer'>
+                <footer className='jd-footer'>
                     <span>&copy; 2026 {strings.NAME}</span>
                     <Link href='/apps'>Back to apps</Link>
                 </footer>

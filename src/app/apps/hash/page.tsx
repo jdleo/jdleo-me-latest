@@ -39,17 +39,17 @@ export default function Hash() {
     return (
         <>
             <WebVitals />
-            <main className={`resend-home resend-apps-home ${isLoaded ? 'is-loaded' : ''}`}>
-                <header className='resend-nav-wrap'>
-                    <Link href='/' className='resend-logo'>{strings.NAME}</Link>
-                    <nav className='resend-nav' aria-label='Primary navigation'>
-                        <Link href='/apps' className='resend-nav-link'>Apps</Link>
-                        <Link href='/blog' className='resend-nav-link'>Blog</Link>
-                        <Link href='/apps/resume' className='resend-nav-link'>Resume</Link>
+            <main className={`jd-home jd-apps-home ${isLoaded ? 'is-loaded' : ''}`}>
+                <header className='jd-nav-wrap'>
+                    <Link href='/' className='jd-logo'>{strings.NAME}</Link>
+                    <nav className='jd-nav' aria-label='Primary navigation'>
+                        <Link href='/apps' className='jd-nav-link'>Apps</Link>
+                        <Link href='/blog' className='jd-nav-link'>Blog</Link>
+                        <Link href='/apps/resume' className='jd-nav-link'>Resume</Link>
                     </nav>
-                    <div className='resend-nav-actions'>
-                        <Link href='/apps/chat' className='resend-login'>Chat</Link>
-                        <Link href='/' className='resend-top-cta'>Home</Link>
+                    <div className='jd-nav-actions'>
+                        <Link href='/apps/chat' className='jd-login'>Chat</Link>
+                        <Link href='/' className='jd-top-cta'>Home</Link>
                     </div>
                 </header>
 
@@ -71,7 +71,7 @@ export default function Hash() {
                                 value={input}
                                 onChange={e => setInput(e.target.value)}
                                 placeholder='Enter text to generate hashes...'
-                                className='notion-textarea resend-tool-textarea'
+                                className='notion-textarea jd-tool-textarea'
                                 style={{ height: '150px' }}
                             />
                         </div>
@@ -104,7 +104,7 @@ export default function Hash() {
                                             Copy
                                         </button>
                                     </div>
-                                    <div className='resend-hash-output'>
+                                    <div className='jd-hash-output'>
                                         {h.value}
                                     </div>
                                 </div>

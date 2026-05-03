@@ -114,51 +114,51 @@ export default function Home() {
     return (
         <>
             <WebVitals />
-            <main className={`resend-home ${isLoaded ? 'is-loaded' : ''}`}>
-                <header className='resend-nav-wrap'>
-                    <a href='/' className='resend-logo' aria-label='John Leonardo home'>
+            <main className={`jd-home ${isLoaded ? 'is-loaded' : ''}`}>
+                <header className='jd-nav-wrap'>
+                    <a href='/' className='jd-logo' aria-label='John Leonardo home'>
                         John Leonardo
                     </a>
-                    <nav className='resend-nav' aria-label='Primary'>
+                    <nav className='jd-nav' aria-label='Primary'>
                         {notebookLinks.map((link) => (
-                            <a key={link.label} href={link.href} className='resend-nav-link'>
+                            <a key={link.label} href={link.href} className='jd-nav-link'>
                                 {link.label}
                             </a>
                         ))}
-                        <a href={strings.GITHUB_URL} target='_blank' rel='noreferrer' className='resend-nav-link'>
+                        <a href={strings.GITHUB_URL} target='_blank' rel='noreferrer' className='jd-nav-link'>
                             GitHub
                         </a>
                     </nav>
-                    <div className='resend-nav-actions'>
-                        <a href={strings.LINKEDIN_URL} target='_blank' rel='noreferrer' className='resend-login'>
+                    <div className='jd-nav-actions'>
+                        <a href={strings.LINKEDIN_URL} target='_blank' rel='noreferrer' className='jd-login'>
                             LinkedIn
                         </a>
-                        <a href={`mailto:${strings.EMAIL}`} className='resend-top-cta'>
+                        <a href={`mailto:${strings.EMAIL}`} className='jd-top-cta'>
                             Contact
                         </a>
                     </div>
                 </header>
 
-                <section className='resend-hero' aria-labelledby='home-title'>
-                    <div className='resend-hero-copy'>
-                        <a href='/blog' className='resend-pill'>
+                <section className='jd-hero' aria-labelledby='home-title'>
+                    <div className='jd-hero-copy'>
+                        <a href='/blog' className='jd-pill'>
                             <span>Latest writing</span>
                             <ArrowUpRightIcon aria-hidden='true' />
                         </a>
                         <h1 id='home-title'>{strings.NAME}</h1>
-                        <p className='resend-role'>Senior Software Engineer</p>
-                        <p className='resend-lede'>{strings.SUBTITLE}</p>
+                        <p className='jd-role'>Senior Software Engineer</p>
+                        <p className='jd-lede'>{strings.SUBTITLE}</p>
 
-                        <div className='resend-actions'>
-                            <a href='/apps' className='resend-primary'>
+                        <div className='jd-actions'>
+                            <a href='/apps' className='jd-primary'>
                                 Browse apps
                             </a>
-                            <a href='/blog' className='resend-secondary'>
+                            <a href='/blog' className='jd-secondary'>
                                 Read the blog
                             </a>
                         </div>
 
-                        <div className='resend-meta'>
+                        <div className='jd-meta'>
                             <span>SF Bay Area</span>
                             <span>Roblox</span>
                             <span>
@@ -168,22 +168,22 @@ export default function Home() {
                         </div>
                     </div>
 
-                    <div className='resend-hero-art' aria-hidden='true'>
-                        <div className='resend-cube-stage'>
-                            <div className='resend-cube'>
+                    <div className='jd-hero-art' aria-hidden='true'>
+                        <div className='jd-cube-stage'>
+                            <div className='jd-cube'>
                                 {Array.from({ length: 27 }).map((_, index) => (
-                                    <span key={index} className={`resend-cube-cell cell-${index}`} />
+                                    <span key={index} className={`jd-cube-cell cell-${index}`} />
                                 ))}
                             </div>
-                            <div className='resend-cube-shadow' />
+                            <div className='jd-cube-shadow' />
                         </div>
                     </div>
                 </section>
 
-                <section className='resend-work' aria-label='Homepage links'>
+                <section className='jd-work' aria-label='Homepage links'>
                     {latestPost && (
-                        <a href={`/blog/${latestPost.slug}`} className='resend-work-card resend-work-card-wide'>
-                            <div className='resend-card-eyebrow'>
+                        <a href={`/blog/${latestPost.slug}`} className='jd-work-card jd-work-card-wide'>
+                            <div className='jd-card-eyebrow'>
                                 <PencilSquareIcon aria-hidden='true' />
                                 Latest writing
                             </div>
@@ -193,8 +193,8 @@ export default function Home() {
                         </a>
                     )}
 
-                    <div className='resend-work-card'>
-                        <div className='resend-card-eyebrow'>Projects</div>
+                    <div className='jd-work-card'>
+                        <div className='jd-card-eyebrow'>Projects</div>
                         <ul>
                             {featuredProjects.map((project) => (
                                 <li key={project.label}>
@@ -207,8 +207,8 @@ export default function Home() {
                         </ul>
                     </div>
 
-                    <div className='resend-work-card'>
-                        <div className='resend-card-eyebrow'>iPhone Apps</div>
+                    <div className='jd-work-card'>
+                        <div className='jd-card-eyebrow'>iPhone Apps</div>
                         <ul>
                             {iosApps.map((app) => (
                                 <li key={app.label}>
@@ -222,7 +222,7 @@ export default function Home() {
                     </div>
                 </section>
 
-                <footer className='resend-footer'>
+                <footer className='jd-footer'>
                     <span>© 2026 {strings.NAME}</span>
                     <a href={`mailto:${strings.EMAIL}`}>{strings.EMAIL}</a>
                 </footer>

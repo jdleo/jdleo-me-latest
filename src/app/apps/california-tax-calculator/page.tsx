@@ -230,17 +230,17 @@ export default function CaliforniaTaxCalculator() {
     return (
         <>
             <WebVitals />
-            <main className={`resend-home resend-apps-home ${isLoaded ? 'is-loaded' : ''}`}>
-                <header className='resend-nav-wrap'>
-                    <Link href='/' className='resend-logo'>{strings.NAME}</Link>
-                    <nav className='resend-nav' aria-label='Primary navigation'>
-                        <Link href='/apps' className='resend-nav-link'>Apps</Link>
-                        <Link href='/blog' className='resend-nav-link'>Blog</Link>
-                        <Link href='/apps/resume' className='resend-nav-link'>Resume</Link>
+            <main className={`jd-home jd-apps-home ${isLoaded ? 'is-loaded' : ''}`}>
+                <header className='jd-nav-wrap'>
+                    <Link href='/' className='jd-logo'>{strings.NAME}</Link>
+                    <nav className='jd-nav' aria-label='Primary navigation'>
+                        <Link href='/apps' className='jd-nav-link'>Apps</Link>
+                        <Link href='/blog' className='jd-nav-link'>Blog</Link>
+                        <Link href='/apps/resume' className='jd-nav-link'>Resume</Link>
                     </nav>
-                    <div className='resend-nav-actions'>
-                        <Link href='/apps/chat' className='resend-login'>Chat</Link>
-                        <Link href='/' className='resend-top-cta'>Home</Link>
+                    <div className='jd-nav-actions'>
+                        <Link href='/apps/chat' className='jd-login'>Chat</Link>
+                        <Link href='/' className='jd-top-cta'>Home</Link>
                     </div>
                 </header>
 
@@ -281,10 +281,10 @@ export default function CaliforniaTaxCalculator() {
                                 </div>
                                 <div>
                                     <label style={{ fontSize: '11px', fontWeight: 600, color: 'rgba(255, 255, 255, 0.58)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '8px', display: 'block' }}>Filing Status</label>
-                                    <div className='resend-select-wrap'>
+                                    <div className='jd-select-wrap'>
                                         <button
                                             type='button'
-                                            className={`resend-select-button ${isFilingOpen ? 'is-open' : ''}`}
+                                            className={`jd-select-button ${isFilingOpen ? 'is-open' : ''}`}
                                             onClick={() => setIsFilingOpen(open => !open)}
                                             aria-haspopup='listbox'
                                             aria-expanded={isFilingOpen}
@@ -293,7 +293,7 @@ export default function CaliforniaTaxCalculator() {
                                             <ChevronDownIcon />
                                         </button>
                                         {isFilingOpen && (
-                                            <div className='resend-select-menu' role='listbox'>
+                                            <div className='jd-select-menu' role='listbox'>
                                                 {filingOptions.map(option => (
                                                     <button
                                                         key={option.value}

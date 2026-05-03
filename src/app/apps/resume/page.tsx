@@ -160,48 +160,48 @@ export default function Resume() {
     return (
         <>
             <WebVitals />
-            <main className='resend-home resend-app-runtime is-loaded'>
-                <header className='resend-nav-wrap resend-app-runtime-nav'>
-                    <Link href='/apps' className='resend-back-link'>
+            <main className='jd-home jd-app-runtime is-loaded'>
+                <header className='jd-nav-wrap jd-app-runtime-nav'>
+                    <Link href='/apps' className='jd-back-link'>
                         <ArrowLeftIcon aria-hidden='true' />
                         <span className='hidden sm:inline'>Back to Apps</span>
                         <span className='sm:hidden'>Apps</span>
                     </Link>
-                    <nav className='resend-nav' aria-label='Resume app navigation'>
-                        <Link href='/' className='resend-nav-link'>
+                    <nav className='jd-nav' aria-label='Resume app navigation'>
+                        <Link href='/' className='jd-nav-link'>
                             Home
                         </Link>
-                        <Link href='/blog' className='resend-nav-link'>
+                        <Link href='/blog' className='jd-nav-link'>
                             Blog
                         </Link>
-                        <a href={strings.GITHUB_URL} target='_blank' rel='noreferrer' className='resend-nav-link'>
+                        <a href={strings.GITHUB_URL} target='_blank' rel='noreferrer' className='jd-nav-link'>
                             GitHub
                         </a>
                     </nav>
-                    <div className='resend-nav-actions'>
+                    <div className='jd-nav-actions'>
                         <button
                             onClick={() => setIsMobileSuggestionsOpen(true)}
-                            className='md:hidden resend-runtime-suggestions-btn'
+                            className='md:hidden jd-runtime-suggestions-btn'
                         >
                             Suggestions
                             <ChevronDownIcon aria-hidden='true' />
                         </button>
-                        <a href={`mailto:${strings.EMAIL}`} className='resend-top-cta'>
+                        <a href={`mailto:${strings.EMAIL}`} className='jd-top-cta'>
                             Contact
                         </a>
                     </div>
                 </header>
 
-                <div className='resend-runtime-layout'>
-                    <aside className='hidden md:flex resend-runtime-sidebar'>
-                        <div className='resend-runtime-sidebar-main'>
-                            <div className='resend-runtime-eyebrow'>Suggested Questions</div>
-                            <div className='resend-runtime-question-list'>
+                <div className='jd-runtime-layout'>
+                    <aside className='hidden md:flex jd-runtime-sidebar'>
+                        <div className='jd-runtime-sidebar-main'>
+                            <div className='jd-runtime-eyebrow'>Suggested Questions</div>
+                            <div className='jd-runtime-question-list'>
                                 {suggestedQueries.map((q, i) => (
                                     <button
                                         key={i}
                                         onClick={() => sendMessage(q)}
-                                        className='resend-runtime-question'
+                                        className='jd-runtime-question'
                                     >
                                         <QuestionMarkCircleIcon aria-hidden='true' />
                                         <span>{q}</span>
@@ -210,7 +210,7 @@ export default function Resume() {
                             </div>
                         </div>
 
-                        <div className='resend-runtime-sidebar-footer'>
+                        <div className='jd-runtime-sidebar-footer'>
                             <button
                                 onClick={() => { setMessages([]); setShowWelcome(true); }}
                                 className='notion-chat-clear-btn'
@@ -220,21 +220,21 @@ export default function Resume() {
                         </div>
                     </aside>
 
-                    <div className='resend-runtime-chat'>
-                        <div className='resend-runtime-scroll scrollbar-hide'>
+                    <div className='jd-runtime-chat'>
+                        <div className='jd-runtime-scroll scrollbar-hide'>
                             {showWelcome && (
-                                <div className='resend-runtime-welcome'>
+                                <div className='jd-runtime-welcome'>
                                     <div>
-                                        <p className='resend-runtime-kicker'>Chat w/ John</p>
+                                        <p className='jd-runtime-kicker'>Chat w/ John</p>
                                         <h1>Hi! I know everything about John.</h1>
                                         <p>Ask me anything about his experience, skills, projects, or background.</p>
                                     </div>
-                                    <div className='resend-runtime-suggestion-grid'>
+                                    <div className='jd-runtime-suggestion-grid'>
                                         {suggestedQueries.slice(0, 4).map((q, i) => (
                                             <button
                                                 key={i}
                                                 onClick={() => sendMessage(q)}
-                                                className='resend-runtime-suggestion'
+                                                className='jd-runtime-suggestion'
                                             >
                                                 {q}
                                             </button>
@@ -250,10 +250,10 @@ export default function Resume() {
                             {streamingMessage && (
                                 <div className='notion-chat-message-wrapper'>
                                     <div className='notion-chat-message notion-chat-message-ai'>
-                                        <div className='resend-runtime-message-label'>
+                                        <div className='jd-runtime-message-label'>
                                             Thinking...
                                         </div>
-                                        <div className='notion-blog-content resend-prose'>
+                                        <div className='notion-blog-content jd-prose'>
                                             <ReactMarkdown
                                                 remarkPlugins={[remarkGfm]}
                                                 rehypePlugins={[rehypeRaw]}
@@ -284,7 +284,7 @@ export default function Resume() {
                             <div ref={messagesEndRef} />
                         </div>
 
-                        <div className='resend-runtime-input'>
+                        <div className='jd-runtime-input'>
                             <ChatInput
                                 onSend={sendMessage}
                                 isLoading={isLoading}
@@ -295,18 +295,18 @@ export default function Resume() {
                 </div>
 
                 {isMobileSuggestionsOpen && (
-                    <div className='notion-mobile-overlay resend-runtime-overlay' onClick={() => setIsMobileSuggestionsOpen(false)}>
-                        <div className='notion-mobile-panel resend-runtime-panel' onClick={e => e.stopPropagation()}>
-                            <div className='notion-mobile-panel-header resend-runtime-panel-header'>
+                    <div className='notion-mobile-overlay jd-runtime-overlay' onClick={() => setIsMobileSuggestionsOpen(false)}>
+                        <div className='notion-mobile-panel jd-runtime-panel' onClick={e => e.stopPropagation()}>
+                            <div className='notion-mobile-panel-header jd-runtime-panel-header'>
                                 <span>Suggested Questions</span>
                                 <button onClick={() => setIsMobileSuggestionsOpen(false)} className='notion-mobile-close'>✕</button>
                             </div>
-                            <div className='resend-runtime-panel-body'>
+                            <div className='jd-runtime-panel-body'>
                                 {suggestedQueries.map((q, i) => (
                                     <button
                                         key={i}
                                         onClick={() => sendMessage(q)}
-                                        className='resend-runtime-question'
+                                        className='jd-runtime-question'
                                     >
                                         <QuestionMarkCircleIcon aria-hidden='true' />
                                         <span>{q}</span>

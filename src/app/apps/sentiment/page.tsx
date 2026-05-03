@@ -271,33 +271,33 @@ export default function Sentiment() {
     return (
         <>
             <WebVitals />
-            <main className={`resend-home resend-apps-home ${isLoaded ? 'is-loaded' : ''}`}>
-                <header className='resend-nav-wrap'>
-                    <Link href='/' className='resend-logo'>{strings.NAME}</Link>
-                    <nav className='resend-nav' aria-label='Primary navigation'>
-                        <Link href='/apps' className='resend-nav-link'>Apps</Link>
-                        <Link href='/blog' className='resend-nav-link'>Blog</Link>
-                        <Link href='/apps/resume' className='resend-nav-link'>Resume</Link>
+            <main className={`jd-home jd-apps-home ${isLoaded ? 'is-loaded' : ''}`}>
+                <header className='jd-nav-wrap'>
+                    <Link href='/' className='jd-logo'>{strings.NAME}</Link>
+                    <nav className='jd-nav' aria-label='Primary navigation'>
+                        <Link href='/apps' className='jd-nav-link'>Apps</Link>
+                        <Link href='/blog' className='jd-nav-link'>Blog</Link>
+                        <Link href='/apps/resume' className='jd-nav-link'>Resume</Link>
                     </nav>
-                    <div className='resend-nav-actions'>
-                        <Link href='/apps/chat' className='resend-login'>Chat</Link>
-                        <Link href='/' className='resend-top-cta'>Home</Link>
+                    <div className='jd-nav-actions'>
+                        <Link href='/apps/chat' className='jd-login'>Chat</Link>
+                        <Link href='/' className='jd-top-cta'>Home</Link>
                     </div>
                 </header>
 
-                <div className='resend-blog-shell resend-tool-shell'>
-                    <section className='resend-blog-hero resend-tool-hero'>
+                <div className='jd-blog-shell jd-tool-shell'>
+                    <section className='jd-blog-hero jd-tool-hero'>
                         <h1>AI Sentiment</h1>
                         <p>Tracking public sentiment toward AI over time.</p>
                     </section>
 
-                    <section className='resend-tool-card'>
+                    <section className='jd-tool-card'>
                         <p>
                             Every week, 250 articles about AI are collected from various news sources and classified into 5 sentiment categories
-                            using <code className='resend-inline-code'>openai/gpt-oss-120b</code>. The results are aggregated below to show how
+                            using <code className='jd-inline-code'>openai/gpt-oss-120b</code>. The results are aggregated below to show how
                             public perception of AI shifts over time.
                         </p>
-                        <div className='resend-tool-card-footer'>
+                        <div className='jd-tool-card-footer'>
                             <p>
                                 Data collected and curated by{' '}
                                 <a href='https://jdleo.me' target='_blank' rel='noopener noreferrer'>John Leonardo</a>.
@@ -313,7 +313,7 @@ export default function Sentiment() {
                                     a.click();
                                     URL.revokeObjectURL(url);
                                 }}
-                                className='resend-download-btn'
+                                className='jd-download-btn'
                             >
                                 <ArrowDownTrayIcon />
                                 Download Raw Data
@@ -321,28 +321,28 @@ export default function Sentiment() {
                         </div>
                     </section>
 
-                    <section className='resend-chart-section'>
-                        <div className='resend-section-title'>
+                    <section className='jd-chart-section'>
+                        <div className='jd-section-title'>
                             <span><SignalIcon /> Aggregate Sentiment Score</span>
-                            <span className='resend-pill-metric'>{sentimentData.length} Weeks</span>
+                            <span className='jd-pill-metric'>{sentimentData.length} Weeks</span>
                         </div>
-                        <div className='resend-chart-card'>
+                        <div className='jd-chart-card'>
                             <Line data={scoreChartData} options={scoreChartOptions} />
                         </div>
                     </section>
 
-                    <section className='resend-chart-section'>
-                        <div className='resend-section-title'>
+                    <section className='jd-chart-section'>
+                        <div className='jd-section-title'>
                             <span><ChartBarIcon /> Sentiment Breakdown</span>
-                            <span className='resend-pill-metric resend-pill-metric-green'>% Distribution</span>
+                            <span className='jd-pill-metric jd-pill-metric-green'>% Distribution</span>
                         </div>
-                        <div className='resend-chart-card resend-chart-card-tall'>
+                        <div className='jd-chart-card jd-chart-card-tall'>
                             <Line data={breakdownChartData} options={breakdownChartOptions} />
                         </div>
                     </section>
                 </div>
 
-                <footer className='resend-footer'>
+                <footer className='jd-footer'>
                     <span>&copy; 2026 {strings.NAME}</span>
                     <Link href='/apps'>Back to apps</Link>
                 </footer>

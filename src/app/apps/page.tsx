@@ -63,60 +63,60 @@ export default function Apps() {
     return (
         <>
             <WebVitals />
-            <main className={`resend-home resend-apps-home ${isLoaded ? 'is-loaded' : ''}`}>
-                <header className='resend-nav-wrap'>
-                    <Link href='/' className='resend-logo' aria-label='John Leonardo home'>
+            <main className={`jd-home jd-apps-home ${isLoaded ? 'is-loaded' : ''}`}>
+                <header className='jd-nav-wrap'>
+                    <Link href='/' className='jd-logo' aria-label='John Leonardo home'>
                         {strings.NAME}
                     </Link>
-                    <nav className='resend-nav' aria-label='Apps navigation'>
-                        <Link href='/' className='resend-nav-link'>
+                    <nav className='jd-nav' aria-label='Apps navigation'>
+                        <Link href='/' className='jd-nav-link'>
                             Home
                         </Link>
-                        <Link href='/blog' className='resend-nav-link'>
+                        <Link href='/blog' className='jd-nav-link'>
                             Blog
                         </Link>
-                        <Link href='/apps/resume' className='resend-nav-link'>
+                        <Link href='/apps/resume' className='jd-nav-link'>
                             Resume
                         </Link>
-                        <a href={strings.GITHUB_URL} target='_blank' rel='noreferrer' className='resend-nav-link'>
+                        <a href={strings.GITHUB_URL} target='_blank' rel='noreferrer' className='jd-nav-link'>
                             GitHub
                         </a>
                     </nav>
-                    <div className='resend-nav-actions'>
-                        <a href={strings.LINKEDIN_URL} target='_blank' rel='noreferrer' className='resend-login'>
+                    <div className='jd-nav-actions'>
+                        <a href={strings.LINKEDIN_URL} target='_blank' rel='noreferrer' className='jd-login'>
                             LinkedIn
                         </a>
-                        <a href={`mailto:${strings.EMAIL}`} className='resend-top-cta'>
+                        <a href={`mailto:${strings.EMAIL}`} className='jd-top-cta'>
                             Contact
                         </a>
                     </div>
                 </header>
 
-                <article className='resend-blog-shell'>
-                    <section className='resend-blog-hero resend-apps-hero'>
+                <article className='jd-blog-shell'>
+                    <section className='jd-blog-hero jd-apps-hero'>
                         <h1>Apps</h1>
                         <p>Random apps I made that might have some value to somebody.</p>
                     </section>
 
-                    <section className='resend-app-grid' aria-label='Applications and tools'>
+                    <section className='jd-app-grid' aria-label='Applications and tools'>
                         {apps.map((app) => {
                             const IconComponent = getAppIcon(app.title);
                             return (
-                                <Link key={app.title} href={app.href} className='resend-app-card'>
-                                    <div className='resend-app-card-icon'>
+                                <Link key={app.title} href={app.href} className='jd-app-card'>
+                                    <div className='jd-app-card-icon'>
                                         <IconComponent aria-hidden='true' />
                                     </div>
-                                    <div className='resend-app-card-body'>
+                                    <div className='jd-app-card-body'>
                                         <h2>{app.title}</h2>
                                         <p>{app.subtitle}</p>
                                     </div>
-                                    <ArrowUpRightIcon className='resend-app-card-arrow' aria-hidden='true' />
+                                    <ArrowUpRightIcon className='jd-app-card-arrow' aria-hidden='true' />
                                 </Link>
                             );
                         })}
                     </section>
 
-                    <footer className='resend-footer'>
+                    <footer className='jd-footer'>
                         <span>© 2026 {strings.NAME}</span>
                         <a href={`mailto:${strings.EMAIL}`}>{strings.EMAIL}</a>
                     </footer>

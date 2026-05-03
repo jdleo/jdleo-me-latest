@@ -59,36 +59,36 @@ export default function BlogPage() {
     return (
         <>
             <WebVitals />
-            <main className={`resend-home resend-blog-home ${isLoaded ? 'is-loaded' : ''}`}>
-                <header className='resend-nav-wrap'>
-                    <Link href='/' className='resend-logo' aria-label='John Leonardo home'>
+            <main className={`jd-home jd-blog-home ${isLoaded ? 'is-loaded' : ''}`}>
+                <header className='jd-nav-wrap'>
+                    <Link href='/' className='jd-logo' aria-label='John Leonardo home'>
                         {strings.NAME}
                     </Link>
-                    <nav className='resend-nav' aria-label='Blog navigation'>
+                    <nav className='jd-nav' aria-label='Blog navigation'>
                         {notebookLinks.map((link) => (
                             <a
                                 key={link.label}
                                 href={link.href}
                                 target={link.external ? '_blank' : undefined}
                                 rel={link.external ? 'noreferrer' : undefined}
-                                className='resend-nav-link'
+                                className='jd-nav-link'
                             >
                                 {link.label}
                             </a>
                         ))}
                     </nav>
-                    <div className='resend-nav-actions'>
-                        <a href={strings.LINKEDIN_URL} target='_blank' rel='noreferrer' className='resend-login'>
+                    <div className='jd-nav-actions'>
+                        <a href={strings.LINKEDIN_URL} target='_blank' rel='noreferrer' className='jd-login'>
                             LinkedIn
                         </a>
-                        <a href={`mailto:${strings.EMAIL}`} className='resend-top-cta'>
+                        <a href={`mailto:${strings.EMAIL}`} className='jd-top-cta'>
                             Contact
                         </a>
                     </div>
                 </header>
 
-                <article className='resend-blog-shell'>
-                    <section className='resend-blog-hero'>
+                <article className='jd-blog-shell'>
+                    <section className='jd-blog-hero'>
                         <h1>Blog</h1>
                         <p>
                             Technical notes, experiments, and longer writeups on AI, distributed systems,
@@ -97,11 +97,11 @@ export default function BlogPage() {
                     </section>
 
                     {posts.length > 0 ? (
-                        <section className='resend-blog-list'>
-                            <div className='resend-post-list'>
+                        <section className='jd-blog-list'>
+                            <div className='jd-post-list'>
                                 {posts.map((post) => (
-                                    <Link key={post.slug} href={`/blog/${post.slug}`} className='resend-post-card'>
-                                        <div className='resend-post-meta'>
+                                    <Link key={post.slug} href={`/blog/${post.slug}`} className='jd-post-card'>
+                                        <div className='jd-post-meta'>
                                             <span>
                                                 <CalendarIcon aria-hidden='true' />
                                                 {formatDate(post.date)}
@@ -116,9 +116,9 @@ export default function BlogPage() {
                                         <h2>{post.title}</h2>
                                         {post.description && <p>{post.description}</p>}
                                         {post.tags.length > 0 && (
-                                            <div className='resend-tag-row'>
+                                            <div className='jd-tag-row'>
                                                 {post.tags.map((tag) => (
-                                                    <span key={tag} className='resend-tag'>
+                                                    <span key={tag} className='jd-tag'>
                                                         {tag}
                                                     </span>
                                                 ))}
@@ -129,12 +129,12 @@ export default function BlogPage() {
                             </div>
                         </section>
                     ) : (
-                        <section className='resend-blog-empty'>
+                        <section className='jd-blog-empty'>
                             <p>No posts yet.</p>
                         </section>
                     )}
 
-                    <footer className='resend-footer'>
+                    <footer className='jd-footer'>
                         <span>© 2026 {strings.NAME}</span>
                         <a href={`mailto:${strings.EMAIL}`}>{strings.EMAIL}</a>
                     </footer>
