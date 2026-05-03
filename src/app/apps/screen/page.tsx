@@ -6,8 +6,6 @@ import { useDropzone } from 'react-dropzone';
 import { strings } from '../../constants/strings';
 import { WebVitals } from '@/components/SEO/WebVitals';
 import {
-    DevicePhoneMobileIcon,
-    PencilSquareIcon,
     DocumentTextIcon,
     DocumentMagnifyingGlassIcon,
     ClipboardDocumentListIcon,
@@ -100,164 +98,108 @@ export default function ScreenApp() {
     return (
         <>
             <WebVitals />
-            <main className='notion-page'>
-                <header className={`notion-header ${isLoaded ? 'loaded' : ''}`}>
-                    <div className='notion-nav' style={{ justifyContent: 'space-between', maxWidth: '1100px' }}>
-                        <Link href='/' className='notion-nav-link' style={{ fontWeight: 600 }}>
-                            {strings.NAME}
-                        </Link>
-                        <div style={{ display: 'flex', gap: '8px' }}>
-                            <Link href='/apps' className='notion-nav-link'>
-                                <DevicePhoneMobileIcon className='notion-nav-icon' />
-                                Apps
-                            </Link>
-                            <Link href='/blog' className='notion-nav-link'>
-                                <PencilSquareIcon className='notion-nav-icon' />
-                                Blog
-                            </Link>
-                            <Link href='/apps/resume' className='notion-nav-link'>
-                                <DocumentTextIcon className='notion-nav-icon' />
-                                Resume
-                            </Link>
-                        </div>
+            <main className={`resend-home resend-apps-home ${isLoaded ? 'is-loaded' : ''}`}>
+                <header className='resend-nav-wrap'>
+                    <Link href='/' className='resend-logo'>{strings.NAME}</Link>
+                    <nav className='resend-nav' aria-label='Primary navigation'>
+                        <Link href='/apps' className='resend-nav-link'>Apps</Link>
+                        <Link href='/blog' className='resend-nav-link'>Blog</Link>
+                        <Link href='/apps/resume' className='resend-nav-link'>Resume</Link>
+                    </nav>
+                    <div className='resend-nav-actions'>
+                        <Link href='/apps/chat' className='resend-login'>Chat</Link>
+                        <Link href='/' className='resend-top-cta'>Home</Link>
                     </div>
                 </header>
 
-                <div className={`notion-content ${isLoaded ? 'loaded' : ''}`} style={{ maxWidth: '1000px' }}>
-                    <div className='notion-title-block'>
-                        <h1 className='notion-title'>Resume Screener</h1>
-                        <div className='notion-subtitle'>Generate tailored interview questions based on candidate resumes</div>
-                    </div>
-
-                    <div className='notion-divider' />
+                <div className='resend-blog-shell resend-tool-shell'>
+                    <section className='resend-blog-hero resend-tool-hero'>
+                        <h1>Resume Screener</h1>
+                        <p>Generate tailored interview questions from a candidate resume.</p>
+                    </section>
 
                     {!fileName ? (
-                        <div className='notion-section'>
-                            <div
-                                {...getRootProps()}
-                                style={{
-                                    padding: '64px',
-                                    border: `2px dashed ${isDragActive ? '#6366f1' : 'rgba(55, 53, 47, 0.16)'}`,
-                                    borderRadius: '12px',
-                                    textAlign: 'center',
-                                    cursor: 'pointer',
-                                    backgroundColor: isDragActive ? 'rgba(99, 102, 241, 0.05)' : 'transparent',
-                                    transition: 'all 0.2s ease'
-                                }}
-                            >
-                                <input {...getInputProps()} />
-                                <div style={{ fontSize: '32px', marginBottom: '16px' }}>📋</div>
-                                <div style={{ fontSize: '14px', fontWeight: 600, color: '#37352f' }}>
-                                    {isDragActive ? 'Drop PDF Here' : 'Click or drop Resume PDF'}
-                                </div>
+                        <section
+                            {...getRootProps()}
+                            className={`resend-dropzone ${isDragActive ? 'is-active' : ''}`}
+                        >
+                            <input {...getInputProps()} />
+                            <div className='resend-dropzone-icon'>
+                                <DocumentMagnifyingGlassIcon />
                             </div>
-                        </div>
+                            <h2>{isDragActive ? 'Drop the PDF here' : 'Click or drop resume PDF'}</h2>
+                            <p>Upload a resume and I'll turn it into focused interview questions with signal to watch for.</p>
+                        </section>
                     ) : (
-                        <div className='notion-section'>
-                            <div className='notion-card' style={{ padding: '24px', marginBottom: '24px' }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                                    <span style={{ fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                        <DocumentTextIcon style={{ width: '18px', height: '18px', color: '#6366f1' }} />
-                                        {fileName}
-                                    </span>
-                                    <button onClick={() => { setFileName(null); setResumeText(null); }} className='notion-action-btn'>Change</button>
-                                </div>
-                                <textarea
-                                    value={jobDescription}
-                                    onChange={e => setJobDescription(e.target.value)}
-                                    placeholder='Optional: Paste Job Description to tailor questions...'
-                                    className='notion-textarea'
-                                    style={{ height: '100px', fontSize: '13px', marginBottom: '16px' }}
-                                />
-                                <button
-                                    onClick={handleGenerate}
-                                    disabled={loading}
-                                    className='notion-action-btn notion-action-primary'
-                                    style={{ width: '100%', justifyContent: 'center' }}
-                                >
-                                    {loading ? 'Analyzing...' : 'Generate Questions'}
+                        <section className='resend-form-card'>
+                            <div className='resend-file-row'>
+                                <span>
+                                    <DocumentTextIcon />
+                                    {fileName}
+                                </span>
+                                <button onClick={() => { setFileName(null); setResumeText(null); setQuestions(null); }} className='resend-secondary-btn'>
+                                    Change
                                 </button>
-                                {error && <div style={{ marginTop: '12px', color: '#dc2626', fontSize: '13px' }}>{error}</div>}
                             </div>
-                        </div>
+                            <textarea
+                                value={jobDescription}
+                                onChange={e => setJobDescription(e.target.value)}
+                                placeholder='Optional: paste the job description to tailor the questions...'
+                                className='resend-textarea'
+                            />
+                            <button onClick={handleGenerate} disabled={loading} className='resend-action-btn'>
+                                {loading ? 'Analyzing...' : 'Generate Questions'}
+                            </button>
+                            {error && <div className='resend-error-text'>{error}</div>}
+                        </section>
                     )}
 
                     {questions && (
-                        <div className='notion-section'>
-                            <div className='notion-section-title'>
-                                <ClipboardDocumentListIcon className='notion-section-icon' />
-                                Screening Questions
+                        <section className='resend-question-section'>
+                            <div className='resend-section-title'>
+                                <span><ClipboardDocumentListIcon /> Screening Questions</span>
                             </div>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '16px' }}>
+                            <div className='resend-question-list'>
                                 {questions.map((q) => (
-                                    <div
+                                    <article
                                         key={q.id}
-                                        className='notion-card'
-                                        style={{ padding: '20px', cursor: 'pointer', transition: 'all 0.2s ease' }}
+                                        className='resend-question-card'
                                         onClick={() => setExpandedQuestion(expandedQuestion === q.id ? null : q.id)}
                                     >
-                                        <div style={{ display: 'flex', gap: '16px' }}>
-                                            <div style={{
-                                                width: '24px',
-                                                height: '24px',
-                                                borderRadius: '50%',
-                                                backgroundColor: 'rgba(55, 53, 47, 0.06)',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                fontSize: '12px',
-                                                fontWeight: 600
-                                            }}>
-                                                {q.id}
-                                            </div>
-                                            <div style={{ flex: 1 }}>
-                                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                                                    <span style={{ fontSize: '10px', fontWeight: 600, color: '#6366f1', backgroundColor: 'rgba(99, 102, 241, 0.1)', padding: '2px 6px', borderRadius: '4px', textTransform: 'uppercase' }}>
-                                                        {q.topic}
-                                                    </span>
-                                                </div>
-                                                <h3 style={{ fontSize: '15px', fontWeight: 600, color: '#37352f', marginBottom: '4px' }}>{q.question}</h3>
-                                                <p style={{ fontSize: '13px', color: 'rgba(55, 53, 47, 0.6)' }}>Context: {q.context}</p>
+                                        <div className='resend-question-number'>{q.id}</div>
+                                        <div>
+                                            <span className='resend-tag'>{q.topic}</span>
+                                            <h3>{q.question}</h3>
+                                            <p>Context: {q.context}</p>
 
-                                                {expandedQuestion === q.id && (
-                                                    <div style={{ marginTop: '20px', paddingTop: '20px', borderTop: '1px solid rgba(55, 53, 47, 0.09)', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px' }}>
-                                                        <div>
-                                                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
-                                                                <CheckCircleIcon style={{ width: '14px', height: '14px', color: '#059669' }} />
-                                                                <span style={{ fontSize: '11px', fontWeight: 700, color: '#059669', textTransform: 'uppercase' }}>Green Flags</span>
-                                                            </div>
-                                                            <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-                                                                {q.greenFlags.map((flag, i) => (
-                                                                    <li key={i} style={{ fontSize: '13px', color: 'rgba(55, 53, 47, 0.7)', marginBottom: '4px', paddingLeft: '12px', position: 'relative' }}>
-                                                                        <span style={{ position: 'absolute', left: 0, top: '6px', width: '4px', height: '4px', borderRadius: '50%', backgroundColor: '#059669' }} />
-                                                                        {flag}
-                                                                    </li>
-                                                                ))}
-                                                            </ul>
-                                                        </div>
-                                                        <div>
-                                                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
-                                                                <ExclamationTriangleIcon style={{ width: '14px', height: '14px', color: '#dc2626' }} />
-                                                                <span style={{ fontSize: '11px', fontWeight: 700, color: '#dc2626', textTransform: 'uppercase' }}>Red Flags</span>
-                                                            </div>
-                                                            <p style={{ fontSize: '13px', color: 'rgba(55, 53, 47, 0.7)', backgroundColor: 'rgba(239, 68, 68, 0.05)', padding: '12px', borderRadius: '8px' }}>
-                                                                {q.redFlags}
-                                                            </p>
-                                                        </div>
+                                            {expandedQuestion === q.id && (
+                                                <div className='resend-flag-grid'>
+                                                    <div>
+                                                        <h4 className='resend-green'><CheckCircleIcon /> Green Flags</h4>
+                                                        <ul>
+                                                            {q.greenFlags.map((flag, i) => (
+                                                                <li key={i}>{flag}</li>
+                                                            ))}
+                                                        </ul>
                                                     </div>
-                                                )}
-                                            </div>
+                                                    <div>
+                                                        <h4 className='resend-red'><ExclamationTriangleIcon /> Red Flags</h4>
+                                                        <p>{q.redFlags}</p>
+                                                    </div>
+                                                </div>
+                                            )}
                                         </div>
-                                    </div>
+                                    </article>
                                 ))}
                             </div>
-                        </div>
+                        </section>
                     )}
-
-                    <footer className='notion-footer'>
-                        © 2026 {strings.NAME}
-                    </footer>
                 </div>
+
+                <footer className='resend-footer'>
+                    <span>&copy; 2026 {strings.NAME}</span>
+                    <Link href='/apps'>Back to apps</Link>
+                </footer>
             </main>
         </>
     );

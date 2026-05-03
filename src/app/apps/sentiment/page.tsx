@@ -17,9 +17,6 @@ import {
     Legend,
 } from 'chart.js';
 import {
-    DevicePhoneMobileIcon,
-    PencilSquareIcon,
-    DocumentTextIcon,
     ChartBarIcon,
     SignalIcon,
     ArrowDownTrayIcon,
@@ -57,16 +54,16 @@ export default function Sentiment() {
             {
                 label: 'Avg Sentiment Score',
                 data: sentimentData.map((w) => w.avg),
-                borderColor: '#6366f1',
-                backgroundColor: 'rgba(99, 102, 241, 0.08)',
+                borderColor: '#8dd8ff',
+                backgroundColor: 'rgba(141, 216, 255, 0.11)',
                 borderWidth: 2.5,
                 pointRadius: 4,
                 pointHoverRadius: 7,
-                pointBackgroundColor: '#fff',
-                pointBorderColor: '#6366f1',
+                pointBackgroundColor: '#050505',
+                pointBorderColor: '#8dd8ff',
                 pointBorderWidth: 2,
-                pointHoverBackgroundColor: '#6366f1',
-                pointHoverBorderColor: '#fff',
+                pointHoverBackgroundColor: '#8dd8ff',
+                pointHoverBorderColor: '#050505',
                 tension: 0.35,
                 fill: true,
                 order: 1,
@@ -74,7 +71,7 @@ export default function Sentiment() {
             {
                 label: 'Trend',
                 data: trendline,
-                borderColor: 'rgba(239, 68, 68, 0.7)',
+                borderColor: 'rgba(185, 247, 234, 0.68)',
                 borderWidth: 1.5,
                 borderDash: [6, 4],
                 pointRadius: 0,
@@ -92,10 +89,10 @@ export default function Sentiment() {
         plugins: {
             legend: { display: false },
             tooltip: {
-                backgroundColor: '#1e1e2e',
+                backgroundColor: '#080808',
                 titleColor: '#fff',
-                bodyColor: '#ccc',
-                borderColor: 'rgba(99, 102, 241, 0.3)',
+                bodyColor: 'rgba(255, 255, 255, 0.72)',
+                borderColor: 'rgba(255, 255, 255, 0.14)',
                 borderWidth: 1,
                 padding: 12,
                 cornerRadius: 8,
@@ -115,7 +112,7 @@ export default function Sentiment() {
                 grid: { display: false },
                 ticks: {
                     font: { size: 10 },
-                    color: 'rgba(55, 53, 47, 0.4)',
+                    color: 'rgba(255, 255, 255, 0.42)',
                     maxRotation: 45,
                     autoSkip: true,
                     maxTicksLimit: 16,
@@ -125,10 +122,10 @@ export default function Sentiment() {
             y: {
                 min: 1,
                 max: 5,
-                grid: { color: 'rgba(55, 53, 47, 0.06)' },
+                grid: { color: 'rgba(255, 255, 255, 0.08)' },
                 ticks: {
                     font: { size: 11 },
-                    color: 'rgba(55, 53, 47, 0.4)',
+                    color: 'rgba(255, 255, 255, 0.42)',
                     stepSize: 0.5,
                     callback: (value: any) => {
                         const map: Record<number, string> = { 1: '1 - Very Neg', 2: '2 - Negative', 3: '3 - Neutral', 4: '4 - Positive', 5: '5 - Very Pos' };
@@ -150,12 +147,12 @@ export default function Sentiment() {
             {
                 label: 'Very Positive',
                 data: sentimentData.map((w) => w.veryPositive),
-                borderColor: '#6366f1',
-                backgroundColor: 'rgba(99, 102, 241, 0.15)',
+                borderColor: '#a78bfa',
+                backgroundColor: 'rgba(167, 139, 250, 0.13)',
                 borderWidth: 2,
                 pointRadius: 0,
                 pointHoverRadius: 5,
-                pointHoverBackgroundColor: '#6366f1',
+                pointHoverBackgroundColor: '#a78bfa',
                 tension: 0.35,
                 fill: true,
             },
@@ -163,7 +160,7 @@ export default function Sentiment() {
                 label: 'Positive',
                 data: sentimentData.map((w) => w.positive),
                 borderColor: '#22c55e',
-                backgroundColor: 'rgba(34, 197, 94, 0.15)',
+                backgroundColor: 'rgba(34, 197, 94, 0.12)',
                 borderWidth: 2,
                 pointRadius: 0,
                 pointHoverRadius: 5,
@@ -187,7 +184,7 @@ export default function Sentiment() {
                 label: 'Negative',
                 data: sentimentData.map((w) => w.negative),
                 borderColor: '#f97316',
-                backgroundColor: 'rgba(249, 115, 22, 0.15)',
+                backgroundColor: 'rgba(249, 115, 22, 0.12)',
                 borderWidth: 2,
                 pointRadius: 0,
                 pointHoverRadius: 5,
@@ -199,7 +196,7 @@ export default function Sentiment() {
                 label: 'Very Negative',
                 data: sentimentData.map((w) => w.veryNegative),
                 borderColor: '#ef4444',
-                backgroundColor: 'rgba(239, 68, 68, 0.15)',
+                backgroundColor: 'rgba(239, 68, 68, 0.12)',
                 borderWidth: 2,
                 pointRadius: 0,
                 pointHoverRadius: 5,
@@ -222,14 +219,14 @@ export default function Sentiment() {
                     pointStyle: 'circle',
                     padding: 16,
                     font: { size: 11, weight: 600 as const },
-                    color: 'rgba(55, 53, 47, 0.6)',
+                    color: 'rgba(255, 255, 255, 0.58)',
                 },
             },
             tooltip: {
-                backgroundColor: '#1e1e2e',
+                backgroundColor: '#080808',
                 titleColor: '#fff',
-                bodyColor: '#ccc',
-                borderColor: 'rgba(99, 102, 241, 0.3)',
+                bodyColor: 'rgba(255, 255, 255, 0.72)',
+                borderColor: 'rgba(255, 255, 255, 0.14)',
                 borderWidth: 1,
                 padding: 12,
                 cornerRadius: 8,
@@ -246,7 +243,7 @@ export default function Sentiment() {
                 grid: { display: false },
                 ticks: {
                     font: { size: 10 },
-                    color: 'rgba(55, 53, 47, 0.4)',
+                    color: 'rgba(255, 255, 255, 0.42)',
                     maxRotation: 45,
                     autoSkip: true,
                     maxTicksLimit: 16,
@@ -256,10 +253,10 @@ export default function Sentiment() {
             y: {
                 min: 0,
                 max: 60,
-                grid: { color: 'rgba(55, 53, 47, 0.06)' },
+                grid: { color: 'rgba(255, 255, 255, 0.08)' },
                 ticks: {
                     font: { size: 11 },
-                    color: 'rgba(55, 53, 47, 0.4)',
+                    color: 'rgba(255, 255, 255, 0.42)',
                     callback: (value: any) => `${value}%`,
                 },
                 border: { display: false },
@@ -274,53 +271,37 @@ export default function Sentiment() {
     return (
         <>
             <WebVitals />
-            <main className='notion-page'>
-                <header className={`notion-header ${isLoaded ? 'loaded' : ''}`}>
-                    <div className='notion-nav' style={{ justifyContent: 'space-between', maxWidth: '1100px' }}>
-                        <Link href='/' className='notion-nav-link' style={{ fontWeight: 600 }}>
-                            {strings.NAME}
-                        </Link>
-                        <div style={{ display: 'flex', gap: '8px' }}>
-                            <Link href='/apps' className='notion-nav-link'>
-                                <DevicePhoneMobileIcon className='notion-nav-icon' />
-                                Apps
-                            </Link>
-                            <Link href='/blog' className='notion-nav-link'>
-                                <PencilSquareIcon className='notion-nav-icon' />
-                                Blog
-                            </Link>
-                            <Link href='/apps/resume' className='notion-nav-link'>
-                                <DocumentTextIcon className='notion-nav-icon' />
-                                Resume
-                            </Link>
-                        </div>
+            <main className={`resend-home resend-apps-home ${isLoaded ? 'is-loaded' : ''}`}>
+                <header className='resend-nav-wrap'>
+                    <Link href='/' className='resend-logo'>{strings.NAME}</Link>
+                    <nav className='resend-nav' aria-label='Primary navigation'>
+                        <Link href='/apps' className='resend-nav-link'>Apps</Link>
+                        <Link href='/blog' className='resend-nav-link'>Blog</Link>
+                        <Link href='/apps/resume' className='resend-nav-link'>Resume</Link>
+                    </nav>
+                    <div className='resend-nav-actions'>
+                        <Link href='/apps/chat' className='resend-login'>Chat</Link>
+                        <Link href='/' className='resend-top-cta'>Home</Link>
                     </div>
                 </header>
 
-                <div className={`notion-content ${isLoaded ? 'loaded' : ''}`} style={{ maxWidth: '1000px' }}>
-                    <div className='notion-title-block'>
-                        <h1 className='notion-title'>AI Sentiment</h1>
-                        <div className='notion-subtitle'>Tracking public sentiment toward AI over time</div>
-                    </div>
+                <div className='resend-blog-shell resend-tool-shell'>
+                    <section className='resend-blog-hero resend-tool-hero'>
+                        <h1>AI Sentiment</h1>
+                        <p>Tracking public sentiment toward AI over time.</p>
+                    </section>
 
-                    <div className='notion-divider' />
-
-                    <div className='notion-section'>
-                        <p style={{ fontSize: '14px', color: 'rgba(55, 53, 47, 0.7)', lineHeight: 1.8 }}>
+                    <section className='resend-tool-card'>
+                        <p>
                             Every week, 250 articles about AI are collected from various news sources and classified into 5 sentiment categories
-                            (very negative, negative, neutral, positive, very positive) using{' '}
-                            <code style={{ fontSize: '12px', backgroundColor: 'rgba(55, 53, 47, 0.06)', padding: '2px 6px', borderRadius: '4px', fontFamily: 'monospace' }}>
-                                openai/gpt-oss-20b
-                            </code>
-                            , a lightweight open-source model. The results are aggregated and plotted below to show how public perception of AI shifts over time.
+                            using <code className='resend-inline-code'>openai/gpt-oss-120b</code>. The results are aggregated below to show how
+                            public perception of AI shifts over time.
                         </p>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px', marginTop: '16px' }}>
-                            <p style={{ fontSize: '13px', color: 'rgba(55, 53, 47, 0.5)', lineHeight: 1.6, margin: 0 }}>
+                        <div className='resend-tool-card-footer'>
+                            <p>
                                 Data collected and curated by{' '}
-                                <a href='https://jdleo.me' target='_blank' rel='noopener noreferrer' style={{ color: '#6366f1', fontWeight: 600, textDecoration: 'none' }}>
-                                    John Leonardo
-                                </a>
-                                . If you use this data, please credit the source.
+                                <a href='https://jdleo.me' target='_blank' rel='noopener noreferrer'>John Leonardo</a>.
+                                If you use this data, please credit the source.
                             </p>
                             <button
                                 onClick={() => {
@@ -332,55 +313,39 @@ export default function Sentiment() {
                                     a.click();
                                     URL.revokeObjectURL(url);
                                 }}
-                                className='notion-action-btn notion-action-primary'
-                                style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 16px', fontSize: '13px', whiteSpace: 'nowrap' }}
+                                className='resend-download-btn'
                             >
-                                <ArrowDownTrayIcon style={{ width: '16px', height: '16px' }} />
+                                <ArrowDownTrayIcon />
                                 Download Raw Data
                             </button>
                         </div>
-                    </div>
+                    </section>
 
-                    <div className='notion-divider' />
-
-                    {/* Aggregate Score Chart */}
-                    <div className='notion-section'>
-                        <div className='notion-section-title'>
-                            <SignalIcon className='notion-section-icon' />
-                            Aggregate Sentiment Score
-                            <span style={{ marginLeft: 'auto', fontSize: '10px', fontWeight: 600, color: '#6366f1', backgroundColor: 'rgba(99, 102, 241, 0.1)', padding: '4px 8px', borderRadius: '12px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                                {sentimentData.length} Weeks
-                            </span>
+                    <section className='resend-chart-section'>
+                        <div className='resend-section-title'>
+                            <span><SignalIcon /> Aggregate Sentiment Score</span>
+                            <span className='resend-pill-metric'>{sentimentData.length} Weeks</span>
                         </div>
-                        <div className='notion-card' style={{ padding: '24px', marginTop: '16px' }}>
-                            <div style={{ height: '360px' }}>
-                                <Line data={scoreChartData} options={scoreChartOptions} />
-                            </div>
+                        <div className='resend-chart-card'>
+                            <Line data={scoreChartData} options={scoreChartOptions} />
                         </div>
-                    </div>
+                    </section>
 
-                    <div className='notion-divider' />
-
-                    {/* Breakdown Chart */}
-                    <div className='notion-section'>
-                        <div className='notion-section-title'>
-                            <ChartBarIcon className='notion-section-icon' />
-                            Sentiment Breakdown
-                            <span style={{ marginLeft: 'auto', fontSize: '10px', fontWeight: 600, color: '#22c55e', backgroundColor: 'rgba(34, 197, 94, 0.1)', padding: '4px 8px', borderRadius: '12px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                                % Distribution
-                            </span>
+                    <section className='resend-chart-section'>
+                        <div className='resend-section-title'>
+                            <span><ChartBarIcon /> Sentiment Breakdown</span>
+                            <span className='resend-pill-metric resend-pill-metric-green'>% Distribution</span>
                         </div>
-                        <div className='notion-card' style={{ padding: '24px', marginTop: '16px' }}>
-                            <div style={{ height: '400px' }}>
-                                <Line data={breakdownChartData} options={breakdownChartOptions} />
-                            </div>
+                        <div className='resend-chart-card resend-chart-card-tall'>
+                            <Line data={breakdownChartData} options={breakdownChartOptions} />
                         </div>
-                    </div>
-
-                    <footer className='notion-footer'>
-                        &copy; 2026 {strings.NAME}
-                    </footer>
+                    </section>
                 </div>
+
+                <footer className='resend-footer'>
+                    <span>&copy; 2026 {strings.NAME}</span>
+                    <Link href='/apps'>Back to apps</Link>
+                </footer>
             </main>
         </>
     );

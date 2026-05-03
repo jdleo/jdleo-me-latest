@@ -45,6 +45,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         notFound();
     }
 
+    const firstHeadingPattern = new RegExp(`^#\\s+${post.title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*\\n+`);
+    const renderedContent = content.replace(firstHeadingPattern, '');
+
     const structuredData = {
         '@context': 'https://schema.org',
         '@type': 'BlogPosting',
@@ -69,52 +72,63 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             <ViewTracker slug={slug} />
             <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
 
-            <main className='obsidian-home obsidian-home-blog'>
-                <div className='obsidian-orb obsidian-orb-left' />
-                <div className='obsidian-orb obsidian-orb-right' />
-
-                <article className='obsidian-sheet is-loaded'>
-                    <header className='obsidian-topbar'>
-                        <Link href='/' className='obsidian-wordmark'>
-                            {strings.NAME}
+            <main className='resend-home resend-blog-home is-loaded'>
+                <header className='resend-nav-wrap'>
+                    <Link href='/' className='resend-logo' aria-label='John Leonardo home'>
+                        {strings.NAME}
+                    </Link>
+                    <nav className='resend-nav' aria-label='Post navigation'>
+                        <Link href='/blog' className='resend-nav-link'>
+                            Blog
                         </Link>
-                        <nav className='obsidian-nav' aria-label='Post navigation'>
-                            <Link href='/blog' className='obsidian-nav-link'>
-                                Blog
-                            </Link>
-                            <Link href='/apps' className='obsidian-nav-link'>
-                                Apps
-                            </Link>
-                            <Link href='/apps/resume' className='obsidian-nav-link'>
-                                Resume
-                            </Link>
-                        </nav>
-                    </header>
+                        <Link href='/apps' className='resend-nav-link'>
+                            Apps
+                        </Link>
+                        <Link href='/apps/resume' className='resend-nav-link'>
+                            Resume
+                        </Link>
+                        <a href={strings.GITHUB_URL} target='_blank' rel='noreferrer' className='resend-nav-link'>
+                            GitHub
+                        </a>
+                    </nav>
+                    <div className='resend-nav-actions'>
+                        <a href={strings.LINKEDIN_URL} target='_blank' rel='noreferrer' className='resend-login'>
+                            LinkedIn
+                        </a>
+                        <a href={`mailto:${strings.EMAIL}`} className='resend-top-cta'>
+                            Contact
+                        </a>
+                    </div>
+                </header>
 
-                    <div className='obsidian-back-row'>
-                        <Link href='/blog' className='obsidian-back-link'>
-                            <ArrowLeftIcon className='obsidian-inline-icon' />
+                <article className='resend-article-shell'>
+                    <div className='resend-back-row'>
+                        <Link href='/blog' className='resend-back-link'>
+                            <ArrowLeftIcon aria-hidden='true' />
                             Back to blog
                         </Link>
                     </div>
 
-                    <header className='obsidian-post-header'>
-                        <h1 className='obsidian-post-title'>{post.title}</h1>
-                        <div className='obsidian-entry-header'>
-                            <span className='obsidian-post-meta-item'>
-                                <CalendarIcon className='obsidian-entry-icon' />
+                    <header className='resend-article-header'>
+                        <Link href='/blog' className='resend-pill'>
+                            Blog
+                        </Link>
+                        <h1>{post.title}</h1>
+                        <div className='resend-post-meta'>
+                            <span>
+                                <CalendarIcon aria-hidden='true' />
                                 {formatDate(post.date)}
                             </span>
-                            <span className='obsidian-post-meta-item'>
-                                <EyeIcon className='obsidian-entry-icon' />
+                            <span>
+                                <EyeIcon aria-hidden='true' />
                                 {displayViewCount.toLocaleString('en-US')} views
                             </span>
                         </div>
-                        {post.description && <p className='obsidian-post-description'>{post.description}</p>}
+                        {post.description && <p>{post.description}</p>}
                         {post.tags.length > 0 && (
-                            <div className='obsidian-tag-row'>
+                            <div className='resend-tag-row'>
                                 {post.tags.map((tag: string) => (
-                                    <span key={tag} className='obsidian-tag'>
+                                    <span key={tag} className='resend-tag'>
                                         {tag}
                                     </span>
                                 ))}
@@ -122,7 +136,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                         )}
                     </header>
 
-                    <div className='obsidian-prose'>
+                    <div className='resend-prose'>
                         <ReactMarkdown
                             remarkPlugins={[remarkGfm]}
                             rehypePlugins={[rehypeRaw]}
@@ -135,18 +149,21 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                                 ),
                             }}
                         >
-                            {content}
+                            {renderedContent}
                         </ReactMarkdown>
                     </div>
 
-                    <div className='obsidian-post-footer'>
-                        <Link href='/blog' className='obsidian-back-link'>
-                            <ArrowLeftIcon className='obsidian-inline-icon' />
+                    <div className='resend-post-footer'>
+                        <Link href='/blog' className='resend-back-link'>
+                            <ArrowLeftIcon aria-hidden='true' />
                             Back to all posts
                         </Link>
                     </div>
 
-                    <footer className='obsidian-footer'>© 2026 {strings.NAME}</footer>
+                    <footer className='resend-footer resend-article-footer'>
+                        <span>© 2026 {strings.NAME}</span>
+                        <a href={`mailto:${strings.EMAIL}`}>{strings.EMAIL}</a>
+                    </footer>
                 </article>
             </main>
         </>

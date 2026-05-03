@@ -2686,5 +2686,101 @@
     "neutral": 23.5,
     "positive": 37.1,
     "veryPositive": 0.8
+  },
+  {
+    "week": "2026-03-08_to_2026-03-15",
+    "display": "Mar 08 \u2013 Mar 15, 2026",
+    "start": "2026-03-08T00:00:00.000Z",
+    "total": 29,
+    "avg": 2.76,
+    "veryNegative": 3.4,
+    "negative": 41.4,
+    "neutral": 34.5,
+    "positive": 17.2,
+    "veryPositive": 3.4
+  },
+  {
+    "week": "2026-03-15_to_2026-03-22",
+    "display": "Mar 15 \u2013 Mar 22, 2026",
+    "start": "2026-03-15T00:00:00.000Z",
+    "total": 30,
+    "avg": 3.17,
+    "veryNegative": 6.7,
+    "negative": 26.7,
+    "neutral": 26.7,
+    "positive": 23.3,
+    "veryPositive": 16.7
+  },
+  {
+    "week": "2026-03-22_to_2026-03-29",
+    "display": "Mar 22 \u2013 Mar 29, 2026",
+    "start": "2026-03-22T00:00:00.000Z",
+    "total": 30,
+    "avg": 3.33,
+    "veryNegative": 0,
+    "negative": 26.7,
+    "neutral": 26.7,
+    "positive": 33.3,
+    "veryPositive": 13.3
+  },
+  {
+    "week": "2026-03-29_to_2026-04-05",
+    "display": "Mar 29 \u2013 Apr 05, 2026",
+    "start": "2026-03-29T00:00:00.000Z",
+    "total": 29,
+    "avg": 2.45,
+    "veryNegative": 13.8,
+    "negative": 44.8,
+    "neutral": 24.1,
+    "positive": 17.2,
+    "veryPositive": 0
+  },
+  {
+    "week": "2026-04-05_to_2026-04-12",
+    "display": "Apr 05 \u2013 Apr 12, 2026",
+    "start": "2026-04-05T00:00:00.000Z",
+    "total": 30,
+    "avg": 3.07,
+    "veryNegative": 0,
+    "negative": 23.3,
+    "neutral": 46.7,
+    "positive": 30,
+    "veryPositive": 0
+  },
+  {
+    "week": "2026-04-12_to_2026-04-19",
+    "display": "Apr 12 \u2013 Apr 19, 2026",
+    "start": "2026-04-12T00:00:00.000Z",
+    "total": 30,
+    "avg": 2.9,
+    "veryNegative": 0,
+    "negative": 36.7,
+    "neutral": 36.7,
+    "positive": 26.7,
+    "veryPositive": 0
+  },
+  {
+    "week": "2026-04-19_to_2026-04-26",
+    "display": "Apr 19 \u2013 Apr 26, 2026",
+    "start": "2026-04-19T00:00:00.000Z",
+    "total": 30,
+    "avg": 3.07,
+    "veryNegative": 0,
+    "negative": 36.7,
+    "neutral": 23.3,
+    "positive": 36.7,
+    "veryPositive": 3.3
+  },
+  {
+    "week": "2026-04-26_to_2026-05-03",
+    "display": "Apr 26 \u2013 May 03, 2026",
+    "start": "2026-04-26T00:00:00.000Z",
+    "total": 30,
+    "avg": 3.27,
+    "veryNegative": 3.3,
+    "negative": 23.3,
+    "neutral": 36.7,
+    "positive": 16.7,
+    "veryPositive": 20
   }
 ]

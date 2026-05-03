@@ -12,6 +12,11 @@ import { strings } from './constants/strings';
 
 const featuredProjects = [
     {
+        label: 'TinySafe',
+        description: 'A Qwen3 safety classifier that returns structured moderation verdicts.',
+        href: 'https://huggingface.co/jdleo1/tinysafe-3?ref=jdleo.me',
+    },
+    {
         label: 'WeirdBench',
         description: 'Unconventional LLM benchmarks for modern frontier models.',
         href: 'https://weirdbench.com?ref=jdleo.me',
@@ -109,126 +114,118 @@ export default function Home() {
     return (
         <>
             <WebVitals />
-            <main className='obsidian-home'>
-                <div className='obsidian-orb obsidian-orb-left' />
-                <div className='obsidian-orb obsidian-orb-right' />
+            <main className={`resend-home ${isLoaded ? 'is-loaded' : ''}`}>
+                <header className='resend-nav-wrap'>
+                    <a href='/' className='resend-logo' aria-label='John Leonardo home'>
+                        John Leonardo
+                    </a>
+                    <nav className='resend-nav' aria-label='Primary'>
+                        {notebookLinks.map((link) => (
+                            <a key={link.label} href={link.href} className='resend-nav-link'>
+                                {link.label}
+                            </a>
+                        ))}
+                        <a href={strings.GITHUB_URL} target='_blank' rel='noreferrer' className='resend-nav-link'>
+                            GitHub
+                        </a>
+                    </nav>
+                    <div className='resend-nav-actions'>
+                        <a href={strings.LINKEDIN_URL} target='_blank' rel='noreferrer' className='resend-login'>
+                            LinkedIn
+                        </a>
+                        <a href={`mailto:${strings.EMAIL}`} className='resend-top-cta'>
+                            Contact
+                        </a>
+                    </div>
+                </header>
 
-                <article className={`obsidian-sheet ${isLoaded ? 'is-loaded' : ''}`}>
-                    <header className='obsidian-topbar obsidian-topbar-home'>
-                        <nav className='obsidian-nav' aria-label='Primary'>
-                            {notebookLinks.map((link) => (
-                                <a
-                                    key={link.label}
-                                    href={link.href}
-                                    className='obsidian-nav-link'
-                                >
-                                    {link.label}
-                                </a>
-                            ))}
-                        </nav>
-                    </header>
+                <section className='resend-hero' aria-labelledby='home-title'>
+                    <div className='resend-hero-copy'>
+                        <a href='/blog' className='resend-pill'>
+                            <span>Latest writing</span>
+                            <ArrowUpRightIcon aria-hidden='true' />
+                        </a>
+                        <h1 id='home-title'>{strings.NAME}</h1>
+                        <p className='resend-role'>Senior Software Engineer</p>
+                        <p className='resend-lede'>{strings.SUBTITLE}</p>
 
-                    <section className='obsidian-intro'>
-                        <h1 className='obsidian-title'>{strings.NAME}</h1>
-                        <p className='obsidian-subtitle'>Senior Software Engineer</p>
-                        <p className='obsidian-lede'>{strings.SUBTITLE}</p>
+                        <div className='resend-actions'>
+                            <a href='/apps' className='resend-primary'>
+                                Browse apps
+                            </a>
+                            <a href='/blog' className='resend-secondary'>
+                                Read the blog
+                            </a>
+                        </div>
 
-                        <div className='obsidian-meta'>
+                        <div className='resend-meta'>
                             <span>SF Bay Area</span>
-                            <span>Senior Engineer at Roblox</span>
-                            <span className='obsidian-meta-views'>
-                                <EyeIcon className='obsidian-meta-icon' />
-                                {formatNumber(pageViewCount)} page views
+                            <span>Roblox</span>
+                            <span>
+                                <EyeIcon aria-hidden='true' />
+                                {formatNumber(pageViewCount)} views
                             </span>
                         </div>
-                    </section>
+                    </div>
 
-                    <section className='obsidian-section'>
-                        <h2>Elsewhere</h2>
-                        <p className='obsidian-inline-list'>
-                            <a href={strings.GITHUB_URL} target='_blank' rel='noreferrer'>
-                                GitHub
-                            </a>
-                            <span>/</span>
-                            <a href={strings.LINKEDIN_URL} target='_blank' rel='noreferrer'>
-                                LinkedIn
-                            </a>
-                            <span>/</span>
-                            <a href={`mailto:${strings.EMAIL}`}>Email</a>
-                            <span>/</span>
-                            <a href='https://calendly.com/jleonardo-roblox?ref=jdleo.me' target='_blank' rel='noreferrer'>
-                                Mentorship
-                            </a>
-                        </p>
-                    </section>
-
-                    {latestPost && (
-                        <section className='obsidian-section'>
-                            <div className='obsidian-section-heading'>
-                                <h2>Latest Writing</h2>
-                                <a href='/blog' className='obsidian-section-link'>
-                                    All posts
-                                    <ArrowUpRightIcon className='obsidian-inline-icon' />
-                                </a>
+                    <div className='resend-hero-art' aria-hidden='true'>
+                        <div className='resend-cube-stage'>
+                            <div className='resend-cube'>
+                                {Array.from({ length: 27 }).map((_, index) => (
+                                    <span key={index} className={`resend-cube-cell cell-${index}`} />
+                                ))}
                             </div>
-                            <a href={`/blog/${latestPost.slug}`} className='obsidian-entry-link'>
-                                <div className='obsidian-entry-header'>
-                                    <PencilSquareIcon className='obsidian-entry-icon' />
-                                    <span>{formatDate(latestPost.date)}</span>
-                                </div>
-                                <h3>{latestPost.title}</h3>
-                                <p>{latestPost.description}</p>
-                            </a>
-                        </section>
+                            <div className='resend-cube-shadow' />
+                        </div>
+                    </div>
+                </section>
+
+                <section className='resend-work' aria-label='Homepage links'>
+                    {latestPost && (
+                        <a href={`/blog/${latestPost.slug}`} className='resend-work-card resend-work-card-wide'>
+                            <div className='resend-card-eyebrow'>
+                                <PencilSquareIcon aria-hidden='true' />
+                                Latest writing
+                            </div>
+                            <h3>{latestPost.title}</h3>
+                            <p>{latestPost.description}</p>
+                            <span>{formatDate(latestPost.date)}</span>
+                        </a>
                     )}
 
-                    <section className='obsidian-section'>
-                        <h2>Things I&apos;m Building</h2>
-                        <ul className='obsidian-list'>
+                    <div className='resend-work-card'>
+                        <div className='resend-card-eyebrow'>Projects</div>
+                        <ul>
                             {featuredProjects.map((project) => (
                                 <li key={project.label}>
                                     <a href={project.href} target='_blank' rel='noreferrer'>
                                         {project.label}
-                                    </a>{' '}
-                                    <span>- </span>
+                                    </a>
                                     <span>{project.description}</span>
                                 </li>
                             ))}
                         </ul>
-                    </section>
+                    </div>
 
-                    <section className='obsidian-section'>
-                        <h2>iPhone Apps</h2>
-                        <ul className='obsidian-list obsidian-list-compact'>
+                    <div className='resend-work-card'>
+                        <div className='resend-card-eyebrow'>iPhone Apps</div>
+                        <ul>
                             {iosApps.map((app) => (
                                 <li key={app.label}>
                                     <a href={app.href} target='_blank' rel='noreferrer'>
                                         {app.label}
-                                    </a>{' '}
-                                    <span>- </span>
+                                    </a>
                                     <span>{app.description}</span>
                                 </li>
                             ))}
                         </ul>
-                    </section>
+                    </div>
+                </section>
 
-                    <section className='obsidian-section obsidian-section-closing'>
-                        <h2>Open Tabs</h2>
-                        <p>
-                            If you want the broader catalog, the apps index is the fastest path. If you want
-                            the thinking behind the work, the blog is where I put the longer writeups.
-                        </p>
-                        <p className='obsidian-inline-list'>
-                            <a href='/apps'>Browse apps</a>
-                            <span>/</span>
-                            <a href='/blog'>Read the blog</a>
-                            <span>/</span>
-                            <a href={`mailto:${strings.EMAIL}`}>Start a conversation</a>
-                        </p>
-                    </section>
-
-                    <footer className='obsidian-footer'>© 2026 {strings.NAME}</footer>
-                </article>
+                <footer className='resend-footer'>
+                    <span>© 2026 {strings.NAME}</span>
+                    <a href={`mailto:${strings.EMAIL}`}>{strings.EMAIL}</a>
+                </footer>
             </main>
         </>
     );

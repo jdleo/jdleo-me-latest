@@ -28,7 +28,6 @@ export default function ChatInput({ onSend, isLoading, placeholder = 'Ask anythi
                     placeholder={placeholder}
                     className='notion-chat-input'
                     disabled={isLoading}
-                    autoFocus
                 />
                 <button
                     type='submit'

@@ -97,8 +97,8 @@ export const apps: MiniApp[] = [
         href: '/apps/privacy',
     },
     {
-        title: 'California Tax Calculator',
-        subtitle: 'Calculate your CA state income tax, federal tax, and take-home pay with detailed breakdown.',
+        title: '2026 California Tax Calculator',
+        subtitle: 'Calculate your 2026 CA state income tax, federal tax, payroll taxes, and take-home pay.',
         emoji: '🧮',
         href: '/apps/california-tax-calculator',
     },

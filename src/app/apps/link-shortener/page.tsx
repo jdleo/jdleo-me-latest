@@ -93,28 +93,37 @@ export default function LinkShortener() {
         datasets: [{
             label: 'Clicks',
             data: analyticsData.map(d => d.clicks),
-            borderColor: '#6366f1',
-            backgroundColor: 'rgba(99, 102, 241, 0.1)',
+            borderColor: '#8dd8ff',
+            backgroundColor: 'rgba(141, 216, 255, 0.11)',
             fill: true,
             tension: 0.4,
             borderWidth: 2,
             pointRadius: 4,
-            pointBackgroundColor: '#6366f1',
+            pointBackgroundColor: '#8dd8ff',
         }]
     };
 
     const chartOptions = {
         responsive: true,
         maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
+        plugins: {
+            legend: { display: false },
+            tooltip: {
+                backgroundColor: '#080808',
+                titleColor: '#fff',
+                bodyColor: 'rgba(255, 255, 255, 0.72)',
+                borderColor: 'rgba(255, 255, 255, 0.14)',
+                borderWidth: 1,
+            },
+        },
         scales: {
             x: {
                 grid: { display: false },
-                ticks: { color: '#64748b', font: { size: 10, family: 'sans-serif' } }
+                ticks: { color: 'rgba(255, 255, 255, 0.42)', font: { size: 10, family: 'sans-serif' } }
             },
             y: {
-                grid: { color: 'rgba(0,0,0,0.05)' },
-                ticks: { color: '#64748b', font: { size: 10, family: 'sans-serif' }, stepSize: 1 }
+                grid: { color: 'rgba(255, 255, 255, 0.08)' },
+                ticks: { color: 'rgba(255, 255, 255, 0.42)', font: { size: 10, family: 'sans-serif' }, stepSize: 1 }
             }
         }
     };
@@ -126,26 +135,17 @@ export default function LinkShortener() {
     return (
         <>
             <WebVitals />
-            <main className='notion-page'>
-                <header className={`notion-header ${isLoaded ? 'loaded' : ''}`}>
-                    <div className='notion-nav' style={{ justifyContent: 'space-between', maxWidth: '1100px' }}>
-                        <Link href='/' className='notion-nav-link' style={{ fontWeight: 600 }}>
-                            {strings.NAME}
-                        </Link>
-                        <div style={{ display: 'flex', gap: '8px' }}>
-                            <Link href='/apps' className='notion-nav-link'>
-                                <DevicePhoneMobileIcon className='notion-nav-icon' />
-                                Apps
-                            </Link>
-                            <Link href='/blog' className='notion-nav-link'>
-                                <PencilSquareIcon className='notion-nav-icon' />
-                                Blog
-                            </Link>
-                            <Link href='/apps/resume' className='notion-nav-link'>
-                                <DocumentTextIcon className='notion-nav-icon' />
-                                Resume
-                            </Link>
-                        </div>
+            <main className={`resend-home resend-apps-home ${isLoaded ? 'is-loaded' : ''}`}>
+                <header className='resend-nav-wrap'>
+                    <Link href='/' className='resend-logo'>{strings.NAME}</Link>
+                    <nav className='resend-nav' aria-label='Primary navigation'>
+                        <Link href='/apps' className='resend-nav-link'>Apps</Link>
+                        <Link href='/blog' className='resend-nav-link'>Blog</Link>
+                        <Link href='/apps/resume' className='resend-nav-link'>Resume</Link>
+                    </nav>
+                    <div className='resend-nav-actions'>
+                        <Link href='/apps/chat' className='resend-login'>Chat</Link>
+                        <Link href='/' className='resend-top-cta'>Home</Link>
                     </div>
                 </header>
 

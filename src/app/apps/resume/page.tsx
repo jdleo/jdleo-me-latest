@@ -10,7 +10,7 @@ import MessageItem, { Message } from '@/components/chat/MessageItem';
 import ChatInput from '@/components/chat/ChatInput';
 import { WebVitals } from '@/components/SEO/WebVitals';
 import { strings } from '../../constants/strings';
-import { ArrowLeftIcon, SparklesIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
+import { ArrowLeftIcon, ChevronDownIcon, QuestionMarkCircleIcon } from '@heroicons/react/24/outline';
 
 export default function Resume() {
     const [messages, setMessages] = useState<Message[]>([]);
@@ -78,7 +78,7 @@ export default function Resume() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     messages: apiMessages,
-                    model: 'anthropic/claude-sonnet-4.5',
+                    model: 'anthropic/claude-sonnet-4.6',
                     promptVariant: 'resume',
                 }),
             });
@@ -160,58 +160,57 @@ export default function Resume() {
     return (
         <>
             <WebVitals />
-            <main className='notion-page' style={{ height: '100vh', overflow: 'hidden' }}>
-                {/* Header */}
-                <header className='notion-header loaded' style={{ position: 'sticky' }}>
-                    <div className='notion-nav' style={{ justifyContent: 'space-between', maxWidth: '100%' }}>
-                        <Link href='/apps' className='notion-nav-link'>
-                            <ArrowLeftIcon className='notion-nav-icon' />
-                            <span className='hidden sm:inline'>Back to Apps</span>
-                            <span className='sm:hidden'>Apps</span>
+            <main className='resend-home resend-app-runtime is-loaded'>
+                <header className='resend-nav-wrap resend-app-runtime-nav'>
+                    <Link href='/apps' className='resend-back-link'>
+                        <ArrowLeftIcon aria-hidden='true' />
+                        <span className='hidden sm:inline'>Back to Apps</span>
+                        <span className='sm:hidden'>Apps</span>
+                    </Link>
+                    <nav className='resend-nav' aria-label='Resume app navigation'>
+                        <Link href='/' className='resend-nav-link'>
+                            Home
                         </Link>
+                        <Link href='/blog' className='resend-nav-link'>
+                            Blog
+                        </Link>
+                        <a href={strings.GITHUB_URL} target='_blank' rel='noreferrer' className='resend-nav-link'>
+                            GitHub
+                        </a>
+                    </nav>
+                    <div className='resend-nav-actions'>
                         <button
                             onClick={() => setIsMobileSuggestionsOpen(true)}
-                            className='md:hidden notion-nav-link'
-                            style={{ padding: '4px 10px' }}
+                            className='md:hidden resend-runtime-suggestions-btn'
                         >
-                            <span className='text-xs'>Suggestions</span>
-                            <ChevronDownIcon className='notion-nav-icon' style={{ width: '12px', height: '12px' }} />
+                            Suggestions
+                            <ChevronDownIcon aria-hidden='true' />
                         </button>
-                        <Link href='/' className='notion-nav-link hidden md:flex' style={{ fontWeight: 600 }}>
-                            {strings.NAME}
-                        </Link>
+                        <a href={`mailto:${strings.EMAIL}`} className='resend-top-cta'>
+                            Contact
+                        </a>
                     </div>
                 </header>
 
-                <div style={{ display: 'flex', height: 'calc(100vh - 57px)', overflow: 'hidden' }}>
-                    {/* Left Sidebar (Desktop) */}
-                    <aside className='hidden md:flex flex-col' style={{ width: '280px', borderRight: '1px solid rgba(55, 53, 47, 0.09)', backgroundColor: '#ffffff' }}>
-                        <div style={{ padding: '20px 16px', borderBottom: '1px solid rgba(55, 53, 47, 0.09)' }}>
-                            <div style={{ fontSize: '12px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '12px' }}>
-                                Suggested Questions
-                            </div>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                <div className='resend-runtime-layout'>
+                    <aside className='hidden md:flex resend-runtime-sidebar'>
+                        <div className='resend-runtime-sidebar-main'>
+                            <div className='resend-runtime-eyebrow'>Suggested Questions</div>
+                            <div className='resend-runtime-question-list'>
                                 {suggestedQueries.map((q, i) => (
                                     <button
                                         key={i}
                                         onClick={() => sendMessage(q)}
-                                        className='notion-chat-model-btn'
-                                        style={{ backgroundColor: 'transparent', borderColor: 'transparent' }}
+                                        className='resend-runtime-question'
                                     >
-                                        <div style={{ width: '18px', height: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                                            <SparklesIcon style={{ width: '16px', height: '16px', color: 'rgba(55, 53, 47, 0.5)', strokeWidth: 2 }} />
-                                        </div>
-                                        <div style={{ flex: 1, textAlign: 'left', minWidth: 0 }}>
-                                            <div style={{ fontSize: '13px', fontWeight: 500, color: '#37352f' }}>
-                                                {q}
-                                            </div>
-                                        </div>
+                                        <QuestionMarkCircleIcon aria-hidden='true' />
+                                        <span>{q}</span>
                                     </button>
                                 ))}
                             </div>
                         </div>
 
-                        <div style={{ padding: '16px', marginTop: 'auto', borderTop: '1px solid rgba(55, 53, 47, 0.09)' }}>
+                        <div className='resend-runtime-sidebar-footer'>
                             <button
                                 onClick={() => { setMessages([]); setShowWelcome(true); }}
                                 className='notion-chat-clear-btn'
@@ -221,27 +220,21 @@ export default function Resume() {
                         </div>
                     </aside>
 
-                    {/* Main Chat Area */}
-                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', backgroundColor: '#ffffff', overflow: 'hidden' }}>
-                        <div className='scrollbar-hide' style={{ flex: 1, overflowY: 'auto', padding: '24px', paddingBottom: '120px' }}>
+                    <div className='resend-runtime-chat'>
+                        <div className='resend-runtime-scroll scrollbar-hide'>
                             {showWelcome && (
-                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', textAlign: 'center', gap: '16px' }}>
+                                <div className='resend-runtime-welcome'>
                                     <div>
-                                        <h1 style={{ fontSize: '24px', fontWeight: 700, color: '#37352f', marginBottom: '8px', letterSpacing: '-0.02em' }}>
-                                            Hi! I know everything about John.
-                                        </h1>
-                                        <p style={{ fontSize: '15px', color: 'rgba(55, 53, 47, 0.6)', maxWidth: '500px', margin: '0 auto', lineHeight: '1.6' }}>
-                                            Ask me anything about his experience, skills, projects, or background.
-                                        </p>
+                                        <p className='resend-runtime-kicker'>Chat w/ John</p>
+                                        <h1>Hi! I know everything about John.</h1>
+                                        <p>Ask me anything about his experience, skills, projects, or background.</p>
                                     </div>
-                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px', maxWidth: '600px', width: '100%' }}>
+                                    <div className='resend-runtime-suggestion-grid'>
                                         {suggestedQueries.slice(0, 4).map((q, i) => (
                                             <button
                                                 key={i}
                                                 onClick={() => sendMessage(q)}
-                                                style={{ padding: '14px 16px', background: 'rgba(55, 53, 47, 0.04)', border: '1px solid rgba(55, 53, 47, 0.08)', borderRadius: '8px', fontSize: '13px', fontWeight: 500, color: '#37352f', textAlign: 'left', cursor: 'pointer', transition: 'all 0.15s ease' }}
-                                                onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(55, 53, 47, 0.06)'; e.currentTarget.style.borderColor = 'rgba(55, 53, 47, 0.12)'; }}
-                                                onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(55, 53, 47, 0.04)'; e.currentTarget.style.borderColor = 'rgba(55, 53, 47, 0.08)'; }}
+                                                className='resend-runtime-suggestion'
                                             >
                                                 {q}
                                             </button>
@@ -257,10 +250,10 @@ export default function Resume() {
                             {streamingMessage && (
                                 <div className='notion-chat-message-wrapper'>
                                     <div className='notion-chat-message notion-chat-message-ai'>
-                                        <div style={{ fontSize: '11px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.4)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '12px', paddingBottom: '8px', borderBottom: '1px solid rgba(55, 53, 47, 0.06)' }}>
+                                        <div className='resend-runtime-message-label'>
                                             Thinking...
                                         </div>
-                                        <div className='notion-blog-content'>
+                                        <div className='notion-blog-content resend-prose'>
                                             <ReactMarkdown
                                                 remarkPlugins={[remarkGfm]}
                                                 rehypePlugins={[rehypeRaw]}
@@ -291,8 +284,7 @@ export default function Resume() {
                             <div ref={messagesEndRef} />
                         </div>
 
-                        {/* Input Area */}
-                        <div style={{ padding: '16px 24px', borderTop: '1px solid rgba(55, 53, 47, 0.09)', backgroundColor: '#ffffff' }}>
+                        <div className='resend-runtime-input'>
                             <ChatInput
                                 onSend={sendMessage}
                                 isLoading={isLoading}
@@ -302,26 +294,22 @@ export default function Resume() {
                     </div>
                 </div>
 
-                {/* Mobile Suggestions Overlay */}
                 {isMobileSuggestionsOpen && (
-                    <div className='notion-mobile-overlay' onClick={() => setIsMobileSuggestionsOpen(false)}>
-                        <div className='notion-mobile-panel' onClick={e => e.stopPropagation()}>
-                            <div className='notion-mobile-panel-header'>
+                    <div className='notion-mobile-overlay resend-runtime-overlay' onClick={() => setIsMobileSuggestionsOpen(false)}>
+                        <div className='notion-mobile-panel resend-runtime-panel' onClick={e => e.stopPropagation()}>
+                            <div className='notion-mobile-panel-header resend-runtime-panel-header'>
                                 <span>Suggested Questions</span>
                                 <button onClick={() => setIsMobileSuggestionsOpen(false)} className='notion-mobile-close'>✕</button>
                             </div>
-                            <div style={{ padding: '12px', maxHeight: '60vh', overflowY: 'auto' }}>
+                            <div className='resend-runtime-panel-body'>
                                 {suggestedQueries.map((q, i) => (
                                     <button
                                         key={i}
                                         onClick={() => sendMessage(q)}
-                                        className='notion-chat-model-btn'
-                                        style={{ backgroundColor: 'transparent', borderColor: 'transparent', marginBottom: '6px' }}
+                                        className='resend-runtime-question'
                                     >
-                                        <SparklesIcon style={{ width: '18px', height: '18px', color: 'rgba(55, 53, 47, 0.5)', strokeWidth: 2 }} />
-                                        <div style={{ flex: 1, textAlign: 'left' }}>
-                                            <div style={{ fontSize: '13px', fontWeight: 500, color: '#37352f' }}>{q}</div>
-                                        </div>
+                                        <QuestionMarkCircleIcon aria-hidden='true' />
+                                        <span>{q}</span>
                                     </button>
                                 ))}
                             </div>

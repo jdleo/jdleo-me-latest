@@ -12,8 +12,8 @@ const CodeBlock = ({ inline, className, children, ...props }: CodeBlockProps) =>
     const language = match ? match[1] : '';
 
     return !inline && match ? (
-        <div className='relative rounded-lg overflow-hidden my-6 bg-[#fafafa] border border-gray-200'>
-            <div className='absolute top-3 right-3 px-2 py-1 bg-black/5 rounded text-[10px] font-mono text-gray-500 uppercase tracking-wider'>
+        <div className='markdown-code-block relative rounded-lg overflow-hidden my-6 bg-[#fafafa] border border-gray-200'>
+            <div className='markdown-code-label absolute top-3 right-3 px-2 py-1 bg-black/5 rounded text-[10px] font-mono text-gray-500 uppercase tracking-wider'>
                 {language}
             </div>
             <SyntaxHighlighter
@@ -42,7 +42,7 @@ const CodeBlock = ({ inline, className, children, ...props }: CodeBlockProps) =>
             </SyntaxHighlighter>
         </div>
     ) : (
-        <code className='bg-[var(--purple-1)] text-[var(--purple-4)] px-1.5 py-0.5 rounded text-[0.9em] font-mono border border-[var(--purple-2)]' {...props}>
+        <code className='markdown-inline-code bg-[var(--purple-1)] text-[var(--purple-4)] px-1.5 py-0.5 rounded text-[0.9em] font-mono border border-[var(--purple-2)]' {...props}>
             {children}
         </code>
     );

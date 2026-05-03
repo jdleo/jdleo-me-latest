@@ -59,51 +59,56 @@ export default function BlogPage() {
     return (
         <>
             <WebVitals />
-            <main className='obsidian-home obsidian-home-blog'>
-                <div className='obsidian-orb obsidian-orb-left' />
-                <div className='obsidian-orb obsidian-orb-right' />
+            <main className={`resend-home resend-blog-home ${isLoaded ? 'is-loaded' : ''}`}>
+                <header className='resend-nav-wrap'>
+                    <Link href='/' className='resend-logo' aria-label='John Leonardo home'>
+                        {strings.NAME}
+                    </Link>
+                    <nav className='resend-nav' aria-label='Blog navigation'>
+                        {notebookLinks.map((link) => (
+                            <a
+                                key={link.label}
+                                href={link.href}
+                                target={link.external ? '_blank' : undefined}
+                                rel={link.external ? 'noreferrer' : undefined}
+                                className='resend-nav-link'
+                            >
+                                {link.label}
+                            </a>
+                        ))}
+                    </nav>
+                    <div className='resend-nav-actions'>
+                        <a href={strings.LINKEDIN_URL} target='_blank' rel='noreferrer' className='resend-login'>
+                            LinkedIn
+                        </a>
+                        <a href={`mailto:${strings.EMAIL}`} className='resend-top-cta'>
+                            Contact
+                        </a>
+                    </div>
+                </header>
 
-                <article className={`obsidian-sheet ${isLoaded ? 'is-loaded' : ''}`}>
-                    <header className='obsidian-topbar'>
-                        <Link href='/' className='obsidian-wordmark'>
-                            {strings.NAME}
-                        </Link>
-                        <nav className='obsidian-nav' aria-label='Blog navigation'>
-                            {notebookLinks.map((link) => (
-                                <a
-                                    key={link.label}
-                                    href={link.href}
-                                    target={link.external ? '_blank' : undefined}
-                                    rel={link.external ? 'noreferrer' : undefined}
-                                    className='obsidian-nav-link'
-                                >
-                                    {link.label}
-                                </a>
-                            ))}
-                        </nav>
-                    </header>
-
-                    <section className='obsidian-intro obsidian-intro-blog'>
-                        <h1 className='obsidian-title'>Blog</h1>
-                        <p className='obsidian-lede obsidian-lede-blog'>
+                <article className='resend-blog-shell'>
+                    <section className='resend-blog-hero'>
+                        <h1>Blog</h1>
+                        <p>
                             Technical notes, experiments, and longer writeups on AI, distributed systems,
                             product work, and whatever else was worth keeping.
                         </p>
                     </section>
 
                     {posts.length > 0 ? (
-                        <section className='obsidian-section obsidian-section-blog-list'>
-                            <div className='obsidian-post-list'>
+                        <section className='resend-blog-list'>
+                            <div className='resend-post-list'>
                                 {posts.map((post) => (
-                                    <Link key={post.slug} href={`/blog/${post.slug}`} className='obsidian-post-card'>
-                                        <div className='obsidian-entry-header'>
-                                            <span className='obsidian-post-meta-item'>
-                                                <CalendarIcon className='obsidian-entry-icon' />
+                                    <Link key={post.slug} href={`/blog/${post.slug}`} className='resend-post-card'>
+                                        <div className='resend-post-meta'>
+                                            <span>
+                                                <CalendarIcon aria-hidden='true' />
                                                 {formatDate(post.date)}
                                             </span>
                                             {viewCounts[post.slug] > 0 && (
-                                                <span className='obsidian-post-meta-item'>
-                                                    <EyeIcon className='obsidian-entry-icon' />
+                                                <span>
+                                                    <EyeIcon aria-hidden='true' />
                                                     {formatNumber(viewCounts[post.slug])} views
                                                 </span>
                                             )}
@@ -111,9 +116,9 @@ export default function BlogPage() {
                                         <h2>{post.title}</h2>
                                         {post.description && <p>{post.description}</p>}
                                         {post.tags.length > 0 && (
-                                            <div className='obsidian-tag-row'>
+                                            <div className='resend-tag-row'>
                                                 {post.tags.map((tag) => (
-                                                    <span key={tag} className='obsidian-tag'>
+                                                    <span key={tag} className='resend-tag'>
                                                         {tag}
                                                     </span>
                                                 ))}
@@ -124,12 +129,15 @@ export default function BlogPage() {
                             </div>
                         </section>
                     ) : (
-                        <section className='obsidian-section'>
+                        <section className='resend-blog-empty'>
                             <p>No posts yet.</p>
                         </section>
                     )}
 
-                    <footer className='obsidian-footer'>© 2026 {strings.NAME}</footer>
+                    <footer className='resend-footer'>
+                        <span>© 2026 {strings.NAME}</span>
+                        <a href={`mailto:${strings.EMAIL}`}>{strings.EMAIL}</a>
+                    </footer>
                 </article>
             </main>
         </>

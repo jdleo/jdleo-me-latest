@@ -10,7 +10,7 @@ import {
     DevicePhoneMobileIcon,
     PencilSquareIcon,
     DocumentTextIcon,
-    SparklesIcon,
+    BoltIcon,
     ArrowPathIcon,
     MagnifyingGlassPlusIcon,
     MagnifyingGlassMinusIcon,
@@ -77,26 +77,17 @@ export default function DiagramGenerator() {
     return (
         <>
             <WebVitals />
-            <main className='notion-page'>
-                <header className={`notion-header ${isLoaded ? 'loaded' : ''}`}>
-                    <div className='notion-nav' style={{ justifyContent: 'space-between', maxWidth: '1100px' }}>
-                        <Link href='/' className='notion-nav-link' style={{ fontWeight: 600 }}>
-                            {strings.NAME}
-                        </Link>
-                        <div style={{ display: 'flex', gap: '8px' }}>
-                            <Link href='/apps' className='notion-nav-link'>
-                                <DevicePhoneMobileIcon className='notion-nav-icon' />
-                                Apps
-                            </Link>
-                            <Link href='/blog' className='notion-nav-link'>
-                                <PencilSquareIcon className='notion-nav-icon' />
-                                Blog
-                            </Link>
-                            <Link href='/apps/resume' className='notion-nav-link'>
-                                <DocumentTextIcon className='notion-nav-icon' />
-                                Resume
-                            </Link>
-                        </div>
+            <main className={`resend-home resend-apps-home ${isLoaded ? 'is-loaded' : ''}`}>
+                <header className='resend-nav-wrap'>
+                    <Link href='/' className='resend-logo'>{strings.NAME}</Link>
+                    <nav className='resend-nav' aria-label='Primary navigation'>
+                        <Link href='/apps' className='resend-nav-link'>Apps</Link>
+                        <Link href='/blog' className='resend-nav-link'>Blog</Link>
+                        <Link href='/apps/resume' className='resend-nav-link'>Resume</Link>
+                    </nav>
+                    <div className='resend-nav-actions'>
+                        <Link href='/apps/chat' className='resend-login'>Chat</Link>
+                        <Link href='/' className='resend-top-cta'>Home</Link>
                     </div>
                 </header>
 
@@ -110,7 +101,7 @@ export default function DiagramGenerator() {
 
                     <div className='notion-section'>
                         <div className='notion-section-title'>
-                            <SparklesIcon className='notion-section-icon' />
+                            <BoltIcon className='notion-section-icon' />
                             Describe Your Diagram
                         </div>
                         <div style={{ marginTop: '16px' }}>
@@ -134,7 +125,7 @@ export default function DiagramGenerator() {
                                         </>
                                     ) : (
                                         <>
-                                            <SparklesIcon className='notion-action-icon' />
+                                            <BoltIcon className='notion-action-icon' />
                                             Generate Diagram
                                         </>
                                     )}

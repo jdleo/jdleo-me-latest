@@ -6,8 +6,6 @@ import { strings } from '../constants/strings';
 import { apps } from '../constants/apps';
 import { WebVitals } from '@/components/SEO/WebVitals';
 import {
-    DevicePhoneMobileIcon,
-    PencilSquareIcon,
     DocumentTextIcon,
     ChatBubbleLeftRightIcon,
     UserIcon,
@@ -17,7 +15,7 @@ import {
     ChartBarIcon,
     TrophyIcon,
     LinkIcon,
-    SparklesIcon,
+    BoltIcon,
     CommandLineIcon,
     CubeIcon,
     CubeTransparentIcon,
@@ -26,6 +24,7 @@ import {
     CalculatorIcon,
     ArrowTrendingUpIcon,
     SignalIcon,
+    ArrowUpRightIcon,
 } from '@heroicons/react/24/outline';
 
 // Map apps to their icons
@@ -39,14 +38,14 @@ const getAppIcon = (title: string) => {
         'LLM Serialization': ChartBarIcon,
         'LLM Leaderboard': TrophyIcon,
         'Link Shortener': LinkIcon,
-        'AI Diagram Generator': SparklesIcon,
+        'AI Diagram Generator': BoltIcon,
         'Resume Parser': DocumentTextIcon,
         'Color Gamble': CubeIcon,
         'Sort Viz': CommandLineIcon,
         'Blockchain 101': CubeTransparentIcon,
         'Hash Lab': LockClosedIcon,
         'Privacy Scanner': EyeIcon,
-        'California Tax Calculator': CalculatorIcon,
+        '2026 California Tax Calculator': CalculatorIcon,
         'Founder Dilution': ArrowTrendingUpIcon,
         'AI Sentiment': SignalIcon,
     };
@@ -64,61 +63,64 @@ export default function Apps() {
     return (
         <>
             <WebVitals />
-            <main className='notion-page'>
-                {/* Header */}
-                <header className={`notion-header ${isLoaded ? 'loaded' : ''}`}>
-                    <div className='notion-nav' style={{ justifyContent: 'space-between', maxWidth: '1100px' }}>
-                        <Link href='/' className='notion-nav-link' style={{ fontWeight: 600 }}>
-                            {strings.NAME}
+            <main className={`resend-home resend-apps-home ${isLoaded ? 'is-loaded' : ''}`}>
+                <header className='resend-nav-wrap'>
+                    <Link href='/' className='resend-logo' aria-label='John Leonardo home'>
+                        {strings.NAME}
+                    </Link>
+                    <nav className='resend-nav' aria-label='Apps navigation'>
+                        <Link href='/' className='resend-nav-link'>
+                            Home
                         </Link>
-                        <div style={{ display: 'flex', gap: '8px' }}>
-                            <Link href='/apps' className='notion-nav-link' style={{ color: '#37352f' }}>
-                                <DevicePhoneMobileIcon className='notion-nav-icon' />
-                                Apps
-                            </Link>
-                            <Link href='/blog' className='notion-nav-link'>
-                                <PencilSquareIcon className='notion-nav-icon' />
-                                Blog
-                            </Link>
-                            <Link href='/apps/resume' className='notion-nav-link'>
-                                <DocumentTextIcon className='notion-nav-icon' />
-                                Resume
-                            </Link>
-                        </div>
+                        <Link href='/blog' className='resend-nav-link'>
+                            Blog
+                        </Link>
+                        <Link href='/apps/resume' className='resend-nav-link'>
+                            Resume
+                        </Link>
+                        <a href={strings.GITHUB_URL} target='_blank' rel='noreferrer' className='resend-nav-link'>
+                            GitHub
+                        </a>
+                    </nav>
+                    <div className='resend-nav-actions'>
+                        <a href={strings.LINKEDIN_URL} target='_blank' rel='noreferrer' className='resend-login'>
+                            LinkedIn
+                        </a>
+                        <a href={`mailto:${strings.EMAIL}`} className='resend-top-cta'>
+                            Contact
+                        </a>
                     </div>
                 </header>
 
-                <div className={`notion-content ${isLoaded ? 'loaded' : ''}`} style={{ maxWidth: '1100px' }}>
-                    {/* Title Section */}
-                    <div className='notion-title-block'>
-                        <h1 className='notion-title'>Applications & Tools</h1>
-                        <div className='notion-subtitle'>Random apps I made that might have some value to somebody</div>
-                    </div>
+                <article className='resend-blog-shell'>
+                    <section className='resend-blog-hero resend-apps-hero'>
+                        <h1>Apps</h1>
+                        <p>Random apps I made that might have some value to somebody.</p>
+                    </section>
 
-                    {/* All Apps List */}
-                    <div className='notion-apps-list'>
+                    <section className='resend-app-grid' aria-label='Applications and tools'>
                         {apps.map((app) => {
                             const IconComponent = getAppIcon(app.title);
                             return (
-                                <Link key={app.title} href={app.href} className='notion-app-item'>
-                                    <div className='notion-app-icon-wrapper'>
-                                        <IconComponent className='notion-app-icon' />
+                                <Link key={app.title} href={app.href} className='resend-app-card'>
+                                    <div className='resend-app-card-icon'>
+                                        <IconComponent aria-hidden='true' />
                                     </div>
-                                    <div className='notion-app-info'>
-                                        <div className='notion-app-name'>{app.title}</div>
-                                        <div className='notion-app-desc'>{app.subtitle}</div>
+                                    <div className='resend-app-card-body'>
+                                        <h2>{app.title}</h2>
+                                        <p>{app.subtitle}</p>
                                     </div>
-                                    <div className='notion-app-arrow'>→</div>
+                                    <ArrowUpRightIcon className='resend-app-card-arrow' aria-hidden='true' />
                                 </Link>
                             );
                         })}
-                    </div>
+                    </section>
 
-                    {/* Footer */}
-                    <footer className='notion-footer'>
-                        © 2026 {strings.NAME}
+                    <footer className='resend-footer'>
+                        <span>© 2026 {strings.NAME}</span>
+                        <a href={`mailto:${strings.EMAIL}`}>{strings.EMAIL}</a>
                     </footer>
-                </div>
+                </article>
             </main>
         </>
     );

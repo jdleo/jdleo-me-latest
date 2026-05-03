@@ -27,10 +27,10 @@ const MessageItem = memo(({ message }: MessageItemProps) => {
         <div className={`notion-chat-message-wrapper ${message.isUser ? 'justify-end' : 'justify-start'}`}>
             <div className={`notion-chat-message ${message.isUser ? 'notion-chat-message-user' : 'notion-chat-message-ai'}`}>
                 {!message.isUser && message.model && (
-                    <div style={{ fontSize: '11px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.4)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '12px', paddingBottom: '8px', borderBottom: '1px solid rgba(55, 53, 47, 0.06)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <div className='notion-chat-message-label'>
                         <span>{message.model}</span>
                         {message.usage && (
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '10px', color: 'rgba(55, 53, 47, 0.3)' }}>
+                            <div className='notion-chat-message-stats'>
                                 <span>{message.usage.response_time_ms}ms</span>
                                 <span>{message.usage.tokens_per_second?.toFixed(1)} tok/s</span>
                             </div>
