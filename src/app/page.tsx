@@ -171,7 +171,7 @@ export default function Home() {
                     <div className='jd-hero-art' aria-hidden='true'>
                         <div className='jd-cube-stage'>
                             <div className='jd-cube'>
-                                {Array.from({ length: 27 }).map((_, index) => (
+                                {Array.from({ length: 9 }).map((_, index) => (
                                     <span key={index} className={`jd-cube-cell cell-${index}`} />
                                 ))}
                             </div>
