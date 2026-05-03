@@ -146,14 +146,14 @@ export default function KnowledgeGraph() {
                                             position: { x: 0, y: 0 },
                                             type: 'default',
                                             style: {
-                                                background: '#fff',
-                                                border: '1px solid #e5e7eb',
-                                                borderRadius: '4px',
-                                                padding: '8px 12px',
+                                                background: 'rgba(12, 12, 12, 0.94)',
+                                                border: '1px solid rgba(141, 216, 255, 0.28)',
+                                                borderRadius: '10px',
+                                                padding: '9px 12px',
                                                 fontSize: '12px',
                                                 fontWeight: 600,
-                                                color: '#37352f',
-                                                boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
+                                                color: 'rgba(255, 255, 255, 0.86)',
+                                                boxShadow: '0 14px 40px rgba(0, 0, 0, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.06)',
                                             },
                                         });
                                     }
@@ -165,14 +165,14 @@ export default function KnowledgeGraph() {
                                             position: { x: 0, y: 0 },
                                             type: 'default',
                                             style: {
-                                                background: '#fff',
-                                                border: '1px solid #e5e7eb',
-                                                borderRadius: '4px',
-                                                padding: '8px 12px',
+                                                background: 'rgba(12, 12, 12, 0.94)',
+                                                border: '1px solid rgba(141, 216, 255, 0.28)',
+                                                borderRadius: '10px',
+                                                padding: '9px 12px',
                                                 fontSize: '12px',
                                                 fontWeight: 600,
-                                                color: '#37352f',
-                                                boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
+                                                color: 'rgba(255, 255, 255, 0.86)',
+                                                boxShadow: '0 14px 40px rgba(0, 0, 0, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.06)',
                                             },
                                         });
                                     }
@@ -186,9 +186,9 @@ export default function KnowledgeGraph() {
                                             label: predicate.replace(/_/g, ' '),
                                             type: 'smoothstep',
                                             animated: false,
-                                            style: { stroke: '#9ca3af' },
-                                            markerEnd: { type: MarkerType.ArrowClosed, color: '#9ca3af' },
-                                            labelStyle: { fontSize: '10px', fill: '#6b7280' },
+                                            style: { stroke: 'rgba(255, 255, 255, 0.32)' },
+                                            markerEnd: { type: MarkerType.ArrowClosed, color: 'rgba(255, 255, 255, 0.32)' },
+                                            labelStyle: { fontSize: '10px', fill: 'rgba(255, 255, 255, 0.58)' },
                                         });
                                     }
                                 });
@@ -222,8 +222,8 @@ export default function KnowledgeGraph() {
         setHighlightedPath({ nodes: [], edges: [] });
 
         // Reset styles first
-        setEdges(eds => eds.map(e => ({ ...e, animated: false, style: { ...e.style, stroke: '#9ca3af', strokeWidth: 1 } })));
-        setNodes(nds => nds.map(n => ({ ...n, style: { ...n.style, border: '1px solid #e5e7eb', background: '#fff' } })));
+        setEdges(eds => eds.map(e => ({ ...e, animated: false, style: { ...e.style, stroke: 'rgba(255, 255, 255, 0.32)', strokeWidth: 1 } })));
+        setNodes(nds => nds.map(n => ({ ...n, style: { ...n.style, border: '1px solid rgba(141, 216, 255, 0.28)', background: 'rgba(12, 12, 12, 0.94)' } })));
 
         try {
             const response = await fetch('/api/knowledge-graph/chat', {
@@ -253,7 +253,7 @@ export default function KnowledgeGraph() {
                     animated: data.path.edges.includes(edge.id),
                     style: {
                         ...edge.style,
-                        stroke: data.path.edges.includes(edge.id) ? '#6366f1' : '#e5e7eb',
+                        stroke: data.path.edges.includes(edge.id) ? '#8dd8ff' : 'rgba(255, 255, 255, 0.18)',
                         strokeWidth: data.path.edges.includes(edge.id) ? 2 : 1,
                         opacity: data.path.edges.includes(edge.id) ? 1 : 0.3,
                     },
@@ -262,8 +262,8 @@ export default function KnowledgeGraph() {
                     ...node,
                     style: {
                         ...node.style,
-                        border: data.path.nodes.includes(node.id) ? '2px solid #6366f1' : '1px solid #e5e7eb',
-                        background: data.path.nodes.includes(node.id) ? '#e0e7ff' : '#fff',
+                        border: data.path.nodes.includes(node.id) ? '2px solid #8dd8ff' : '1px solid rgba(141, 216, 255, 0.2)',
+                        background: data.path.nodes.includes(node.id) ? 'rgba(141, 216, 255, 0.18)' : 'rgba(12, 12, 12, 0.94)',
                         opacity: data.path.nodes.includes(node.id) ? 1 : 0.5,
                     },
                 })));
@@ -316,9 +316,9 @@ export default function KnowledgeGraph() {
                                         value={text}
                                         onChange={(e) => setText(e.target.value)}
                                         placeholder='Paste text here...'
-                                        className='notion-textarea'
+                                        className='notion-textarea resend-tool-textarea'
                                         disabled={isGenerating}
-                                        style={{ height: '200px', fontSize: '12px' }}
+                                        style={{ height: '240px' }}
                                     />
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '8px' }}>
                                         <span style={{ fontSize: '10px', color: 'rgba(55, 53, 47, 0.5)' }}>
@@ -362,7 +362,7 @@ export default function KnowledgeGraph() {
                                             onKeyDown={e => e.key === 'Enter' && askQuestion()}
                                             disabled={isAsking}
                                             placeholder='Ask a question...'
-                                            className='notion-input'
+                                            className='notion-input resend-tool-input'
                                             style={{ marginBottom: '8px', paddingRight: '30px' }}
                                         />
                                         <button
@@ -386,7 +386,7 @@ export default function KnowledgeGraph() {
                         </div>
 
                         {/* Right Graph Area */}
-                        <div style={{ height: '600px', backgroundColor: '#f9f9fb', borderRadius: '12px', border: '1px solid rgba(55, 53, 47, 0.09)', position: 'relative', overflow: 'hidden' }}>
+                        <div className='resend-graph-canvas'>
                             <ReactFlow
                                 nodes={nodes}
                                 edges={edges}
@@ -396,18 +396,18 @@ export default function KnowledgeGraph() {
                                 fitView
                                 attributionPosition="bottom-left"
                             >
-                                <Background color="#e5e5e5" gap={16} />
+                                <Background color="rgba(255, 255, 255, 0.08)" gap={18} />
                                 <Controls />
                                 <MiniMap
-                                    nodeColor={(node) => highlightedPath.nodes.includes(node.id) ? '#6366f1' : '#d1d5db'}
-                                    maskColor="rgba(240, 240, 240, 0.6)"
+                                    nodeColor={(node) => highlightedPath.nodes.includes(node.id) ? '#8dd8ff' : 'rgba(255, 255, 255, 0.34)'}
+                                    maskColor="rgba(0, 0, 0, 0.58)"
                                 />
                             </ReactFlow>
 
                             {!nodes.length && !isGenerating && (
                                 <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', opacity: 0.5 }}>
-                                    <CpuChipIcon style={{ width: '48px', height: '48px', color: 'rgba(55, 53, 47, 0.3)', marginBottom: '16px' }} />
-                                    <span style={{ fontSize: '14px', fontWeight: 500, color: 'rgba(55, 53, 47, 0.5)' }}>Generate a graph to visualize data</span>
+                                    <CpuChipIcon style={{ width: '48px', height: '48px', color: 'rgba(141, 216, 255, 0.42)', marginBottom: '16px' }} />
+                                    <span style={{ fontSize: '14px', fontWeight: 500, color: 'rgba(255, 255, 255, 0.52)' }}>Generate a graph to visualize data</span>
                                 </div>
                             )}
                         </div>

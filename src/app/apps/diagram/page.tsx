@@ -109,8 +109,8 @@ export default function DiagramGenerator() {
                                 value={description}
                                 onChange={e => setDescription(e.target.value)}
                                 placeholder='Describe your system architecture, flow, or data structure...'
-                                className='notion-textarea'
-                                style={{ height: '120px' }}
+                                className='notion-textarea resend-tool-textarea'
+                                style={{ height: '160px' }}
                             />
                             <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginTop: '12px' }}>
                                 <button

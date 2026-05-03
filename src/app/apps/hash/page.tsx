@@ -71,8 +71,8 @@ export default function Hash() {
                                 value={input}
                                 onChange={e => setInput(e.target.value)}
                                 placeholder='Enter text to generate hashes...'
-                                className='notion-textarea'
-                                style={{ height: '120px' }}
+                                className='notion-textarea resend-tool-textarea'
+                                style={{ height: '150px' }}
                             />
                         </div>
                     </div>
@@ -104,16 +104,7 @@ export default function Hash() {
                                             Copy
                                         </button>
                                     </div>
-                                    <div style={{
-                                        fontFamily: 'monospace',
-                                        fontSize: '12px',
-                                        wordBreak: 'break-all',
-                                        color: '#37352f',
-                                        backgroundColor: 'rgba(55, 53, 47, 0.04)',
-                                        padding: '12px',
-                                        borderRadius: '8px',
-                                        lineHeight: 1.6
-                                    }}>
+                                    <div className='resend-hash-output'>
                                         {h.value}
                                     </div>
                                 </div>
