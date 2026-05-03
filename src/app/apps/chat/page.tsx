@@ -9,6 +9,7 @@ import rehypeRaw from 'rehype-raw';
 import CodeBlock from '@/components/CodeBlock';
 import MessageItem, { Message } from '@/components/chat/MessageItem';
 import ChatInput from '@/components/chat/ChatInput';
+import { useBufferedStream } from '@/components/chat/useBufferedStream';
 import { WebVitals } from '@/components/SEO/WebVitals';
 import { ArrowLeftIcon, Cog6ToothIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 
@@ -27,36 +28,14 @@ export default function Chat() {
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const streamBufferRef = useRef('');
 
-    useEffect(() => {
-        let animationFrameId: number;
+    useBufferedStream(streamBufferRef, isLoading, setStreamingMessage);
 
-        const animate = () => {
-            if (streamBufferRef.current && streamingMessage !== streamBufferRef.current) {
-                setStreamingMessage(prev => {
-                    const diff = streamBufferRef.current.length - prev.length;
-                    if (diff <= 0) return streamBufferRef.current;
-                    const jump = Math.max(1, Math.min(diff, Math.ceil(diff / 8)));
-                    return streamBufferRef.current.slice(0, prev.length + jump);
-                });
-            }
-            animationFrameId = requestAnimationFrame(animate);
-        };
-
-        if (isLoading) {
-            animationFrameId = requestAnimationFrame(animate);
-        }
-
-        return () => {
-            if (animationFrameId) cancelAnimationFrame(animationFrameId);
-        };
-    }, [isLoading, streamingMessage]);
-
-    const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    const scrollToBottom = (behavior: ScrollBehavior = 'smooth') => {
+        messagesEndRef.current?.scrollIntoView({ behavior });
     };
 
     useEffect(() => {
-        scrollToBottom();
+        scrollToBottom(isLoading ? 'auto' : 'smooth');
     }, [messages, isLoading, streamingMessage]);
 
     useEffect(() => {
