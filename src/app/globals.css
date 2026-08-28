@@ -6398,3 +6398,24 @@ a.el-btn-light, .el-btn-light {
 .el-prose ol {
   list-style-type: decimal;
 }
+
+/* no sideways scrolling, ever */
+.el-page {
+  overflow-x: clip;
+}
+
+.el-prose,
+.el-article-header h1,
+.el-article-desc {
+  overflow-wrap: break-word;
+}
+
+.el-prose .markdown-inline-code {
+  overflow-wrap: break-word;
+}
+
+/* long code lines scroll inside the block, not the page */
+.el-prose .markdown-code-block {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
