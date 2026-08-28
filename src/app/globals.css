@@ -6419,3 +6419,60 @@ a.el-btn-light, .el-btn-light {
   overflow-x: auto;
   overflow-y: hidden;
 }
+
+/* unified content width: hero, sections, and footer share one dial */
+.el-page {
+  --el-content: 1152px;
+  --el-gutter: clamp(1.5rem, 5vw, 4.5rem);
+}
+
+.el-hero {
+  padding: clamp(7.5rem, 14vh, 10.5rem) 0 clamp(3rem, 6vh, 4.5rem);
+}
+
+.el-hero-inner,
+.el-section,
+.el-footer-inner {
+  width: min(100% - (var(--el-gutter) * 2), var(--el-content));
+  margin-inline: auto;
+}
+
+.el-hero-inner {
+  padding: 0;
+}
+
+.el-section {
+  padding: clamp(2.75rem, 5vw, 4rem) 0 0;
+}
+
+.el-footer-inner {
+  padding: 2.25rem 0 2.75rem;
+}
+
+/* breathing room inside hoverable cells: text inset from the highlight edge */
+.el-row {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.el-post-row {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.el-latest {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+/* nav content aligns with the shared content width; gutter wins on small screens */
+.el-nav {
+  padding-left: max(var(--el-gutter), calc((100% - var(--el-content)) / 2));
+  padding-right: max(var(--el-gutter), calc((100% - var(--el-content)) / 2));
+}
+
+/* latest-writing block aligns flush with its bar and the rest of the page */
+.el-latest {
+  padding-left: 0;
+  padding-right: 0;
+}
