@@ -64,6 +64,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             month: 'short',
             day: 'numeric',
             year: 'numeric',
+            timeZone: 'UTC',
         }).format(new Date(date));
 
     return (

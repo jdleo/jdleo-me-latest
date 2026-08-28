@@ -45,6 +45,7 @@ export default function BlogPage() {
             month: 'short',
             day: 'numeric',
             year: 'numeric',
+            timeZone: 'UTC',
         }).format(new Date(date));
 
     return (
