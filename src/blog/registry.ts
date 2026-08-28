@@ -92,21 +92,13 @@ export const blogRegistry: BlogPost[] = [
         date: '2026-03-07',
         tags: ['ai', 'machine learning', 'safety', 'nlp', 'experiment', 'distillation', 'qlora'],
         description:
-            'A 4B parameter model fine-tuned with QLoRA gets within 0.008 F1 of SOTA on ToxicChat, then hits a wall. Five versions, $100, and a lot of lessons about why 0.83 is so hard to break.'
+            'A 4B parameter model fine-tuned with QLoRA gets within 0.008 F1 of SOTA on ToxicChat, then hits a wall. Five versions, $100, and a lot of lessons about why 0.83 is so hard to break.',
     },
     {
         slug: 'ai-political-compass',
         title: 'Which AI Models Lean in Which Political Direction?',
         date: '2026-01-25',
-        tags: [
-            'ai',
-            'llm',
-            'political compass',
-            'bias',
-            'experiment',
-            'politics',
-            'alignment',
-        ],
+        tags: ['ai', 'llm', 'political compass', 'bias', 'experiment', 'politics', 'alignment'],
         description:
             'I asked the top LLMs 20 different political compass questions to figure out how left/right/libertarian/authoritarian they were.',
     },
@@ -116,6 +108,13 @@ export const blogRegistry: BlogPost[] = [
         date: '2026-03-15',
         tags: ['ai', 'opinions', 'current'],
         description: 'My current thoughts on AI and how to be good at it.',
+    },
+    {
+        slug: 'thoughts-on-ai-aug-2026',
+        title: 'Thoughts on AI now in August 2026',
+        date: '2026-08-28',
+        tags: ['ai', 'opinions', 'august', '2026'],
+        description: 'My opinions on where we are, and where we go from here.',
     },
 ];
 
