@@ -6476,3 +6476,22 @@ a.el-btn-light, .el-btn-light {
   padding-left: 0;
   padding-right: 0;
 }
+
+/* article joins the shared content grid: header flush with the site edges,
+   prose keeps a readable measure anchored to the same left edge */
+.el-article {
+  width: min(100% - (var(--el-gutter) * 2), var(--el-content));
+  max-width: none;
+  margin-inline: auto;
+  padding: 6rem 0 0;
+}
+
+.el-article .el-prose {
+  max-width: 760px;
+  margin-right: auto;
+}
+
+.el-article-header .el-eyebrow,
+.el-article-back {
+  margin: 0;
+}
