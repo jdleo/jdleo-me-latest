@@ -1,11 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import {
-    ArrowUpRightIcon,
-    EyeIcon,
-    PencilSquareIcon,
-} from '@heroicons/react/24/outline';
+import { ArrowUpRightIcon, EyeIcon } from '@heroicons/react/24/outline';
+import LiquidGhost from '@/components/LiquidGhost';
 import { WebVitals } from '@/components/SEO/WebVitals';
 import { getAllBlogPosts, BlogPost } from '@/blog/registry';
 import { strings } from './constants/strings';
@@ -66,37 +63,31 @@ const iosApps = [
     },
 ];
 
-const notebookLinks = [
+const navLinks = [
     { label: 'Apps', href: '/apps' },
     { label: 'Blog', href: '/blog' },
     { label: 'Resume', href: '/apps/resume' },
+    { label: 'GitHub', href: strings.GITHUB_URL, external: true },
 ];
 
 export default function Home() {
     const [pageViewCount, setPageViewCount] = useState(0);
-    const [isLoaded, setIsLoaded] = useState(false);
     const [latestPost, setLatestPost] = useState<BlogPost | null>(null);
 
     useEffect(() => {
-        const timer = setTimeout(() => setIsLoaded(true), 80);
-
         fetch('/api/view')
             .then((res) => res.json())
             .then((data) => {
-                const views = Number(data.views) || 0;
-                setPageViewCount(views);
+                setPageViewCount(Number(data.views) || 0);
             })
             .catch((error) => {
                 console.error('Failed to fetch view count:', error);
-                setPageViewCount(0);
             });
 
         const posts = getAllBlogPosts();
         if (posts.length > 0) {
             setLatestPost(posts[0]);
         }
-
-        return () => clearTimeout(timer);
     }, []);
 
     const formatNumber = (num: number | string) => {
@@ -106,7 +97,7 @@ export default function Home() {
 
     const formatDate = (date: string) =>
         new Intl.DateTimeFormat('en-US', {
-            month: 'long',
+            month: 'short',
             day: 'numeric',
             year: 'numeric',
         }).format(new Date(date));
@@ -114,117 +105,147 @@ export default function Home() {
     return (
         <>
             <WebVitals />
-            <main className={`jd-home ${isLoaded ? 'is-loaded' : ''}`}>
-                <header className='jd-nav-wrap'>
-                    <a href='/' className='jd-logo' aria-label='John Leonardo home'>
+            <main className='el-page'>
+                <header className='el-nav'>
+                    <a href='/' className='el-logo' aria-label='John Leonardo home'>
                         John Leonardo
                     </a>
-                    <nav className='jd-nav' aria-label='Primary'>
-                        {notebookLinks.map((link) => (
-                            <a key={link.label} href={link.href} className='jd-nav-link'>
+                    <nav className='el-nav-links' aria-label='Primary'>
+                        {navLinks.map((link) => (
+                            <a
+                                key={link.label}
+                                href={link.href}
+                                target={link.external ? '_blank' : undefined}
+                                rel={link.external ? 'noreferrer' : undefined}
+                                className='el-nav-link'
+                            >
                                 {link.label}
                             </a>
                         ))}
-                        <a href={strings.GITHUB_URL} target='_blank' rel='noreferrer' className='jd-nav-link'>
-                            GitHub
-                        </a>
                     </nav>
-                    <div className='jd-nav-actions'>
-                        <a href={strings.LINKEDIN_URL} target='_blank' rel='noreferrer' className='jd-login'>
+                    <div className='el-nav-actions'>
+                        <a href={strings.LINKEDIN_URL} target='_blank' rel='noreferrer' className='el-nav-link'>
                             LinkedIn
                         </a>
-                        <a href={`mailto:${strings.EMAIL}`} className='jd-top-cta'>
+                        <a href={`mailto:${strings.EMAIL}`} className='el-btn el-btn-dark el-btn-sm'>
                             Contact
                         </a>
                     </div>
                 </header>
 
-                <section className='jd-hero' aria-labelledby='home-title'>
-                    <div className='jd-hero-copy'>
-                        <a href='/blog' className='jd-pill'>
-                            <span>Latest writing</span>
-                            <ArrowUpRightIcon aria-hidden='true' />
-                        </a>
-                        <h1 id='home-title'>{strings.NAME}</h1>
-                        <p className='jd-role'>Senior Software Engineer</p>
-                        <p className='jd-lede'>{strings.SUBTITLE}</p>
+                <section className='el-hero'>
+                    <div className='el-hero-inner'>
+                        <div className='el-hero-copy'>
+                            <h1>
+                                John Leonardo
+                                <span className='el-hero-cursor' aria-hidden='true' />
+                            </h1>
+                            <p className='el-hero-sub'>{strings.SUBTITLE}</p>
 
-                        <div className='jd-actions'>
-                            <a href='/apps' className='jd-primary'>
-                                Browse apps
-                            </a>
-                            <a href='/blog' className='jd-secondary'>
-                                Read the blog
-                            </a>
-                        </div>
-
-                        <div className='jd-meta'>
-                            <span>SF Bay Area</span>
-                            <span>Roblox</span>
-                            <span>
-                                <EyeIcon aria-hidden='true' />
-                                {formatNumber(pageViewCount)} views
-                            </span>
-                        </div>
-                    </div>
-
-                    <div className='jd-hero-art' aria-hidden='true'>
-                        <div className='jd-cube-stage'>
-                            <div className='jd-cube'>
-                                {Array.from({ length: 9 }).map((_, index) => (
-                                    <span key={index} className={`jd-cube-cell cell-${index}`} />
-                                ))}
+                            <div className='el-hero-actions'>
+                                <a href='/apps' className='el-btn el-btn-dark'>
+                                    Browse apps
+                                    <ArrowUpRightIcon aria-hidden='true' />
+                                </a>
+                                <a href='/blog' className='el-btn el-btn-light'>
+                                    Read the blog
+                                </a>
                             </div>
-                            <div className='jd-cube-shadow' />
+
+                            <div className='el-hero-meta'>
+                                <span>Senior Software Engineer</span>
+                                <span className='el-meta-dot' aria-hidden='true' />
+                                <span>SF Bay Area</span>
+                                <span className='el-meta-dot' aria-hidden='true' />
+                                <span>Roblox</span>
+                                <span className='el-meta-dot' aria-hidden='true' />
+                                <span className='el-meta-views'>
+                                    <EyeIcon aria-hidden='true' />
+                                    {formatNumber(pageViewCount)} views
+                                </span>
+                            </div>
+                        </div>
+
+                        <div className='el-hero-art'>
+                            <LiquidGhost />
                         </div>
                     </div>
                 </section>
 
-                <section className='jd-work' aria-label='Homepage links'>
+                <section className='el-section' aria-label='Latest writing'>
                     {latestPost && (
-                        <a href={`/blog/${latestPost.slug}`} className='jd-work-card jd-work-card-wide'>
-                            <div className='jd-card-eyebrow'>
-                                <PencilSquareIcon aria-hidden='true' />
-                                Latest writing
+                        <a href={`/blog/${latestPost.slug}`} className='el-latest'>
+                            <div className='el-eyebrow'>
+                                <span className='el-eyebrow-label'>Latest writing</span>
+                                <span className='el-eyebrow-date'>{formatDate(latestPost.date)}</span>
                             </div>
-                            <h3>{latestPost.title}</h3>
-                            <p>{latestPost.description}</p>
-                            <span>{formatDate(latestPost.date)}</span>
+                            <div className='el-latest-row'>
+                                <h2>{latestPost.title}</h2>
+                                <span className='el-arrow' aria-hidden='true'>
+                                    <ArrowUpRightIcon />
+                                </span>
+                            </div>
+                            {latestPost.description && <p>{latestPost.description}</p>}
                         </a>
                     )}
-
-                    <div className='jd-work-card'>
-                        <div className='jd-card-eyebrow'>Projects</div>
-                        <ul>
-                            {featuredProjects.map((project) => (
-                                <li key={project.label}>
-                                    <a href={project.href} target='_blank' rel='noreferrer'>
-                                        {project.label}
-                                    </a>
-                                    <span>{project.description}</span>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-
-                    <div className='jd-work-card'>
-                        <div className='jd-card-eyebrow'>iPhone Apps</div>
-                        <ul>
-                            {iosApps.map((app) => (
-                                <li key={app.label}>
-                                    <a href={app.href} target='_blank' rel='noreferrer'>
-                                        {app.label}
-                                    </a>
-                                    <span>{app.description}</span>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
                 </section>
 
-                <footer className='jd-footer'>
-                    <span>© 2026 {strings.NAME}</span>
-                    <a href={`mailto:${strings.EMAIL}`}>{strings.EMAIL}</a>
+                <section className='el-section' aria-label='Projects'>
+                    <div className='el-list-head'>
+                        <h3>Projects</h3>
+                        <a href='/apps' className='el-list-more'>
+                            All apps
+                            <ArrowUpRightIcon aria-hidden='true' />
+                        </a>
+                    </div>
+                    <ul className='el-list'>
+                        {featuredProjects.map((project) => (
+                            <li key={project.label}>
+                                <a href={project.href} target='_blank' rel='noreferrer' className='el-row'>
+                                    <span className='el-row-label'>{project.label}</span>
+                                    <span className='el-row-desc'>{project.description}</span>
+                                    <span className='el-arrow' aria-hidden='true'>
+                                        <ArrowUpRightIcon />
+                                    </span>
+                                </a>
+                            </li>
+                        ))}
+                    </ul>
+                </section>
+
+                <section className='el-section' aria-label='iPhone apps'>
+                    <div className='el-list-head'>
+                        <h3>iPhone Apps</h3>
+                    </div>
+                    <ul className='el-list'>
+                        {iosApps.map((app) => (
+                            <li key={app.label}>
+                                <a href={app.href} target='_blank' rel='noreferrer' className='el-row'>
+                                    <span className='el-row-label'>{app.label}</span>
+                                    <span className='el-row-desc'>{app.description}</span>
+                                    <span className='el-arrow' aria-hidden='true'>
+                                        <ArrowUpRightIcon />
+                                    </span>
+                                </a>
+                            </li>
+                        ))}
+                    </ul>
+                </section>
+
+                <footer className='el-footer'>
+                    <div className='el-footer-inner'>
+                        <span className='el-footer-logo'>John Leonardo</span>
+                        <div className='el-footer-links'>
+                            <a href={strings.GITHUB_URL} target='_blank' rel='noreferrer'>
+                                GitHub
+                            </a>
+                            <a href={strings.LINKEDIN_URL} target='_blank' rel='noreferrer'>
+                                LinkedIn
+                            </a>
+                            <a href={`mailto:${strings.EMAIL}`}>{strings.EMAIL}</a>
+                        </div>
+                        <span className='el-footer-copy'>© 2026. All rights reserved.</span>
+                    </div>
                 </footer>
             </main>
         </>

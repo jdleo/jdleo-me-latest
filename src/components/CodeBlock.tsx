@@ -12,8 +12,8 @@ const CodeBlock = ({ inline, className, children, ...props }: CodeBlockProps) =>
     const language = match ? match[1] : '';
 
     return !inline && match ? (
-        <div className='markdown-code-block relative rounded-lg overflow-hidden my-6 bg-[#fafafa] border border-gray-200'>
-            <div className='markdown-code-label absolute top-3 right-3 px-2 py-1 bg-black/5 rounded text-[10px] font-mono text-gray-500 uppercase tracking-wider'>
+        <div className='markdown-code-block relative rounded-xl overflow-hidden my-6 bg-[#f4f4ee] border border-[#e2e2da]'>
+            <div className='markdown-code-label absolute top-3 right-3 px-2 py-1 bg-black/5 rounded text-[10px] font-mono text-[#82827c] uppercase tracking-wider'>
                 {language}
             </div>
             <SyntaxHighlighter
@@ -28,12 +28,12 @@ const CodeBlock = ({ inline, className, children, ...props }: CodeBlockProps) =>
                     padding: '1.5rem',
                     fontSize: '14px',
                     lineHeight: '1.6',
-                    fontFamily: 'var(--font-family-mono)',
+                    fontFamily: 'var(--font-geist-mono), ui-monospace, monospace',
                 }}
                 codeTagProps={{
                     style: {
                         background: 'transparent',
-                        fontFamily: 'var(--font-family-mono)',
+                        fontFamily: 'var(--font-geist-mono), ui-monospace, monospace',
                     }
                 }}
                 {...props}
@@ -42,7 +42,10 @@ const CodeBlock = ({ inline, className, children, ...props }: CodeBlockProps) =>
             </SyntaxHighlighter>
         </div>
     ) : (
-        <code className='markdown-inline-code bg-[var(--purple-1)] text-[var(--purple-4)] px-1.5 py-0.5 rounded text-[0.9em] font-mono border border-[var(--purple-2)]' {...props}>
+        <code
+            className='markdown-inline-code bg-[rgba(17,17,16,0.05)] text-[#111110] px-1.5 py-0.5 rounded text-[0.9em] font-mono border border-[rgba(17,17,16,0.1)]'
+            {...props}
+        >
             {children}
         </code>
     );

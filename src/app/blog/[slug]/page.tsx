@@ -61,7 +61,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
     const formatDate = (date: string) =>
         new Intl.DateTimeFormat('en-US', {
-            month: 'long',
+            month: 'short',
             day: 'numeric',
             year: 'numeric',
         }).format(new Date(date));
@@ -72,63 +72,60 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             <ViewTracker slug={slug} />
             <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
 
-            <main className='jd-home jd-blog-home is-loaded'>
-                <header className='jd-nav-wrap'>
-                    <Link href='/' className='jd-logo' aria-label='John Leonardo home'>
-                        {strings.NAME}
+            <main className='el-page'>
+                <header className='el-nav'>
+                    <Link href='/' className='el-logo' aria-label='John Leonardo home'>
+                        John Leonardo
                     </Link>
-                    <nav className='jd-nav' aria-label='Post navigation'>
-                        <Link href='/blog' className='jd-nav-link'>
-                            Blog
-                        </Link>
-                        <Link href='/apps' className='jd-nav-link'>
+                    <nav className='el-nav-links' aria-label='Post navigation'>
+                        <Link href='/apps' className='el-nav-link'>
                             Apps
                         </Link>
-                        <Link href='/apps/resume' className='jd-nav-link'>
+                        <Link href='/blog' className='el-nav-link'>
+                            Blog
+                        </Link>
+                        <Link href='/apps/resume' className='el-nav-link'>
                             Resume
                         </Link>
-                        <a href={strings.GITHUB_URL} target='_blank' rel='noreferrer' className='jd-nav-link'>
+                        <a href={strings.GITHUB_URL} target='_blank' rel='noreferrer' className='el-nav-link'>
                             GitHub
                         </a>
                     </nav>
-                    <div className='jd-nav-actions'>
-                        <a href={strings.LINKEDIN_URL} target='_blank' rel='noreferrer' className='jd-login'>
+                    <div className='el-nav-actions'>
+                        <a href={strings.LINKEDIN_URL} target='_blank' rel='noreferrer' className='el-nav-link'>
                             LinkedIn
                         </a>
-                        <a href={`mailto:${strings.EMAIL}`} className='jd-top-cta'>
+                        <a href={`mailto:${strings.EMAIL}`} className='el-btn el-btn-dark el-btn-sm'>
                             Contact
                         </a>
                     </div>
                 </header>
 
-                <article className='jd-article-shell'>
-                    <div className='jd-back-row'>
-                        <Link href='/blog' className='jd-back-link'>
+                <article className='el-article'>
+                    <div className='el-article-back'>
+                        <Link href='/blog' className='el-back'>
                             <ArrowLeftIcon aria-hidden='true' />
                             Back to blog
                         </Link>
                     </div>
 
-                    <header className='jd-article-header'>
-                        <Link href='/blog' className='jd-pill'>
-                            Blog
-                        </Link>
-                        <h1>{post.title}</h1>
-                        <div className='jd-post-meta'>
-                            <span>
+                    <header className='el-article-header'>
+                        <div className='el-eyebrow'>
+                            <span className='el-eyebrow-label'>Blog</span>
+                            <span className='el-eyebrow-date'>
                                 <CalendarIcon aria-hidden='true' />
                                 {formatDate(post.date)}
-                            </span>
-                            <span>
+                                <span className='el-meta-dot' aria-hidden='true' />
                                 <EyeIcon aria-hidden='true' />
                                 {displayViewCount.toLocaleString('en-US')} views
                             </span>
                         </div>
-                        {post.description && <p>{post.description}</p>}
+                        <h1>{post.title}</h1>
+                        {post.description && <p className='el-article-desc'>{post.description}</p>}
                         {post.tags.length > 0 && (
-                            <div className='jd-tag-row'>
+                            <div className='el-tag-row'>
                                 {post.tags.map((tag: string) => (
-                                    <span key={tag} className='jd-tag'>
+                                    <span key={tag} className='el-tag'>
                                         {tag}
                                     </span>
                                 ))}
@@ -136,7 +133,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                         )}
                     </header>
 
-                    <div className='jd-prose'>
+                    <div className='el-prose'>
                         <ReactMarkdown
                             remarkPlugins={[remarkGfm]}
                             rehypePlugins={[rehypeRaw]}
@@ -153,18 +150,29 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                         </ReactMarkdown>
                     </div>
 
-                    <div className='jd-post-footer'>
-                        <Link href='/blog' className='jd-back-link'>
+                    <div className='el-article-footer'>
+                        <Link href='/blog' className='el-back'>
                             <ArrowLeftIcon aria-hidden='true' />
                             Back to all posts
                         </Link>
                     </div>
-
-                    <footer className='jd-footer jd-article-footer'>
-                        <span>© 2026 {strings.NAME}</span>
-                        <a href={`mailto:${strings.EMAIL}`}>{strings.EMAIL}</a>
-                    </footer>
                 </article>
+
+                <footer className='el-footer'>
+                    <div className='el-footer-inner'>
+                        <span className='el-footer-logo'>John Leonardo</span>
+                        <div className='el-footer-links'>
+                            <a href={strings.GITHUB_URL} target='_blank' rel='noreferrer'>
+                                GitHub
+                            </a>
+                            <a href={strings.LINKEDIN_URL} target='_blank' rel='noreferrer'>
+                                LinkedIn
+                            </a>
+                            <a href={`mailto:${strings.EMAIL}`}>{strings.EMAIL}</a>
+                        </div>
+                        <span className='el-footer-copy'>© 2026. All rights reserved.</span>
+                    </div>
+                </footer>
             </main>
         </>
     );
