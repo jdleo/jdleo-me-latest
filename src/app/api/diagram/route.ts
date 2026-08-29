@@ -43,8 +43,8 @@ graph TD
     B -->|No| D[Show Error]
     C --> E[Redirect to Dashboard]
     
-    classDef default fill:transparent,stroke:#5e6ad2,color:#f7f8f8,stroke-width:2px
-    classDef decision fill:transparent,stroke:#818cf8,color:#f7f8f8,stroke-width:2px
+    classDef default fill:#fdfdfb,stroke:#111110,color:#111110,stroke-width:1.5px
+    classDef decision fill:#efefe8,stroke:#111110,color:#111110,stroke-width:1.5px
     class B decision
 
 ALWAYS TEST: Before responding, mentally check each line for:
@@ -70,7 +70,7 @@ export async function POST(req: Request) {
                 'X-Title': 'jdleo.me',
             },
             body: JSON.stringify({
-                model: 'anthropic/claude-sonnet-4.5',
+                model: 'anthropic/claude-sonnet-5',
                 messages: [
                     {
                         role: 'system',

@@ -8,11 +8,10 @@ import { WebVitals } from '@/components/SEO/WebVitals';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import {
-    DevicePhoneMobileIcon,
-    PencilSquareIcon,
-    DocumentTextIcon,
     DocumentArrowUpIcon,
     ClipboardIcon,
+    CheckIcon,
+    DocumentTextIcon,
 } from '@heroicons/react/24/outline';
 
 const loadPdfJs = async () => {
@@ -27,6 +26,7 @@ export default function Parser() {
     const [error, setError] = useState<string | null>(null);
     const [isLoaded, setIsLoaded] = useState(false);
     const [fileName, setFileName] = useState<string | null>(null);
+    const [copied, setCopied] = useState(false);
 
     useEffect(() => {
         const timer = setTimeout(() => setIsLoaded(true), 100);
@@ -77,149 +77,130 @@ export default function Parser() {
     });
 
     const copyToClipboard = () => {
-        if (parsedData) navigator.clipboard.writeText(parsedData);
+        if (parsedData) {
+            navigator.clipboard.writeText(parsedData);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 1500);
+        }
     };
 
     return (
         <>
             <WebVitals />
-            <main className={`jd-home jd-apps-home ${isLoaded ? 'is-loaded' : ''}`}>
-                <header className='jd-nav-wrap'>
-                    <Link href='/' className='jd-logo'>{strings.NAME}</Link>
-                    <nav className='jd-nav' aria-label='Primary navigation'>
-                        <Link href='/apps' className='jd-nav-link'>Apps</Link>
-                        <Link href='/blog' className='jd-nav-link'>Blog</Link>
-                        <Link href='/apps/resume' className='jd-nav-link'>Resume</Link>
+            <main className='el-page'>
+                <header className='el-nav'>
+                    <Link href='/' className='el-logo' aria-label='John Leonardo home'>
+                        John Leonardo
+                    </Link>
+                    <nav className='el-nav-links' aria-label='Primary navigation'>
+                        <Link href='/apps' className='el-nav-link'>Apps</Link>
+                        <Link href='/blog' className='el-nav-link'>Blog</Link>
+                        <Link href='/apps/resume' className='el-nav-link'>Resume</Link>
                     </nav>
-                    <div className='jd-nav-actions'>
-                        <Link href='/apps/chat' className='jd-login'>Chat</Link>
-                        <Link href='/' className='jd-top-cta'>Home</Link>
+                    <div className='el-nav-actions'>
+                        <Link href='/apps/chat' className='el-nav-link'>Chat</Link>
+                        <Link href={`mailto:${strings.EMAIL}`} className='el-btn el-btn-dark el-btn-sm'>
+                            Contact
+                        </Link>
                     </div>
                 </header>
 
-                <div className={`notion-content ${isLoaded ? 'loaded' : ''}`} style={{ maxWidth: '1000px' }}>
-                    <div className='notion-title-block'>
-                        <h1 className='notion-title'>Resume Parser</h1>
-                        <div className='notion-subtitle'>Upload a PDF resume to extract structured data using AI</div>
+                <section className='el-hero el-hero-page'>
+                    <div className='el-hero-inner'>
+                        <div className='el-hero-copy'>
+                            <h1>Resume Parser</h1>
+                            <p className='el-hero-sub'>
+                                Upload a PDF resume to extract structured data using AI.
+                            </p>
+                        </div>
                     </div>
+                </section>
 
-                    <div className='notion-divider' />
-
+                <section className='el-section el-sentiment'>
                     {!parsedData && !loading && (
-                        <div className='notion-section'>
-                            <div className='notion-section-title'>
-                                <DocumentArrowUpIcon className='notion-section-icon' />
-                                Upload Document
+                        <div className='el-chart-block'>
+                            <div className='el-chart-title'>
+                                <span className='el-chart-title-label'>
+                                    <DocumentArrowUpIcon aria-hidden='true' />
+                                    Upload Document
+                                </span>
+                                <span className='el-chart-pill'>PDF only</span>
                             </div>
-                            <div
-                                {...getRootProps()}
-                                style={{
-                                    marginTop: '16px',
-                                    padding: '48px',
-                                    border: `2px dashed ${isDragActive ? '#6366f1' : 'rgba(55, 53, 47, 0.16)'}`,
-                                    borderRadius: '12px',
-                                    textAlign: 'center',
-                                    cursor: 'pointer',
-                                    backgroundColor: isDragActive ? 'rgba(99, 102, 241, 0.05)' : 'transparent',
-                                    transition: 'all 0.2s ease'
-                                }}
-                            >
+                            <div {...getRootProps()} className={`el-dropzone ${isDragActive ? 'is-active' : ''}`}>
                                 <input {...getInputProps()} />
-                                <div style={{
-                                    width: '56px',
-                                    height: '56px',
-                                    margin: '0 auto 16px',
-                                    borderRadius: '50%',
-                                    backgroundColor: isDragActive ? '#6366f1' : 'rgba(55, 53, 47, 0.06)',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    fontSize: '28px',
-                                    transition: 'all 0.2s ease'
-                                }}>
-                                    📄
-                                </div>
-                                <div style={{ fontSize: '14px', fontWeight: 600, color: '#37352f', marginBottom: '4px' }}>
-                                    {isDragActive ? 'Drop PDF Here' : 'Click or drag to upload'}
-                                </div>
-                                <div style={{ fontSize: '12px', color: 'rgba(55, 53, 47, 0.5)' }}>PDF files only</div>
+                                <DocumentArrowUpIcon className='el-dropzone-icon' aria-hidden='true' />
+                                <h2>{isDragActive ? 'Drop PDF Here' : 'Click or drag to upload'}</h2>
+                                <p>PDF files only</p>
                             </div>
                         </div>
                     )}
 
                     {loading && (
-                        <div style={{ textAlign: 'center', padding: '64px 24px' }}>
-                            <div style={{
-                                width: '64px',
-                                height: '64px',
-                                margin: '0 auto 24px',
-                                border: '4px solid rgba(99, 102, 241, 0.2)',
-                                borderTopColor: '#6366f1',
-                                borderRadius: '50%',
-                                animation: 'spin 1s linear infinite'
-                            }} />
-                            <div style={{ fontSize: '14px', fontWeight: 600, color: '#37352f', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Extracting Entities...</div>
-                            <div style={{ fontSize: '12px', color: 'rgba(55, 53, 47, 0.5)', marginTop: '8px' }}>{fileName}</div>
+                        <div className='el-chart-block'>
+                            <div className='el-chart-title'>
+                                <span className='el-chart-title-label'>Extracting Entities...</span>
+                                <span className='el-chart-pill'>{fileName}</span>
+                            </div>
+                            <div className='el-file-card el-parser-loading'>
+                                <div className='ecl-loading-ring' aria-hidden='true' />
+                                <p>Reading the PDF, calling the model, and structuring the output.</p>
+                            </div>
                         </div>
                     )}
 
                     {error && (
-                        <div style={{
-                            padding: '16px',
-                            backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                            borderRadius: '8px',
-                            color: '#dc2626',
-                            fontSize: '14px',
-                            fontWeight: 500,
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '8px',
-                            marginTop: '24px'
-                        }}>
-                            <span style={{ width: '20px', height: '20px', borderRadius: '50%', backgroundColor: 'rgba(239, 68, 68, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px' }}>!</span>
+                        <div className='el-file-card el-diagram-error'>
                             {error}
                         </div>
                     )}
 
                     {parsedData && !loading && (
-                        <div className='notion-section'>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                    <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#059669' }} />
-                                    <span style={{ fontSize: '16px', fontWeight: 700, color: '#37352f' }}>Extraction Results</span>
+                        <div className='el-chart-block'>
+                            <div className='el-chart-title'>
+                                <span className='el-chart-title-label'>
+                                    <DocumentTextIcon aria-hidden='true' />
+                                    Extraction Results
+                                </span>
+                                <div className='el-parser-actions'>
+                                    <button onClick={copyToClipboard} className='el-btn el-btn-light el-btn-sm'>
+                                        <ClipboardIcon aria-hidden='true' />
+                                        {copied ? 'Copied' : 'Copy JSON'}
+                                    </button>
+                                    <button
+                                        onClick={() => { setParsedData(null); setFileName(null); }}
+                                        className='el-btn el-btn-dark el-btn-sm'
+                                    >
+                                        <DocumentArrowUpIcon aria-hidden='true' />
+                                        Upload Another
+                                    </button>
                                 </div>
-                                <button onClick={copyToClipboard} className='notion-action-btn'>
-                                    <ClipboardIcon className='notion-action-icon' />
-                                    Copy JSON
-                                </button>
                             </div>
-                            <div className='notion-card' style={{ padding: 0, overflow: 'hidden' }}>
+                            <div className='el-file-card el-parser-output'>
                                 <SyntaxHighlighter
                                     language="json"
                                     style={oneLight}
-                                    customStyle={{ margin: 0, padding: '20px', fontSize: '12px', lineHeight: 1.6, maxHeight: '600px', overflow: 'auto' }}
+                                    customStyle={{ margin: 0, padding: '20px', fontSize: '12px', lineHeight: 1.6, maxHeight: '600px', overflow: 'auto', backgroundColor: 'transparent' }}
                                     showLineNumbers={true}
                                     wrapLongLines={true}
                                 >
                                     {parsedData}
                                 </SyntaxHighlighter>
                             </div>
-                            <div style={{ marginTop: '16px' }}>
-                                <button
-                                    onClick={() => { setParsedData(null); setFileName(null); }}
-                                    className='notion-action-btn'
-                                >
-                                    <DocumentArrowUpIcon className='notion-action-icon' />
-                                    Upload Another
-                                </button>
-                            </div>
                         </div>
                     )}
+                </section>
 
-                    <footer className='notion-footer'>
-                        © 2026 {strings.NAME}
-                    </footer>
-                </div>
+                <footer className='el-footer'>
+                    <div className='el-footer-inner'>
+                        <span className='el-footer-logo'>John Leonardo</span>
+                        <div className='el-footer-links'>
+                            <a href={strings.GITHUB_URL} target='_blank' rel='noreferrer'>GitHub</a>
+                            <a href={strings.LINKEDIN_URL} target='_blank' rel='noreferrer'>LinkedIn</a>
+                            <a href={`mailto:${strings.EMAIL}`}>{strings.EMAIL}</a>
+                        </div>
+                        <span className='el-footer-copy'>© 2026. All rights reserved.</span>
+                    </div>
+                </footer>
             </main>
         </>
     );

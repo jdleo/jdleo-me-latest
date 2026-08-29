@@ -1,19 +1,17 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { strings } from '../../constants/strings';
 import { WebVitals } from '@/components/SEO/WebVitals';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import {
-    DevicePhoneMobileIcon,
-    PencilSquareIcon,
-    DocumentTextIcon,
     BoltIcon,
     ArrowPathIcon,
     MagnifyingGlassPlusIcon,
     MagnifyingGlassMinusIcon,
+    ArrowDownTrayIcon,
 } from '@heroicons/react/24/outline';
 
 const Mermaid = dynamic(() => import('../../../components/Mermaid'), {
@@ -26,11 +24,68 @@ export default function DiagramGenerator() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [isLoaded, setIsLoaded] = useState(false);
+    const diagramRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
         const timer = setTimeout(() => setIsLoaded(true), 100);
         return () => clearTimeout(timer);
     }, []);
+
+    useEffect(() => {
+        if (diagramCode && !loading) {
+            diagramRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }, [diagramCode, loading]);
+
+    const downloadPng = () => {
+        const svg = diagramRef.current?.querySelector('.el-diagram-inner svg');
+        if (!svg) return;
+
+        const vb = (svg.getAttribute('viewBox') || '0 0 1200 800').split(/\s+/).map(Number);
+        const w = vb[2] || svg.clientWidth || 1200;
+        const h = vb[3] || svg.clientHeight || 800;
+        const scale = 2.5;
+
+        const clone = svg.cloneNode(true) as SVGSVGElement;
+        clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+        clone.setAttribute('width', String(w * scale));
+        clone.setAttribute('height', String(h * scale));
+        clone.innerHTML = clone.innerHTML.replace(/var\(--font-geist-mono\)/g, 'ui-monospace, monospace');
+
+        const xml = new XMLSerializer().serializeToString(clone);
+        const svgBlob = new Blob([xml], { type: 'image/svg+xml;charset=utf-8' });
+        const url = URL.createObjectURL(svgBlob);
+        const img = new Image();
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = Math.round(w * scale);
+            canvas.height = Math.round(h * scale);
+            const ctx = canvas.getContext('2d')!;
+            ctx.fillStyle = '#f7f7f2';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            URL.revokeObjectURL(url);
+            try {
+                canvas.toBlob((blob) => {
+                    if (!blob) throw new Error('blob failed');
+                    const a = document.createElement('a');
+                    a.href = URL.createObjectURL(blob);
+                    a.download = 'diagram.png';
+                    a.click();
+                    URL.revokeObjectURL(a.href);
+                }, 'image/png');
+            } catch {
+                // tainted canvas (foreignObject): fall back to the SVG file
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(svgBlob);
+                a.download = 'diagram.svg';
+                a.click();
+                URL.revokeObjectURL(a.href);
+            }
+        };
+        img.onerror = () => URL.revokeObjectURL(url);
+        img.src = url;
+    };
 
     const generateDiagram = async (prompt?: string) => {
         const finalDescription = prompt || description;
@@ -77,55 +132,65 @@ export default function DiagramGenerator() {
     return (
         <>
             <WebVitals />
-            <main className={`jd-home jd-apps-home ${isLoaded ? 'is-loaded' : ''}`}>
-                <header className='jd-nav-wrap'>
-                    <Link href='/' className='jd-logo'>{strings.NAME}</Link>
-                    <nav className='jd-nav' aria-label='Primary navigation'>
-                        <Link href='/apps' className='jd-nav-link'>Apps</Link>
-                        <Link href='/blog' className='jd-nav-link'>Blog</Link>
-                        <Link href='/apps/resume' className='jd-nav-link'>Resume</Link>
+            <main className='el-page'>
+                <header className='el-nav'>
+                    <Link href='/' className='el-logo' aria-label='John Leonardo home'>
+                        John Leonardo
+                    </Link>
+                    <nav className='el-nav-links' aria-label='Primary navigation'>
+                        <Link href='/apps' className='el-nav-link'>Apps</Link>
+                        <Link href='/blog' className='el-nav-link'>Blog</Link>
+                        <Link href='/apps/resume' className='el-nav-link'>Resume</Link>
                     </nav>
-                    <div className='jd-nav-actions'>
-                        <Link href='/apps/chat' className='jd-login'>Chat</Link>
-                        <Link href='/' className='jd-top-cta'>Home</Link>
+                    <div className='el-nav-actions'>
+                        <Link href='/apps/chat' className='el-nav-link'>Chat</Link>
+                        <Link href={`mailto:${strings.EMAIL}`} className='el-btn el-btn-dark el-btn-sm'>
+                            Contact
+                        </Link>
                     </div>
                 </header>
 
-                <div className={`notion-content ${isLoaded ? 'loaded' : ''}`} style={{ maxWidth: '1100px' }}>
-                    <div className='notion-title-block'>
-                        <h1 className='notion-title'>AI Diagram Generator</h1>
-                        <div className='notion-subtitle'>Generate Mermaid.js diagrams from natural language descriptions</div>
-                    </div>
-
-                    <div className='notion-divider' />
-
-                    <div className='notion-section'>
-                        <div className='notion-section-title'>
-                            <BoltIcon className='notion-section-icon' />
-                            Describe Your Diagram
+                <section className='el-hero el-hero-page'>
+                    <div className='el-hero-inner'>
+                        <div className='el-hero-copy'>
+                            <h1>AI Diagram Generator</h1>
+                            <p className='el-hero-sub'>
+                                Generate Mermaid.js diagrams from natural language descriptions.
+                            </p>
                         </div>
-                        <div style={{ marginTop: '16px' }}>
+                    </div>
+                </section>
+
+                <section className='el-section el-sentiment'>
+                    <div className='el-chart-block'>
+                        <div className='el-chart-title'>
+                            <span className='el-chart-title-label'>
+                                <BoltIcon aria-hidden='true' />
+                                Describe Your Diagram
+                            </span>
+                        </div>
+                        <div className='el-file-card'>
                             <textarea
                                 value={description}
                                 onChange={e => setDescription(e.target.value)}
                                 placeholder='Describe your system architecture, flow, or data structure...'
-                                className='notion-textarea jd-tool-textarea'
-                                style={{ height: '160px' }}
+                                className='el-textarea'
+                                rows={6}
                             />
-                            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginTop: '12px' }}>
+                            <div className='el-serialize-row'>
                                 <button
                                     onClick={() => generateDiagram()}
                                     disabled={loading || !description.trim()}
-                                    className='notion-action-btn notion-action-primary'
+                                    className='el-btn el-btn-dark el-btn-sm'
                                 >
                                     {loading ? (
                                         <>
-                                            <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'white', animation: 'pulse 1s infinite' }} />
+                                            <span className='ecl-loading-dot' aria-hidden='true' />
                                             Generating...
                                         </>
                                     ) : (
                                         <>
-                                            <BoltIcon className='notion-action-icon' />
+                                            <BoltIcon aria-hidden='true' />
                                             Generate Diagram
                                         </>
                                     )}
@@ -133,9 +198,9 @@ export default function DiagramGenerator() {
                                 {diagramCode && (
                                     <button
                                         onClick={() => setDiagramCode(null)}
-                                        className='notion-action-btn'
+                                        className='el-btn el-btn-light el-btn-sm'
                                     >
-                                        <ArrowPathIcon className='notion-action-icon' />
+                                        <ArrowPathIcon aria-hidden='true' />
                                         Clear
                                     </button>
                                 )}
@@ -143,19 +208,16 @@ export default function DiagramGenerator() {
                         </div>
                     </div>
 
-                    <div className='notion-divider' />
-
-                    <div className='notion-section'>
-                        <div className='notion-section-title'>
-                            <DocumentTextIcon className='notion-section-icon' />
-                            Quick Start Examples
+                    <div className='el-chart-block'>
+                        <div className='el-chart-title'>
+                            <span className='el-chart-title-label'>Quick Start Examples</span>
                         </div>
-                        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '12px' }}>
+                        <div className='el-suggestion-grid ecl-diagram-suggestions'>
                             {examplePrompts.map((p, i) => (
                                 <button
                                     key={i}
                                     onClick={() => handleExampleClick(p)}
-                                    className='notion-action-btn'
+                                    className='ecl-suggestion'
                                 >
                                     {p}
                                 </button>
@@ -164,145 +226,81 @@ export default function DiagramGenerator() {
                     </div>
 
                     {error && (
-                        <>
-                            <div className='notion-divider' />
-                            <div style={{
-                                padding: '16px',
-                                backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                                borderRadius: '8px',
-                                color: '#dc2626',
-                                fontSize: '14px',
-                                fontWeight: 500,
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '8px'
-                            }}>
-                                <span style={{ width: '20px', height: '20px', borderRadius: '50%', backgroundColor: 'rgba(239, 68, 68, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px' }}>!</span>
-                                {error}
-                            </div>
-                        </>
+                        <div className='el-file-card el-diagram-error'>
+                            {error}
+                        </div>
                     )}
 
                     {diagramCode ? (
-                        <>
-                            <div className='notion-divider' />
-                            <div className='notion-section'>
-                                <div className='notion-section-title'>
-                                    <DocumentTextIcon className='notion-section-icon' />
-                                    Generated Diagram
-                                    <span style={{ marginLeft: 'auto', fontSize: '10px', fontWeight: 600, color: '#059669', backgroundColor: 'rgba(16, 185, 129, 0.1)', padding: '4px 8px', borderRadius: '12px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                                        ✓ Rendered
-                                    </span>
-                                </div>
-                                <div className='notion-card' style={{
-                                    marginTop: '16px',
-                                    padding: 0,
-                                    overflow: 'hidden',
-                                    backgroundColor: '#1a1b1e'
-                                }}>
-                                    <TransformWrapper
-                                        initialScale={1}
-                                        minScale={0.2}
-                                        maxScale={4}
-                                        centerOnInit={true}
-                                        limitToBounds={false}
-                                    >
-                                        {({ zoomIn, zoomOut, resetTransform }) => (
-                                            <>
-                                                <div style={{
-                                                    position: 'absolute',
-                                                    bottom: '16px',
-                                                    right: '16px',
-                                                    zIndex: 20,
-                                                    display: 'flex',
-                                                    gap: '8px'
-                                                }}>
-                                                    <button
-                                                        onClick={() => zoomIn()}
-                                                        style={{
-                                                            width: '40px',
-                                                            height: '40px',
-                                                            borderRadius: '50%',
-                                                            backgroundColor: 'white',
-                                                            border: 'none',
-                                                            cursor: 'pointer',
-                                                            display: 'flex',
-                                                            alignItems: 'center',
-                                                            justifyContent: 'center',
-                                                            boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
-                                                        }}
-                                                    >
-                                                        <MagnifyingGlassPlusIcon style={{ width: '20px', height: '20px' }} />
-                                                    </button>
-                                                    <button
-                                                        onClick={() => zoomOut()}
-                                                        style={{
-                                                            width: '40px',
-                                                            height: '40px',
-                                                            borderRadius: '50%',
-                                                            backgroundColor: 'white',
-                                                            border: 'none',
-                                                            cursor: 'pointer',
-                                                            display: 'flex',
-                                                            alignItems: 'center',
-                                                            justifyContent: 'center',
-                                                            boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
-                                                        }}
-                                                    >
-                                                        <MagnifyingGlassMinusIcon style={{ width: '20px', height: '20px' }} />
-                                                    </button>
-                                                    <button
-                                                        onClick={() => resetTransform()}
-                                                        style={{
-                                                            width: '40px',
-                                                            height: '40px',
-                                                            borderRadius: '50%',
-                                                            backgroundColor: 'white',
-                                                            border: 'none',
-                                                            cursor: 'pointer',
-                                                            display: 'flex',
-                                                            alignItems: 'center',
-                                                            justifyContent: 'center',
-                                                            boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
-                                                            fontSize: '18px'
-                                                        }}
-                                                    >
-                                                        ⟲
-                                                    </button>
-                                                </div>
-                                                <TransformComponent
-                                                    wrapperStyle={{ width: '100%', height: '500px' }}
-                                                    contentStyle={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                                                >
-                                                    <div style={{ padding: '48px', minWidth: '600px' }}>
-                                                        <Mermaid chart={diagramCode} id='mermaid-main' />
-                                                    </div>
-                                                </TransformComponent>
-                                            </>
-                                        )}
-                                    </TransformWrapper>
-                                </div>
+                        <div className='el-chart-block' ref={diagramRef}>
+                            <div className='el-chart-title'>
+                                <span className='el-chart-title-label'>Generated Diagram</span>
+                                <span className='el-chart-pill'>rendered</span>
                             </div>
-                        </>
-                    ) : !loading && (
-                        <>
-                            <div className='notion-divider' />
-                            <div style={{ textAlign: 'center', padding: '64px 24px' }}>
-                                <div style={{ width: '80px', height: '80px', margin: '0 auto 24px', backgroundColor: 'rgba(99, 102, 241, 0.1)', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '40px', transform: 'rotate(3deg)' }}>
-                                    💠
+                            <div className='el-diagram-card'>
+                                <TransformWrapper
+                                    initialScale={1}
+                                    minScale={0.2}
+                                    maxScale={4}
+                                    centerOnInit={true}
+                                    limitToBounds={false}
+                                >
+                                    {({ zoomIn, zoomOut, resetTransform }) => (
+                                        <>
+                                            <div className='el-zoom-row'>
+                                                <button onClick={() => zoomIn()} className='el-zoom-btn' aria-label='Zoom in'>
+                                                    <MagnifyingGlassPlusIcon />
+                                                </button>
+                                                <button onClick={() => zoomOut()} className='el-zoom-btn' aria-label='Zoom out'>
+                                                    <MagnifyingGlassMinusIcon />
+                                                </button>
+                                                <button onClick={() => resetTransform()} className='el-zoom-btn' aria-label='Reset zoom'>
+                                                    <ArrowPathIcon />
+                                                </button>
+                                                <button onClick={downloadPng} className='el-zoom-btn' aria-label='Download as PNG'>
+                                                    <ArrowDownTrayIcon />
+                                                </button>
+                                            </div>
+                                            <TransformComponent
+                                                wrapperStyle={{ width: '100%', height: '100%' }}
+                                                contentStyle={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                                            >
+                                                <div className='el-diagram-inner'>
+                                                    <Mermaid chart={diagramCode} id='mermaid-main' theme='light' />
+                                                </div>
+                                            </TransformComponent>
+                                        </>
+                                    )}
+                                </TransformWrapper>
+                            </div>
+                        </div>
+                    ) : (
+                        !loading && (
+                            <div className='ecl-welcome ecl-diagram-empty'>
+                                <div className='el-eyebrow'>
+                                    <span className='el-eyebrow-label'>Canvas Empty</span>
                                 </div>
-                                <h2 style={{ fontSize: '24px', fontWeight: 700, color: '#37352f', marginBottom: '8px' }}>Canvas Empty</h2>
-                                <p style={{ color: 'rgba(55, 53, 47, 0.6)', fontSize: '15px', maxWidth: '400px', margin: '0 auto' }}>
-                                    Enter a description or choose a preset to generate a Mermaid.js diagram instantly.
+                                <h1>Nothing drawn yet.</h1>
+                                <p>
+                                    Enter a description or choose a preset to generate a
+                                    Mermaid.js diagram instantly.
                                 </p>
                             </div>
-                        </>
+                        )
                     )}
+                </section>
 
-                    <footer className='notion-footer'>
-                        © 2026 {strings.NAME}
-                    </footer>
-                </div>
+                <footer className='el-footer'>
+                    <div className='el-footer-inner'>
+                        <span className='el-footer-logo'>John Leonardo</span>
+                        <div className='el-footer-links'>
+                            <a href={strings.GITHUB_URL} target='_blank' rel='noreferrer'>GitHub</a>
+                            <a href={strings.LINKEDIN_URL} target='_blank' rel='noreferrer'>LinkedIn</a>
+                            <a href={`mailto:${strings.EMAIL}`}>{strings.EMAIL}</a>
+                        </div>
+                        <span className='el-footer-copy'>© 2026. All rights reserved.</span>
+                    </div>
+                </footer>
             </main>
         </>
     );
