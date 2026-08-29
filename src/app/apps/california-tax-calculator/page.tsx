@@ -370,9 +370,12 @@ export default function CaliforniaTaxCalculator() {
                                 </div>
 
                                 <p className='el-tax-disclaimer'>
-                                    Estimates use 2026 federal brackets, 2026 Social Security wage base,
-                                    CA&apos;s 2026 estimated-tax worksheet guidance, CA SDI, and the 1% CA
-                                    Behavioral Health Services Tax above $1M taxable income. Not financial advice.
+                                    Estimates use 2026 federal brackets (OBBBA-adjusted), 2026 Social Security
+                                    wage base, CA&apos;s 2026 estimated-tax worksheet guidance, CA SDI, and the
+                                    1% CA Behavioral Health Services Tax above $1M taxable income. Assumes the
+                                    standard deduction — itemized deductions (including the OBBBA SALT cap of
+                                    $40,400 with its $505k phaseout) are not modeled. California taxes all
+                                    capital gains as ordinary income. Not financial advice.
                                 </p>
                             </div>
                         </>

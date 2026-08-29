@@ -7879,3 +7879,18 @@ a.el-btn-light, .el-btn-light {
     font-size: 1.7rem;
   }
 }
+
+.el-kv-mono-sm {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* breathing room between input cards and the stat panels they feed */
+.el-stat-grid {
+  margin-top: 1.75rem;
+}
