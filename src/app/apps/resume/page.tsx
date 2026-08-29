@@ -57,7 +57,7 @@ export default function Resume() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     messages: apiMessages,
-                    model: 'anthropic/claude-sonnet-4.6',
+                    model: 'openai/gpt-5.6-luna',
                     promptVariant: 'resume',
                 }),
             });
@@ -139,81 +139,74 @@ export default function Resume() {
     return (
         <>
             <WebVitals />
-            <main className='jd-home jd-app-runtime is-loaded'>
-                <header className='jd-nav-wrap jd-app-runtime-nav'>
-                    <Link href='/apps' className='jd-back-link'>
+            <main className='el-page el-chat'>
+                <header className='el-nav'>
+                    <Link href='/apps' className='el-back'>
                         <ArrowLeftIcon aria-hidden='true' />
-                        <span className='hidden sm:inline'>Back to Apps</span>
-                        <span className='sm:hidden'>Apps</span>
+                        Apps
                     </Link>
-                    <nav className='jd-nav' aria-label='Resume app navigation'>
-                        <Link href='/' className='jd-nav-link'>
-                            Home
-                        </Link>
-                        <Link href='/blog' className='jd-nav-link'>
-                            Blog
-                        </Link>
-                        <a href={strings.GITHUB_URL} target='_blank' rel='noreferrer' className='jd-nav-link'>
-                            GitHub
-                        </a>
+                    <nav className='el-nav-links' aria-label='Resume app navigation'>
+                        <Link href='/' className='el-nav-link'>Home</Link>
+                        <Link href='/blog' className='el-nav-link'>Blog</Link>
+                        <a href={strings.GITHUB_URL} target='_blank' rel='noreferrer' className='el-nav-link'>GitHub</a>
                     </nav>
-                    <div className='jd-nav-actions'>
+                    <div className='el-nav-actions'>
                         <button
                             onClick={() => setIsMobileSuggestionsOpen(true)}
-                            className='md:hidden jd-runtime-suggestions-btn'
+                            className='ecl-pill-btn md:hidden'
                         >
-                            Suggestions
+                            <span>Suggestions</span>
                             <ChevronDownIcon aria-hidden='true' />
                         </button>
-                        <a href={`mailto:${strings.EMAIL}`} className='jd-top-cta'>
-                            Contact
-                        </a>
+                        <a href={`mailto:${strings.EMAIL}`} className='el-btn el-btn-dark el-btn-sm'>Contact</a>
                     </div>
                 </header>
 
-                <div className='jd-runtime-layout'>
-                    <aside className='hidden md:flex jd-runtime-sidebar'>
-                        <div className='jd-runtime-sidebar-main'>
-                            <div className='jd-runtime-eyebrow'>Suggested Questions</div>
-                            <div className='jd-runtime-question-list'>
+                <div className='ecl-layout'>
+                    <aside className='ecl-side hidden md:flex'>
+                        <div className='ecl-side-block'>
+                            <div className='el-eyebrow'>
+                                <span className='el-eyebrow-label'>Suggested Questions</span>
+                            </div>
+                            <div className='ecl-models'>
                                 {suggestedQueries.map((q, i) => (
                                     <button
                                         key={i}
                                         onClick={() => sendMessage(q)}
-                                        className='jd-runtime-question'
+                                        className='ecl-model'
                                     >
-                                        <QuestionMarkCircleIcon aria-hidden='true' />
+                                        <QuestionMarkCircleIcon aria-hidden='true' className='ecl-suggestion-icon' />
                                         <span>{q}</span>
                                     </button>
                                 ))}
                             </div>
                         </div>
 
-                        <div className='jd-runtime-sidebar-footer'>
+                        <div className='ecl-side-footer'>
                             <button
                                 onClick={() => { setMessages([]); setShowWelcome(true); }}
-                                className='notion-chat-clear-btn'
+                                className='ecl-clear-btn'
                             >
                                 Clear Conversation
                             </button>
                         </div>
                     </aside>
 
-                    <div className='jd-runtime-chat'>
-                        <div className='jd-runtime-scroll scrollbar-hide'>
+                    <section className='ecl-main'>
+                        <div className='ecl-scroll scrollbar-hide'>
                             {showWelcome && (
-                                <div className='jd-runtime-welcome'>
-                                    <div>
-                                        <p className='jd-runtime-kicker'>Chat w/ John</p>
-                                        <h1>Hi! I know everything about John.</h1>
-                                        <p>Ask me anything about his experience, skills, projects, or background.</p>
+                                <div className='ecl-welcome'>
+                                    <div className='el-eyebrow'>
+                                        <span className='el-eyebrow-label'>Chat w/ John</span>
                                     </div>
-                                    <div className='jd-runtime-suggestion-grid'>
+                                    <h1>Hi! I know everything about John.</h1>
+                                    <p>Ask me anything about his experience, skills, projects, or background.</p>
+                                    <div className='ecl-suggestion-grid'>
                                         {suggestedQueries.slice(0, 4).map((q, i) => (
                                             <button
                                                 key={i}
                                                 onClick={() => sendMessage(q)}
-                                                className='jd-runtime-suggestion'
+                                                className='ecl-suggestion'
                                             >
                                                 {q}
                                             </button>
@@ -229,10 +222,10 @@ export default function Resume() {
                             {streamingMessage && (
                                 <div className='notion-chat-message-wrapper'>
                                     <div className='notion-chat-message notion-chat-message-ai'>
-                                        <div className='jd-runtime-message-label'>
+                                        <div className='ecl-message-label'>
                                             Thinking...
                                         </div>
-                                        <div className='notion-blog-content jd-prose'>
+                                        <div className='notion-blog-content'>
                                             <ReactMarkdown
                                                 remarkPlugins={[remarkGfm]}
                                                 rehypePlugins={[rehypeRaw]}
@@ -263,31 +256,31 @@ export default function Resume() {
                             <div ref={messagesEndRef} />
                         </div>
 
-                        <div className='jd-runtime-input'>
+                        <div className='ecl-inputbar'>
                             <ChatInput
                                 onSend={sendMessage}
                                 isLoading={isLoading}
                                 placeholder='Ask about John...'
                             />
                         </div>
-                    </div>
+                    </section>
                 </div>
 
                 {isMobileSuggestionsOpen && (
-                    <div className='notion-mobile-overlay jd-runtime-overlay' onClick={() => setIsMobileSuggestionsOpen(false)}>
-                        <div className='notion-mobile-panel jd-runtime-panel' onClick={e => e.stopPropagation()}>
-                            <div className='notion-mobile-panel-header jd-runtime-panel-header'>
+                    <div className='notion-mobile-overlay' onClick={() => setIsMobileSuggestionsOpen(false)}>
+                        <div className='ecl-panel' onClick={e => e.stopPropagation()}>
+                            <div className='ecl-panel-header'>
                                 <span>Suggested Questions</span>
-                                <button onClick={() => setIsMobileSuggestionsOpen(false)} className='notion-mobile-close'>✕</button>
+                                <button onClick={() => setIsMobileSuggestionsOpen(false)} className='ecl-panel-close'>x</button>
                             </div>
-                            <div className='jd-runtime-panel-body'>
+                            <div className='ecl-models ecl-panel-models'>
                                 {suggestedQueries.map((q, i) => (
                                     <button
                                         key={i}
                                         onClick={() => sendMessage(q)}
-                                        className='jd-runtime-question'
+                                        className='ecl-model'
                                     >
-                                        <QuestionMarkCircleIcon aria-hidden='true' />
+                                        <QuestionMarkCircleIcon aria-hidden='true' className='ecl-suggestion-icon' />
                                         <span>{q}</span>
                                     </button>
                                 ))}

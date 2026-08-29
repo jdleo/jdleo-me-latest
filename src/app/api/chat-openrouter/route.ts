@@ -1,13 +1,12 @@
 import { NextResponse } from 'next/server';
 
 const ALLOWED_MODELS = [
+    'z-ai/glm-5.3-flash',
+    'google/gemini-3.7-flash',
     'openai/gpt-oss-120b',
-    'anthropic/claude-sonnet-4.6',
-    'openai/gpt-5.5',
-    'openai/gpt-5.4-nano',
-    'google/gemini-3.1-pro-preview',
-    'google/gemini-3.1-flash-lite-preview',
-    'x-ai/grok-4.20',
+    'anthropic/claude-sonnet-5',
+    'openai/gpt-5.6-luna',
+    'x-ai/grok-4.6',
 ];
 
 function buildResumeSystemPrompt() {

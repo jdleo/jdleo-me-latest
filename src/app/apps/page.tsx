@@ -5,52 +5,14 @@ import Link from 'next/link';
 import { strings } from '../constants/strings';
 import { apps } from '../constants/apps';
 import { WebVitals } from '@/components/SEO/WebVitals';
-import {
-    DocumentTextIcon,
-    ChatBubbleLeftRightIcon,
-    UserIcon,
-    MagnifyingGlassIcon,
-    BookOpenIcon,
-    CircleStackIcon,
-    ChartBarIcon,
-    TrophyIcon,
-    LinkIcon,
-    BoltIcon,
-    CommandLineIcon,
-    CubeIcon,
-    CubeTransparentIcon,
-    LockClosedIcon,
-    EyeIcon,
-    CalculatorIcon,
-    ArrowTrendingUpIcon,
-    SignalIcon,
-    ArrowUpRightIcon,
-} from '@heroicons/react/24/outline';
+import { ArrowUpRightIcon } from '@heroicons/react/24/outline';
 
-// Map apps to their icons
-const getAppIcon = (title: string) => {
-    const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
-        'AI Chat': ChatBubbleLeftRightIcon,
-        'Chat w/ John': UserIcon,
-        'Resume Screen': MagnifyingGlassIcon,
-        'PDF Chat (Embeddings)': BookOpenIcon,
-        'Knowledge Graph': CircleStackIcon,
-        'LLM Serialization': ChartBarIcon,
-        'LLM Leaderboard': TrophyIcon,
-        'Link Shortener': LinkIcon,
-        'AI Diagram Generator': BoltIcon,
-        'Resume Parser': DocumentTextIcon,
-        'Color Gamble': CubeIcon,
-        'Sort Viz': CommandLineIcon,
-        'Blockchain 101': CubeTransparentIcon,
-        'Hash Lab': LockClosedIcon,
-        'Privacy Scanner': EyeIcon,
-        '2026 California Tax Calculator': CalculatorIcon,
-        'Founder Dilution': ArrowTrendingUpIcon,
-        'AI Sentiment': SignalIcon,
-    };
-    return iconMap[title] || DocumentTextIcon;
-};
+const navLinks = [
+    { label: 'Home', href: '/' },
+    { label: 'Blog', href: '/blog' },
+    { label: 'Resume', href: '/apps/resume' },
+    { label: 'GitHub', href: strings.GITHUB_URL, external: true },
+];
 
 export default function Apps() {
     const [isLoaded, setIsLoaded] = useState(false);
@@ -63,64 +25,83 @@ export default function Apps() {
     return (
         <>
             <WebVitals />
-            <main className={`jd-home jd-apps-home ${isLoaded ? 'is-loaded' : ''}`}>
-                <header className='jd-nav-wrap'>
-                    <Link href='/' className='jd-logo' aria-label='John Leonardo home'>
-                        {strings.NAME}
+            <main className='el-page'>
+                <header className='el-nav'>
+                    <Link href='/' className='el-logo' aria-label='John Leonardo home'>
+                        John Leonardo
                     </Link>
-                    <nav className='jd-nav' aria-label='Apps navigation'>
-                        <Link href='/' className='jd-nav-link'>
-                            Home
-                        </Link>
-                        <Link href='/blog' className='jd-nav-link'>
-                            Blog
-                        </Link>
-                        <Link href='/apps/resume' className='jd-nav-link'>
-                            Resume
-                        </Link>
-                        <a href={strings.GITHUB_URL} target='_blank' rel='noreferrer' className='jd-nav-link'>
-                            GitHub
-                        </a>
+                    <nav className='el-nav-links' aria-label='Apps navigation'>
+                        {navLinks.map((link) => (
+                            <a
+                                key={link.label}
+                                href={link.href}
+                                target={link.external ? '_blank' : undefined}
+                                rel={link.external ? 'noreferrer' : undefined}
+                                className='el-nav-link'
+                            >
+                                {link.label}
+                            </a>
+                        ))}
                     </nav>
-                    <div className='jd-nav-actions'>
-                        <a href={strings.LINKEDIN_URL} target='_blank' rel='noreferrer' className='jd-login'>
+                    <div className='el-nav-actions'>
+                        <a href={strings.LINKEDIN_URL} target='_blank' rel='noreferrer' className='el-nav-link'>
                             LinkedIn
                         </a>
-                        <a href={`mailto:${strings.EMAIL}`} className='jd-top-cta'>
+                        <a href={`mailto:${strings.EMAIL}`} className='el-btn el-btn-dark el-btn-sm'>
                             Contact
                         </a>
                     </div>
                 </header>
 
-                <article className='jd-blog-shell'>
-                    <section className='jd-blog-hero jd-apps-hero'>
-                        <h1>Apps</h1>
-                        <p>Random apps I made that might have some value to somebody.</p>
-                    </section>
+                <section className='el-hero el-hero-page'>
+                    <div className='el-hero-inner'>
+                        <div className='el-hero-copy'>
+                            <h1>Apps</h1>
+                            <p className='el-hero-sub'>
+                                Random apps I made that might have some value to somebody.
+                            </p>
+                        </div>
+                    </div>
+                </section>
 
-                    <section className='jd-app-grid' aria-label='Applications and tools'>
-                        {apps.map((app) => {
-                            const IconComponent = getAppIcon(app.title);
-                            return (
-                                <Link key={app.title} href={app.href} className='jd-app-card'>
-                                    <div className='jd-app-card-icon'>
-                                        <IconComponent aria-hidden='true' />
-                                    </div>
-                                    <div className='jd-app-card-body'>
-                                        <h2>{app.title}</h2>
+                <section className='el-section el-blog-list' aria-label='Applications and tools'>
+                    <ul className='el-list'>
+                        {apps.map((app) => (
+                            <li key={app.title}>
+                                <Link href={app.href} className='el-row el-post-row'>
+                                    <div className='el-post-main'>
+                                        <div className='el-app-title-row'>
+                                            <span className='el-app-emoji' aria-hidden='true'>
+                                                {app.emoji}
+                                            </span>
+                                            <h2>{app.title}</h2>
+                                        </div>
                                         <p>{app.subtitle}</p>
                                     </div>
-                                    <ArrowUpRightIcon className='jd-app-card-arrow' aria-hidden='true' />
+                                    <span className='el-arrow' aria-hidden='true'>
+                                        <ArrowUpRightIcon />
+                                    </span>
                                 </Link>
-                            );
-                        })}
-                    </section>
+                            </li>
+                        ))}
+                    </ul>
+                </section>
 
-                    <footer className='jd-footer'>
-                        <span>© 2026 {strings.NAME}</span>
-                        <a href={`mailto:${strings.EMAIL}`}>{strings.EMAIL}</a>
-                    </footer>
-                </article>
+                <footer className='el-footer'>
+                    <div className='el-footer-inner'>
+                        <span className='el-footer-logo'>John Leonardo</span>
+                        <div className='el-footer-links'>
+                            <a href={strings.GITHUB_URL} target='_blank' rel='noreferrer'>
+                                GitHub
+                            </a>
+                            <a href={strings.LINKEDIN_URL} target='_blank' rel='noreferrer'>
+                                LinkedIn
+                            </a>
+                            <a href={`mailto:${strings.EMAIL}`}>{strings.EMAIL}</a>
+                        </div>
+                        <span className='el-footer-copy'>© 2026. All rights reserved.</span>
+                    </div>
+                </footer>
             </main>
         </>
     );
