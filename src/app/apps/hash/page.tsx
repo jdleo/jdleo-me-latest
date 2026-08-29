@@ -1,129 +1,158 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import crypto from 'crypto';
 import { strings } from '../../constants/strings';
 import { WebVitals } from '@/components/SEO/WebVitals';
-import {
-    DevicePhoneMobileIcon,
-    PencilSquareIcon,
-    DocumentTextIcon,
-    LockClosedIcon,
-    ClipboardIcon,
-} from '@heroicons/react/24/outline';
+import md5 from 'crypto-js/md5';
+import ripemd160 from 'crypto-js/ripemd160';
+import sha224 from 'crypto-js/sha224';
+import { LockClosedIcon, ClipboardIcon, CheckIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
+
+const toHex = (buf: ArrayBuffer): string =>
+    [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
 
 export default function Hash() {
     const [input, setInput] = useState('');
-    const [isLoaded, setIsLoaded] = useState(false);
+    const [hashes, setHashes] = useState<{ name: string; value: string }[]>([]);
+    const [copied, setCopied] = useState<string | null>(null);
+    const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     useEffect(() => {
-        const timer = setTimeout(() => setIsLoaded(true), 100);
-        return () => clearTimeout(timer);
-    }, []);
+        if (debounceRef.current) clearTimeout(debounceRef.current);
 
-    const hashes = [
-        { name: 'MD5', value: crypto.createHash('md5').update(input).digest('hex') },
-        { name: 'SHA1', value: crypto.createHash('sha1').update(input).digest('hex') },
-        { name: 'SHA256', value: crypto.createHash('sha256').update(input).digest('hex') },
-        { name: 'SHA512', value: crypto.createHash('sha512').update(input).digest('hex') },
-        { name: 'RIPEMD160', value: crypto.createHash('ripemd160').update(input).digest('hex') },
-        { name: 'SHA384', value: crypto.createHash('sha384').update(input).digest('hex') },
-        { name: 'SHA224', value: crypto.createHash('sha224').update(input).digest('hex') },
-    ];
+        const compute = async () => {
+            const text = input;
+            const enc = new TextEncoder().encode(text);
 
-    const copyToClipboard = (text: string) => {
+            const [sha1, sha256, sha384, sha512] = await Promise.all([
+                crypto.subtle.digest('SHA-1', enc),
+                crypto.subtle.digest('SHA-256', enc),
+                crypto.subtle.digest('SHA-384', enc),
+                crypto.subtle.digest('SHA-512', enc),
+            ]);
+            // note: SubtleCrypto has no SHA-224, hence crypto-js
+
+            setHashes([
+                { name: 'MD5', value: md5(text).toString() },
+                { name: 'SHA1', value: toHex(sha1) },
+                { name: 'SHA256', value: toHex(sha256) },
+                { name: 'SHA512', value: toHex(sha512) },
+                { name: 'RIPEMD160', value: ripemd160(text).toString() },
+                { name: 'SHA384', value: toHex(sha384) },
+                { name: 'SHA224', value: sha224(text).toString() },
+            ]);
+        };
+
+        // debounce: hashing never runs mid-typing, so the UI never jams
+        debounceRef.current = setTimeout(compute, 150);
+        return () => {
+            if (debounceRef.current) clearTimeout(debounceRef.current);
+        };
+    }, [input]);
+
+    const copyToClipboard = (text: string, name: string) => {
         navigator.clipboard.writeText(text);
+        setCopied(name);
+        setTimeout(() => setCopied(null), 1500);
     };
 
     return (
         <>
             <WebVitals />
-            <main className={`jd-home jd-apps-home ${isLoaded ? 'is-loaded' : ''}`}>
-                <header className='jd-nav-wrap'>
-                    <Link href='/' className='jd-logo'>{strings.NAME}</Link>
-                    <nav className='jd-nav' aria-label='Primary navigation'>
-                        <Link href='/apps' className='jd-nav-link'>Apps</Link>
-                        <Link href='/blog' className='jd-nav-link'>Blog</Link>
-                        <Link href='/apps/resume' className='jd-nav-link'>Resume</Link>
+            <main className='el-page'>
+                <header className='el-nav'>
+                    <Link href='/' className='el-logo' aria-label='John Leonardo home'>
+                        John Leonardo
+                    </Link>
+                    <nav className='el-nav-links' aria-label='Primary navigation'>
+                        <Link href='/apps' className='el-nav-link'>Apps</Link>
+                        <Link href='/blog' className='el-nav-link'>Blog</Link>
+                        <Link href='/apps/resume' className='el-nav-link'>Resume</Link>
                     </nav>
-                    <div className='jd-nav-actions'>
-                        <Link href='/apps/chat' className='jd-login'>Chat</Link>
-                        <Link href='/' className='jd-top-cta'>Home</Link>
+                    <div className='el-nav-actions'>
+                        <Link href='/apps/chat' className='el-nav-link'>Chat</Link>
+                        <Link href={`mailto:${strings.EMAIL}`} className='el-btn el-btn-dark el-btn-sm'>
+                            Contact
+                        </Link>
                     </div>
                 </header>
 
-                <div className={`notion-content ${isLoaded ? 'loaded' : ''}`} style={{ maxWidth: '900px' }}>
-                    <div className='notion-title-block'>
-                        <h1 className='notion-title'>Hash Lab</h1>
-                        <div className='notion-subtitle'>Generate cryptographic hashes in real-time using multiple algorithms</div>
-                    </div>
-
-                    <div className='notion-divider' />
-
-                    <div className='notion-section'>
-                        <div className='notion-section-title'>
-                            <LockClosedIcon className='notion-section-icon' />
-                            Input
+                <section className='el-hero el-hero-page'>
+                    <div className='el-hero-inner'>
+                        <div className='el-hero-copy'>
+                            <h1>Hash Lab</h1>
+                            <p className='el-hero-sub'>
+                                Generate cryptographic hashes in real-time using multiple algorithms.
+                            </p>
                         </div>
-                        <div style={{ marginTop: '16px' }}>
+                    </div>
+                </section>
+
+                <section className='el-section el-sentiment'>
+                    <div className='el-chart-block'>
+                        <div className='el-chart-title'>
+                            <span className='el-chart-title-label'>
+                                <LockClosedIcon aria-hidden='true' />
+                                Input
+                            </span>
+                        </div>
+                        <div className='el-file-card'>
                             <textarea
                                 value={input}
                                 onChange={e => setInput(e.target.value)}
                                 placeholder='Enter text to generate hashes...'
-                                className='notion-textarea jd-tool-textarea'
-                                style={{ height: '150px' }}
+                                className='el-textarea'
+                                rows={5}
                             />
                         </div>
                     </div>
 
-                    <div className='notion-divider' />
-
-                    <div className='notion-section'>
-                        <div className='notion-section-title'>
-                            <DocumentTextIcon className='notion-section-icon' />
-                            Generated Digests
-                            <span style={{ marginLeft: 'auto', fontSize: '10px', fontWeight: 600, color: '#6366f1', backgroundColor: 'rgba(99, 102, 241, 0.1)', padding: '4px 8px', borderRadius: '12px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                                Live Compute
+                    <div className='el-chart-block'>
+                        <div className='el-chart-title'>
+                            <span className='el-chart-title-label'>
+                                <DocumentTextIcon aria-hidden='true' />
+                                Generated Digests
                             </span>
+                            <span className='el-chart-pill'>live compute</span>
                         </div>
-                        <div style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                        <div className='el-hash-list'>
                             {hashes.map(h => (
-                                <div key={h.name} className='notion-card' style={{ padding: '16px' }}>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                            <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#6366f1' }} />
-                                            <span style={{ fontSize: '11px', fontWeight: 700, color: '#6366f1', textTransform: 'uppercase', letterSpacing: '0.1em' }}>{h.name}</span>
-                                        </div>
+                                <div key={h.name} className='el-file-card el-hash-row'>
+                                    <div className='el-hash-row-head'>
+                                        <span className='el-hash-name'>{h.name}</span>
                                         <button
-                                            onClick={() => copyToClipboard(h.value)}
-                                            className='notion-action-btn'
-                                            style={{ padding: '4px 8px', fontSize: '10px' }}
+                                            onClick={() => copyToClipboard(h.value, h.name)}
+                                            className='el-btn el-btn-light el-btn-sm'
                                         >
-                                            <ClipboardIcon style={{ width: '12px', height: '12px' }} />
-                                            Copy
+                                            <ClipboardIcon aria-hidden='true' />
+                                            {copied === h.name ? 'Copied' : 'Copy'}
                                         </button>
                                     </div>
-                                    <div className='jd-hash-output'>
-                                        {h.value}
-                                    </div>
+                                    <div className='el-hash-output'>{h.value}</div>
                                 </div>
                             ))}
                         </div>
                     </div>
 
-                    <div className='notion-divider' />
+                    <p className='el-hash-note'>
+                        Cryptographic hash functions map data of arbitrary size to fixed-size values.
+                        They are one-way functions, making it practically impossible to invert. These are
+                        commonly used for data integrity verification, password storage, and digital signatures.
+                    </p>
+                </section>
 
-                    <div className='notion-section'>
-                        <p style={{ fontSize: '13px', color: 'rgba(55, 53, 47, 0.6)', lineHeight: 1.7 }}>
-                            Cryptographic hash functions map data of arbitrary size to fixed-size values. They are one-way functions, making it practically impossible to invert. These are commonly used for data integrity verification, password storage, and digital signatures.
-                        </p>
+                <footer className='el-footer'>
+                    <div className='el-footer-inner'>
+                        <span className='el-footer-logo'>John Leonardo</span>
+                        <div className='el-footer-links'>
+                            <a href={strings.GITHUB_URL} target='_blank' rel='noreferrer'>GitHub</a>
+                            <a href={strings.LINKEDIN_URL} target='_blank' rel='noreferrer'>LinkedIn</a>
+                            <a href={`mailto:${strings.EMAIL}`}>{strings.EMAIL}</a>
+                        </div>
+                        <span className='el-footer-copy'>© 2026. All rights reserved.</span>
                     </div>
-
-                    <footer className='notion-footer'>
-                        © 2026 {strings.NAME}
-                    </footer>
-                </div>
+                </footer>
             </main>
         </>
     );

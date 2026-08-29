@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { WebVitals } from '@/components/SEO/WebVitals';
 import ReactFlow, {
@@ -19,10 +19,7 @@ import dagre from 'dagre';
 import 'reactflow/dist/style.css';
 import { strings } from '../../constants/strings';
 import {
-    DevicePhoneMobileIcon,
-    PencilSquareIcon,
     DocumentTextIcon,
-    ArrowPathIcon,
     ChatBubbleLeftRightIcon,
     ShareIcon,
     CpuChipIcon,
@@ -33,6 +30,20 @@ interface Relationship {
     predicate: string;
     object: string;
 }
+
+const NODE_BASE = {
+    background: '#fdfdfb',
+    border: '1px solid #c9c9c0',
+    borderRadius: '10px',
+    padding: '9px 12px',
+    fontSize: '12px',
+    fontWeight: 600,
+    color: '#111110',
+};
+
+const EDGE_BASE = {
+    stroke: '#b9b9b1',
+};
 
 const getLayoutedElements = (nodes: Node[], edges: Edge[], direction = 'TB') => {
     const dagreGraph = new dagre.graphlib.Graph();
@@ -145,16 +156,7 @@ export default function KnowledgeGraph() {
                                             data: { label: subject },
                                             position: { x: 0, y: 0 },
                                             type: 'default',
-                                            style: {
-                                                background: 'rgba(12, 12, 12, 0.94)',
-                                                border: '1px solid rgba(141, 216, 255, 0.28)',
-                                                borderRadius: '10px',
-                                                padding: '9px 12px',
-                                                fontSize: '12px',
-                                                fontWeight: 600,
-                                                color: 'rgba(255, 255, 255, 0.86)',
-                                                boxShadow: '0 14px 40px rgba(0, 0, 0, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.06)',
-                                            },
+                                            style: { ...NODE_BASE },
                                         });
                                     }
 
@@ -164,16 +166,7 @@ export default function KnowledgeGraph() {
                                             data: { label: object },
                                             position: { x: 0, y: 0 },
                                             type: 'default',
-                                            style: {
-                                                background: 'rgba(12, 12, 12, 0.94)',
-                                                border: '1px solid rgba(141, 216, 255, 0.28)',
-                                                borderRadius: '10px',
-                                                padding: '9px 12px',
-                                                fontSize: '12px',
-                                                fontWeight: 600,
-                                                color: 'rgba(255, 255, 255, 0.86)',
-                                                boxShadow: '0 14px 40px rgba(0, 0, 0, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.06)',
-                                            },
+                                            style: { ...NODE_BASE },
                                         });
                                     }
 
@@ -186,9 +179,9 @@ export default function KnowledgeGraph() {
                                             label: predicate.replace(/_/g, ' '),
                                             type: 'smoothstep',
                                             animated: false,
-                                            style: { stroke: 'rgba(255, 255, 255, 0.32)' },
-                                            markerEnd: { type: MarkerType.ArrowClosed, color: 'rgba(255, 255, 255, 0.32)' },
-                                            labelStyle: { fontSize: '10px', fill: 'rgba(255, 255, 255, 0.58)' },
+                                            style: { stroke: '#b9b9b1' },
+                                            markerEnd: { type: MarkerType.ArrowClosed, color: '#b9b9b1' },
+                                            labelStyle: { fontSize: '10px', fill: '#82827c' },
                                         });
                                     }
                                 });
@@ -222,8 +215,8 @@ export default function KnowledgeGraph() {
         setHighlightedPath({ nodes: [], edges: [] });
 
         // Reset styles first
-        setEdges(eds => eds.map(e => ({ ...e, animated: false, style: { ...e.style, stroke: 'rgba(255, 255, 255, 0.32)', strokeWidth: 1 } })));
-        setNodes(nds => nds.map(n => ({ ...n, style: { ...n.style, border: '1px solid rgba(141, 216, 255, 0.28)', background: 'rgba(12, 12, 12, 0.94)' } })));
+        setEdges(eds => eds.map(e => ({ ...e, animated: false, style: { ...e.style, stroke: '#b9b9b1', strokeWidth: 1 } })));
+        setNodes(nds => nds.map(n => ({ ...n, style: { ...n.style, border: '1px solid #c9c9c0', background: '#fdfdfb' } })));
 
         try {
             const response = await fetch('/api/knowledge-graph/chat', {
@@ -253,17 +246,17 @@ export default function KnowledgeGraph() {
                     animated: data.path.edges.includes(edge.id),
                     style: {
                         ...edge.style,
-                        stroke: data.path.edges.includes(edge.id) ? '#8dd8ff' : 'rgba(255, 255, 255, 0.18)',
+                        stroke: data.path.edges.includes(edge.id) ? '#111110' : '#d9d9d2',
                         strokeWidth: data.path.edges.includes(edge.id) ? 2 : 1,
-                        opacity: data.path.edges.includes(edge.id) ? 1 : 0.3,
+                        opacity: data.path.edges.includes(edge.id) ? 1 : 0.35,
                     },
                 })));
                 setNodes(nds => nds.map(node => ({
                     ...node,
                     style: {
                         ...node.style,
-                        border: data.path.nodes.includes(node.id) ? '2px solid #8dd8ff' : '1px solid rgba(141, 216, 255, 0.2)',
-                        background: data.path.nodes.includes(node.id) ? 'rgba(141, 216, 255, 0.18)' : 'rgba(12, 12, 12, 0.94)',
+                        border: data.path.nodes.includes(node.id) ? '2px solid #111110' : '1px solid #c9c9c0',
+                        background: data.path.nodes.includes(node.id) ? '#efefe8' : '#fdfdfb',
                         opacity: data.path.nodes.includes(node.id) ? 1 : 0.5,
                     },
                 })));
@@ -280,96 +273,110 @@ export default function KnowledgeGraph() {
     return (
         <>
             <WebVitals />
-            <main className={`jd-home jd-apps-home ${isLoaded ? 'is-loaded' : ''}`}>
-                <header className='jd-nav-wrap'>
-                    <Link href='/' className='jd-logo'>{strings.NAME}</Link>
-                    <nav className='jd-nav' aria-label='Primary navigation'>
-                        <Link href='/apps' className='jd-nav-link'>Apps</Link>
-                        <Link href='/blog' className='jd-nav-link'>Blog</Link>
-                        <Link href='/apps/resume' className='jd-nav-link'>Resume</Link>
+            <main className='el-page el-kg'>
+                <header className='el-nav'>
+                    <Link href='/' className='el-logo' aria-label='John Leonardo home'>
+                        John Leonardo
+                    </Link>
+                    <nav className='el-nav-links' aria-label='Primary navigation'>
+                        <Link href='/apps' className='el-nav-link'>Apps</Link>
+                        <Link href='/blog' className='el-nav-link'>Blog</Link>
+                        <Link href='/apps/resume' className='el-nav-link'>Resume</Link>
                     </nav>
-                    <div className='jd-nav-actions'>
-                        <Link href='/apps/chat' className='jd-login'>Chat</Link>
-                        <Link href='/' className='jd-top-cta'>Home</Link>
+                    <div className='el-nav-actions'>
+                        <Link href='/apps/chat' className='el-nav-link'>Chat</Link>
+                        <Link href={`mailto:${strings.EMAIL}`} className='el-btn el-btn-dark el-btn-sm'>
+                            Contact
+                        </Link>
                     </div>
                 </header>
 
-                <div className={`notion-content ${isLoaded ? 'loaded' : ''}`} style={{ maxWidth: '1200px' }}>
-                    <div className='notion-title-block'>
-                        <h1 className='notion-title'>Knowledge Graph</h1>
-                        <div className='notion-subtitle'>Convert raw text into an interactive, queriable knowledge graph</div>
+                <section className='el-hero el-hero-page'>
+                    <div className='el-hero-inner'>
+                        <div className='el-hero-copy'>
+                            <h1>Knowledge Graph</h1>
+                            <p className='el-hero-sub'>
+                                Convert raw text into an interactive, queriable knowledge graph.
+                            </p>
+                        </div>
                     </div>
+                </section>
 
-                    <div className='notion-divider' />
-
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 3fr', gap: '32px' }} className="responsive-grid">
-
-                        {/* Left Control Panel */}
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                            <div className='notion-section'>
-                                <div className='notion-section-title'>
-                                    <DocumentTextIcon className='notion-section-icon' />
-                                    Source Text
+                <section className='el-section el-sentiment'>
+                    <div className='ecl-dilution-grid'>
+                        <div>
+                            <div className='el-chart-block' style={{ marginTop: 0 }}>
+                                <div className='el-chart-title'>
+                                    <span className='el-chart-title-label'>
+                                        <DocumentTextIcon aria-hidden='true' />
+                                        Source Text
+                                    </span>
+                                    <span className='el-chart-pill'>{text.length} / {MAX_CHARS}</span>
                                 </div>
-                                <div style={{ marginTop: '12px' }}>
+                                <div className='el-file-card'>
                                     <textarea
                                         value={text}
                                         onChange={(e) => setText(e.target.value)}
                                         placeholder='Paste text here...'
-                                        className='notion-textarea jd-tool-textarea'
+                                        className='el-textarea'
                                         disabled={isGenerating}
-                                        style={{ height: '240px' }}
+                                        rows={9}
+                                        maxLength={MAX_CHARS}
                                     />
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '8px' }}>
-                                        <span style={{ fontSize: '10px', color: 'rgba(55, 53, 47, 0.5)' }}>
-                                            {text.length} / {MAX_CHARS}
-                                        </span>
+                                    <div className='el-serialize-row'>
                                         <button
                                             onClick={generateGraph}
                                             disabled={!text.trim() || isGenerating}
-                                            className='notion-action-btn notion-action-primary'
+                                            className='el-btn el-btn-dark el-btn-sm'
                                         >
-                                            <ShareIcon className='notion-action-icon' />
-                                            {isGenerating ? 'Building...' : 'Generate'}
+                                            <ShareIcon aria-hidden='true' />
+                                            {isGenerating
+                                                ? `Building ${progress.total ? `(${progress.current}/${progress.total})` : ''}...`
+                                                : 'Generate'}
                                         </button>
                                     </div>
                                 </div>
                             </div>
 
                             {nodes.length > 0 && (
-                                <div className='notion-card' style={{ padding: '16px' }}>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                                        <span style={{ fontSize: '11px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase' }}>Nodes</span>
-                                        <span style={{ fontSize: '12px', fontWeight: 600 }}>{nodes.length}</span>
+                                <div className='el-chart-block'>
+                                    <div className='el-chart-title'>
+                                        <span className='el-chart-title-label'>Graph Stats</span>
                                     </div>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                        <span style={{ fontSize: '11px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase' }}>Relationships</span>
-                                        <span style={{ fontSize: '12px', fontWeight: 600 }}>{edges.length}</span>
+                                    <div className='el-file-card'>
+                                        <div className='ecl-split-row'>
+                                            <span className='ecl-split-name'>Nodes</span>
+                                            <span className='ecl-split-value'>{nodes.length}</span>
+                                        </div>
+                                        <div className='ecl-split-row'>
+                                            <span className='ecl-split-name'>Relationships</span>
+                                            <span className='ecl-split-value'>{edges.length}</span>
+                                        </div>
                                     </div>
                                 </div>
                             )}
 
                             {nodes.length > 0 && (
-                                <div className='notion-section'>
-                                    <div className='notion-section-title'>
-                                        <ChatBubbleLeftRightIcon className='notion-section-icon' />
-                                        Query Graph
+                                <div className='el-chart-block'>
+                                    <div className='el-chart-title'>
+                                        <span className='el-chart-title-label'>
+                                            <ChatBubbleLeftRightIcon aria-hidden='true' />
+                                            Query Graph
+                                        </span>
                                     </div>
-                                    <div style={{ marginTop: '12px' }}>
+                                    <div className='el-file-card'>
                                         <input
                                             value={query}
                                             onChange={e => setQuery(e.target.value)}
                                             onKeyDown={e => e.key === 'Enter' && askQuestion()}
                                             disabled={isAsking}
                                             placeholder='Ask a question...'
-                                            className='notion-input jd-tool-input'
-                                            style={{ marginBottom: '8px', paddingRight: '30px' }}
+                                            className='el-textarea el-el-input'
                                         />
                                         <button
                                             onClick={askQuestion}
                                             disabled={!query.trim() || isAsking}
-                                            className='notion-action-btn'
-                                            style={{ width: '100%', justifyContent: 'center' }}
+                                            className='el-btn el-btn-light el-generate-btn'
                                         >
                                             {isAsking ? 'Thinking...' : 'Ask'}
                                         </button>
@@ -378,15 +385,18 @@ export default function KnowledgeGraph() {
                             )}
 
                             {showAnswer && answer && (
-                                <div className='notion-card' style={{ padding: '16px', backgroundColor: 'rgba(99, 102, 241, 0.05)', border: '1px solid rgba(99, 102, 241, 0.2)' }}>
-                                    <h3 style={{ fontSize: '11px', fontWeight: 700, color: '#6366f1', textTransform: 'uppercase', marginBottom: '8px' }}>Answer</h3>
-                                    <p style={{ fontSize: '13px', lineHeight: 1.6, color: '#37352f' }}>{answer}</p>
+                                <div className='el-chart-block'>
+                                    <div className='el-chart-title'>
+                                        <span className='el-chart-title-label'>Answer</span>
+                                    </div>
+                                    <div className='el-file-card el-rag-answer'>
+                                        {answer}
+                                    </div>
                                 </div>
                             )}
                         </div>
 
-                        {/* Right Graph Area */}
-                        <div className='jd-graph-canvas'>
+                        <div className='jd-graph-canvas ecl-kg-canvas'>
                             <ReactFlow
                                 nodes={nodes}
                                 edges={edges}
@@ -395,28 +405,37 @@ export default function KnowledgeGraph() {
                                 onConnect={onConnect}
                                 fitView
                                 attributionPosition="bottom-left"
+                                proOptions={{ hideAttribution: true }}
                             >
-                                <Background color="rgba(255, 255, 255, 0.08)" gap={18} />
+                                <Background color="#d9d9d2" gap={18} />
                                 <Controls />
                                 <MiniMap
-                                    nodeColor={(node) => highlightedPath.nodes.includes(node.id) ? '#8dd8ff' : 'rgba(255, 255, 255, 0.34)'}
-                                    maskColor="rgba(0, 0, 0, 0.58)"
+                                    nodeColor={(node) => highlightedPath.nodes.includes(node.id) ? '#111110' : '#c9c9c0'}
+                                    maskColor="rgba(247, 247, 242, 0.72)"
                                 />
                             </ReactFlow>
 
                             {!nodes.length && !isGenerating && (
-                                <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', opacity: 0.5 }}>
-                                    <CpuChipIcon style={{ width: '48px', height: '48px', color: 'rgba(141, 216, 255, 0.42)', marginBottom: '16px' }} />
-                                    <span style={{ fontSize: '14px', fontWeight: 500, color: 'rgba(255, 255, 255, 0.52)' }}>Generate a graph to visualize data</span>
+                                <div className='ecl-kg-empty'>
+                                    <CpuChipIcon aria-hidden='true' />
+                                    <span>Generate a graph to visualize data</span>
                                 </div>
                             )}
                         </div>
                     </div>
+                </section>
 
-                    <footer className='notion-footer'>
-                        © 2026 {strings.NAME}
-                    </footer>
-                </div>
+                <footer className='el-footer'>
+                    <div className='el-footer-inner'>
+                        <span className='el-footer-logo'>John Leonardo</span>
+                        <div className='el-footer-links'>
+                            <a href={strings.GITHUB_URL} target='_blank' rel='noreferrer'>GitHub</a>
+                            <a href={strings.LINKEDIN_URL} target='_blank' rel='noreferrer'>LinkedIn</a>
+                            <a href={`mailto:${strings.EMAIL}`}>{strings.EMAIL}</a>
+                        </div>
+                        <span className='el-footer-copy'>© 2026. All rights reserved.</span>
+                    </div>
+                </footer>
             </main>
         </>
     );

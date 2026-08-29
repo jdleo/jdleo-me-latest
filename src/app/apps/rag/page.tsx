@@ -7,13 +7,10 @@ import { strings } from '../../constants/strings';
 import { WebVitals } from '@/components/SEO/WebVitals';
 import ReactMarkdown from 'react-markdown';
 import {
-    DevicePhoneMobileIcon,
-    PencilSquareIcon,
     DocumentTextIcon,
-    DocumentPlusIcon,
+    DocumentArrowUpIcon,
     MagnifyingGlassIcon,
     ChatBubbleLeftRightIcon,
-    Cog6ToothIcon
 } from '@heroicons/react/24/outline';
 
 const loadPdfJs = async () => {
@@ -187,155 +184,181 @@ export default function RagInspectorApp() {
     return (
         <>
             <WebVitals />
-            <main className={`jd-home jd-apps-home ${isLoaded ? 'is-loaded' : ''}`}>
-                <header className='jd-nav-wrap'>
-                    <Link href='/' className='jd-logo'>{strings.NAME}</Link>
-                    <nav className='jd-nav' aria-label='Primary navigation'>
-                        <Link href='/apps' className='jd-nav-link'>Apps</Link>
-                        <Link href='/blog' className='jd-nav-link'>Blog</Link>
-                        <Link href='/apps/resume' className='jd-nav-link'>Resume</Link>
+            <main className='el-page'>
+                <header className='el-nav'>
+                    <Link href='/' className='el-logo' aria-label='John Leonardo home'>
+                        John Leonardo
+                    </Link>
+                    <nav className='el-nav-links' aria-label='Primary navigation'>
+                        <Link href='/apps' className='el-nav-link'>Apps</Link>
+                        <Link href='/blog' className='el-nav-link'>Blog</Link>
+                        <Link href='/apps/resume' className='el-nav-link'>Resume</Link>
                     </nav>
-                    <div className='jd-nav-actions'>
-                        <Link href='/apps/chat' className='jd-login'>Chat</Link>
-                        <Link href='/' className='jd-top-cta'>Home</Link>
+                    <div className='el-nav-actions'>
+                        <Link href='/apps/chat' className='el-nav-link'>Chat</Link>
+                        <Link href={`mailto:${strings.EMAIL}`} className='el-btn el-btn-dark el-btn-sm'>
+                            Contact
+                        </Link>
                     </div>
                 </header>
 
-                <div className={`notion-content ${isLoaded ? 'loaded' : ''}`} style={{ maxWidth: '1000px' }}>
-                    <div className='notion-title-block'>
-                        <h1 className='notion-title'>RAG Inspector</h1>
-                        <div className='notion-subtitle'>Chat with your documents using Retrieval Augmented Generation</div>
+                <section className='el-hero el-hero-page'>
+                    <div className='el-hero-inner'>
+                        <div className='el-hero-copy'>
+                            <h1>RAG Inspector</h1>
+                            <p className='el-hero-sub'>
+                                Chat with your documents using Retrieval Augmented Generation.
+                            </p>
+                        </div>
                     </div>
+                </section>
 
-                    <div className='notion-divider' />
-
+                <section className='el-section el-sentiment'>
                     {!fileName && (
-                        <div className='notion-section'>
-                            <div
-                                {...getRootProps()}
-                                style={{
-                                    padding: '64px',
-                                    border: `2px dashed ${isDragActive ? '#6366f1' : 'rgba(55, 53, 47, 0.16)'}`,
-                                    borderRadius: '12px',
-                                    textAlign: 'center',
-                                    cursor: 'pointer',
-                                    backgroundColor: isDragActive ? 'rgba(99, 102, 241, 0.05)' : 'transparent',
-                                    transition: 'all 0.2s ease'
-                                }}
-                            >
+                        <div className='el-chart-block'>
+                            <div className='el-chart-title'>
+                                <span className='el-chart-title-label'>
+                                    <DocumentArrowUpIcon aria-hidden='true' />
+                                    Upload Document
+                                </span>
+                                <span className='el-chart-pill'>PDF only</span>
+                            </div>
+                            <div {...getRootProps()} className={`el-dropzone ${isDragActive ? 'is-active' : ''}`}>
                                 <input {...getInputProps()} />
-                                <div style={{ fontSize: '32px', marginBottom: '16px' }}>📄</div>
-                                <div style={{ fontSize: '14px', fontWeight: 600, color: '#37352f' }}>
-                                    {isDragActive ? 'Drop PDF Here' : 'Click or drop PDF to begin'}
-                                </div>
+                                <DocumentArrowUpIcon className='el-dropzone-icon' aria-hidden='true' />
+                                <h2>{isDragActive ? 'Drop PDF Here' : 'Click or drop PDF to begin'}</h2>
+                                <p>The document is chunked, embedded, and searchable — nothing is stored.</p>
                             </div>
                         </div>
                     )}
 
                     {fileName && (
                         <>
-                            <div className='notion-card' style={{ padding: '24px', marginBottom: '32px' }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                        <DocumentTextIcon style={{ width: '20px', height: '20px', color: '#6366f1' }} />
-                                        <span style={{ fontWeight: 600 }}>{fileName}</span>
-                                    </div>
-                                    <button onClick={() => { setFileName(null); setPdfText(null); setIsEmbedded(false); }} className='notion-action-btn'>
+                            <div className='el-chart-block'>
+                                <div className='el-chart-title'>
+                                    <span className='el-chart-title-label'>
+                                        <DocumentTextIcon aria-hidden='true' />
+                                        {fileName}
+                                    </span>
+                                    <button
+                                        onClick={() => { setFileName(null); setPdfText(null); setIsEmbedded(false); }}
+                                        className='el-btn el-btn-light el-btn-sm'
+                                    >
                                         Reset
                                     </button>
                                 </div>
-
-                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', borderTop: '1px solid rgba(55, 53, 47, 0.09)', paddingTop: '16px' }}>
-                                    <div>
-                                        <label style={{ fontSize: '11px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase' }}>Chunk Size</label>
-                                        <input
-                                            type='number'
-                                            value={chunkSize}
-                                            onChange={e => setChunkSize(Number(e.target.value))}
-                                            className='notion-input'
-                                            style={{ marginTop: '4px', width: '100%' }}
-                                            disabled={isEmbedded || loading}
-                                        />
-                                    </div>
-                                    <div>
-                                        <label style={{ fontSize: '11px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase' }}>Chunks</label>
-                                        <div style={{ marginTop: '8px', fontWeight: 600 }}>{chunks.length} segments</div>
-                                    </div>
-                                    <div style={{ display: 'flex', alignItems: 'end' }}>
-                                        <button
-                                            onClick={handleEmbed}
-                                            disabled={isEmbedded || loading}
-                                            className='notion-action-btn notion-action-primary'
-                                            style={{ width: '100%', justifyContent: 'center' }}
-                                        >
-                                            {isEmbedded ? 'Document Ready' : loading ? status : 'Process Embeddings'}
-                                        </button>
+                                <div className='el-file-card'>
+                                    <div className='el-tax-input-grid'>
+                                        <div>
+                                            <label className='ecl-copy-label'>Chunk Size</label>
+                                            <input
+                                                type='number'
+                                                value={chunkSize}
+                                                onChange={e => setChunkSize(Number(e.target.value))}
+                                                className='el-textarea el-el-input'
+                                                disabled={isEmbedded || loading}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className='ecl-copy-label'>Chunks</label>
+                                            <div className='el-rag-chunks'>{chunks.length} segments</div>
+                                        </div>
+                                        <div className='el-rag-embed-cell'>
+                                            <button
+                                                onClick={handleEmbed}
+                                                disabled={isEmbedded || loading}
+                                                className={`el-btn ${isEmbedded ? 'el-btn-light' : 'el-btn-dark'} el-generate-btn`}
+                                            >
+                                                {isEmbedded ? 'Document Ready' : loading ? status : 'Process Embeddings'}
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
                             {isEmbedded && (
-                                <div className='notion-section'>
-                                    <div style={{ display: 'flex', gap: '12px', marginBottom: '24px' }}>
-                                        <input
-                                            value={query}
-                                            onChange={e => setQuery(e.target.value)}
-                                            onKeyDown={e => e.key === 'Enter' && handleAsk()}
-                                            disabled={loading}
-                                            placeholder='Ask a question about the document...'
-                                            className='notion-input'
-                                            style={{ flex: 1 }}
-                                        />
-                                        <button onClick={handleAsk} disabled={!query.trim() || loading} className='notion-action-btn notion-action-primary'>
-                                            <MagnifyingGlassIcon className='notion-action-icon' />
-                                            {loading ? 'Searching...' : 'Ask'}
-                                        </button>
+                                <>
+                                    <div className='el-chart-block'>
+                                        <div className='el-chart-title'>
+                                            <span className='el-chart-title-label'>
+                                                <MagnifyingGlassIcon aria-hidden='true' />
+                                                Query
+                                            </span>
+                                        </div>
+                                        <div className='el-file-card'>
+                                            <div className='el-copy-row'>
+                                                <input
+                                                    value={query}
+                                                    onChange={e => setQuery(e.target.value)}
+                                                    onKeyDown={e => e.key === 'Enter' && handleAsk()}
+                                                    disabled={loading}
+                                                    placeholder='Ask a question about the document...'
+                                                    className='el-textarea el-el-input'
+                                                />
+                                                <button
+                                                    onClick={handleAsk}
+                                                    disabled={!query.trim() || loading}
+                                                    className='el-btn el-btn-dark el-btn-sm'
+                                                >
+                                                    <MagnifyingGlassIcon aria-hidden='true' />
+                                                    {loading ? 'Searching...' : 'Ask'}
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
 
                                     {answer && (
-                                        <div className='notion-card' style={{ padding: '24px', marginBottom: '24px' }}>
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-                                                <ChatBubbleLeftRightIcon style={{ width: '16px', height: '16px', color: '#6366f1' }} />
-                                                <span style={{ fontSize: '12px', fontWeight: 700, color: '#6366f1', textTransform: 'uppercase' }}>AI Answer</span>
+                                        <div className='el-chart-block'>
+                                            <div className='el-chart-title'>
+                                                <span className='el-chart-title-label'>
+                                                    <ChatBubbleLeftRightIcon aria-hidden='true' />
+                                                    AI Answer
+                                                </span>
                                             </div>
-                                            <div className='prose prose-sm' style={{ color: '#37352f' }}>
+                                            <div className='el-file-card el-rag-answer'>
                                                 <ReactMarkdown>{answer}</ReactMarkdown>
                                             </div>
                                         </div>
                                     )}
 
                                     {topChunks.length > 0 && (
-                                        <div className='notion-section'>
-                                            <div className='notion-section-title'>
-                                                <DocumentPlusIcon className='notion-section-icon' />
-                                                Sources & Citations
+                                        <div className='el-chart-block'>
+                                            <div className='el-chart-title'>
+                                                <span className='el-chart-title-label'>Sources & Citations</span>
+                                                <span className='el-chart-pill'>top {topChunks.length}</span>
                                             </div>
-                                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '16px', marginTop: '16px' }}>
+                                            <div className='el-privacy-grid'>
                                                 {topChunks.map(chunk => (
-                                                    <div key={chunk.id} className='notion-card' style={{ padding: '16px' }}>
-                                                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                                                            <span style={{ fontSize: '10px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase' }}>Chunk #{chunk.id}</span>
-                                                            <span style={{ fontSize: '10px', fontWeight: 700, color: (chunk.score || 0) > 0.8 ? '#059669' : '#d97706' }}>
-                                                                {Math.round((chunk.score || 0) * 100)}% Match
+                                                    <div key={chunk.id} className='el-info-card'>
+                                                        <div className='el-info-card-head'>
+                                                            <span className='el-kv-label'>Chunk #{chunk.id}</span>
+                                                            <span className={`el-tag ${(chunk.score || 0) > 0.8 ? 'el-tag-green' : 'el-tag-purple'}`}>
+                                                                {Math.round((chunk.score || 0) * 100)}% match
                                                             </span>
                                                         </div>
-                                                        <p style={{ fontSize: '12px', color: 'rgba(55, 53, 47, 0.7)', lineHeight: 1.6, display: '-webkit-box', WebkitLineClamp: 5, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                                                            "{chunk.text}"
-                                                        </p>
+                                                        <p className='el-rag-chunk-text'>&quot;{chunk.text}&quot;</p>
                                                     </div>
                                                 ))}
                                             </div>
                                         </div>
                                     )}
-                                </div>
+                                </>
                             )}
                         </>
                     )}
+                </section>
 
-                    <footer className='notion-footer'>
-                        © 2026 {strings.NAME}
-                    </footer>
-                </div>
+                <footer className='el-footer'>
+                    <div className='el-footer-inner'>
+                        <span className='el-footer-logo'>John Leonardo</span>
+                        <div className='el-footer-links'>
+                            <a href={strings.GITHUB_URL} target='_blank' rel='noreferrer'>GitHub</a>
+                            <a href={strings.LINKEDIN_URL} target='_blank' rel='noreferrer'>LinkedIn</a>
+                            <a href={`mailto:${strings.EMAIL}`}>{strings.EMAIL}</a>
+                        </div>
+                        <span className='el-footer-copy'>© 2026. All rights reserved.</span>
+                    </div>
+                </footer>
             </main>
         </>
     );
