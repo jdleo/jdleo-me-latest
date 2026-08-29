@@ -4,14 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { strings } from '../../constants/strings';
 import { WebVitals } from '@/components/SEO/WebVitals';
-import {
-    DevicePhoneMobileIcon,
-    PencilSquareIcon,
-    DocumentTextIcon,
-    CalculatorIcon,
-    BanknotesIcon,
-    ChevronDownIcon,
-} from '@heroicons/react/24/outline';
+import { BanknotesIcon } from '@heroicons/react/24/outline';
 
 type TaxBreakdown = {
     grossIncome: number;
@@ -230,57 +223,57 @@ export default function CaliforniaTaxCalculator() {
     return (
         <>
             <WebVitals />
-            <main className={`jd-home jd-apps-home ${isLoaded ? 'is-loaded' : ''}`}>
-                <header className='jd-nav-wrap'>
-                    <Link href='/' className='jd-logo'>{strings.NAME}</Link>
-                    <nav className='jd-nav' aria-label='Primary navigation'>
-                        <Link href='/apps' className='jd-nav-link'>Apps</Link>
-                        <Link href='/blog' className='jd-nav-link'>Blog</Link>
-                        <Link href='/apps/resume' className='jd-nav-link'>Resume</Link>
+            <main className='el-page el-tax'>
+                <header className='el-nav'>
+                    <Link href='/' className='el-logo' aria-label='John Leonardo home'>
+                        John Leonardo
+                    </Link>
+                    <nav className='el-nav-links' aria-label='Primary navigation'>
+                        <Link href='/apps' className='el-nav-link'>Apps</Link>
+                        <Link href='/blog' className='el-nav-link'>Blog</Link>
+                        <Link href='/apps/resume' className='el-nav-link'>Resume</Link>
                     </nav>
-                    <div className='jd-nav-actions'>
-                        <Link href='/apps/chat' className='jd-login'>Chat</Link>
-                        <Link href='/' className='jd-top-cta'>Home</Link>
+                    <div className='el-nav-actions'>
+                        <Link href='/apps/chat' className='el-nav-link'>Chat</Link>
+                        <Link href={`mailto:${strings.EMAIL}`} className='el-btn el-btn-dark el-btn-sm'>
+                            Contact
+                        </Link>
                     </div>
                 </header>
 
-                <div className={`notion-content ${isLoaded ? 'loaded' : ''}`} style={{ maxWidth: '1100px' }}>
-                    <div className='notion-title-block'>
-                        <h1 className='notion-title'>2026 California Tax Calculator</h1>
-                        <div className='notion-subtitle'>Estimate your effective tax rate and net income for the 2026 tax year</div>
-                    </div>
-
-                    <div className='notion-divider' />
-
-                    {!taxBreakdown && (
-                        <div style={{ textAlign: 'center', padding: '64px', opacity: 0.6 }}>
-                            <div style={{ width: '64px', height: '64px', borderRadius: '50%', backgroundColor: 'rgba(55, 53, 47, 0.06)', margin: '0 auto 24px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '32px' }}>
-                                🧮
-                            </div>
-                            <h3 style={{ fontSize: '18px', fontWeight: 600, color: 'rgba(255, 255, 255, 0.88)', marginBottom: '8px' }}>Ready to Calculate</h3>
-                            <p style={{ color: 'rgba(255, 255, 255, 0.58)' }}>Enter your financial details to see the breakdown.</p>
+                <section className='el-hero el-hero-page'>
+                    <div className='el-hero-inner'>
+                        <div className='el-hero-copy'>
+                            <h1>2026 CA Tax Calculator</h1>
+                            <p className='el-hero-sub'>
+                                Estimate your effective tax rate and net income for the 2026 tax year.
+                            </p>
                         </div>
-                    )}
+                    </div>
+                </section>
 
-                    <div className='notion-section'>
-                        <div className='notion-card' style={{ padding: '24px' }}>
-                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '24px' }}>
+                <section className='el-section el-sentiment'>
+                    <div className='el-chart-block'>
+                        <div className='el-chart-title'>
+                            <span className='el-chart-title-label'>Your Details</span>
+                        </div>
+                        <div className='el-file-card'>
+                            <div className='el-tax-input-grid'>
                                 <div>
-                                    <label style={{ fontSize: '11px', fontWeight: 600, color: 'rgba(255, 255, 255, 0.58)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '8px', display: 'block' }}>Gross Annual Income</label>
-                                    <div style={{ position: 'relative' }}>
-                                        <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(255, 255, 255, 0.46)', fontWeight: 600 }}>$</span>
+                                    <label className='ecl-copy-label'>Gross Annual Income</label>
+                                    <div className='el-money-wrap'>
+                                        <span className='el-money-symbol'>$</span>
                                         <input
                                             type='number'
                                             value={income}
                                             onChange={e => setIncome(e.target.value)}
-                                            className='notion-input'
-                                            style={{ paddingLeft: '28px', width: '100%', borderRadius: '6px', padding: '10px 12px 10px 28px', border: '1px solid rgba(255, 255, 255, 0.13)' }}
+                                            className='el-textarea el-el-input el-money-input'
                                             placeholder='0.00'
                                         />
                                     </div>
                                 </div>
                                 <div>
-                                    <label style={{ fontSize: '11px', fontWeight: 600, color: 'rgba(255, 255, 255, 0.58)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '8px', display: 'block' }}>Filing Status</label>
+                                    <label className='ecl-copy-label'>Filing Status</label>
                                     <div className='jd-select-wrap'>
                                         <button
                                             type='button'
@@ -290,7 +283,7 @@ export default function CaliforniaTaxCalculator() {
                                             aria-expanded={isFilingOpen}
                                         >
                                             <span>{selectedFilingLabel}</span>
-                                            <ChevronDownIcon />
+                                            <ChevronDownSvg />
                                         </button>
                                         {isFilingOpen && (
                                             <div className='jd-select-menu' role='listbox'>
@@ -319,34 +312,33 @@ export default function CaliforniaTaxCalculator() {
 
                     {taxBreakdown && (
                         <>
-                            <div className='notion-divider' />
-                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px', marginBottom: '32px' }}>
-                                <div className='notion-card' style={{ padding: '24px', backgroundColor: 'rgba(255, 255, 255, 0.055)' }}>
-                                    <span style={{ fontSize: '11px', fontWeight: 600, color: 'rgba(255, 255, 255, 0.58)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Net Pay (Monthly)</span>
-                                    <div style={{ fontSize: '36px', fontWeight: 700, color: 'rgba(255, 255, 255, 0.88)', marginTop: '8px', letterSpacing: '-0.02em' }}>
+                            <div className='el-stat-grid'>
+                                <div className='el-stat-card'>
+                                    <span className='el-stat-label'>Net Pay (Monthly)</span>
+                                    <div className='el-stat-value'>
                                         {formatCurrency(taxBreakdown.netIncome / 12)}
                                     </div>
-                                    <div style={{ marginTop: '8px', fontSize: '13px', color: 'rgba(255, 255, 255, 0.58)' }}>
+                                    <div className='el-stat-sub'>
                                         {formatCurrency(taxBreakdown.netIncome)} / year
                                     </div>
                                 </div>
-                                <div className='notion-card' style={{ padding: '24px', backgroundColor: 'rgba(255, 92, 92, 0.08)' }}>
-                                    <span style={{ fontSize: '11px', fontWeight: 600, color: 'rgba(255, 180, 180, 0.9)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Effective Tax Rate</span>
-                                    <div style={{ fontSize: '36px', fontWeight: 700, color: 'rgba(255, 180, 180, 0.95)', marginTop: '8px', letterSpacing: '-0.02em' }}>
+                                <div className='el-stat-card el-stat-card-accent'>
+                                    <span className='el-stat-label'>Effective Tax Rate</span>
+                                    <div className='el-stat-value'>
                                         {taxBreakdown.effectiveRate.toFixed(2)}%
                                     </div>
-                                    <div style={{ marginTop: '8px', fontSize: '13px', color: 'rgba(255, 180, 180, 0.72)' }}>
-                                        Estimated Liability
-                                    </div>
+                                    <div className='el-stat-sub'>Estimated liability</div>
                                 </div>
                             </div>
 
-                            <div className='notion-section'>
-                                <div className='notion-section-title'>
-                                    <BanknotesIcon className='notion-section-icon' />
-                                    Tax Breakdown
+                            <div className='el-chart-block'>
+                                <div className='el-chart-title'>
+                                    <span className='el-chart-title-label'>
+                                        <BanknotesIcon aria-hidden='true' />
+                                        Tax Breakdown
+                                    </span>
                                 </div>
-                                <div className='notion-card' style={{ padding: '0', overflow: 'hidden' }}>
+                                <div className='el-breakdown-card'>
                                     {[
                                         { label: 'Gross Income', value: taxBreakdown.grossIncome, isHeader: true },
                                         { label: 'Federal Income Tax', value: taxBreakdown.federalTax },
@@ -360,54 +352,53 @@ export default function CaliforniaTaxCalculator() {
                                     ].map((item, idx, items) => (
                                         <div
                                             key={idx}
-                                            style={{
-                                                display: 'flex',
-                                                justifyContent: 'space-between',
-                                                padding: '16px 24px',
-                                                borderBottom: idx !== items.length - 1 ? '1px solid rgba(255, 255, 255, 0.08)' : 'none',
-                                                backgroundColor: item.isHeader ? 'rgba(255, 255, 255, 0.045)' : 'transparent'
-                                            }}
+                                            className={`el-breakdown-row ${item.isHeader ? 'is-header' : ''}`}
                                         >
-                                            <span style={{ fontWeight: item.isHeader ? 600 : 400, color: 'rgba(255, 255, 255, 0.88)', fontSize: '14px' }}>{item.label}</span>
-                                            <span style={{
-                                                fontWeight: item.isHeader ? 700 : 400,
-                                                color: item.isHeader ? 'rgba(255, 255, 255, 0.9)' : 'rgba(255, 180, 180, 0.9)',
-                                                fontFamily: 'monospace',
-                                                fontSize: '14px'
-                                            }}>
+                                            <span>{item.label}</span>
+                                            <span className='el-breakdown-amount'>
                                                 {item.isHeader ? '' : '-'}
                                                 {formatCurrency(item.value)}
                                             </span>
                                         </div>
                                     ))}
-                                    <div style={{
-                                        display: 'flex',
-                                        justifyContent: 'space-between',
-                                        padding: '16px 24px',
-                                        backgroundColor: 'rgba(34, 197, 94, 0.1)',
-                                        borderTop: '1px solid rgba(34, 197, 94, 0.24)'
-                                    }}>
-                                        <span style={{ fontWeight: 600, color: '#15803d', fontSize: '14px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Net Pay</span>
-                                        <span style={{ fontWeight: 700, color: '#15803d', fontFamily: 'monospace', fontSize: '16px' }}>
+                                    <div className='el-breakdown-row el-breakdown-net'>
+                                        <span>Net Pay</span>
+                                        <span className='el-breakdown-amount'>
                                             {formatCurrency(taxBreakdown.netIncome)}
                                         </span>
                                     </div>
                                 </div>
-                            </div>
 
-                            <div style={{ marginTop: '32px', textAlign: 'center' }}>
-                                <p style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 0.46)', fontStyle: 'italic' }}>
-                                    Estimates use 2026 federal brackets, 2026 Social Security wage base, CA's 2026 estimated-tax worksheet guidance, CA SDI, and the 1% CA Behavioral Health Services Tax above $1M taxable income. Not financial advice.
+                                <p className='el-tax-disclaimer'>
+                                    Estimates use 2026 federal brackets, 2026 Social Security wage base,
+                                    CA&apos;s 2026 estimated-tax worksheet guidance, CA SDI, and the 1% CA
+                                    Behavioral Health Services Tax above $1M taxable income. Not financial advice.
                                 </p>
                             </div>
                         </>
                     )}
+                </section>
 
-                    <footer className='notion-footer'>
-                        © 2026 {strings.NAME}
-                    </footer>
-                </div>
+                <footer className='el-footer'>
+                    <div className='el-footer-inner'>
+                        <span className='el-footer-logo'>John Leonardo</span>
+                        <div className='el-footer-links'>
+                            <a href={strings.GITHUB_URL} target='_blank' rel='noreferrer'>GitHub</a>
+                            <a href={strings.LINKEDIN_URL} target='_blank' rel='noreferrer'>LinkedIn</a>
+                            <a href={`mailto:${strings.EMAIL}`}>{strings.EMAIL}</a>
+                        </div>
+                        <span className='el-footer-copy'>© 2026. All rights reserved.</span>
+                    </div>
+                </footer>
             </main>
         </>
+    );
+}
+
+function ChevronDownSvg() {
+    return (
+        <svg viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth={2} className='el-select-chevron'>
+            <path strokeLinecap='round' strokeLinejoin='round' d='M19 9l-7 7-7-7' />
+        </svg>
     );
 }

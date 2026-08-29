@@ -7603,3 +7603,279 @@ a.el-btn-light, .el-btn-light {
 .el-chart-inner {
   height: 280px;
 }
+
+/* ============================================
+   Privacy Scan + Tax Calculator pages
+   ============================================ */
+
+.el-privacy-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 0.7rem;
+}
+
+.el-info-card {
+  padding: 1.25rem;
+  border: 1px solid var(--el-line);
+  border-radius: 12px;
+  background: var(--el-surface);
+}
+
+.el-info-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding-bottom: 0.9rem;
+  margin-bottom: 0.9rem;
+  border-bottom: 1px solid var(--el-line);
+}
+
+.el-info-card-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.92rem;
+  font-weight: 550;
+  color: var(--el-ink);
+}
+
+.el-info-card-title svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  color: var(--el-ink-soft);
+}
+
+.el-tag-red {
+  border-color: rgba(180, 40, 40, 0.3);
+  background: rgba(180, 40, 40, 0.06);
+  color: #a03030;
+}
+
+.el-tag-purple {
+  border-color: rgba(139, 92, 246, 0.3);
+  background: rgba(139, 92, 246, 0.06);
+  color: #6d4fd0;
+}
+
+.el-kv {
+  margin: 0.7rem 0;
+}
+
+.el-kv-label {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-size: 0.7rem;
+  font-weight: 550;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--el-ink-faint);
+}
+
+.el-kv-value {
+  font-size: 0.98rem;
+  font-weight: 550;
+  color: var(--el-ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.el-kv-mono {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 1.25rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.el-kv-break {
+  white-space: normal;
+  word-break: break-all;
+  font-size: 1rem;
+}
+
+.el-kv-note {
+  margin: 0.8rem 0 0;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--el-ink-faint);
+}
+
+.el-stat-grid-tight {
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+}
+
+.el-stat-mini {
+  padding: 1rem;
+}
+
+.el-stat-emoji {
+  font-size: 1.4rem;
+  margin-bottom: 0.55rem;
+}
+
+.el-stat-mini-value {
+  font-size: 0.9rem;
+  font-weight: 550;
+  color: var(--el-ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.el-ua-box {
+  font-size: 0.8rem;
+  line-height: 1.6;
+  color: var(--el-ink-soft);
+}
+
+/* tax calculator */
+.el-tax-input-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.25rem;
+}
+
+.el-money-wrap {
+  position: relative;
+}
+
+.el-money-symbol {
+  position: absolute;
+  left: 0.9rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--el-ink-faint);
+  font-weight: 600;
+}
+
+.el-money-input {
+  padding-left: 2rem !important;
+}
+
+.el-tax .jd-select-button {
+  border-color: var(--el-line);
+  border-radius: 10px;
+  background: var(--el-bg);
+  color: var(--el-ink);
+  font-weight: 500;
+}
+
+.el-tax .jd-select-button:hover,
+.el-tax .jd-select-button.is-open {
+  border-color: var(--el-ink);
+  background: var(--el-bg);
+  box-shadow: none;
+}
+
+.el-tax .jd-select-button svg {
+  color: var(--el-ink-faint);
+}
+
+.el-tax .jd-select-menu {
+  border-color: var(--el-line);
+  border-radius: 12px;
+  background: var(--el-surface);
+  box-shadow: 0 16px 48px rgba(17, 17, 16, 0.12);
+}
+
+.el-tax .jd-select-menu button {
+  color: var(--el-ink-soft);
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+.el-tax .jd-select-menu button:hover,
+.el-tax .jd-select-menu button.is-selected {
+  background: #efefe8;
+  color: var(--el-ink);
+}
+
+.el-stat-card-accent {
+  border-color: rgba(180, 40, 40, 0.28);
+}
+
+.el-stat-card-accent .el-stat-value {
+  color: #a03030;
+}
+
+.el-breakdown-card {
+  border: 1px solid var(--el-line);
+  border-radius: 12px;
+  background: var(--el-surface);
+  overflow: hidden;
+}
+
+.el-breakdown-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.95rem 1.25rem;
+  border-bottom: 1px solid var(--el-line);
+  font-size: 0.94rem;
+  color: var(--el-ink-soft);
+}
+
+.el-breakdown-row.is-header {
+  background: #efefe8;
+  color: var(--el-ink);
+  font-weight: 550;
+}
+
+.el-breakdown-row:last-child {
+  border-bottom: none;
+}
+
+.el-breakdown-amount {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
+  color: var(--el-ink);
+  white-space: nowrap;
+}
+
+.el-breakdown-row.is-header .el-breakdown-amount {
+  font-weight: 600;
+}
+
+.el-breakdown-net {
+  background: #ecf6ec;
+  border-top: 1px solid rgba(22, 163, 74, 0.25);
+  color: #15803d;
+  font-weight: 550;
+}
+
+.el-breakdown-net .el-breakdown-amount {
+  color: #15803d;
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+
+.el-tax-disclaimer {
+  max-width: 52rem;
+  margin: 1.25rem auto 0;
+  text-align: center;
+  font-size: 0.78rem;
+  font-style: italic;
+  line-height: 1.6;
+  color: var(--el-ink-faint);
+}
+
+@media (max-width: 640px) {
+  .el-privacy-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .el-tax-input-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .el-breakdown-row {
+    padding: 0.8rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .el-stat-value {
+    font-size: 1.7rem;
+  }
+}

@@ -6,12 +6,8 @@ import FingerprintJS from '@fingerprintjs/fingerprintjs';
 import { strings } from '../../constants/strings';
 import { WebVitals } from '@/components/SEO/WebVitals';
 import {
-    DevicePhoneMobileIcon,
-    PencilSquareIcon,
-    DocumentTextIcon,
     ShieldCheckIcon,
     GlobeAmericasIcon,
-    ComputerDesktopIcon,
 } from '@heroicons/react/24/outline';
 
 type IPInfo = {
@@ -76,114 +72,115 @@ export default function Privacy() {
     return (
         <>
             <WebVitals />
-            <main className={`jd-home jd-apps-home ${isLoaded ? 'is-loaded' : ''}`}>
-                <header className='jd-nav-wrap'>
-                    <Link href='/' className='jd-logo'>{strings.NAME}</Link>
-                    <nav className='jd-nav' aria-label='Primary navigation'>
-                        <Link href='/apps' className='jd-nav-link'>Apps</Link>
-                        <Link href='/blog' className='jd-nav-link'>Blog</Link>
-                        <Link href='/apps/resume' className='jd-nav-link'>Resume</Link>
+            <main className='el-page'>
+                <header className='el-nav'>
+                    <Link href='/' className='el-logo' aria-label='John Leonardo home'>
+                        John Leonardo
+                    </Link>
+                    <nav className='el-nav-links' aria-label='Primary navigation'>
+                        <Link href='/apps' className='el-nav-link'>Apps</Link>
+                        <Link href='/blog' className='el-nav-link'>Blog</Link>
+                        <Link href='/apps/resume' className='el-nav-link'>Resume</Link>
                     </nav>
-                    <div className='jd-nav-actions'>
-                        <Link href='/apps/chat' className='jd-login'>Chat</Link>
-                        <Link href='/' className='jd-top-cta'>Home</Link>
+                    <div className='el-nav-actions'>
+                        <Link href='/apps/chat' className='el-nav-link'>Chat</Link>
+                        <Link href={`mailto:${strings.EMAIL}`} className='el-btn el-btn-dark el-btn-sm'>
+                            Contact
+                        </Link>
                     </div>
                 </header>
 
-                <div className={`notion-content ${isLoaded ? 'loaded' : ''}`} style={{ maxWidth: '1000px' }}>
-                    <div className='notion-title-block'>
-                        <h1 className='notion-title'>Privacy Scan</h1>
-                        <div className='notion-subtitle'>See what websites can learn about you just by visiting</div>
+                <section className='el-hero el-hero-page'>
+                    <div className='el-hero-inner'>
+                        <div className='el-hero-copy'>
+                            <h1>Privacy Scan</h1>
+                            <p className='el-hero-sub'>
+                                See what websites can learn about you just by visiting.
+                            </p>
+                        </div>
                     </div>
+                </section>
 
-                    <div className='notion-divider' />
-
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px', marginBottom: '32px' }}>
-
-                        <div className='notion-card' style={{ padding: '24px' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                    <GlobeAmericasIcon style={{ width: '20px', height: '20px', color: '#ef4444' }} />
-                                    <span style={{ fontSize: '14px', fontWeight: 600 }}>Network Identity</span>
-                                </div>
-                                <span style={{ fontSize: '10px', fontWeight: 700, color: '#ef4444', backgroundColor: 'rgba(239, 68, 68, 0.1)', padding: '4px 8px', borderRadius: '4px', textTransform: 'uppercase' }}>
-                                    Exposed
+                <section className='el-section el-sentiment'>
+                    <div className='el-privacy-grid'>
+                        <div className='el-info-card'>
+                            <div className='el-info-card-head'>
+                                <span className='el-info-card-title'>
+                                    <GlobeAmericasIcon aria-hidden='true' />
+                                    Network Identity
                                 </span>
+                                <span className='el-tag el-tag-red'>Exposed</span>
                             </div>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                                <div>
-                                    <span style={{ fontSize: '11px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase' }}>IP Address</span>
-                                    <div style={{ fontSize: '20px', fontWeight: 700, color: '#37352f', fontFamily: 'monospace' }}>
-                                        {ipInfo?.ip || 'Scanning...'}
-                                    </div>
+                            <div className='el-kv'>
+                                <span className='el-kv-label'>IP Address</span>
+                                <div className='el-kv-value el-kv-mono'>
+                                    {ipInfo?.ip || 'Scanning...'}
                                 </div>
-                                <div style={{ height: '1px', backgroundColor: 'rgba(55, 53, 47, 0.09)' }} />
-                                <div>
-                                    <span style={{ fontSize: '11px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase' }}>Location</span>
-                                    <div style={{ fontSize: '14px', fontWeight: 600, color: '#37352f' }}>
-                                        {ipInfo ? `${ipInfo.city}, ${ipInfo.region}, ${ipInfo.country}` : 'Locating...'}
-                                    </div>
+                            </div>
+                            <div className='el-kv'>
+                                <span className='el-kv-label'>Location</span>
+                                <div className='el-kv-value'>
+                                    {ipInfo ? `${ipInfo.city}, ${ipInfo.region}, ${ipInfo.country}` : 'Locating...'}
                                 </div>
                             </div>
                         </div>
 
-                        <div className='notion-card' style={{ padding: '24px' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                    <ShieldCheckIcon style={{ width: '20px', height: '20px', color: '#6366f1' }} />
-                                    <span style={{ fontSize: '14px', fontWeight: 600 }}>Digital Fingerprint</span>
-                                </div>
-                                <span style={{ fontSize: '10px', fontWeight: 700, color: '#6366f1', backgroundColor: 'rgba(99, 102, 241, 0.1)', padding: '4px 8px', borderRadius: '4px', textTransform: 'uppercase' }}>
-                                    Unique ID
+                        <div className='el-info-card'>
+                            <div className='el-info-card-head'>
+                                <span className='el-info-card-title'>
+                                    <ShieldCheckIcon aria-hidden='true' />
+                                    Digital Fingerprint
                                 </span>
+                                <span className='el-tag el-tag-purple'>Unique ID</span>
                             </div>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                                <div>
-                                    <span style={{ fontSize: '11px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase' }}>Canvas Hash</span>
-                                    <div style={{ fontSize: '16px', fontWeight: 600, color: '#37352f', fontFamily: 'monospace', wordBreak: 'break-all' }}>
-                                        {fingerprint || 'Generating...'}
-                                    </div>
-                                </div>
-                                <div style={{ marginTop: '8px', fontSize: '12px', color: 'rgba(55, 53, 47, 0.5)', lineHeight: 1.5 }}>
-                                    Your browser's unique rendering behavior creates a permanent ID used to track you across the web, even in Incognito mode.
+                            <div className='el-kv'>
+                                <span className='el-kv-label'>Canvas Hash</span>
+                                <div className='el-kv-value el-kv-mono el-kv-break'>
+                                    {fingerprint || 'Generating...'}
                                 </div>
                             </div>
+                            <p className='el-kv-note'>
+                                Your browser&apos;s unique rendering behavior creates a permanent ID used
+                                to track you across the web, even in Incognito mode.
+                            </p>
                         </div>
                     </div>
 
-                    <div className='notion-section'>
-                        <div className='notion-section-title'>
-                            <ComputerDesktopIcon className='notion-section-icon' />
-                            Device Leaks
+                    <div className='el-chart-block'>
+                        <div className='el-chart-title'>
+                            <span className='el-chart-title-label'>Device Leaks</span>
+                            <span className='el-chart-pill'>{metaItems.length} signals</span>
                         </div>
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px', marginTop: '16px' }}>
+                        <div className='el-stat-grid el-stat-grid-tight'>
                             {metaItems.map((item) => (
-                                <div key={item.label} className='notion-card' style={{ padding: '16px' }}>
-                                    <div style={{ fontSize: '24px', marginBottom: '12px' }}>{item.icon}</div>
-                                    <div style={{ fontSize: '11px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase', marginBottom: '4px' }}>
-                                        {item.label}
-                                    </div>
-                                    <div style={{ fontSize: '14px', fontWeight: 600, color: '#37352f', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                                        {item.value}
-                                    </div>
+                                <div key={item.label} className='el-stat-card el-stat-mini'>
+                                    <div className='el-stat-emoji'>{item.icon}</div>
+                                    <div className='el-stat-label'>{item.label}</div>
+                                    <div className='el-stat-mini-value'>{item.value}</div>
                                 </div>
                             ))}
                         </div>
                     </div>
 
-                    <div className='notion-section'>
-                        <div className='notion-card' style={{ padding: '24px', backgroundColor: '#f8fafc' }}>
-                            <span style={{ fontSize: '11px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase', display: 'block', marginBottom: '12px' }}>User Agent String</span>
-                            <code style={{ fontSize: '12px', fontFamily: 'monospace', color: '#37352f', lineHeight: 1.6, wordBreak: 'break-all' }}>
-                                {browserInfo.userAgent}
-                            </code>
+                    <div className='el-chart-block'>
+                        <div className='el-chart-title'>
+                            <span className='el-chart-title-label'>User Agent String</span>
                         </div>
+                        <div className='el-copy-box el-ua-box'>{browserInfo.userAgent}</div>
                     </div>
+                </section>
 
-                    <footer className='notion-footer'>
-                        © 2026 {strings.NAME}
-                    </footer>
-                </div>
+                <footer className='el-footer'>
+                    <div className='el-footer-inner'>
+                        <span className='el-footer-logo'>John Leonardo</span>
+                        <div className='el-footer-links'>
+                            <a href={strings.GITHUB_URL} target='_blank' rel='noreferrer'>GitHub</a>
+                            <a href={strings.LINKEDIN_URL} target='_blank' rel='noreferrer'>LinkedIn</a>
+                            <a href={`mailto:${strings.EMAIL}`}>{strings.EMAIL}</a>
+                        </div>
+                        <span className='el-footer-copy'>© 2026. All rights reserved.</span>
+                    </div>
+                </footer>
             </main>
         </>
     );
