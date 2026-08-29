@@ -7343,3 +7343,152 @@ a.el-btn-light, .el-btn-light {
     gap: 0.7rem;
   }
 }
+
+/* ============================================
+   LLM Serialization page
+   ============================================ */
+
+.el-textarea-mono {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.82rem !important;
+  line-height: 1.6;
+}
+
+.el-serialize-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+}
+
+.el-error-inline {
+  margin: 0;
+}
+
+.el-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--el-line);
+  border-radius: 12px;
+  background: var(--el-surface);
+}
+
+.el-data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+
+.el-data-table th {
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid var(--el-line);
+  background: #efefe8;
+  color: var(--el-ink);
+  font-size: 0.8rem;
+  font-weight: 550;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.el-data-table td {
+  padding: 0.78rem 1rem;
+  border-bottom: 1px solid var(--el-line);
+  color: var(--el-ink);
+}
+
+.el-data-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.el-data-table tbody tr {
+  cursor: pointer;
+  transition: background-color 0.12s ease;
+}
+
+.el-data-table tbody tr:hover {
+  background: rgba(17, 17, 16, 0.025);
+}
+
+.el-data-table .el-num {
+  text-align: right;
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+.el-data-table th.el-num {
+  font-family: var(--font-geist-sans), sans-serif;
+}
+
+.el-rank {
+  color: var(--el-ink-faint);
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.85rem;
+}
+
+.el-trophy {
+  font-size: 1.05rem;
+}
+
+.el-format-name {
+  font-weight: 550;
+  letter-spacing: -0.01em;
+}
+
+.el-muted {
+  color: var(--el-ink-faint);
+}
+
+.el-savings {
+  font-weight: 600;
+  color: var(--el-ink-faint);
+}
+
+.el-savings.is-positive {
+  color: #16a34a;
+}
+
+.el-savings.is-negative {
+  color: #dc2626;
+}
+
+.el-result-list {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.el-result-card {
+  border: 1px solid var(--el-line);
+  border-radius: 12px;
+  background: var(--el-surface);
+  overflow: hidden;
+}
+
+.el-result-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 1.1rem;
+  cursor: pointer;
+  font-size: 0.92rem;
+  font-weight: 550;
+  color: var(--el-ink);
+  transition: background-color 0.12s ease;
+}
+
+.el-result-header:hover {
+  background: rgba(17, 17, 16, 0.025);
+}
+
+.el-result-header svg {
+  width: 1rem;
+  height: 1rem;
+  color: var(--el-ink-faint);
+}
+
+.el-result-body {
+  max-height: 400px;
+  overflow: auto;
+  border-top: 1px solid var(--el-line);
+}

@@ -5,16 +5,13 @@ import Link from 'next/link';
 import { strings } from '../../constants/strings';
 import { WebVitals } from '@/components/SEO/WebVitals';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { oneLight } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import {
-    DevicePhoneMobileIcon,
-    PencilSquareIcon,
-    DocumentTextIcon,
     ChartBarIcon,
+    DocumentTextIcon,
     ArrowPathIcon,
     ChevronDownIcon,
     ChevronRightIcon,
-    ClipboardIcon,
     TrophyIcon,
 } from '@heroicons/react/24/outline';
 
@@ -451,74 +448,81 @@ export default function Serialization() {
     return (
         <>
             <WebVitals />
-            <main className={`jd-home jd-apps-home ${isLoaded ? 'is-loaded' : ''}`}>
-                <header className='jd-nav-wrap'>
-                    <Link href='/' className='jd-logo'>{strings.NAME}</Link>
-                    <nav className='jd-nav' aria-label='Primary navigation'>
-                        <Link href='/apps' className='jd-nav-link'>Apps</Link>
-                        <Link href='/blog' className='jd-nav-link'>Blog</Link>
-                        <Link href='/apps/resume' className='jd-nav-link'>Resume</Link>
+            <main className='el-page'>
+                <header className='el-nav'>
+                    <Link href='/' className='el-logo' aria-label='John Leonardo home'>
+                        John Leonardo
+                    </Link>
+                    <nav className='el-nav-links' aria-label='Primary navigation'>
+                        <Link href='/apps' className='el-nav-link'>Apps</Link>
+                        <Link href='/blog' className='el-nav-link'>Blog</Link>
+                        <Link href='/apps/resume' className='el-nav-link'>Resume</Link>
                     </nav>
-                    <div className='jd-nav-actions'>
-                        <Link href='/apps/chat' className='jd-login'>Chat</Link>
-                        <Link href='/' className='jd-top-cta'>Home</Link>
+                    <div className='el-nav-actions'>
+                        <Link href='/apps/chat' className='el-nav-link'>Chat</Link>
+                        <Link href={`mailto:${strings.EMAIL}`} className='el-btn el-btn-dark el-btn-sm'>
+                            Contact
+                        </Link>
                     </div>
                 </header>
 
-                <div className={`notion-content ${isLoaded ? 'loaded' : ''}`} style={{ maxWidth: '1100px' }}>
-                    <div className='notion-title-block'>
-                        <h1 className='notion-title'>LLM Serialization Comparison</h1>
-                        <div className='notion-subtitle'>Compare token efficiency across different serialization formats for LLM contexts</div>
-                    </div>
-
-                    <div className='notion-divider' />
-
-                    <div className='notion-section'>
-                        <div className='notion-section-title'>
-                            <ChartBarIcon className='notion-section-icon' />
-                            Input JSON
+                <section className='el-hero el-hero-page'>
+                    <div className='el-hero-inner'>
+                        <div className='el-hero-copy'>
+                            <h1>LLM Serialization</h1>
+                            <p className='el-hero-sub'>
+                                Compare token efficiency across serialization formats for LLM contexts.
+                            </p>
                         </div>
-                        <div style={{ marginTop: '16px' }}>
+                    </div>
+                </section>
+
+                <section className='el-section el-sentiment'>
+                    <div className='el-chart-block'>
+                        <div className='el-chart-title'>
+                            <span className='el-chart-title-label'>
+                                <ChartBarIcon aria-hidden='true' />
+                                Input JSON
+                            </span>
+                        </div>
+                        <div className='el-file-card'>
                             <textarea
                                 value={input}
                                 onChange={(e) => setInput(e.target.value)}
-                                className='notion-textarea'
+                                className='el-textarea el-textarea-mono'
                                 placeholder='Paste JSON here...'
-                                style={{ height: '200px', fontFamily: 'monospace', fontSize: '12px', width: '100%' }}
+                                rows={8}
+                                spellCheck={false}
                             />
-                            <div style={{ marginTop: '12px', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-                                <button onClick={serialize} className='notion-action-btn notion-action-primary'>
-                                    <ArrowPathIcon className='notion-action-icon' />
+                            <div className='el-serialize-row'>
+                                <button onClick={serialize} className='el-btn el-btn-dark el-btn-sm'>
+                                    <ArrowPathIcon aria-hidden='true' />
                                     Serialize
                                 </button>
-                                {error && (
-                                    <span style={{ color: '#dc2626', fontSize: '14px', display: 'flex', alignItems: 'center' }}>
-                                        {error}
-                                    </span>
-                                )}
+                                {error && <span className='el-error-text el-error-inline'>{error}</span>}
                             </div>
                         </div>
                     </div>
 
                     {results.length > 0 && (
                         <>
-                            <div className='notion-divider' />
-
-                            <div className='notion-section'>
-                                <div className='notion-section-title'>
-                                    <TrophyIcon className='notion-section-icon' />
-                                    Results (Sorted by Token Count)
+                            <div className='el-chart-block'>
+                                <div className='el-chart-title'>
+                                    <span className='el-chart-title-label'>
+                                        <TrophyIcon aria-hidden='true' />
+                                        Results
+                                    </span>
+                                    <span className='el-chart-pill'>sorted by token count</span>
                                 </div>
-
-                                <div className='notion-table-container' style={{ marginTop: '16px' }}>
-                                    <table className='notion-table'>
+                                <div className='el-table-wrap'>
+                                    <table className='el-data-table'>
                                         <thead>
                                             <tr>
-                                                <th style={{ padding: '12px 16px' }}>Rank</th>
-                                                <th style={{ padding: '12px 16px' }}>Format</th>
-                                                <th style={{ textAlign: 'right', padding: '12px 16px' }}>Tokens</th>
-                                                <th style={{ textAlign: 'right', padding: '12px 16px' }}>Bytes</th>
-                                                <th style={{ textAlign: 'right', padding: '12px 16px' }}>vs Baseline</th>
+                                                <th>Rank</th>
+                                                <th>Format</th>
+                                                <th className='el-num'>Tokens</th>
+                                                <th className='el-num'>Bytes</th>
+                                                <th className='el-num'>vs Baseline</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -526,19 +530,18 @@ export default function Serialization() {
                                                 <tr
                                                     key={result.format}
                                                     onClick={() => toggleExpand(result.format)}
-                                                    style={{ cursor: 'pointer' }}
                                                 >
-                                                    <td style={{ padding: '12px 16px' }}>
+                                                    <td>
                                                         {idx === 0 ? (
-                                                            <span style={{ fontSize: '16px' }}>🏆</span>
+                                                            <span className='el-trophy'>🏆</span>
                                                         ) : (
-                                                            <span style={{ color: 'rgba(55, 53, 47, 0.5)' }}>#{idx + 1}</span>
+                                                            <span className='el-rank'>#{idx + 1}</span>
                                                         )}
                                                     </td>
-                                                    <td style={{ fontWeight: 500, padding: '12px 16px' }}>{result.format}</td>
-                                                    <td style={{ textAlign: 'right', fontFamily: 'monospace', padding: '12px 16px' }}>{result.tokens.toLocaleString()}</td>
-                                                    <td style={{ textAlign: 'right', fontFamily: 'monospace', color: 'rgba(55, 53, 47, 0.5)', padding: '12px 16px' }}>{result.bytes.toLocaleString()}</td>
-                                                    <td style={{ textAlign: 'right', fontWeight: 600, color: result.savings > 0 ? '#059669' : result.savings < 0 ? '#dc2626' : 'rgba(55, 53, 47, 0.5)', padding: '12px 16px' }}>
+                                                    <td className='el-format-name'>{result.format}</td>
+                                                    <td className='el-num'>{result.tokens.toLocaleString()}</td>
+                                                    <td className='el-num el-muted'>{result.bytes.toLocaleString()}</td>
+                                                    <td className={`el-num el-savings ${result.savings > 0 ? 'is-positive' : result.savings < 0 ? 'is-negative' : ''}`}>
                                                         {result.savings > 0 ? '-' : result.savings < 0 ? '+' : ''}{Math.abs(result.savings).toFixed(1)}%
                                                     </td>
                                                 </tr>
@@ -548,46 +551,39 @@ export default function Serialization() {
                                 </div>
                             </div>
 
-                            <div className='notion-divider' />
-
-                            <div className='notion-section'>
-                                <div className='notion-section-title'>
-                                    <DocumentTextIcon className='notion-section-icon' />
-                                    Output Preview
+                            <div className='el-chart-block'>
+                                <div className='el-chart-title'>
+                                    <span className='el-chart-title-label'>
+                                        <DocumentTextIcon aria-hidden='true' />
+                                        Output Preview
+                                    </span>
+                                    <span className='el-chart-pill'>{results.length} formats</span>
                                 </div>
-                                <div style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                                <div className='el-result-list'>
                                     {results.map((result) => (
-                                        <div key={result.format} className='notion-card' style={{ padding: 0, overflow: 'hidden' }}>
+                                        <div key={result.format} className='el-result-card'>
                                             <div
+                                                className='el-result-header'
                                                 onClick={() => toggleExpand(result.format)}
-                                                style={{
-                                                    padding: '12px 16px',
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'space-between',
-                                                    cursor: 'pointer',
-                                                    backgroundColor: 'rgba(55, 53, 47, 0.03)',
-                                                    borderBottom: expandedFormats.includes(result.format) ? '1px solid rgba(55, 53, 47, 0.09)' : 'none'
-                                                }}
                                             >
-                                                <span style={{ fontWeight: 600, fontSize: '14px' }}>{result.format}</span>
+                                                <span>{result.format}</span>
                                                 {expandedFormats.includes(result.format) ? (
-                                                    <ChevronDownIcon style={{ width: '16px', height: '16px', color: 'rgba(55, 53, 47, 0.5)' }} />
+                                                    <ChevronDownIcon aria-hidden='true' />
                                                 ) : (
-                                                    <ChevronRightIcon style={{ width: '16px', height: '16px', color: 'rgba(55, 53, 47, 0.5)' }} />
+                                                    <ChevronRightIcon aria-hidden='true' />
                                                 )}
                                             </div>
                                             {expandedFormats.includes(result.format) && (
-                                                <div style={{ maxHeight: '400px', overflow: 'auto', backgroundColor: '#1e1e1e' }}>
+                                                <div className='el-result-body'>
                                                     <SyntaxHighlighter
                                                         language={result.language}
-                                                        style={vscDarkPlus}
+                                                        style={oneLight}
                                                         customStyle={{
                                                             margin: 0,
                                                             padding: '16px',
                                                             borderRadius: 0,
                                                             fontSize: '12px',
-                                                            backgroundColor: '#1e1e1e', // Force background
+                                                            backgroundColor: 'transparent',
                                                         }}
                                                         wrapLongLines={true}
                                                     >
@@ -601,11 +597,19 @@ export default function Serialization() {
                             </div>
                         </>
                     )}
+                </section>
 
-                    <footer className='notion-footer'>
-                        © 2026 {strings.NAME}
-                    </footer>
-                </div>
+                <footer className='el-footer'>
+                    <div className='el-footer-inner'>
+                        <span className='el-footer-logo'>John Leonardo</span>
+                        <div className='el-footer-links'>
+                            <a href={strings.GITHUB_URL} target='_blank' rel='noreferrer'>GitHub</a>
+                            <a href={strings.LINKEDIN_URL} target='_blank' rel='noreferrer'>LinkedIn</a>
+                            <a href={`mailto:${strings.EMAIL}`}>{strings.EMAIL}</a>
+                        </div>
+                        <span className='el-footer-copy'>© 2026. All rights reserved.</span>
+                    </div>
+                </footer>
             </main>
         </>
     );

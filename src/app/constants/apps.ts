@@ -19,28 +19,10 @@ export const apps: MiniApp[] = [
         href: '/apps/resume',
     },
     {
-        title: 'AI Sentiment',
-        subtitle: 'Track how public sentiment toward AI shifts week by week across 250 news articles.',
-        emoji: '🌡️',
-        href: '/apps/sentiment',
-    },
-    {
         title: 'Resume Screen',
         subtitle: 'FOR RECRUITERS: Generate ungooglable screening questions from a resume.',
         emoji: '🕵️',
         href: '/apps/screen',
-    },
-    {
-        title: 'PDF Chat (Embeddings)',
-        subtitle: 'Upload any document and chat with it using AI semantic search.',
-        emoji: '📚',
-        href: '/apps/rag',
-    },
-    {
-        title: 'Knowledge Graph',
-        subtitle: 'Construct and chat with dynamic knowledge graphs from any body of text.',
-        emoji: '🕸️',
-        href: '/apps/knowledge-graph',
     },
     {
         title: 'LLM Serialization',
@@ -107,5 +89,23 @@ export const apps: MiniApp[] = [
         subtitle: 'Simulate startup fundraising rounds and see how your equity evolves from Seed to Exit.',
         emoji: '📈',
         href: '/apps/dilution',
+    },
+    {
+        title: 'AI Sentiment',
+        subtitle: 'Track how public sentiment toward AI shifts week by week across 250 news articles.',
+        emoji: '🌡️',
+        href: '/apps/sentiment',
+    },
+    {
+        title: 'PDF Chat (Embeddings)',
+        subtitle: 'Upload any document and chat with it using AI semantic search.',
+        emoji: '📚',
+        href: '/apps/rag',
+    },
+    {
+        title: 'Knowledge Graph',
+        subtitle: 'Construct and chat with dynamic knowledge graphs from any body of text.',
+        emoji: '🕸️',
+        href: '/apps/knowledge-graph',
     },
 ] as const;
