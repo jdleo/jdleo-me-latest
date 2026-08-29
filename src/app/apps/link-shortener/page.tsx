@@ -16,12 +16,10 @@ import {
     Legend,
 } from 'chart.js';
 import {
-    DevicePhoneMobileIcon,
-    PencilSquareIcon,
-    DocumentTextIcon,
     LinkIcon,
     ChartBarIcon,
     ClipboardIcon,
+    CheckIcon,
 } from '@heroicons/react/24/outline';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, ChartTooltip, Legend);
@@ -37,6 +35,7 @@ export default function LinkShortener() {
     const [analyticsData, setAnalyticsData] = useState<any[]>([]);
     const [analyticsAuthenticated, setAnalyticsAuthenticated] = useState(false);
     const [analyticsOriginalUrl, setAnalyticsOriginalUrl] = useState<string | null>(null);
+    const [copied, setCopied] = useState<string | null>(null);
 
     useEffect(() => {
         const timer = setTimeout(() => setIsLoaded(true), 100);
@@ -93,13 +92,14 @@ export default function LinkShortener() {
         datasets: [{
             label: 'Clicks',
             data: analyticsData.map(d => d.clicks),
-            borderColor: '#8dd8ff',
-            backgroundColor: 'rgba(141, 216, 255, 0.11)',
+            borderColor: '#111110',
+            backgroundColor: 'rgba(17, 17, 16, 0.05)',
             fill: true,
             tension: 0.4,
             borderWidth: 2,
-            pointRadius: 4,
-            pointBackgroundColor: '#8dd8ff',
+            pointRadius: 3,
+            pointBackgroundColor: '#f7f7f2',
+            pointBorderColor: '#111110',
         }]
     };
 
@@ -109,130 +109,114 @@ export default function LinkShortener() {
         plugins: {
             legend: { display: false },
             tooltip: {
-                backgroundColor: '#080808',
-                titleColor: '#fff',
-                bodyColor: 'rgba(255, 255, 255, 0.72)',
-                borderColor: 'rgba(255, 255, 255, 0.14)',
+                backgroundColor: '#ffffff',
+                titleColor: '#111110',
+                bodyColor: '#4d4d4a',
+                borderColor: '#e2e2da',
                 borderWidth: 1,
+                padding: 10,
+                cornerRadius: 10,
             },
         },
         scales: {
             x: {
                 grid: { display: false },
-                ticks: { color: 'rgba(255, 255, 255, 0.42)', font: { size: 10, family: 'sans-serif' } }
+                ticks: { color: '#82827c', font: { size: 10, family: 'sans-serif' } }
             },
             y: {
-                grid: { color: 'rgba(255, 255, 255, 0.08)' },
-                ticks: { color: 'rgba(255, 255, 255, 0.42)', font: { size: 10, family: 'sans-serif' }, stepSize: 1 }
+                grid: { color: '#e7e7e0' },
+                ticks: { color: '#82827c', font: { size: 10, family: 'sans-serif' }, stepSize: 1 }
             }
         }
     };
 
-    const copyToClipboard = (text: string) => {
+    const copyToClipboard = (text: string, tag: string) => {
         navigator.clipboard.writeText(text);
+        setCopied(tag);
+        setTimeout(() => setCopied(null), 1500);
     };
 
     return (
         <>
             <WebVitals />
-            <main className={`jd-home jd-apps-home ${isLoaded ? 'is-loaded' : ''}`}>
-                <header className='jd-nav-wrap'>
-                    <Link href='/' className='jd-logo'>{strings.NAME}</Link>
-                    <nav className='jd-nav' aria-label='Primary navigation'>
-                        <Link href='/apps' className='jd-nav-link'>Apps</Link>
-                        <Link href='/blog' className='jd-nav-link'>Blog</Link>
-                        <Link href='/apps/resume' className='jd-nav-link'>Resume</Link>
+            <main className='el-page'>
+                <header className='el-nav'>
+                    <Link href='/' className='el-logo' aria-label='John Leonardo home'>
+                        John Leonardo
+                    </Link>
+                    <nav className='el-nav-links' aria-label='Primary navigation'>
+                        <Link href='/apps' className='el-nav-link'>Apps</Link>
+                        <Link href='/blog' className='el-nav-link'>Blog</Link>
+                        <Link href='/apps/resume' className='el-nav-link'>Resume</Link>
                     </nav>
-                    <div className='jd-nav-actions'>
-                        <Link href='/apps/chat' className='jd-login'>Chat</Link>
-                        <Link href='/' className='jd-top-cta'>Home</Link>
+                    <div className='el-nav-actions'>
+                        <Link href='/apps/chat' className='el-nav-link'>Chat</Link>
+                        <Link href={`mailto:${strings.EMAIL}`} className='el-btn el-btn-dark el-btn-sm'>
+                            Contact
+                        </Link>
                     </div>
                 </header>
 
-                <div className={`notion-content ${isLoaded ? 'loaded' : ''}`} style={{ maxWidth: '900px' }}>
-                    <div className='notion-title-block'>
-                        <h1 className='notion-title'>Link Shortener</h1>
-                        <div className='notion-subtitle'>Create short links with built-in analytics tracking</div>
+                <section className='el-hero el-hero-page'>
+                    <div className='el-hero-inner'>
+                        <div className='el-hero-copy'>
+                            <h1>Link Shortener</h1>
+                            <p className='el-hero-sub'>
+                                Create short links with built-in analytics tracking.
+                            </p>
+                        </div>
                     </div>
+                </section>
 
-                    <div className='notion-divider' />
-
+                <section className='el-section el-sentiment'>
                     {!shortenedUrl && !analyticsAuthenticated && (
                         <>
-                            <div className='notion-section'>
-                                <div className='notion-section-title'>
-                                    <LinkIcon className='notion-section-icon' />
-                                    Create Short Link
+                            <div className='el-chart-block'>
+                                <div className='el-chart-title'>
+                                    <span className='el-chart-title-label'>
+                                        <LinkIcon aria-hidden='true' />
+                                        Create Short Link
+                                    </span>
                                 </div>
-                                <div style={{ marginTop: '16px' }}>
+                                <div className='el-file-card'>
                                     <input
                                         value={url}
                                         onChange={e => setUrl(e.target.value)}
                                         placeholder='Enter URL to shorten...'
-                                        className='notion-input'
-                                        style={{
-                                            marginBottom: '12px',
-                                            width: '100%',
-                                            padding: '10px 12px',
-                                            borderRadius: '6px',
-                                            border: '1px solid rgba(55, 53, 47, 0.16)',
-                                            backgroundColor: 'rgba(255, 255, 255, 0.6)',
-                                            fontSize: '14px',
-                                            lineHeight: '20px',
-                                            color: '#37352f',
-                                            outline: 'none',
-                                            transition: 'border-color 0.2s',
-                                        }}
-                                        onFocus={(e) => e.target.style.borderColor = '#a78bfa'}
-                                        onBlur={(e) => e.target.style.borderColor = 'rgba(55, 53, 47, 0.16)'}
+                                        className='el-textarea el-el-input'
                                     />
                                     <button
                                         onClick={handleShorten}
                                         disabled={isShortening || !url.trim()}
-                                        className='notion-action-btn notion-action-primary'
+                                        className='el-btn el-btn-dark el-generate-btn'
                                     >
-                                        <LinkIcon className='notion-action-icon' />
+                                        <LinkIcon aria-hidden='true' />
                                         {isShortening ? 'Shortening...' : 'Generate Link'}
                                     </button>
                                 </div>
                             </div>
 
-                            <div className='notion-divider' />
-
-                            <div className='notion-section'>
-                                <div className='notion-section-title'>
-                                    <ChartBarIcon className='notion-section-icon' />
-                                    View Analytics
+                            <div className='el-chart-block'>
+                                <div className='el-chart-title'>
+                                    <span className='el-chart-title-label'>
+                                        <ChartBarIcon aria-hidden='true' />
+                                        View Analytics
+                                    </span>
                                 </div>
-                                <div style={{ marginTop: '16px' }}>
+                                <div className='el-file-card'>
                                     <input
                                         type='password'
                                         value={analyticsPasswordInput}
                                         onChange={e => setAnalyticsPasswordInput(e.target.value)}
                                         placeholder='Enter access key...'
-                                        className='notion-input'
-                                        style={{
-                                            marginBottom: '12px',
-                                            width: '100%',
-                                            padding: '10px 12px',
-                                            borderRadius: '6px',
-                                            border: '1px solid rgba(55, 53, 47, 0.16)',
-                                            backgroundColor: 'rgba(255, 255, 255, 0.6)',
-                                            fontSize: '14px',
-                                            lineHeight: '20px',
-                                            color: '#37352f',
-                                            outline: 'none',
-                                            transition: 'border-color 0.2s',
-                                        }}
-                                        onFocus={(e) => e.target.style.borderColor = '#a78bfa'}
-                                        onBlur={(e) => e.target.style.borderColor = 'rgba(55, 53, 47, 0.16)'}
+                                        className='el-textarea el-el-input'
                                     />
                                     <button
                                         onClick={handleViewAnalytics}
                                         disabled={analyticsLoading || !analyticsPasswordInput.trim()}
-                                        className='notion-action-btn'
+                                        className='el-btn el-btn-light el-generate-btn'
                                     >
-                                        <ChartBarIcon className='notion-action-icon' />
+                                        <ChartBarIcon aria-hidden='true' />
                                         {analyticsLoading ? 'Loading...' : 'View Stats'}
                                     </button>
                                 </div>
@@ -241,97 +225,108 @@ export default function LinkShortener() {
                     )}
 
                     {shortenedUrl && !analyticsAuthenticated && (
-                        <div className='notion-section'>
-                            <div className='notion-card' style={{ padding: '24px' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px', paddingBottom: '16px', borderBottom: '1px solid rgba(55, 53, 47, 0.09)' }}>
-                                    <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: 'rgba(16, 185, 129, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#059669', fontWeight: 700 }}>✓</div>
-                                    <span style={{ fontSize: '14px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Link Created</span>
+                        <div className='el-chart-block'>
+                            <div className='el-chart-title'>
+                                <span className='el-chart-title-label'>
+                                    <CheckIcon aria-hidden='true' />
+                                    Link Created
+                                </span>
+                                <span className='el-chart-pill'>save your key</span>
+                            </div>
+                            <div className='el-file-card'>
+                                <div className='ecl-copy-label'>Short Link</div>
+                                <div className='el-copy-row'>
+                                    <div className='el-copy-box'>{shortenedUrl}</div>
+                                    <button
+                                        onClick={() => copyToClipboard(shortenedUrl, 'link')}
+                                        className='el-btn el-btn-dark el-btn-sm'
+                                    >
+                                        <ClipboardIcon aria-hidden='true' />
+                                        {copied === 'link' ? 'Copied' : 'Copy'}
+                                    </button>
                                 </div>
 
-                                <div style={{ marginBottom: '20px' }}>
-                                    <label style={{ fontSize: '11px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Short Link</label>
-                                    <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
-                                        <div style={{ flex: 1, padding: '12px 16px', backgroundColor: 'rgba(55, 53, 47, 0.04)', borderRadius: '8px', fontFamily: 'monospace', fontSize: '14px', color: '#6366f1', fontWeight: 500, wordBreak: 'break-all' }}>
-                                            {shortenedUrl}
-                                        </div>
-                                        <button
-                                            onClick={() => copyToClipboard(shortenedUrl)}
-                                            className='notion-action-btn notion-action-primary'
-                                            style={{ padding: '12px 16px' }}
-                                        >
-                                            <ClipboardIcon className='notion-action-icon' />
-                                            Copy
-                                        </button>
-                                    </div>
+                                <div className='ecl-copy-label ecl-copy-label-key'>
+                                    Analytics Key
+                                    <span className='el-key-tag'>save this</span>
                                 </div>
-
-                                <div>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                                        <label style={{ fontSize: '11px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Analytics Key</label>
-                                        <span style={{ fontSize: '9px', fontWeight: 700, color: '#dc2626', backgroundColor: 'rgba(239, 68, 68, 0.1)', padding: '4px 8px', borderRadius: '4px', textTransform: 'uppercase' }}>Save This</span>
-                                    </div>
-                                    <div style={{ display: 'flex', gap: '12px' }}>
-                                        <div style={{ flex: 1, padding: '12px 16px', backgroundColor: 'rgba(239, 68, 68, 0.05)', border: '1px solid rgba(239, 68, 68, 0.2)', borderRadius: '8px', fontFamily: 'monospace', fontSize: '14px', color: '#dc2626', fontWeight: 600, wordBreak: 'break-all' }}>
-                                            {analyticsPassword}
-                                        </div>
-                                        <button
-                                            onClick={() => copyToClipboard(analyticsPassword!)}
-                                            className='notion-action-btn'
-                                            style={{ padding: '12px 16px', color: '#dc2626' }}
-                                        >
-                                            <ClipboardIcon className='notion-action-icon' />
-                                            Copy
-                                        </button>
-                                    </div>
+                                <div className='el-copy-row'>
+                                    <div className='el-copy-box el-copy-box-key'>{analyticsPassword}</div>
+                                    <button
+                                        onClick={() => copyToClipboard(analyticsPassword!, 'key')}
+                                        className='el-btn el-btn-light el-btn-sm'
+                                    >
+                                        <ClipboardIcon aria-hidden='true' />
+                                        {copied === 'key' ? 'Copied' : 'Copy'}
+                                    </button>
                                 </div>
+                                <p className='ecl-key-warning'>
+                                    This key is the only way to view analytics for this link. If you lose it, the stats are gone.
+                                </p>
                             </div>
                         </div>
                     )}
 
                     {analyticsAuthenticated && (
-                        <div className='notion-section'>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-                                <div>
-                                    <h2 style={{ fontSize: '20px', fontWeight: 700, color: '#37352f', marginBottom: '4px' }}>Analytics Dashboard</h2>
-                                    <p style={{ fontSize: '13px', color: 'rgba(55, 53, 47, 0.6)', maxWidth: '400px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{analyticsOriginalUrl}</p>
+                        <>
+                            <div className='el-chart-block'>
+                                <div className='el-chart-title'>
+                                    <span className='el-chart-title-label'>
+                                        <ChartBarIcon aria-hidden='true' />
+                                        Analytics Dashboard
+                                    </span>
+                                    <button
+                                        onClick={() => { setAnalyticsAuthenticated(false); setAnalyticsData([]); }}
+                                        className='el-btn el-btn-light el-btn-sm'
+                                    >
+                                        Close
+                                    </button>
                                 </div>
-                                <button
-                                    onClick={() => { setAnalyticsAuthenticated(false); setAnalyticsData([]); }}
-                                    className='notion-action-btn'
-                                    style={{ color: '#dc2626' }}
-                                >
-                                    Close
-                                </button>
+                                <div className='el-copy-box el-copy-box-url'>{analyticsOriginalUrl}</div>
                             </div>
 
-                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '24px' }}>
-                                <div className='notion-card' style={{ padding: '20px' }}>
-                                    <span style={{ fontSize: '10px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Total Clicks</span>
-                                    <div style={{ fontSize: '32px', fontWeight: 700, color: '#6366f1', marginTop: '4px' }}>
+                            <div className='el-stat-grid'>
+                                <div className='el-stat-card'>
+                                    <span className='el-stat-label'>Total Clicks</span>
+                                    <div className='el-stat-value'>
                                         {analyticsData.reduce((s, d) => s + d.clicks, 0).toLocaleString()}
                                     </div>
                                 </div>
-                                <div className='notion-card' style={{ padding: '20px' }}>
-                                    <span style={{ fontSize: '10px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Daily Average</span>
-                                    <div style={{ fontSize: '32px', fontWeight: 700, color: '#37352f', marginTop: '4px' }}>
+                                <div className='el-stat-card'>
+                                    <span className='el-stat-label'>Daily Average</span>
+                                    <div className='el-stat-value'>
                                         {(analyticsData.reduce((s, d) => s + d.clicks, 0) / (analyticsData.length || 1)).toFixed(1)}
                                     </div>
                                 </div>
                             </div>
 
-                            <div className='notion-card' style={{ padding: '24px' }}>
-                                <h3 style={{ fontSize: '13px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'rgba(55, 53, 47, 0.5)', marginBottom: '16px' }}>Click Activity (30 Days)</h3>
-                                <div style={{ height: '280px' }}>
-                                    <Line data={chartData} options={chartOptions} />
+                            <div className='el-chart-block'>
+                                <div className='el-chart-title'>
+                                    <span className='el-chart-title-label'>
+                                        Click Activity (30 Days)
+                                    </span>
+                                </div>
+                                <div className='el-chart-card'>
+                                    <div className='el-chart-inner'>
+                                        <Line data={chartData} options={chartOptions} />
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        </>
                     )}
+                </section>
 
-                    <footer className='notion-footer'>
-                        © 2026 {strings.NAME}
-                    </footer>
-                </div>
+                <footer className='el-footer'>
+                    <div className='el-footer-inner'>
+                        <span className='el-footer-logo'>John Leonardo</span>
+                        <div className='el-footer-links'>
+                            <a href={strings.GITHUB_URL} target='_blank' rel='noreferrer'>GitHub</a>
+                            <a href={strings.LINKEDIN_URL} target='_blank' rel='noreferrer'>LinkedIn</a>
+                            <a href={`mailto:${strings.EMAIL}`}>{strings.EMAIL}</a>
+                        </div>
+                        <span className='el-footer-copy'>© 2026. All rights reserved.</span>
+                    </div>
+                </footer>
             </main>
         </>
     );
