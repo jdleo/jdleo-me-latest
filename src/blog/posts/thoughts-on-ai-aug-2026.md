@@ -8,12 +8,12 @@ I'll cover:
 
 - AI acceleration and the 10x productivity boost that every CEO wants
 - Where models are going and where they need to go
-- Future of Software Engineering, and whats different now vs. back then
+- Future of Software Engineering, and what's different now vs. back then
 - My current AI coding stack and way of working
 
 ## Achieving 10x with AI
 
-I think coding velocity is the easy part, and we're basically already there. Phase 1 is getting really good with agents. Parallel coding tasks, worktrees, good specs, good testing gauntlets. A lot of people try to make that sound harder than it is, but it's really not. You can even have AI set it up for you. I think with a barebones agent with no fancy skills or parallelism gets you to 3-5x velocity alone. That was the biggest unlock. Phase 2 is having tasks come to you, and having your AI learn from your team/org's past mistakes/motivations and role them into docs and governance. This is a bit more ambigious because every organization is different.
+I think coding velocity is the easy part, and we're basically already there. Phase 1 is getting really good with agents. Parallel coding tasks, worktrees, good specs, good testing gauntlets. A lot of people try to make that sound harder than it is, but it's really not. You can even have AI set it up for you. I think with a barebones agent with no fancy skills or parallelism gets you to 3-5x velocity alone. That was the biggest unlock. Phase 2 is having tasks come to you, and having your AI learn from your team/org's past mistakes/motivations and roll them into docs and governance. This is a bit more ambiguous because every organization is different.
 
 However, being intentionally handwavy, this is what I believe a 10x coding system looks like:
 
@@ -28,7 +28,7 @@ However, being intentionally handwavy, this is what I believe a 10x coding syste
 
 - For reviewing your peer's work. I want humans to focus on _WHAT_ is changing. Is this the right change for our company? For our org? For our team? Will this potentially cause issues later that aren't evident from context & code? I think this "taste" factor is what makes a really good engineer. Agents are great at reviewing but lack that critical gut check on philosophy/direction. Let the humans be good at that.
 
-4. Ops - Rollout + monitoring, trivially automable with agents
+4. Ops - Rollout + monitoring, trivially automatable with agents
 
 So, once you build a system like this, I think you get your 10x+ coding velocity you always dreamed of. Okay, now once you built it, you're going to notice you don't have 10x the deliveries. Maybe 1.5 or 2x if you're lucky.
 
@@ -78,7 +78,7 @@ Work:
 - GPT 5.6 Sol xhigh (primary), Kimi K3 max (secondary)
 - Worktrees
 - Custom task prioritization engine which aggregates from slack, jira, google docs, gmail, and zoom meeting summaries
-- Local voice transcription model (Nividia Parakeet)
+- Local voice transcription model (Nvidia Parakeet)
 
 Personal:
 
