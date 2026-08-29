@@ -98,46 +98,58 @@ export default function ScreenApp() {
     return (
         <>
             <WebVitals />
-            <main className={`jd-home jd-apps-home ${isLoaded ? 'is-loaded' : ''}`}>
-                <header className='jd-nav-wrap'>
-                    <Link href='/' className='jd-logo'>{strings.NAME}</Link>
-                    <nav className='jd-nav' aria-label='Primary navigation'>
-                        <Link href='/apps' className='jd-nav-link'>Apps</Link>
-                        <Link href='/blog' className='jd-nav-link'>Blog</Link>
-                        <Link href='/apps/resume' className='jd-nav-link'>Resume</Link>
+            <main className='el-page'>
+                <header className='el-nav'>
+                    <Link href='/' className='el-logo' aria-label='John Leonardo home'>
+                        John Leonardo
+                    </Link>
+                    <nav className='el-nav-links' aria-label='Primary navigation'>
+                        <Link href='/apps' className='el-nav-link'>Apps</Link>
+                        <Link href='/blog' className='el-nav-link'>Blog</Link>
+                        <Link href='/apps/resume' className='el-nav-link'>Resume</Link>
                     </nav>
-                    <div className='jd-nav-actions'>
-                        <Link href='/apps/chat' className='jd-login'>Chat</Link>
-                        <Link href='/' className='jd-top-cta'>Home</Link>
+                    <div className='el-nav-actions'>
+                        <Link href='/apps/chat' className='el-nav-link'>Chat</Link>
+                        <Link href={`mailto:${strings.EMAIL}`} className='el-btn el-btn-dark el-btn-sm'>
+                            Contact
+                        </Link>
                     </div>
                 </header>
 
-                <div className='jd-blog-shell jd-tool-shell'>
-                    <section className='jd-blog-hero jd-tool-hero'>
-                        <h1>Resume Screener</h1>
-                        <p>Generate tailored interview questions from a candidate resume.</p>
-                    </section>
+                <section className='el-hero el-hero-page'>
+                    <div className='el-hero-inner'>
+                        <div className='el-hero-copy'>
+                            <h1>Resume Screener</h1>
+                            <p className='el-hero-sub'>
+                                Generate tailored interview questions from a candidate resume —
+                                built for non-technical recruiters.
+                            </p>
+                        </div>
+                    </div>
+                </section>
 
+                <section className='el-section el-sentiment'>
                     {!fileName ? (
-                        <section
-                            {...getRootProps()}
-                            className={`jd-dropzone ${isDragActive ? 'is-active' : ''}`}
-                        >
+                        <div {...getRootProps()} className={`el-dropzone ${isDragActive ? 'is-active' : ''}`}>
                             <input {...getInputProps()} />
-                            <div className='jd-dropzone-icon'>
-                                <DocumentMagnifyingGlassIcon />
-                            </div>
+                            <DocumentMagnifyingGlassIcon className='el-dropzone-icon' aria-hidden='true' />
                             <h2>{isDragActive ? 'Drop the PDF here' : 'Click or drop resume PDF'}</h2>
-                            <p>Upload a resume and I'll turn it into focused interview questions with signal to watch for.</p>
-                        </section>
+                            <p>
+                                Upload a resume and I&apos;ll turn it into focused interview questions
+                                with signal to watch for.
+                            </p>
+                        </div>
                     ) : (
-                        <section className='jd-form-card'>
-                            <div className='jd-file-row'>
-                                <span>
-                                    <DocumentTextIcon />
+                        <div className='el-file-card'>
+                            <div className='el-file-row'>
+                                <span className='el-file-name'>
+                                    <DocumentTextIcon aria-hidden='true' />
                                     {fileName}
                                 </span>
-                                <button onClick={() => { setFileName(null); setResumeText(null); setQuestions(null); }} className='jd-secondary-btn'>
+                                <button
+                                    onClick={() => { setFileName(null); setResumeText(null); setQuestions(null); }}
+                                    className='el-btn el-btn-light el-btn-sm'
+                                >
                                     Change
                                 </button>
                             </div>
@@ -145,37 +157,45 @@ export default function ScreenApp() {
                                 value={jobDescription}
                                 onChange={e => setJobDescription(e.target.value)}
                                 placeholder='Optional: paste the job description to tailor the questions...'
-                                className='jd-textarea'
+                                className='el-textarea'
+                                rows={6}
                             />
-                            <button onClick={handleGenerate} disabled={loading} className='jd-action-btn'>
+                            <button onClick={handleGenerate} disabled={loading} className='el-btn el-btn-dark el-generate-btn'>
                                 {loading ? 'Analyzing...' : 'Generate Questions'}
                             </button>
-                            {error && <div className='jd-error-text'>{error}</div>}
-                        </section>
+                            {error && <div className='el-error-text'>{error}</div>}
+                        </div>
                     )}
 
                     {questions && (
-                        <section className='jd-question-section'>
-                            <div className='jd-section-title'>
-                                <span><ClipboardDocumentListIcon /> Screening Questions</span>
+                        <div className='el-chart-block'>
+                            <div className='el-chart-title'>
+                                <span className='el-chart-title-label'>
+                                    <ClipboardDocumentListIcon aria-hidden='true' />
+                                    Screening Questions
+                                </span>
+                                <span className='el-chart-pill'>{questions.length} questions</span>
                             </div>
-                            <div className='jd-question-list'>
+                            <div className='el-question-list'>
                                 {questions.map((q) => (
                                     <article
                                         key={q.id}
-                                        className='jd-question-card'
+                                        className='el-question-card'
                                         onClick={() => setExpandedQuestion(expandedQuestion === q.id ? null : q.id)}
                                     >
-                                        <div className='jd-question-number'>{q.id}</div>
-                                        <div>
-                                            <span className='jd-tag'>{q.topic}</span>
+                                        <div className='el-question-num'>{q.id}</div>
+                                        <div className='el-question-body'>
+                                            <span className='el-tag'>{q.topic}</span>
                                             <h3>{q.question}</h3>
-                                            <p>Context: {q.context}</p>
+                                            <p className='el-question-context'>{q.context}</p>
 
                                             {expandedQuestion === q.id && (
-                                                <div className='jd-flag-grid'>
+                                                <div className='el-flag-grid'>
                                                     <div>
-                                                        <h4 className='jd-green'><CheckCircleIcon /> Green Flags</h4>
+                                                        <h4 className='el-flag-green'>
+                                                            <CheckCircleIcon aria-hidden='true' />
+                                                            Green Flags
+                                                        </h4>
                                                         <ul>
                                                             {q.greenFlags.map((flag, i) => (
                                                                 <li key={i}>{flag}</li>
@@ -183,7 +203,10 @@ export default function ScreenApp() {
                                                         </ul>
                                                     </div>
                                                     <div>
-                                                        <h4 className='jd-red'><ExclamationTriangleIcon /> Red Flags</h4>
+                                                        <h4 className='el-flag-red'>
+                                                            <ExclamationTriangleIcon aria-hidden='true' />
+                                                            Red Flags
+                                                        </h4>
                                                         <p>{q.redFlags}</p>
                                                     </div>
                                                 </div>
@@ -192,13 +215,20 @@ export default function ScreenApp() {
                                     </article>
                                 ))}
                             </div>
-                        </section>
+                        </div>
                     )}
-                </div>
+                </section>
 
-                <footer className='jd-footer'>
-                    <span>&copy; 2026 {strings.NAME}</span>
-                    <Link href='/apps'>Back to apps</Link>
+                <footer className='el-footer'>
+                    <div className='el-footer-inner'>
+                        <span className='el-footer-logo'>John Leonardo</span>
+                        <div className='el-footer-links'>
+                            <a href={strings.GITHUB_URL} target='_blank' rel='noreferrer'>GitHub</a>
+                            <a href={strings.LINKEDIN_URL} target='_blank' rel='noreferrer'>LinkedIn</a>
+                            <a href={`mailto:${strings.EMAIL}`}>{strings.EMAIL}</a>
+                        </div>
+                        <span className='el-footer-copy'>© 2026. All rights reserved.</span>
+                    </div>
                 </footer>
             </main>
         </>

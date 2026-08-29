@@ -20,6 +20,7 @@ import {
     ChartBarIcon,
     SignalIcon,
     ArrowDownTrayIcon,
+    ArrowUpRightIcon,
 } from '@heroicons/react/24/outline';
 import sentimentData from './data.json';
 
@@ -54,16 +55,16 @@ export default function Sentiment() {
             {
                 label: 'Avg Sentiment Score',
                 data: sentimentData.map((w) => w.avg),
-                borderColor: '#8dd8ff',
-                backgroundColor: 'rgba(141, 216, 255, 0.11)',
-                borderWidth: 2.5,
-                pointRadius: 4,
-                pointHoverRadius: 7,
-                pointBackgroundColor: '#050505',
-                pointBorderColor: '#8dd8ff',
+                borderColor: '#111110',
+                backgroundColor: 'rgba(17, 17, 16, 0.05)',
+                borderWidth: 2,
+                pointRadius: 3,
+                pointHoverRadius: 6,
+                pointBackgroundColor: '#f7f7f2',
+                pointBorderColor: '#111110',
                 pointBorderWidth: 2,
-                pointHoverBackgroundColor: '#8dd8ff',
-                pointHoverBorderColor: '#050505',
+                pointHoverBackgroundColor: '#111110',
+                pointHoverBorderColor: '#f7f7f2',
                 tension: 0.35,
                 fill: true,
                 order: 1,
@@ -71,7 +72,7 @@ export default function Sentiment() {
             {
                 label: 'Trend',
                 data: trendline,
-                borderColor: 'rgba(185, 247, 234, 0.68)',
+                borderColor: '#b9b9b1',
                 borderWidth: 1.5,
                 borderDash: [6, 4],
                 pointRadius: 0,
@@ -89,13 +90,13 @@ export default function Sentiment() {
         plugins: {
             legend: { display: false },
             tooltip: {
-                backgroundColor: '#080808',
-                titleColor: '#fff',
-                bodyColor: 'rgba(255, 255, 255, 0.72)',
-                borderColor: 'rgba(255, 255, 255, 0.14)',
+                backgroundColor: '#ffffff',
+                titleColor: '#111110',
+                bodyColor: '#4d4d4a',
+                borderColor: '#e2e2da',
                 borderWidth: 1,
                 padding: 12,
-                cornerRadius: 8,
+                cornerRadius: 10,
                 titleFont: { size: 13, weight: 'bold' as const },
                 bodyFont: { size: 12 },
                 callbacks: {
@@ -112,7 +113,7 @@ export default function Sentiment() {
                 grid: { display: false },
                 ticks: {
                     font: { size: 10 },
-                    color: 'rgba(255, 255, 255, 0.42)',
+                    color: '#82827c',
                     maxRotation: 45,
                     autoSkip: true,
                     maxTicksLimit: 16,
@@ -122,10 +123,10 @@ export default function Sentiment() {
             y: {
                 min: 1,
                 max: 5,
-                grid: { color: 'rgba(255, 255, 255, 0.08)' },
+                grid: { color: '#e7e7e0' },
                 ticks: {
                     font: { size: 11 },
-                    color: 'rgba(255, 255, 255, 0.42)',
+                    color: '#82827c',
                     stepSize: 0.5,
                     callback: (value: any) => {
                         const map: Record<number, string> = { 1: '1 - Very Neg', 2: '2 - Negative', 3: '3 - Neutral', 4: '4 - Positive', 5: '5 - Very Pos' };
@@ -147,24 +148,24 @@ export default function Sentiment() {
             {
                 label: 'Very Positive',
                 data: sentimentData.map((w) => w.veryPositive),
-                borderColor: '#a78bfa',
-                backgroundColor: 'rgba(167, 139, 250, 0.13)',
+                borderColor: '#8b5cf6',
+                backgroundColor: 'rgba(139, 92, 246, 0.09)',
                 borderWidth: 2,
                 pointRadius: 0,
                 pointHoverRadius: 5,
-                pointHoverBackgroundColor: '#a78bfa',
+                pointHoverBackgroundColor: '#8b5cf6',
                 tension: 0.35,
                 fill: true,
             },
             {
                 label: 'Positive',
                 data: sentimentData.map((w) => w.positive),
-                borderColor: '#22c55e',
-                backgroundColor: 'rgba(34, 197, 94, 0.12)',
+                borderColor: '#16a34a',
+                backgroundColor: 'rgba(22, 163, 74, 0.08)',
                 borderWidth: 2,
                 pointRadius: 0,
                 pointHoverRadius: 5,
-                pointHoverBackgroundColor: '#22c55e',
+                pointHoverBackgroundColor: '#16a34a',
                 tension: 0.35,
                 fill: true,
             },
@@ -172,7 +173,7 @@ export default function Sentiment() {
                 label: 'Neutral',
                 data: sentimentData.map((w) => w.neutral),
                 borderColor: '#a3a3a3',
-                backgroundColor: 'rgba(163, 163, 163, 0.12)',
+                backgroundColor: 'rgba(163, 163, 163, 0.08)',
                 borderWidth: 2,
                 pointRadius: 0,
                 pointHoverRadius: 5,
@@ -183,24 +184,24 @@ export default function Sentiment() {
             {
                 label: 'Negative',
                 data: sentimentData.map((w) => w.negative),
-                borderColor: '#f97316',
-                backgroundColor: 'rgba(249, 115, 22, 0.12)',
+                borderColor: '#ea580c',
+                backgroundColor: 'rgba(234, 88, 12, 0.08)',
                 borderWidth: 2,
                 pointRadius: 0,
                 pointHoverRadius: 5,
-                pointHoverBackgroundColor: '#f97316',
+                pointHoverBackgroundColor: '#ea580c',
                 tension: 0.35,
                 fill: true,
             },
             {
                 label: 'Very Negative',
                 data: sentimentData.map((w) => w.veryNegative),
-                borderColor: '#ef4444',
-                backgroundColor: 'rgba(239, 68, 68, 0.12)',
+                borderColor: '#dc2626',
+                backgroundColor: 'rgba(220, 38, 38, 0.08)',
                 borderWidth: 2,
                 pointRadius: 0,
                 pointHoverRadius: 5,
-                pointHoverBackgroundColor: '#ef4444',
+                pointHoverBackgroundColor: '#dc2626',
                 tension: 0.35,
                 fill: true,
             },
@@ -219,17 +220,17 @@ export default function Sentiment() {
                     pointStyle: 'circle',
                     padding: 16,
                     font: { size: 11, weight: 600 as const },
-                    color: 'rgba(255, 255, 255, 0.58)',
+                    color: '#4d4d4a',
                 },
             },
             tooltip: {
-                backgroundColor: '#080808',
-                titleColor: '#fff',
-                bodyColor: 'rgba(255, 255, 255, 0.72)',
-                borderColor: 'rgba(255, 255, 255, 0.14)',
+                backgroundColor: '#ffffff',
+                titleColor: '#111110',
+                bodyColor: '#4d4d4a',
+                borderColor: '#e2e2da',
                 borderWidth: 1,
                 padding: 12,
-                cornerRadius: 8,
+                cornerRadius: 10,
                 titleFont: { size: 13, weight: 'bold' as const },
                 bodyFont: { size: 12 },
                 callbacks: {
@@ -243,7 +244,7 @@ export default function Sentiment() {
                 grid: { display: false },
                 ticks: {
                     font: { size: 10 },
-                    color: 'rgba(255, 255, 255, 0.42)',
+                    color: '#82827c',
                     maxRotation: 45,
                     autoSkip: true,
                     maxTicksLimit: 16,
@@ -253,10 +254,10 @@ export default function Sentiment() {
             y: {
                 min: 0,
                 max: 60,
-                grid: { color: 'rgba(255, 255, 255, 0.08)' },
+                grid: { color: '#e7e7e0' },
                 ticks: {
                     font: { size: 11 },
-                    color: 'rgba(255, 255, 255, 0.42)',
+                    color: '#82827c',
                     callback: (value: any) => `${value}%`,
                 },
                 border: { display: false },
@@ -271,80 +272,116 @@ export default function Sentiment() {
     return (
         <>
             <WebVitals />
-            <main className={`jd-home jd-apps-home ${isLoaded ? 'is-loaded' : ''}`}>
-                <header className='jd-nav-wrap'>
-                    <Link href='/' className='jd-logo'>{strings.NAME}</Link>
-                    <nav className='jd-nav' aria-label='Primary navigation'>
-                        <Link href='/apps' className='jd-nav-link'>Apps</Link>
-                        <Link href='/blog' className='jd-nav-link'>Blog</Link>
-                        <Link href='/apps/resume' className='jd-nav-link'>Resume</Link>
+            <main className='el-page'>
+                <header className='el-nav'>
+                    <Link href='/' className='el-logo' aria-label='John Leonardo home'>
+                        John Leonardo
+                    </Link>
+                    <nav className='el-nav-links' aria-label='Primary navigation'>
+                        <Link href='/apps' className='el-nav-link'>Apps</Link>
+                        <Link href='/blog' className='el-nav-link'>Blog</Link>
+                        <Link href='/apps/resume' className='el-nav-link'>Resume</Link>
                     </nav>
-                    <div className='jd-nav-actions'>
-                        <Link href='/apps/chat' className='jd-login'>Chat</Link>
-                        <Link href='/' className='jd-top-cta'>Home</Link>
+                    <div className='el-nav-actions'>
+                        <Link href='/apps/chat' className='el-nav-link'>Chat</Link>
+                        <Link href={`mailto:${strings.EMAIL}`} className='el-btn el-btn-dark el-btn-sm'>
+                            Contact
+                        </Link>
                     </div>
                 </header>
 
-                <div className='jd-blog-shell jd-tool-shell'>
-                    <section className='jd-blog-hero jd-tool-hero'>
-                        <h1>AI Sentiment</h1>
-                        <p>Tracking public sentiment toward AI over time.</p>
-                    </section>
-
-                    <section className='jd-tool-card'>
-                        <p>
-                            Every week, 250 articles about AI are collected from various news sources and classified into 5 sentiment categories
-                            using <code className='jd-inline-code'>openai/gpt-oss-120b</code>. The results are aggregated below to show how
-                            public perception of AI shifts over time.
-                        </p>
-                        <div className='jd-tool-card-footer'>
-                            <p>
-                                Data collected and curated by{' '}
-                                <a href='https://jdleo.me' target='_blank' rel='noopener noreferrer'>John Leonardo</a>.
-                                If you use this data, please credit the source.
+                <section className='el-hero el-hero-page'>
+                    <div className='el-hero-inner'>
+                        <div className='el-hero-copy'>
+                            <h1>AI Sentiment</h1>
+                            <p className='el-hero-sub'>
+                                Tracking public sentiment toward AI over time — 250 articles a week,
+                                classified and aggregated across 232 weeks.
                             </p>
-                            <button
-                                onClick={() => {
-                                    const blob = new Blob([JSON.stringify(sentimentData, null, 2)], { type: 'application/json' });
-                                    const url = URL.createObjectURL(blob);
-                                    const a = document.createElement('a');
-                                    a.href = url;
-                                    a.download = 'ai-sentiment-data.json';
-                                    a.click();
-                                    URL.revokeObjectURL(url);
-                                }}
-                                className='jd-download-btn'
-                            >
-                                <ArrowDownTrayIcon />
-                                Download Raw Data
-                            </button>
                         </div>
-                    </section>
+                    </div>
+                </section>
 
-                    <section className='jd-chart-section'>
-                        <div className='jd-section-title'>
-                            <span><SignalIcon /> Aggregate Sentiment Score</span>
-                            <span className='jd-pill-metric'>{sentimentData.length} Weeks</span>
+                <section className='el-section el-sentiment'>
+                    <div className='el-notice'>
+                        <div className='el-eyebrow'>
+                            <span className='el-eyebrow-label'>Archive — data is stale</span>
+                            <span className='el-eyebrow-date'>Last update: {sentimentData[sentimentData.length - 1].display}</span>
                         </div>
-                        <div className='jd-chart-card'>
+                        <p className='el-notice-body'>
+                            This dataset is no longer updated. Pulling 250 articles a week through Exa got
+                            genuinely expensive, so I let it run out. That said — if even one person wants
+                            this refreshed, I&apos;d genuinely bring it back. Just reach out.
+                        </p>
+                        <a href={`mailto:${strings.EMAIL}?subject=Refresh%20AI%20Sentiment`} className='el-btn el-btn-light el-btn-sm'>
+                            Ask me to refresh it
+                            <ArrowUpRightIcon aria-hidden='true' />
+                        </a>
+                    </div>
+
+                    <div className='el-methodology'>
+                        <p>
+                            Every week, 250 articles about AI are collected via Exa search and classified
+                            into 5 sentiment categories using <code className='el-inline-code'>openai/gpt-oss-120b</code>.
+                            The results are aggregated to show how public perception of AI shifts over time.
+                        </p>
+                        <p className='el-methodology-credit'>
+                            Data collected and curated by John Leonardo. If you use it, credit the source.
+                        </p>
+                        <button
+                            onClick={() => {
+                                const blob = new Blob([JSON.stringify(sentimentData, null, 2)], { type: 'application/json' });
+                                const url = URL.createObjectURL(blob);
+                                const a = document.createElement('a');
+                                a.href = url;
+                                a.download = 'ai-sentiment-data.json';
+                                a.click();
+                                URL.revokeObjectURL(url);
+                            }}
+                            className='el-btn el-btn-light el-btn-sm'
+                        >
+                            <ArrowDownTrayIcon aria-hidden='true' />
+                            Download raw data
+                        </button>
+                    </div>
+
+                    <div className='el-chart-block'>
+                        <div className='el-chart-title'>
+                            <span className='el-chart-title-label'>
+                                <SignalIcon aria-hidden='true' />
+                                Aggregate Sentiment Score
+                            </span>
+                            <span className='el-chart-pill'>{sentimentData.length} weeks</span>
+                        </div>
+                        <div className='el-chart-card'>
                             <Line data={scoreChartData} options={scoreChartOptions} />
                         </div>
-                    </section>
+                    </div>
 
-                    <section className='jd-chart-section'>
-                        <div className='jd-section-title'>
-                            <span><ChartBarIcon /> Sentiment Breakdown</span>
-                            <span className='jd-pill-metric jd-pill-metric-green'>% Distribution</span>
+                    <div className='el-chart-block'>
+                        <div className='el-chart-title'>
+                            <span className='el-chart-title-label'>
+                                <ChartBarIcon aria-hidden='true' />
+                                Sentiment Breakdown
+                            </span>
+                            <span className='el-chart-pill'>% distribution</span>
                         </div>
-                        <div className='jd-chart-card jd-chart-card-tall'>
+                        <div className='el-chart-card el-chart-card-tall'>
                             <Line data={breakdownChartData} options={breakdownChartOptions} />
                         </div>
-                    </section>
-                </div>
+                    </div>
+                </section>
 
-                <footer className='jd-footer'>
-                    <span>&copy; 2026 {strings.NAME}</span>
-                    <Link href='/apps'>Back to apps</Link>
+                <footer className='el-footer'>
+                    <div className='el-footer-inner'>
+                        <span className='el-footer-logo'>John Leonardo</span>
+                        <div className='el-footer-links'>
+                            <a href={strings.GITHUB_URL} target='_blank' rel='noreferrer'>GitHub</a>
+                            <a href={strings.LINKEDIN_URL} target='_blank' rel='noreferrer'>LinkedIn</a>
+                            <a href={`mailto:${strings.EMAIL}`}>{strings.EMAIL}</a>
+                        </div>
+                        <span className='el-footer-copy'>© 2026. All rights reserved.</span>
+                    </div>
                 </footer>
             </main>
         </>

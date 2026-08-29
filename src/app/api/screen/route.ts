@@ -62,7 +62,7 @@ export async function POST(req: Request) {
                 'X-Title': 'jdleo.me',
             },
             body: JSON.stringify({
-                model: 'google/gemini-3-flash-preview',
+                model: 'google/gemini-3.7-flash',
                 messages: [
                     {
                         role: 'system',

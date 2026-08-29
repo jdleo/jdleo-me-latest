@@ -6974,3 +6974,372 @@ a.el-btn-light, .el-btn-light {
   flex: none;
   color: var(--el-ink-faint);
 }
+
+/* ============================================
+   AI Sentiment page
+   ============================================ */
+
+.el-notice {
+  padding: 1.2rem 1.25rem 1.3rem;
+  border: 1px solid var(--el-ink);
+  border-radius: 12px;
+  background: var(--el-surface);
+}
+
+.el-notice .el-eyebrow {
+  justify-content: flex-start;
+  gap: 0.7rem;
+}
+
+.el-notice-body {
+  max-width: 46rem;
+  margin: 0.9rem 0 1.1rem;
+  font-size: 0.98rem;
+  line-height: 1.6;
+  letter-spacing: -0.008em;
+  color: var(--el-ink);
+}
+
+.el-methodology {
+  max-width: 46rem;
+  margin-top: 2rem;
+}
+
+.el-methodology p {
+  margin: 0 0 0.8rem;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--el-ink-soft);
+}
+
+.el-methodology-credit {
+  font-size: 0.85rem !important;
+  color: var(--el-ink-faint) !important;
+}
+
+.el-inline-code {
+  padding: 0.1rem 0.4rem;
+  border: 1px solid rgba(17, 17, 16, 0.1);
+  border-radius: 6px;
+  background: rgba(17, 17, 16, 0.05);
+  color: var(--el-ink);
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.86em;
+}
+
+.el-methodology .el-btn {
+  margin-top: 0.4rem;
+}
+
+.el-chart-block {
+  margin-top: 2.75rem;
+}
+
+.el-chart-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 0.8rem;
+}
+
+.el-chart-title-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 550;
+  letter-spacing: -0.01em;
+  color: var(--el-ink);
+}
+
+.el-chart-title-label svg {
+  width: 1.05rem;
+  height: 1.05rem;
+}
+
+.el-chart-pill {
+  padding: 0.25rem 0.65rem;
+  border: 1px solid var(--el-line);
+  border-radius: 999px;
+  background: var(--el-surface);
+  color: var(--el-ink-faint);
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.7rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
+.el-chart-card {
+  height: 380px;
+  padding: 1.25rem;
+  border: 1px solid var(--el-line);
+  border-radius: 12px;
+  background: var(--el-surface);
+}
+
+.el-chart-card-tall {
+  height: 440px;
+}
+
+/* ============================================
+   Resume Screener page
+   ============================================ */
+
+.el-dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7rem;
+  padding: 4rem 1.5rem;
+  border: 1.5px dashed #c9c9c0;
+  border-radius: 14px;
+  background: var(--el-surface);
+  cursor: pointer;
+  text-align: center;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.el-dropzone:hover,
+.el-dropzone.is-active {
+  border-color: var(--el-ink);
+  background: #efefe8;
+}
+
+.el-dropzone-icon {
+  width: 2.2rem;
+  height: 2.2rem;
+  color: var(--el-ink-faint);
+}
+
+.el-dropzone h2 {
+  margin: 0;
+  padding: 0;
+  position: static;
+  font-size: 1.15rem;
+  font-weight: 550;
+  letter-spacing: -0.015em;
+  color: var(--el-ink);
+}
+
+.el-dropzone h2::after {
+  display: none;
+}
+
+.el-dropzone p {
+  max-width: 26rem;
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--el-ink-faint);
+}
+
+.el-file-card {
+  padding: 1.25rem;
+  border: 1px solid var(--el-line);
+  border-radius: 12px;
+  background: var(--el-surface);
+}
+
+.el-file-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--el-line);
+}
+
+.el-file-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.92rem;
+  font-weight: 550;
+  color: var(--el-ink);
+}
+
+.el-file-name svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  flex: none;
+  color: var(--el-ink-faint);
+}
+
+.el-textarea {
+  width: 100%;
+  padding: 0.8rem 0.9rem;
+  border: 1px solid var(--el-line);
+  border-radius: 10px;
+  background: var(--el-bg);
+  color: var(--el-ink);
+  font-family: var(--font-geist-sans), -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  resize: vertical;
+  transition: border-color 0.15s ease;
+}
+
+.el-textarea:focus {
+  outline: none;
+  border-color: var(--el-ink);
+}
+
+.el-generate-btn {
+  width: 100%;
+  justify-content: center;
+  margin-top: 1rem;
+  padding: 0.85rem 1.4rem;
+}
+
+.el-generate-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.el-error-text {
+  margin-top: 0.75rem;
+  font-size: 0.85rem;
+  color: #a03030;
+}
+
+.el-question-list {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.el-question-card {
+  display: flex;
+  gap: 1rem;
+  padding: 1.15rem 1.25rem;
+  border: 1px solid var(--el-line);
+  border-radius: 12px;
+  background: var(--el-surface);
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+.el-question-card:hover {
+  border-color: #c9c9c0;
+}
+
+.el-question-num {
+  flex: none;
+  width: 1.9rem;
+  height: 1.9rem;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--el-line);
+  border-radius: 8px;
+  background: var(--el-bg);
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--el-ink-soft);
+}
+
+.el-question-body {
+  min-width: 0;
+  flex: 1;
+}
+
+.el-question-body h3 {
+  margin: 0.65rem 0 0.45rem;
+  font-size: 1.02rem;
+  font-weight: 550;
+  line-height: 1.35;
+  letter-spacing: -0.012em;
+  color: var(--el-ink);
+}
+
+.el-question-context {
+  margin: 0;
+  font-size: 0.87rem;
+  line-height: 1.5;
+  color: var(--el-ink-soft);
+}
+
+.el-flag-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--el-line);
+}
+
+.el-flag-grid h4 {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0 0 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.el-flag-grid h4 svg {
+  width: 0.95rem;
+  height: 0.95rem;
+}
+
+.el-flag-green {
+  color: #16a34a;
+}
+
+.el-flag-red {
+  color: #dc2626;
+}
+
+.el-flag-grid ul {
+  margin: 0;
+  padding: 0 0 0 1.1rem;
+  list-style: disc;
+}
+
+.el-flag-grid li {
+  margin: 0.3rem 0;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: var(--el-ink-soft);
+}
+
+.el-flag-grid p {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: var(--el-ink-soft);
+}
+
+@media (max-width: 640px) {
+  .el-flag-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .el-question-card {
+    flex-direction: column;
+    gap: 0.7rem;
+    padding: 1rem;
+  }
+
+  .el-question-num {
+    width: auto;
+    height: auto;
+    padding: 0.15rem 0.55rem;
+  }
+
+  .el-file-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.7rem;
+  }
+}
