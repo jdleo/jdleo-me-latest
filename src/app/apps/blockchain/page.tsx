@@ -7,13 +7,7 @@ import crypto from 'crypto';
 import { ArcherContainer, ArcherElement } from 'react-archer';
 import { strings } from '../../constants/strings';
 import { WebVitals } from '@/components/SEO/WebVitals';
-import {
-    DevicePhoneMobileIcon,
-    PencilSquareIcon,
-    DocumentTextIcon,
-    CubeTransparentIcon,
-    CpuChipIcon,
-} from '@heroicons/react/24/outline';
+import { CpuChipIcon } from '@heroicons/react/24/outline';
 
 type Block = {
     data: string;
@@ -33,13 +27,13 @@ export default function Blockchain() {
     const [showConfetti, setShowConfetti] = useState(false);
     const [difficulty, setDifficulty] = useState(3);
     const [hashRate, setHashRate] = useState(0);
-    const [isLoaded, setIsLoaded] = useState(false);
+    const [miningHash, setMiningHash] = useState<string | null>(null);
     const [invalidBlocks, setInvalidBlocks] = useState<Set<number>>(new Set());
     const [blocksNeedingRemining, setBlocksNeedingRemining] = useState<Set<number>>(new Set());
+    const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
-        const timer = setTimeout(() => setIsLoaded(true), 100);
-        return () => clearTimeout(timer);
+        setMounted(true);
     }, []);
 
     const calculateHash = (data: string, nonce: number, previousHash: string, timestamp: number): string => {
@@ -108,6 +102,7 @@ export default function Blockchain() {
 
     const mineBlock = async (index: number) => {
         setMining(index);
+        setMiningHash('0'.repeat(64));
         const startTime = Date.now();
         let hashCount = 0;
         const block = blocks[index];
@@ -118,9 +113,10 @@ export default function Blockchain() {
         while (true) {
             hash = calculateHash(block.data, nonce, block.previousHash, timestamp);
             hashCount++;
-            if (hashCount % 500 === 0) {
+            if (hashCount % 250 === 0) {
                 const currentTime = Date.now();
                 setHashRate(Math.floor(hashCount / ((currentTime - startTime) / 1000)));
+                setMiningHash(hash);
                 await new Promise(resolve => setTimeout(resolve, 0));
             }
             if (isValidHash(hash)) break;
@@ -137,210 +133,185 @@ export default function Blockchain() {
         }
         setBlocks(newBlocks);
         setMining(null);
+        setMiningHash(null);
         setShowConfetti(true);
         setTimeout(() => setShowConfetti(false), 3000);
     };
+
+    const healthy = invalidBlocks.size === 0;
 
     return (
         <>
             <WebVitals />
             {showConfetti && <ReactConfetti style={{ zIndex: 100 }} />}
-            <main className={`jd-home jd-apps-home ${isLoaded ? 'is-loaded' : ''}`}>
-                <header className='jd-nav-wrap'>
-                    <Link href='/' className='jd-logo'>{strings.NAME}</Link>
-                    <nav className='jd-nav' aria-label='Primary navigation'>
-                        <Link href='/apps' className='jd-nav-link'>Apps</Link>
-                        <Link href='/blog' className='jd-nav-link'>Blog</Link>
-                        <Link href='/apps/resume' className='jd-nav-link'>Resume</Link>
+            <main className='el-page'>
+                <header className='el-nav'>
+                    <Link href='/' className='el-logo' aria-label='John Leonardo home'>
+                        John Leonardo
+                    </Link>
+                    <nav className='el-nav-links' aria-label='Primary navigation'>
+                        <Link href='/apps' className='el-nav-link'>Apps</Link>
+                        <Link href='/blog' className='el-nav-link'>Blog</Link>
+                        <Link href='/apps/resume' className='el-nav-link'>Resume</Link>
                     </nav>
-                    <div className='jd-nav-actions'>
-                        <Link href='/apps/chat' className='jd-login'>Chat</Link>
-                        <Link href='/' className='jd-top-cta'>Home</Link>
+                    <div className='el-nav-actions'>
+                        <Link href='/apps/chat' className='el-nav-link'>Chat</Link>
+                        <Link href={`mailto:${strings.EMAIL}`} className='el-btn el-btn-dark el-btn-sm'>
+                            Contact
+                        </Link>
                     </div>
                 </header>
 
-                <div className={`notion-content ${isLoaded ? 'loaded' : ''}`} style={{ maxWidth: '1200px' }}>
-                    <div className='notion-title-block'>
-                        <h1 className='notion-title'>Blockchain 101</h1>
-                        <div className='notion-subtitle'>Interactive blockchain visualization with proof-of-work mining</div>
+                <section className='el-hero el-hero-page'>
+                    <div className='el-hero-inner'>
+                        <div className='el-hero-copy'>
+                            <h1>Blockchain 101</h1>
+                            <p className='el-hero-sub'>
+                                Mine blocks, tamper with the data, and watch the chain break —
+                                proof-of-work, live.
+                            </p>
+                        </div>
                     </div>
+                </section>
 
-                    <div className='notion-divider' />
-
-                    <div className='notion-section'>
-                        <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap', marginBottom: '24px' }}>
-                            <div className='notion-card' style={{ padding: '16px', flex: '1', minWidth: '200px' }}>
-                                <span style={{ fontSize: '11px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Difficulty</span>
-                                <div style={{ marginTop: '8px' }}>
-                                    <input
-                                        type='range'
-                                        min='1'
-                                        max='5'
-                                        value={difficulty}
-                                        onChange={e => setDifficulty(Number(e.target.value))}
-                                        style={{ width: '100%', accentColor: '#6366f1' }}
-                                    />
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '4px', fontSize: '11px', color: 'rgba(55, 53, 47, 0.5)' }}>
-                                        <span>Fast</span>
-                                        <span style={{ color: '#6366f1', fontWeight: 700 }}>{difficulty} Zeros</span>
-                                        <span>Secure</span>
-                                    </div>
-                                </div>
+                <section className='el-section el-sentiment'>
+                    <div className='el-stat-grid'>
+                        <div className='el-stat-card el-balance-card'>
+                            <span className='el-stat-label'>Chain Health</span>
+                            <div className='el-stat-value' style={{ color: healthy ? '#fdfdfb' : '#f0b429' }}>
+                                {healthy ? 'Healthy' : 'Compromised'}
                             </div>
-                            <div className='notion-card' style={{ padding: '16px', flex: '1', minWidth: '150px' }}>
-                                <span style={{ fontSize: '11px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Hashrate</span>
-                                <div style={{ fontSize: '20px', fontWeight: 700, color: '#6366f1', marginTop: '4px' }}>
-                                    {mining !== null ? `${hashRate.toLocaleString()} H/s` : 'IDLE'}
-                                </div>
+                        </div>
+                        <div className='el-stat-card'>
+                            <span className='el-stat-label'>Hashrate</span>
+                            <div className='el-stat-value'>
+                                {mining !== null ? `${hashRate.toLocaleString()} H/s` : 'Idle'}
                             </div>
-                            <div className='notion-card' style={{ padding: '16px', flex: '1', minWidth: '150px' }}>
-                                <span style={{ fontSize: '11px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Chain Health</span>
-                                <div style={{ fontSize: '20px', fontWeight: 700, color: invalidBlocks.size > 0 ? '#dc2626' : '#059669', marginTop: '4px' }}>
-                                    {invalidBlocks.size > 0 ? 'Compromised' : 'Healthy'}
-                                </div>
+                        </div>
+                        <div className='el-stat-card'>
+                            <span className='el-stat-label'>Block Height</span>
+                            <div className='el-stat-value'>
+                                #{blocks.length}
                             </div>
-                            <div className='notion-card' style={{ padding: '16px', flex: '1', minWidth: '150px' }}>
-                                <span style={{ fontSize: '11px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Block Height</span>
-                                <div style={{ fontSize: '20px', fontWeight: 700, color: '#37352f', marginTop: '4px' }}>
-                                    #{blocks.length}
-                                </div>
-                            </div>
+                        </div>
+                        <div className='el-stat-card'>
+                            <span className='el-stat-label'>Difficulty</span>
+                            <div className='el-stat-value'>{difficulty} zeros</div>
+                            <input
+                                type='range'
+                                min='1'
+                                max='5'
+                                value={difficulty}
+                                onChange={e => setDifficulty(Number(e.target.value))}
+                                className='el-diff-slider'
+                                aria-label='Mining difficulty'
+                            />
                         </div>
                     </div>
 
-                    <div className='notion-divider' />
-
-                    <div className='notion-section'>
-                        <div className='notion-section-title'>
-                            <CubeTransparentIcon className='notion-section-icon' />
-                            Blockchain
+                    <div className='el-chart-block'>
+                        <div className='el-chart-title'>
+                            <span className='el-chart-title-label'>The Chain</span>
+                            <span className='el-chart-pill'>
+                                {invalidBlocks.size > 0 ? `${invalidBlocks.size} broken links` : 'all links valid'}
+                            </span>
                         </div>
-                        <div style={{ marginTop: '24px', overflowX: 'auto', paddingBottom: '24px' }}>
-                            <ArcherContainer
-                                strokeColor={invalidBlocks.size > 0 ? '#ef4444' : '#a78bfa'}
-                                strokeWidth={2}
-                                strokeDasharray={invalidBlocks.size > 0 ? '5,5' : '0'}
-                                endShape={{ arrow: { arrowLength: 4 } }}
-                            >
-                                <div style={{ display: 'inline-flex', gap: '48px', alignItems: 'flex-start', minWidth: 'max-content' }}>
-                                    {blocks.map((block, index) => {
-                                        const isValid = !invalidBlocks.has(index);
-                                        const needsRemining = blocksNeedingRemining.has(index);
-                                        const isMining = mining === index;
 
-                                        return (
-                                            <ArcherElement
-                                                key={index}
-                                                id={`block-${index}`}
-                                                relations={index < blocks.length - 1 ? [{ targetId: `block-${index + 1}`, targetAnchor: 'left', sourceAnchor: 'right' }] : []}
-                                            >
-                                                <div className='notion-card' style={{
-                                                    width: '320px',
-                                                    padding: '20px',
-                                                    borderColor: isValid ? 'rgba(55, 53, 47, 0.09)' : '#fecaca'
-                                                }}>
-                                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', paddingBottom: '12px', borderBottom: '1px solid rgba(55, 53, 47, 0.09)' }}>
-                                                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                                            <div style={{
-                                                                width: '32px',
-                                                                height: '32px',
-                                                                borderRadius: '8px',
-                                                                display: 'flex',
-                                                                alignItems: 'center',
-                                                                justifyContent: 'center',
-                                                                fontWeight: 700,
-                                                                fontSize: '12px',
-                                                                backgroundColor: isValid ? 'rgba(99, 102, 241, 0.1)' : 'rgba(239, 68, 68, 0.1)',
-                                                                color: isValid ? '#6366f1' : '#dc2626'
-                                                            }}>
-                                                                {index}
-                                                            </div>
-                                                            <span style={{ fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Block</span>
-                                                        </div>
-                                                        {needsRemining && (
-                                                            <span style={{ fontSize: '9px', fontWeight: 700, color: '#ca8a04', backgroundColor: 'rgba(234, 179, 8, 0.1)', padding: '4px 8px', borderRadius: '4px', textTransform: 'uppercase' }}>
-                                                                Re-Mine
-                                                            </span>
-                                                        )}
-                                                    </div>
+                        <ArcherContainer
+                            strokeColor={healthy ? '#111110' : '#dc2626'}
+                            strokeWidth={1.5}
+                            strokeDasharray={healthy ? '0' : '5,5'}
+                            endShape={{ arrow: { arrowLength: 4 } }}
+                        >
+                            <div className='el-chain-scroll'>
+                                {blocks.map((block, index) => {
+                                    const isValid = !invalidBlocks.has(index);
+                                    const needsRemining = blocksNeedingRemining.has(index);
+                                    const isMining = mining === index;
 
-                                                    <div style={{ marginBottom: '12px' }}>
-                                                        <label style={{ fontSize: '10px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Data</label>
-                                                        <textarea
-                                                            value={block.data}
-                                                            onChange={e => handleDataChange(index, e.target.value)}
-                                                            placeholder='Enter transaction data...'
-                                                            style={{
-                                                                width: '100%',
-                                                                marginTop: '4px',
-                                                                padding: '12px',
-                                                                border: '1px solid rgba(55, 53, 47, 0.09)',
-                                                                borderRadius: '8px',
-                                                                fontSize: '12px',
-                                                                resize: 'none',
-                                                                height: '80px',
-                                                                backgroundColor: 'rgba(55, 53, 47, 0.03)'
-                                                            }}
-                                                        />
-                                                    </div>
-
-                                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '12px' }}>
-                                                        <div style={{ padding: '8px', backgroundColor: 'rgba(55, 53, 47, 0.03)', borderRadius: '6px' }}>
-                                                            <span style={{ fontSize: '9px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase' }}>Nonce</span>
-                                                            <div style={{ fontSize: '12px', fontWeight: 700, color: '#6366f1', fontFamily: 'monospace' }}>{block.nonce}</div>
-                                                        </div>
-                                                        <div style={{ padding: '8px', backgroundColor: 'rgba(55, 53, 47, 0.03)', borderRadius: '6px' }}>
-                                                            <span style={{ fontSize: '9px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase' }}>Timestamp</span>
-                                                            <div style={{ fontSize: '10px', fontFamily: 'monospace', color: 'rgba(55, 53, 47, 0.7)' }}>{new Date(block.timestamp).toLocaleTimeString()}</div>
-                                                        </div>
-                                                    </div>
-
-                                                    <div style={{ marginBottom: '12px' }}>
-                                                        <span style={{ fontSize: '9px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase' }}>Previous Hash</span>
-                                                        <div style={{ fontSize: '9px', fontFamily: 'monospace', backgroundColor: 'rgba(55, 53, 47, 0.03)', padding: '8px', borderRadius: '6px', wordBreak: 'break-all', color: 'rgba(55, 53, 47, 0.6)', marginTop: '4px' }}>
-                                                            {block.previousHash.slice(0, 32)}...
-                                                        </div>
-                                                    </div>
-
-                                                    <div style={{ marginBottom: '16px' }}>
-                                                        <span style={{ fontSize: '9px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase' }}>Current Hash</span>
-                                                        <div style={{
-                                                            fontSize: '9px',
-                                                            fontFamily: 'monospace',
-                                                            padding: '8px',
-                                                            borderRadius: '6px',
-                                                            wordBreak: 'break-all',
-                                                            fontWeight: 600,
-                                                            marginTop: '4px',
-                                                            backgroundColor: isValid ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
-                                                            color: isValid ? '#059669' : '#dc2626'
-                                                        }}>
-                                                            {block.hash === 'N/A' ? 'N/A' : `${block.hash.slice(0, 32)}...`}
-                                                        </div>
-                                                    </div>
-
-                                                    <button
-                                                        onClick={() => mineBlock(index)}
-                                                        disabled={isMining}
-                                                        className={isValid && !needsRemining ? 'notion-action-btn' : 'notion-action-btn notion-action-primary'}
-                                                        style={{ width: '100%', justifyContent: 'center' }}
-                                                    >
-                                                        <CpuChipIcon className='notion-action-icon' />
-                                                        {isMining ? 'Mining...' : (isValid && !needsRemining ? 'Re-Mine' : 'Mine Block')}
-                                                    </button>
+                                    return (
+                                        <ArcherElement
+                                            key={index}
+                                            id={`block-${index}`}
+                                            relations={index < blocks.length - 1 ? [{ targetId: `block-${index + 1}`, targetAnchor: 'left', sourceAnchor: 'right' }] : []}
+                                        >
+                                            <div className={`el-block-card ${!isValid ? 'is-invalid' : ''} ${isMining ? 'is-mining' : ''}`}>
+                                                <div className='el-block-head'>
+                                                    <span className='el-block-num'>{index}</span>
+                                                    <span className='el-block-label'>Block</span>
+                                                    {needsRemining && <span className='el-tag el-tag-red'>re-mine</span>}
+                                                    {isValid && !needsRemining && block.hash !== 'N/A' && block.hash !== GENESIS_HASH && (
+                                                        <span className='el-tag el-tag-green'>sealed</span>
+                                                    )}
                                                 </div>
-                                            </ArcherElement>
-                                        );
-                                    })}
-                                </div>
-                            </ArcherContainer>
-                        </div>
-                    </div>
 
-                    <footer className='notion-footer'>
-                        © 2026 {strings.NAME}
-                    </footer>
-                </div>
+                                                <textarea
+                                                    value={block.data}
+                                                    onChange={e => handleDataChange(index, e.target.value)}
+                                                    placeholder='Enter transaction data...'
+                                                    className='el-textarea el-block-textarea'
+                                                    rows={3}
+                                                />
+
+                                                <div className='el-block-meta'>
+                                                    <div className='el-kv'>
+                                                        <span className='el-kv-label'>Nonce</span>
+                                                        <div className='el-kv-value el-kv-mono-sm'>{block.nonce}</div>
+                                                    </div>
+                                                    <div className='el-kv'>
+                                                        <span className='el-kv-label'>Timestamp</span>
+                                                        <div className='el-kv-value el-kv-mono-sm'>
+                                                            {mounted ? new Date(block.timestamp).toLocaleTimeString() : '—'}
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div className='el-kv'>
+                                                    <span className='el-kv-label'>Previous Hash</span>
+                                                    <div className='el-hash-box el-hash-prev'>
+                                                        {block.previousHash === GENESIS_HASH ? '0…0 (genesis)' : `${block.previousHash.slice(0, 24)}…`}
+                                                    </div>
+                                                </div>
+
+                                                <div className='el-kv'>
+                                                    <span className='el-kv-label'>Hash</span>
+                                                    <div className={`el-hash-box ${isValid && block.hash !== 'N/A' ? 'el-hash-valid' : !isValid ? 'el-hash-invalid' : 'el-hash-pending'}`}>
+                                                        {block.hash === 'N/A'
+                                                            ? 'N/A — data changed'
+                                                            : isMining
+                                                                ? `${(miningHash || block.hash).slice(0, 24)}…`
+                                                                : `${block.hash.slice(0, 24)}…`}
+                                                    </div>
+                                                </div>
+
+                                                <button
+                                                    onClick={() => mineBlock(index)}
+                                                    disabled={mining !== null}
+                                                    className={`el-btn ${isValid && !needsRemining ? 'el-btn-light' : 'el-btn-dark'} el-generate-btn`}
+                                                >
+                                                    <CpuChipIcon aria-hidden='true' />
+                                                    {isMining ? 'Mining...' : needsRemining || block.hash === 'N/A' ? 'Mine Block' : 'Re-Mine'}
+                                                </button>
+                                            </div>
+                                        </ArcherElement>
+                                    );
+                                })}
+                            </div>
+                        </ArcherContainer>
+                    </div>
+                </section>
+
+                <footer className='el-footer'>
+                    <div className='el-footer-inner'>
+                        <span className='el-footer-logo'>John Leonardo</span>
+                        <div className='el-footer-links'>
+                            <a href={strings.GITHUB_URL} target='_blank' rel='noreferrer'>GitHub</a>
+                            <a href={strings.LINKEDIN_URL} target='_blank' rel='noreferrer'>LinkedIn</a>
+                            <a href={`mailto:${strings.EMAIL}`}>{strings.EMAIL}</a>
+                        </div>
+                        <span className='el-footer-copy'>© 2026. All rights reserved.</span>
+                    </div>
+                </footer>
             </main>
         </>
     );

@@ -8551,3 +8551,121 @@ a.el-btn-light, .el-btn-light {
 .el-bet-presets {
   margin-top: 0.9rem;
 }
+
+/* ============================================
+   Blockchain 101 page
+   ============================================ */
+
+.el-diff-slider {
+  width: 100%;
+  margin-top: 0.5rem;
+  accent-color: var(--el-ink);
+}
+
+.el-chain-scroll {
+  display: inline-flex;
+  gap: 3rem;
+  align-items: flex-start;
+  min-width: max-content;
+  padding: 0.5rem 0.5rem 1.5rem;
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+.el-block-card {
+  width: 310px;
+  padding: 1.15rem;
+  border: 1px solid var(--el-line);
+  border-radius: 12px;
+  background: var(--el-surface);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.el-block-card.is-invalid {
+  border-color: rgba(180, 40, 40, 0.4);
+}
+
+.el-block-card.is-mining {
+  border-color: var(--el-ink);
+  box-shadow: 0 0 0 3px rgba(17, 17, 16, 0.06);
+}
+
+.el-block-head {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding-bottom: 0.8rem;
+  margin-bottom: 0.8rem;
+  border-bottom: 1px solid var(--el-line);
+}
+
+.el-block-num {
+  display: grid;
+  place-items: center;
+  width: 1.9rem;
+  height: 1.9rem;
+  border: 1px solid var(--el-ink);
+  border-radius: 8px;
+  background: var(--el-ink);
+  color: #fdfdfb;
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.82rem;
+  font-weight: 500;
+}
+
+.el-block-label {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.72rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--el-ink-faint);
+  margin-right: auto;
+}
+
+.el-block-textarea {
+  height: 76px;
+  resize: none;
+  font-size: 0.86rem;
+}
+
+.el-block-meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.7rem;
+}
+
+.el-hash-box {
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--el-line);
+  border-radius: 8px;
+  background: var(--el-bg);
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.72rem;
+  word-break: break-all;
+  color: var(--el-ink-soft);
+}
+
+.el-hash-prev {
+  color: var(--el-ink-faint);
+}
+
+.el-hash-valid {
+  border-color: rgba(22, 163, 74, 0.35);
+  background: #ecf6ec;
+  color: #15803d;
+  font-weight: 500;
+}
+
+.el-hash-invalid {
+  border-color: rgba(180, 40, 40, 0.35);
+  background: rgba(180, 40, 40, 0.05);
+  color: #a03030;
+  font-weight: 500;
+}
+
+.el-hash-pending {
+  color: #b98a1c;
+  border-color: rgba(185, 138, 28, 0.35);
+  background: rgba(185, 138, 28, 0.05);
+}
