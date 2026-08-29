@@ -8814,3 +8814,24 @@ a.el-btn-light, .el-btn-light {
     height: 460px;
   }
 }
+
+/* hash lab: breathing room + 2-col digest grid */
+.el-hash-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.el-hash-row {
+  padding: 1.1rem 1.25rem;
+}
+
+.el-hash-row-head {
+  gap: 1rem;
+  margin-bottom: 0.7rem;
+}
+
+@media (max-width: 900px) {
+  .el-hash-list {
+    grid-template-columns: 1fr;
+  }
+}
