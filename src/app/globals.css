@@ -8261,3 +8261,293 @@ a.el-btn-light, .el-btn-light {
   padding: 0 !important;
   overflow: hidden;
 }
+
+/* ============================================
+   Color Gamble + Sort Viz pages
+   ============================================ */
+
+.el-balance-card {
+  border-color: var(--el-ink);
+  background: var(--el-ink);
+}
+
+.el-balance-card .el-stat-label {
+  color: rgba(253, 253, 251, 0.55);
+}
+
+.el-balance-card .el-stat-value {
+  color: #fdfdfb;
+}
+
+.el-gamble-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 0.7rem;
+}
+
+.el-gamble-color {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7rem;
+  height: 118px;
+  border: 1px solid var(--el-line);
+  border-radius: 12px;
+  background: var(--el-surface);
+  cursor: pointer;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.el-gamble-color:hover {
+  border-color: #c9c9c0;
+}
+
+.el-gamble-color.is-selected {
+  border: 2px solid var(--el-ink);
+  transform: scale(1.02);
+}
+
+.el-gamble-color:disabled {
+  cursor: not-allowed;
+}
+
+.el-gamble-dot {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+}
+
+.el-gamble-color.is-spinning .el-gamble-dot {
+  animation: eclSpin 0.5s linear infinite;
+}
+
+.el-gamble-name {
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--el-ink-faint);
+}
+
+.el-gamble-color.is-selected .el-gamble-name {
+  color: var(--el-ink);
+}
+
+.el-gamble-check {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.55rem;
+  color: var(--el-ink);
+  font-size: 0.85rem;
+}
+
+.el-bet-presets {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.el-gamble-actions {
+  display: flex;
+  gap: 0.7rem;
+}
+
+.el-error-center {
+  text-align: center;
+  font-weight: 500;
+}
+
+.el-gamble-result {
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid var(--el-line);
+  background: var(--el-surface);
+  text-align: center;
+}
+
+.el-gamble-result.is-win {
+  border-color: rgba(22, 163, 74, 0.4);
+  background: #ecf6ec;
+}
+
+.el-gamble-result.is-loss {
+  border-color: rgba(180, 40, 40, 0.4);
+  background: rgba(180, 40, 40, 0.04);
+}
+
+.el-gamble-result-label {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.7rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--el-ink-faint);
+  margin-bottom: 0.5rem;
+}
+
+.el-gamble-result-amount {
+  font-size: 2rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  margin-bottom: 0.75rem;
+}
+
+.el-gamble-result.is-win .el-gamble-result-amount {
+  color: #15803d;
+}
+
+.el-gamble-result.is-loss .el-gamble-result-amount {
+  color: #a03030;
+}
+
+.el-gamble-result-color {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 550;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--el-ink-soft);
+}
+
+.el-gamble-dot-sm {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.ecl-history {
+  display: grid;
+  gap: 0;
+}
+
+.ecl-history-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.65rem 0;
+  border-bottom: 1px solid var(--el-line);
+}
+
+.ecl-history-row:last-child {
+  border-bottom: none;
+}
+
+.ecl-history-amount {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.ecl-history-amount.is-win {
+  color: #15803d;
+}
+
+.ecl-history-amount.is-loss {
+  color: #a03030;
+}
+
+.ecl-history-color {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--el-ink-faint);
+}
+
+/* sort viz */
+.el-sort-algos .ecl-suggestion {
+  text-transform: capitalize;
+}
+
+.el-sort-algos .ecl-suggestion.is-selected {
+  border-color: var(--el-ink);
+  background: var(--el-ink);
+  color: #fdfdfb;
+}
+
+.el-complex-card {
+  display: flex;
+  align-items: center;
+  gap: 2.5rem;
+  flex-wrap: wrap;
+}
+
+.ecl-complex-value {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--el-ink);
+}
+
+.ecl-complex-desc {
+  margin: 0 0 0 auto;
+  font-size: 0.9rem;
+  color: var(--el-ink-soft);
+}
+
+.el-sort-canvas {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  height: 300px;
+  gap: 2px;
+}
+
+.el-sort-bar {
+  width: calc(100% / 40);
+  max-width: 16px;
+  border-radius: 3px 3px 0 0;
+  background: #b9b9b1;
+  transition: height 0.1s ease, background-color 0.1s ease;
+}
+
+.el-sort-bar.is-comp {
+  background: #111110;
+}
+
+.el-sort-bar.is-swap {
+  background: #16a34a;
+}
+
+.el-sort-legend {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.el-sort-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.68rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--el-ink-faint);
+}
+
+.el-sort-dot-value {
+  background: #b9b9b1;
+}
+
+.el-sort-dot-comp {
+  background: #111110;
+}
+
+.el-sort-dot-swap {
+  background: #16a34a;
+}
+
+.el-bet-presets {
+  margin-top: 0.9rem;
+}

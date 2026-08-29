@@ -5,18 +5,11 @@ import Link from 'next/link';
 import ReactConfetti from 'react-confetti';
 import { strings } from '../../constants/strings';
 import { WebVitals } from '@/components/SEO/WebVitals';
-import {
-    DevicePhoneMobileIcon,
-    PencilSquareIcon,
-    DocumentTextIcon,
-    CubeIcon,
-    ArrowPathIcon,
-} from '@heroicons/react/24/outline';
+import { CubeIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 
 type Color = {
     id: string;
     name: string;
-    gradient: string;
     hex: string;
 };
 
@@ -38,12 +31,12 @@ type GameHistory = {
 };
 
 const COLORS: Color[] = [
-    { id: 'red', name: 'Red', gradient: 'from-red-400 to-red-600', hex: '#F87171' },
-    { id: 'blue', name: 'Blue', gradient: 'from-blue-400 to-blue-600', hex: '#60A5FA' },
-    { id: 'green', name: 'Green', gradient: 'from-green-400 to-green-600', hex: '#4ADE80' },
-    { id: 'purple', name: 'Purple', gradient: 'from-purple-400 to-purple-600', hex: '#C084FC' },
-    { id: 'orange', name: 'Orange', gradient: 'from-orange-400 to-orange-600', hex: '#FB923C' },
-    { id: 'pink', name: 'Pink', gradient: 'from-pink-400 to-pink-600', hex: '#F472B6' },
+    { id: 'red', name: 'Red', hex: '#dc2626' },
+    { id: 'blue', name: 'Blue', hex: '#2563eb' },
+    { id: 'green', name: 'Green', hex: '#16a34a' },
+    { id: 'purple', name: 'Purple', hex: '#7c3aed' },
+    { id: 'orange', name: 'Orange', hex: '#ea580c' },
+    { id: 'pink', name: 'Pink', hex: '#db2777' },
 ];
 
 const PRESET_BETS = [10, 50, 100, 250, 500];
@@ -105,7 +98,6 @@ export default function Gamble() {
 
         setResult(gameResult);
         setIsSpinning(false);
-        setTimeout(() => { setSelectedColors([]); setBetAmount(0); }, 3000);
     };
 
     const resetGame = () => {
@@ -122,217 +114,181 @@ export default function Gamble() {
         <>
             <WebVitals />
             {showConfetti && <ReactConfetti style={{ zIndex: 100 }} />}
-            <main className={`jd-home jd-apps-home ${isLoaded ? 'is-loaded' : ''}`}>
-                <header className='jd-nav-wrap'>
-                    <Link href='/' className='jd-logo'>{strings.NAME}</Link>
-                    <nav className='jd-nav' aria-label='Primary navigation'>
-                        <Link href='/apps' className='jd-nav-link'>Apps</Link>
-                        <Link href='/blog' className='jd-nav-link'>Blog</Link>
-                        <Link href='/apps/resume' className='jd-nav-link'>Resume</Link>
+            <main className='el-page'>
+                <header className='el-nav'>
+                    <Link href='/' className='el-logo' aria-label='John Leonardo home'>
+                        John Leonardo
+                    </Link>
+                    <nav className='el-nav-links' aria-label='Primary navigation'>
+                        <Link href='/apps' className='el-nav-link'>Apps</Link>
+                        <Link href='/blog' className='el-nav-link'>Blog</Link>
+                        <Link href='/apps/resume' className='el-nav-link'>Resume</Link>
                     </nav>
-                    <div className='jd-nav-actions'>
-                        <Link href='/apps/chat' className='jd-login'>Chat</Link>
-                        <Link href='/' className='jd-top-cta'>Home</Link>
+                    <div className='el-nav-actions'>
+                        <Link href='/apps/chat' className='el-nav-link'>Chat</Link>
+                        <Link href={`mailto:${strings.EMAIL}`} className='el-btn el-btn-dark el-btn-sm'>
+                            Contact
+                        </Link>
                     </div>
                 </header>
 
-                <div className={`notion-content ${isLoaded ? 'loaded' : ''}`} style={{ maxWidth: '900px' }}>
-                    <div className='notion-title-block'>
-                        <h1 className='notion-title'>Color Gamble</h1>
-                        <div className='notion-subtitle'>Pick colors, place your bet, and test your luck</div>
-                    </div>
-
-                    <div className='notion-divider' />
-
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '32px' }}>
-                        <div className='notion-card' style={{ padding: '20px', background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)', color: 'white' }}>
-                            <span style={{ fontSize: '10px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em', opacity: 0.8 }}>Balance</span>
-                            <div style={{ fontSize: '28px', fontWeight: 700, marginTop: '4px' }}>${balance.toLocaleString()}</div>
+                <section className='el-hero el-hero-page'>
+                    <div className='el-hero-inner'>
+                        <div className='el-hero-copy'>
+                            <h1>Color Gamble</h1>
+                            <p className='el-hero-sub'>
+                                Pick colors, place your bet, and test your luck.
+                            </p>
                         </div>
-                        <div className='notion-card' style={{ padding: '20px' }}>
-                            <span style={{ fontSize: '10px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Multiplier</span>
-                            <div style={{ fontSize: '28px', fontWeight: 700, color: '#6366f1', marginTop: '4px' }}>
+                    </div>
+                </section>
+
+                <section className='el-section el-sentiment'>
+                    <div className='el-stat-grid'>
+                        <div className='el-stat-card el-balance-card'>
+                            <span className='el-stat-label'>Balance</span>
+                            <div className='el-stat-value'>
+                                ${balance.toLocaleString()}
+                            </div>
+                        </div>
+                        <div className='el-stat-card'>
+                            <span className='el-stat-label'>Multiplier</span>
+                            <div className='el-stat-value'>
                                 {multiplier > 0 ? `${multiplier.toFixed(2)}x` : '—'}
                             </div>
                         </div>
                     </div>
 
-                    <div className='notion-section'>
-                        <div className='notion-section-title'>
-                            <CubeIcon className='notion-section-icon' />
-                            Select Colors
+                    <div className='el-chart-block'>
+                        <div className='el-chart-title'>
+                            <span className='el-chart-title-label'>
+                                <CubeIcon aria-hidden='true' />
+                                Select Colors
+                            </span>
+                            <span className='el-chart-pill'>{selectedColors.length}/5 selected</span>
                         </div>
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '12px', marginTop: '16px' }}>
+                        <div className='el-gamble-grid'>
                             {COLORS.map(color => (
                                 <button
                                     key={color.id}
                                     onClick={() => handleColorSelect(color.id)}
                                     disabled={isSpinning}
-                                    style={{
-                                        position: 'relative',
-                                        height: '120px',
-                                        borderRadius: '12px',
-                                        border: selectedColors.includes(color.id) ? '3px solid #6366f1' : '1px solid rgba(55, 53, 47, 0.09)',
-                                        backgroundColor: 'white',
-                                        cursor: isSpinning ? 'not-allowed' : 'pointer',
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        gap: '8px',
-                                        transition: 'all 0.2s ease',
-                                        transform: selectedColors.includes(color.id) ? 'scale(1.02)' : 'scale(1)',
-                                        boxShadow: selectedColors.includes(color.id) ? '0 4px 12px rgba(99, 102, 241, 0.25)' : 'none'
-                                    }}
+                                    className={`el-gamble-color ${selectedColors.includes(color.id) ? 'is-selected' : ''}`}
                                 >
-                                    <div style={{
-                                        width: '48px',
-                                        height: '48px',
-                                        borderRadius: '50%',
-                                        backgroundColor: color.hex,
-                                        transition: 'transform 0.3s ease',
-                                        animation: isSpinning ? 'spin 0.5s linear infinite' : 'none'
-                                    }} />
-                                    <span style={{
-                                        fontSize: '11px',
-                                        fontWeight: 600,
-                                        textTransform: 'uppercase',
-                                        letterSpacing: '0.1em',
-                                        color: selectedColors.includes(color.id) ? '#6366f1' : 'rgba(55, 53, 47, 0.5)'
-                                    }}>
-                                        {color.name}
-                                    </span>
+                                    <span
+                                        className={`el-gamble-dot ${isSpinning ? 'is-spinning' : ''}`}
+                                        style={{ backgroundColor: color.hex }}
+                                    />
+                                    <span className='el-gamble-name'>{color.name}</span>
                                     {selectedColors.includes(color.id) && (
-                                        <div style={{ position: 'absolute', top: '8px', right: '8px', color: '#6366f1' }}>
-                                            ✓
-                                        </div>
+                                        <span className='el-gamble-check'>✓</span>
                                     )}
                                 </button>
                             ))}
                         </div>
                     </div>
 
-                    <div className='notion-divider' />
-
-                    <div className='notion-card' style={{ padding: '24px' }}>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                            <div>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                                    <span style={{ fontSize: '11px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Wager Amount</span>
-                                    <span style={{ fontSize: '12px', fontWeight: 600, color: '#6366f1' }}>
-                                        {multiplier > 0 ? `Potential Win: $${(betAmount * multiplier).toFixed(0)}` : ''}
-                                    </span>
-                                </div>
-                                <div style={{ position: 'relative' }}>
-                                    <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'rgba(55, 53, 47, 0.5)', fontWeight: 600 }}>$</span>
-                                    <input
-                                        type='number'
-                                        value={betAmount || ''}
-                                        onChange={e => setBetAmount(Number(e.target.value))}
-                                        placeholder='0'
-                                        disabled={isSpinning}
-                                        className='notion-input'
-                                        style={{ paddingLeft: '28px' }}
-                                    />
-                                </div>
+                    <div className='el-chart-block'>
+                        <div className='el-chart-title'>
+                            <span className='el-chart-title-label'>Place Your Bet</span>
+                            {multiplier > 0 && (
+                                <span className='el-chart-pill'>
+                                    potential win ${(betAmount * multiplier).toFixed(0)}
+                                </span>
+                            )}
+                        </div>
+                        <div className='el-file-card'>
+                            <label className='ecl-copy-label'>Wager Amount</label>
+                            <div className='el-money-wrap'>
+                                <span className='el-money-symbol'>$</span>
+                                <input
+                                    type='number'
+                                    value={betAmount || ''}
+                                    onChange={e => setBetAmount(Number(e.target.value))}
+                                    placeholder='0'
+                                    disabled={isSpinning}
+                                    className='el-textarea el-el-input el-money-input'
+                                />
                             </div>
-
-                            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                            <div className='el-bet-presets'>
                                 {PRESET_BETS.map(amt => (
                                     <button
                                         key={amt}
                                         onClick={() => setBetAmount(amt)}
                                         disabled={isSpinning || amt > balance}
-                                        className={betAmount === amt ? 'notion-action-btn notion-action-primary' : 'notion-action-btn'}
-                                        style={{ padding: '8px 16px' }}
+                                        className={`el-btn el-btn-sm ${betAmount === amt ? 'el-btn-dark' : 'el-btn-light'}`}
                                     >
                                         ${amt}
                                     </button>
                                 ))}
                             </div>
-
-                            <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+                            <div className='el-gamble-actions'>
                                 <button
                                     onClick={handleGamble}
                                     disabled={isSpinning || !selectedColors.length || betAmount <= 0}
-                                    className='notion-action-btn notion-action-primary'
-                                    style={{
-                                        flex: 1,
-                                        padding: '16px',
-                                        justifyContent: 'center',
-                                        backgroundColor: isSpinning ? '#facc15' : undefined,
-                                        animation: isSpinning ? 'pulse 1s infinite' : 'none'
-                                    }}
+                                    className='el-btn el-btn-dark el-generate-btn'
                                 >
                                     {isSpinning ? 'Rolling...' : 'Place Bet'}
                                 </button>
-                                <button onClick={resetGame} className='notion-action-btn' style={{ padding: '16px' }}>
-                                    <ArrowPathIcon className='notion-action-icon' />
+                                <button onClick={resetGame} className='el-btn el-btn-light el-generate-btn'>
+                                    <ArrowPathIcon aria-hidden='true' />
                                     Reset
                                 </button>
                             </div>
-
-                            {error && (
-                                <div style={{ padding: '12px', backgroundColor: 'rgba(239, 68, 68, 0.1)', borderRadius: '8px', color: '#dc2626', fontSize: '13px', fontWeight: 500, textAlign: 'center' }}>
-                                    {error}
-                                </div>
-                            )}
+                            {error && <div className='el-error-text el-error-center'>{error}</div>}
                         </div>
                     </div>
 
                     {result && (
-                        <>
-                            <div className='notion-divider' />
-                            <div className='notion-card' style={{
-                                padding: '24px',
-                                textAlign: 'center',
-                                border: result.won ? '2px solid #059669' : '2px solid #dc2626',
-                                backgroundColor: result.won ? 'rgba(16, 185, 129, 0.05)' : 'rgba(239, 68, 68, 0.05)'
-                            }}>
-                                <div style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'rgba(55, 53, 47, 0.5)', marginBottom: '8px' }}>Round Result</div>
-                                <div style={{ fontSize: '32px', fontWeight: 800, color: result.won ? '#059669' : '#dc2626', marginBottom: '12px' }}>
-                                    {result.won ? `+$${result.amount}` : `-$${result.amount}`}
+                        <div className='el-chart-block'>
+                            <div className={`el-gamble-result ${result.won ? 'is-win' : 'is-loss'}`}>
+                                <div className='el-gamble-result-label'>Round Result</div>
+                                <div className='el-gamble-result-amount'>
+                                    {result.won ? `+$${result.amount.toLocaleString()}` : `-$${result.amount.toLocaleString()}`}
                                 </div>
-                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-                                    <span style={{ fontSize: '12px', fontWeight: 600, textTransform: 'uppercase' }}>Winning Color:</span>
-                                    <span style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: getColorObject(result.color).hex }} />
-                                    <span style={{ fontSize: '12px', fontWeight: 600, textTransform: 'uppercase' }}>{getColorObject(result.color).name}</span>
+                                <div className='el-gamble-result-color'>
+                                    <span>Winning color:</span>
+                                    <span className='el-gamble-dot-sm' style={{ backgroundColor: getColorObject(result.color).hex }} />
+                                    <span>{getColorObject(result.color).name}</span>
                                 </div>
                             </div>
-                        </>
+                        </div>
                     )}
 
                     {gameHistory.length > 0 && (
-                        <>
-                            <div className='notion-divider' />
-                            <div className='notion-section'>
-                                <div className='notion-section-title'>
-                                    <DocumentTextIcon className='notion-section-icon' />
-                                    History
-                                </div>
-                                <div style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                                    {gameHistory.map(game => (
-                                        <div key={game.id} className='notion-card' style={{ padding: '12px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                            <div>
-                                                <span style={{ fontSize: '14px', fontWeight: 600, color: game.result === 'win' ? '#059669' : '#dc2626' }}>
-                                                    {game.result === 'win' ? '+' : '-'}${game.amount}
-                                                </span>
-                                                <span style={{ fontSize: '11px', color: 'rgba(55, 53, 47, 0.5)', marginLeft: '8px', textTransform: 'uppercase' }}>
-                                                    {getColorObject(game.winningColor).name}
-                                                </span>
-                                            </div>
-                                            <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: getColorObject(game.winningColor).hex }} />
-                                        </div>
-                                    ))}
-                                </div>
+                        <div className='el-chart-block'>
+                            <div className='el-chart-title'>
+                                <span className='el-chart-title-label'>History</span>
+                                <span className='el-chart-pill'>last 10</span>
                             </div>
-                        </>
+                            <div className='el-file-card ecl-history'>
+                                {gameHistory.map(game => (
+                                    <div key={game.id} className='ecl-history-row'>
+                                        <span className={`ecl-history-amount ${game.result === 'win' ? 'is-win' : 'is-loss'}`}>
+                                            {game.result === 'win' ? '+' : '-'}${game.amount}
+                                        </span>
+                                        <span className='ecl-history-color'>
+                                            <span className='el-gamble-dot-sm' style={{ backgroundColor: getColorObject(game.winningColor).hex }} />
+                                            {getColorObject(game.winningColor).name}
+                                        </span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
                     )}
+                </section>
 
-                    <footer className='notion-footer'>
-                        © 2026 {strings.NAME}
-                    </footer>
-                </div>
+                <footer className='el-footer'>
+                    <div className='el-footer-inner'>
+                        <span className='el-footer-logo'>John Leonardo</span>
+                        <div className='el-footer-links'>
+                            <a href={strings.GITHUB_URL} target='_blank' rel='noreferrer'>GitHub</a>
+                            <a href={strings.LINKEDIN_URL} target='_blank' rel='noreferrer'>LinkedIn</a>
+                            <a href={`mailto:${strings.EMAIL}`}>{strings.EMAIL}</a>
+                        </div>
+                        <span className='el-footer-copy'>© 2026. All rights reserved.</span>
+                    </div>
+                </footer>
             </main>
         </>
     );

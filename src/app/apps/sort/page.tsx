@@ -4,13 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { strings } from '../../constants/strings';
 import { WebVitals } from '@/components/SEO/WebVitals';
-import {
-    DevicePhoneMobileIcon,
-    PencilSquareIcon,
-    DocumentTextIcon,
-    PlayIcon,
-    ArrowPathIcon,
-} from '@heroicons/react/24/outline';
+import { PlayIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 
 type Algorithm = 'bubble' | 'quick' | 'insertion' | 'selection';
 
@@ -145,119 +139,127 @@ export default function Sort() {
     return (
         <>
             <WebVitals />
-            <main className={`jd-home jd-apps-home ${isLoaded ? 'is-loaded' : ''}`}>
-                <header className='jd-nav-wrap'>
-                    <Link href='/' className='jd-logo'>{strings.NAME}</Link>
-                    <nav className='jd-nav' aria-label='Primary navigation'>
-                        <Link href='/apps' className='jd-nav-link'>Apps</Link>
-                        <Link href='/blog' className='jd-nav-link'>Blog</Link>
-                        <Link href='/apps/resume' className='jd-nav-link'>Resume</Link>
+            <main className='el-page'>
+                <header className='el-nav'>
+                    <Link href='/' className='el-logo' aria-label='John Leonardo home'>
+                        John Leonardo
+                    </Link>
+                    <nav className='el-nav-links' aria-label='Primary navigation'>
+                        <Link href='/apps' className='el-nav-link'>Apps</Link>
+                        <Link href='/blog' className='el-nav-link'>Blog</Link>
+                        <Link href='/apps/resume' className='el-nav-link'>Resume</Link>
                     </nav>
-                    <div className='jd-nav-actions'>
-                        <Link href='/apps/chat' className='jd-login'>Chat</Link>
-                        <Link href='/' className='jd-top-cta'>Home</Link>
+                    <div className='el-nav-actions'>
+                        <Link href='/apps/chat' className='el-nav-link'>Chat</Link>
+                        <Link href={`mailto:${strings.EMAIL}`} className='el-btn el-btn-dark el-btn-sm'>
+                            Contact
+                        </Link>
                     </div>
                 </header>
 
-                <div className={`notion-content ${isLoaded ? 'loaded' : ''}`} style={{ maxWidth: '1100px' }}>
-                    <div className='notion-title-block'>
-                        <h1 className='notion-title'>Sort Visualization</h1>
-                        <div className='notion-subtitle'>Interactive visualization of classic sorting algorithms</div>
+                <section className='el-hero el-hero-page'>
+                    <div className='el-hero-inner'>
+                        <div className='el-hero-copy'>
+                            <h1>Sort Visualization</h1>
+                            <p className='el-hero-sub'>
+                                Interactive visualization of classic sorting algorithms.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
+                <section className='el-section el-sentiment'>
+                    <div className='el-chart-block' style={{ marginTop: 0 }}>
+                        <div className='el-chart-title'>
+                            <span className='el-chart-title-label'>
+                                <PlayIcon aria-hidden='true' />
+                                Algorithm
+                            </span>
+                            <span className='el-chart-pill'>{complexInfo[algorithm].time} · {complexInfo[algorithm].space}</span>
+                        </div>
+                        <div className='el-file-card'>
+                            <div className='el-sort-algos ecl-diagram-suggestions ecl-sort-algos'>
+                                {(['bubble', 'quick', 'insertion', 'selection'] as Algorithm[]).map(a => (
+                                    <button
+                                        key={a}
+                                        onClick={() => setAlgorithm(a)}
+                                        disabled={sorting}
+                                        className={`ecl-suggestion ${algorithm === a ? 'is-selected' : ''}`}
+                                    >
+                                        {a} sort
+                                    </button>
+                                ))}
+                            </div>
+                            <div className='el-serialize-row' style={{ marginBottom: 0 }}>
+                                <button
+                                    onClick={startSort}
+                                    disabled={sorting}
+                                    className='el-btn el-btn-dark el-btn-sm'
+                                >
+                                    <PlayIcon aria-hidden='true' />
+                                    {sorting ? 'Sorting...' : 'Start Sort'}
+                                </button>
+                                <button
+                                    onClick={generateArray}
+                                    disabled={sorting}
+                                    className='el-btn el-btn-light el-btn-sm'
+                                >
+                                    <ArrowPathIcon aria-hidden='true' />
+                                    Reset Array
+                                </button>
+                                <p className='ecl-complex-desc'>{complexInfo[algorithm].desc}</p>
+                            </div>
+                        </div>
                     </div>
 
-                    <div className='notion-divider' />
-
-                    <div className='notion-section'>
-                        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginBottom: '24px' }}>
-                            {(['bubble', 'quick', 'insertion', 'selection'] as Algorithm[]).map(a => (
-                                <button
-                                    key={a}
-                                    onClick={() => setAlgorithm(a)}
-                                    disabled={sorting}
-                                    className={algorithm === a ? 'notion-action-btn notion-action-primary' : 'notion-action-btn'}
-                                    style={{ textTransform: 'capitalize' }}
-                                >
-                                    {a} Sort
-                                </button>
-                            ))}
+                    <div className='el-chart-block'>
+                        <div className='el-chart-title'>
+                            <span className='el-chart-title-label'>Visualization</span>
+                            <span className='el-chart-pill'>{ARRAY_SIZE} elements</span>
                         </div>
-
-                        <div style={{ display: 'flex', gap: '12px', marginBottom: '24px' }}>
-                            <button
-                                onClick={startSort}
-                                disabled={sorting}
-                                className='notion-action-btn notion-action-primary'
-                            >
-                                <PlayIcon className='notion-action-icon' />
-                                {sorting ? 'Sorting...' : 'Start Sort'}
-                            </button>
-                            <button
-                                onClick={generateArray}
-                                disabled={sorting}
-                                className='notion-action-btn'
-                            >
-                                <ArrowPathIcon className='notion-action-icon' />
-                                Reset Array
-                            </button>
-                        </div>
-
-                        <div className='notion-card' style={{ padding: '24px', marginBottom: '24px' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-                                <div>
-                                    <span style={{ fontSize: '12px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Time Complexity</span>
-                                    <div style={{ fontSize: '18px', fontWeight: 700, color: '#6366f1' }}>{complexInfo[algorithm].time}</div>
-                                </div>
-                                <div>
-                                    <span style={{ fontSize: '12px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Space Complexity</span>
-                                    <div style={{ fontSize: '18px', fontWeight: 700, color: '#6366f1' }}>{complexInfo[algorithm].space}</div>
-                                </div>
-                            </div>
-                            <p style={{ color: 'rgba(55, 53, 47, 0.6)', fontSize: '14px' }}>{complexInfo[algorithm].desc}</p>
-                        </div>
-
-                        <div className='notion-card' style={{ padding: '32px', background: 'linear-gradient(135deg, #1a1b1e 0%, #2d2e32 100%)' }}>
-                            <div style={{ display: 'flex', alignItems: 'end', justifyContent: 'center', height: '300px', gap: '2px' }}>
+                        <div className='el-chart-card'>
+                            <div className='el-sort-canvas'>
                                 {array.map((value, index) => {
                                     const isComp = comparing?.includes(index);
                                     const isSwap = swapping?.includes(index);
                                     return (
                                         <div
                                             key={index}
-                                            style={{
-                                                width: `${100 / ARRAY_SIZE}%`,
-                                                maxWidth: '16px',
-                                                height: `${value * 2.5}px`,
-                                                backgroundColor: isSwap ? '#22c55e' : isComp ? '#facc15' : '#818cf8',
-                                                borderRadius: '2px 2px 0 0',
-                                                transition: 'all 0.1s ease',
-                                                boxShadow: isComp || isSwap ? '0 0 10px rgba(250, 204, 21, 0.5)' : 'none',
-                                            }}
+                                            className={`el-sort-bar ${isSwap ? 'is-swap' : isComp ? 'is-comp' : ''}`}
+                                            style={{ height: `${value * 2.5}px` }}
                                         />
                                     );
                                 })}
                             </div>
                         </div>
-
-                        <div style={{ display: 'flex', gap: '24px', justifyContent: 'center', marginTop: '16px' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: '#818cf8' }} />
-                                <span style={{ fontSize: '12px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase' }}>Value</span>
-                            </div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: '#facc15' }} />
-                                <span style={{ fontSize: '12px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase' }}>Comparing</span>
-                            </div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: '#22c55e' }} />
-                                <span style={{ fontSize: '12px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase' }}>Swapping</span>
-                            </div>
+                        <div className='el-sort-legend'>
+                            <span className='el-sort-legend-item'>
+                                <i className='ecl-dot el-sort-dot-value' />
+                                Value
+                            </span>
+                            <span className='el-sort-legend-item'>
+                                <i className='ecl-dot el-sort-dot-comp' />
+                                Comparing
+                            </span>
+                            <span className='el-sort-legend-item'>
+                                <i className='ecl-dot el-sort-dot-swap' />
+                                Swapping
+                            </span>
                         </div>
                     </div>
+                </section>
 
-                    <footer className='notion-footer'>
-                        © 2026 {strings.NAME}
-                    </footer>
-                </div>
+                <footer className='el-footer'>
+                    <div className='el-footer-inner'>
+                        <span className='el-footer-logo'>John Leonardo</span>
+                        <div className='el-footer-links'>
+                            <a href={strings.GITHUB_URL} target='_blank' rel='noreferrer'>GitHub</a>
+                            <a href={strings.LINKEDIN_URL} target='_blank' rel='noreferrer'>LinkedIn</a>
+                            <a href={`mailto:${strings.EMAIL}`}>{strings.EMAIL}</a>
+                        </div>
+                        <span className='el-footer-copy'>© 2026. All rights reserved.</span>
+                    </div>
+                </footer>
             </main>
         </>
     );
