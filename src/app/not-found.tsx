@@ -1,118 +1,128 @@
-'use client';
-
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { apps } from './constants/apps';
+import { ArrowUpRightIcon } from '@heroicons/react/24/outline';
 import { WebVitals } from '@/components/SEO/WebVitals';
-import {
-    HomeIcon,
-    RocketLaunchIcon,
-    MagnifyingGlassIcon,
-    ChatBubbleLeftRightIcon,
-    UserIcon,
-    BookOpenIcon,
-    CircleStackIcon,
-    DocumentTextIcon,
-} from '@heroicons/react/24/outline';
+import { strings } from './constants/strings';
 
-// Map apps to their icons
-const getAppIcon = (title: string) => {
-    const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
-        'AI Chat': ChatBubbleLeftRightIcon,
-        'Chat w/ John': UserIcon,
-        'Resume Screen': MagnifyingGlassIcon,
-        'PDF Chat (Embeddings)': BookOpenIcon,
-        'Knowledge Graph': CircleStackIcon,
-    };
-    return iconMap[title] || DocumentTextIcon;
-};
+const navLinks = [
+    { label: 'Apps', href: '/apps' },
+    { label: 'Blog', href: '/blog' },
+    { label: 'Resume', href: '/apps/resume' },
+    { label: 'GitHub', href: strings.GITHUB_URL, external: true },
+];
+
+const quickLinks = [
+    {
+        label: 'Apps',
+        description: 'Small tools, toys, and experiments.',
+        href: '/apps',
+    },
+    {
+        label: 'Blog',
+        description: 'Technical notes and longer writeups.',
+        href: '/blog',
+    },
+    {
+        label: 'Resume',
+        description: 'Experience and background.',
+        href: '/apps/resume',
+    },
+];
 
 export default function NotFound() {
-    const [isLoaded, setIsLoaded] = useState(false);
-    const popularApps = apps.slice(0, 4);
-
-    useEffect(() => {
-        const timer = setTimeout(() => setIsLoaded(true), 100);
-        return () => clearTimeout(timer);
-    }, []);
-
     return (
         <>
             <WebVitals />
-            <main className='notion-page' style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
-                <div className={`notion-content ${isLoaded ? 'loaded' : ''}`} style={{ maxWidth: '600px', textAlign: 'center' }}>
-                    {/* Icon */}
-                    <div style={{ marginBottom: '24px' }}>
-                        <div style={{ width: '80px', height: '80px', margin: '0 auto', background: 'rgba(220, 38, 38, 0.08)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <MagnifyingGlassIcon style={{ width: '40px', height: '40px', color: 'rgb(220, 38, 38)', strokeWidth: 2 }} />
-                        </div>
+            <main className='el-page'>
+                <header className='el-nav'>
+                    <Link href='/' className='el-logo' aria-label='John Leonardo home'>
+                        John Leonardo
+                    </Link>
+                    <nav className='el-nav-links' aria-label='Primary'>
+                        {navLinks.map((link) => (
+                            <a
+                                key={link.label}
+                                href={link.href}
+                                target={link.external ? '_blank' : undefined}
+                                rel={link.external ? 'noreferrer' : undefined}
+                                className='el-nav-link'
+                            >
+                                {link.label}
+                            </a>
+                        ))}
+                    </nav>
+                    <div className='el-nav-actions'>
+                        <a href={strings.LINKEDIN_URL} target='_blank' rel='noreferrer' className='el-nav-link'>
+                            LinkedIn
+                        </a>
+                        <a href={`mailto:${strings.EMAIL}`} className='el-btn el-btn-dark el-btn-sm'>
+                            Contact
+                        </a>
                     </div>
+                </header>
 
-                    {/* Title */}
-                    <h1 className='notion-title' style={{ marginBottom: '12px' }}>404 - Page Not Found</h1>
-                    <div className='notion-subtitle' style={{ marginBottom: '32px' }}>
-                        The page you're looking for doesn't exist or has been moved
-                    </div>
-
-                    {/* Divider */}
-                    <div className='notion-divider' />
-
-                    {/* Quick Links */}
-                    <div style={{ marginTop: '32px', marginBottom: '32px' }}>
-                        <div style={{ fontSize: '12px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '16px' }}>
-                            Quick Navigation
-                        </div>
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '12px' }}>
-                            <Link href='/' className='notion-link-item'>
-                                <HomeIcon className='notion-link-icon' />
-                                <span className='notion-link-label'>Home</span>
-                            </Link>
-                            <Link href='/apps' className='notion-link-item'>
-                                <RocketLaunchIcon className='notion-link-icon' />
-                                <span className='notion-link-label'>Apps</span>
-                            </Link>
-                        </div>
-                    </div>
-
-                    {/* Popular Apps */}
-                    {popularApps.length > 0 && (
-                        <>
-                            <div className='notion-divider' />
-                            <div style={{ marginTop: '32px' }}>
-                                <div style={{ fontSize: '12px', fontWeight: 600, color: 'rgba(55, 53, 47, 0.5)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '16px' }}>
-                                    Popular Apps
-                                </div>
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                                    {popularApps.map((app, idx) => {
-                                        const IconComponent = getAppIcon(app.title);
-                                        return (
-                                            <Link
-                                                key={app.href}
-                                                href={app.href}
-                                                className='notion-app-item'
-                                                style={{ animationDelay: `${idx * 50}ms` }}
-                                            >
-                                                <div className='notion-app-icon-wrapper' style={{ width: '36px', height: '36px' }}>
-                                                    <IconComponent className='notion-app-icon' />
-                                                </div>
-                                                <div className='notion-app-info'>
-                                                    <div className='notion-app-name'>{app.title}</div>
-                                                    <div className='notion-app-desc'>{app.subtitle}</div>
-                                                </div>
-                                                <div className='notion-app-arrow'>→</div>
-                                            </Link>
-                                        );
-                                    })}
-                                </div>
+                <section className='el-hero el-hero-page'>
+                    <div className='el-hero-inner'>
+                        <div className='el-hero-copy'>
+                            <div className='el-eyebrow'>
+                                <span>Error 404</span>
+                                <span>Page not found</span>
                             </div>
-                        </>
-                    )}
+                            <h1>
+                                Nothing here
+                                <span className='el-hero-cursor' aria-hidden='true' />
+                            </h1>
+                            <p className='el-hero-sub'>
+                                The page you're looking for doesn't exist or has been
+                                moved. It happens to the best of URLs.
+                            </p>
 
-                    {/* Footer */}
-                    <footer className='notion-footer' style={{ marginTop: '48px' }}>
-                        Error 404 • Page Not Found
-                    </footer>
-                </div>
+                            <div className='el-hero-actions'>
+                                <Link href='/' className='el-btn el-btn-dark'>
+                                    Back home
+                                    <ArrowUpRightIcon />
+                                </Link>
+                                <Link href='/apps' className='el-btn el-btn-light'>
+                                    Browse apps
+                                </Link>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section className='el-section' aria-label='Quick links'>
+                    <div className='el-list-head'>
+                        <h3>Quick links</h3>
+                    </div>
+                    <ul className='el-list'>
+                        {quickLinks.map((link) => (
+                            <li key={link.href}>
+                                <Link href={link.href} className='el-row'>
+                                    <span className='el-row-label'>{link.label}</span>
+                                    <span className='el-row-desc'>{link.description}</span>
+                                    <span className='el-arrow' aria-hidden='true'>
+                                        <ArrowUpRightIcon />
+                                    </span>
+                                </Link>
+                            </li>
+                        ))}
+                    </ul>
+                </section>
+
+                <footer className='el-footer'>
+                    <div className='el-footer-inner'>
+                        <span className='el-footer-logo'>John Leonardo</span>
+                        <div className='el-footer-links'>
+                            <a href={strings.GITHUB_URL} target='_blank' rel='noreferrer'>
+                                GitHub
+                            </a>
+                            <a href={strings.LINKEDIN_URL} target='_blank' rel='noreferrer'>
+                                LinkedIn
+                            </a>
+                            <a href={`mailto:${strings.EMAIL}`}>{strings.EMAIL}</a>
+                        </div>
+                        <span className='el-footer-copy'>© 2026. All rights reserved.</span>
+                    </div>
+                </footer>
             </main>
         </>
     );
