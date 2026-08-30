@@ -25,6 +25,12 @@ export const apps: MiniApp[] = [
         href: '/apps/screen',
     },
     {
+        title: 'AI Writing Detector',
+        subtitle: 'Paste any text and get an estimated % chance it was AI-written, with reasons why.',
+        emoji: '🧠',
+        href: '/apps/ai-writing-detector',
+    },
+    {
         title: 'LLM Serialization',
         subtitle: 'Compare token efficiency across different serialization formats for LLMs.',
         emoji: '🔢',
