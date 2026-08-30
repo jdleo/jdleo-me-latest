@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { countTokens } from 'gpt-tokenizer/encoding/o200k_base';
 import { strings } from '../../constants/strings';
 import { WebVitals } from '@/components/SEO/WebVitals';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
@@ -120,7 +121,7 @@ export default function Serialization() {
     }, []);
 
     const estimateTokens = (text: string): number => {
-        return Math.ceil(text.length / 4);
+        return countTokens(text);
     };
 
     const toggleExpand = (format: string) => {
