@@ -9004,3 +9004,29 @@ a.el-btn-light, .el-btn-light {
     font-size: 44px;
   }
 }
+
+/* AI Writing Detector: tighter vertical rhythm */
+.el-awd-page .el-hero {
+  padding-top: clamp(5.5rem, 9vh, 6.5rem);
+  padding-bottom: clamp(1.25rem, 3vw, 1.75rem);
+}
+
+.el-awd-page .el-section {
+  padding-top: clamp(1.5rem, 3vw, 2rem);
+}
+
+.el-awd-page .el-chart-block {
+  margin-top: 1.5rem;
+}
+
+.el-awd-page .el-chart-block:first-child {
+  margin-top: 0;
+}
+
+.el-awd-grid {
+  margin-top: 16px;
+}
+
+.el-awd-notes {
+  margin-top: 16px;
+}

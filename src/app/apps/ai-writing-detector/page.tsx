@@ -69,7 +69,7 @@ export default function AIDetectorPage() {
     return (
         <>
             <WebVitals />
-            <main className='el-page'>
+            <main className='el-page el-awd-page'>
                 <header className='el-nav'>
                     <Link href='/' className='el-logo' aria-label='John Leonardo home'>
                         John Leonardo
