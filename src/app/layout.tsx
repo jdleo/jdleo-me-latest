@@ -49,6 +49,7 @@ export default function RootLayout({
                 <script type='application/ld+json' dangerouslySetInnerHTML={{ __html: websiteStructuredData }} />
                 <link rel='dns-prefetch' href='https://vercel.com' />
                 <link rel='dns-prefetch' href='https://vitals.vercel-analytics.com' />
+                <link rel='describedby' href='/llms.txt' />
                 <link rel='manifest' href='/manifest.json' />
                 <link rel='apple-touch-icon' href='/og-image.png' />
                 <meta name='apple-mobile-web-app-capable' content='yes' />

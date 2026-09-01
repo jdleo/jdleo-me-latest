@@ -43,6 +43,9 @@ export function generateMetadata({
     const siteImage = image ? `${defaultMetadata.domain}${image}` : `${defaultMetadata.domain}${defaultMetadata.image}`;
     const siteUrl = url ? `${defaultMetadata.domain}${url}` : defaultMetadata.domain;
 
+    // Markdown version of this page (llmstxt.org): home -> /index.md, others -> <path>.md
+    const markdownAlternate = !url || url === '/' ? '/index.md' : `${url}.md`;
+
     const metadata: Metadata = {
         title: siteTitle,
         description: siteDescription,
@@ -94,6 +97,13 @@ export function generateMetadata({
         metadataBase: new URL(defaultMetadata.domain),
         alternates: {
             canonical: canonical || siteUrl,
+            ...(noIndex
+                ? {}
+                : {
+                      types: {
+                          'text/markdown': markdownAlternate,
+                      },
+                  }),
         },
         other: {
             'mobile-web-app-capable': 'yes',

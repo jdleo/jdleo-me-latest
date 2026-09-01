@@ -72,14 +72,40 @@ const nextConfig: NextConfig = {
         ];
     },
 
-    // Rewrites for link shortener routes
+    // Rewrites for link shortener routes + LLM markdown versions (llmstxt.org)
     async rewrites() {
         return [
             {
                 source: '/x/:id',
                 destination: '/api/x/:id',
             },
+            {
+                source: '/index.md',
+                destination: '/api/md',
+            },
+            {
+                source: '/apps.md',
+                destination: '/api/md/apps',
+            },
+            {
+                source: '/blog.md',
+                destination: '/api/md/blog',
+            },
+            {
+                source: '/apps/:slug.md',
+                destination: '/api/md/apps/:slug',
+            },
+            {
+                source: '/blog/:slug.md',
+                destination: '/api/md/blog/:slug',
+            },
         ];
+    },
+
+    // Ensure markdown source files are traced into the serverless bundle
+    outputFileTracingIncludes: {
+        '/api/md/[...path]': ['./src/blog/posts/**/*.md'],
+        '/blog/[slug]': ['./src/blog/posts/**/*.md'],
     },
 
     // Generate static pages for better SEO
