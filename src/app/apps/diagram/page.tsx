@@ -61,7 +61,7 @@ export default function DiagramGenerator() {
             canvas.width = Math.round(w * scale);
             canvas.height = Math.round(h * scale);
             const ctx = canvas.getContext('2d')!;
-            ctx.fillStyle = '#f7f7f2';
+            ctx.fillStyle = '#fbfbf9';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
             URL.revokeObjectURL(url);

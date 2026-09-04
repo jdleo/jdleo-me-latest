@@ -98,7 +98,7 @@ export default function LinkShortener() {
             tension: 0.4,
             borderWidth: 2,
             pointRadius: 3,
-            pointBackgroundColor: '#f7f7f2',
+            pointBackgroundColor: '#fbfbf9',
             pointBorderColor: '#111110',
         }]
     };

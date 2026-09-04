@@ -325,7 +325,7 @@
 
   body {
     --font-family-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background: #ffffff;
+    background: #fbfbf9;
     color: var(--fg-4);
     transition: background-color var(--transition-duration-normal), color var(--transition-duration-normal);
     min-height: 100vh;
@@ -5434,7 +5434,7 @@
    ============================================ */
 
 .el-page {
-  --el-bg: #f7f7f2;
+  --el-bg: #fbfbf9;
   --el-surface: #fdfdfb;
   --el-ink: #111110;
   --el-ink-soft: #4d4d4a;
