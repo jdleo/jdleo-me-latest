@@ -70,12 +70,7 @@ export default function Apps() {
                             <li key={app.title}>
                                 <Link href={app.href} className='el-row el-post-row'>
                                     <div className='el-post-main'>
-                                        <div className='el-app-title-row'>
-                                            <span className='el-app-emoji' aria-hidden='true'>
-                                                {app.emoji}
-                                            </span>
-                                            <h2>{app.title}</h2>
-                                        </div>
+                                        <h2>{app.title}</h2>
                                         <p>{app.subtitle}</p>
                                     </div>
                                     <span className='el-arrow' aria-hidden='true'>
