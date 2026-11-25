@@ -1,85 +1,15 @@
 {
-    "name": "jdleo-me-latest",
-    "version": "0.1.0",
-    "private": true,
-    "scripts": {
-        "dev": "next dev --turbopack",
-        "build": "next build",
-        "start": "next start",
-        "lint": "next lint"
-    },
-    "dependencies": {
-        "@anthropic-ai/sdk": "^0.33.1",
-        "@fingerprintjs/fingerprintjs": "^4.5.1",
-        "@heroicons/react": "^2.2.0",
-        "@iarna/toml": "^2.2.5",
-        "@react-three/drei": "^9.77.0",
-        "@react-three/fiber": "^8.13.0",
-        "@tailwindcss/typography": "^0.5.16",
-        "@toon-format/toon": "^2.1.0",
-        "@tron-format/tron": "^0.1.3",
-        "@types/dagre": "^0.7.53",
-        "@vercel/analytics": "^1.5.0",
-        "@vercel/postgres": "^0.10.0",
-        "@vercel/speed-insights": "^1.2.0",
-        "better-sqlite3": "^12.2.0",
-        "bson": "^7.0.0",
-        "cbor": "^10.0.11",
-        "chart.js": "^4.5.0",
-        "crypto": "^1.0.1",
-        "crypto-js": "^4.2.0",
-        "dagre": "^0.8.5",
-        "framer-motion": "^12.23.26",
-        "gpt-tokenizer": "^4.0.0",
-        "ion-js": "^5.2.1",
-        "js-yaml": "^4.1.1",
-        "mermaid": "^11.4.1",
-        "msgpackr": "^1.11.8",
-        "nanoid": "^5.1.5",
-        "next": "^16.1.6",
-        "pdfjs-dist": "4.10.38",
-        "prismjs": "^1.30.0",
-        "protobufjs": "^8.0.0",
-        "react": "^19.2.3",
-        "react-archer": "^4.4.0",
-        "react-chartjs-2": "^5.3.0",
-        "react-confetti": "^6.2.2",
-        "react-dom": "^19.2.3",
-        "react-draggable": "^4.4.6",
-        "react-dropzone": "^14.3.5",
-        "react-markdown": "^10.1.0",
-        "react-syntax-highlighter": "^15.6.6",
-        "react-zoom-pan-pinch": "^3.7.0",
-        "reactflow": "^11.11.4",
-        "rehype-raw": "^7.0.0",
-        "remark-gfm": "^4.0.1",
-        "three": "^0.174.0",
-        "tokenx": "^1.2.1",
-        "tonl": "^2.5.2"
-    },
-    "pnpm": {
-        "overrides": {
-            "prismjs": ">=1.30.0",
-            "lodash": ">=4.17.23",
-            "lodash-es": ">=4.17.23"
-        }
-    },
-    "devDependencies": {
-        "@eslint/eslintrc": "^3",
-        "@types/crypto-js": "^4.2.2",
-        "@types/js-yaml": "^4.0.9",
-        "@types/node": "^20",
-        "@types/pdf-parse": "^1.1.4",
-        "@types/prismjs": "^1.26.5",
-        "@types/react": "^19.2.7",
-        "@types/react-dom": "^19.2.3",
-        "@types/react-syntax-highlighter": "^15.5.13",
-        "@types/three": "^0.174.0",
-        "eslint": "^9",
-        "eslint-config-next": "16.1.0",
-        "playwright": "^1.62.1",
-        "postcss": "^8",
-        "tailwindcss": "^3.4.1",
-        "typescript": "^5"
-    }
+  "name": "jdleo-me",
+  "private": true,
+  "version": "2.0.0",
+  "scripts": {
+    "build": "node build.mjs"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^1.2.1"
+  },
+  "devDependencies": {
+    "marked": "^12.0.2",
+    "playwright-core": "^1.65.1"
+  }
 }
