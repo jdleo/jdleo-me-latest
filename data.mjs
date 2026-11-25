@@ -6,7 +6,8 @@ export const SITE = {
   description:
     'Senior Software Engineer specializing in distributed systems, high-scale architectures, and AI services. Experience at Roblox (OS), Amazon (Search Science) and IBM (iX). Expert in Java, Python, TypeScript, Rust, Go, and AWS.',
   bio: "Hey! I'm currently a Senior Engineer at Roblox working on people/AI systems. Before that, I was at Amazon working in Search AI and anomaly detection in logistics. Before that, I was working at IBM on infra modernization.",
-  role: 'Senior Software Engineer at Roblox. San Francisco Bay Area.',
+  role: 'Senior Software Engineer at Roblox.',
+  location: 'San Francisco Bay Area.',
   email: 'j@jdleo.me',
   github: 'https://github.com/jdleo?ref=jdleo.me',
   linkedin: 'https://linkedin.com/in/jdleo?ref=jdleo.me',

@@ -151,7 +151,7 @@ ${bodyHtml}
 
 const footLinks = `<div class="foot"><span></span><span><a href="${SITE.github}">GitHub</a> &nbsp;·&nbsp; <a href="${SITE.linkedin}">LinkedIn</a> &nbsp;·&nbsp; <a href="/feed.xml">RSS</a> &nbsp;·&nbsp; <a href="mailto:${SITE.email}">${SITE.email}</a></span></div>`;
 const nav = (active, viewsHtml = '') => `<nav class="nav"><span><a href="/"${active === 'about' ? ' class="on"' : ''}>ABOUT</a><a href="/apps"${active === 'apps' ? ' class="on"' : ''}>APPS</a><a href="/blog"${active === 'blog' ? ' class="on"' : ''}>BLOG</a></span>${viewsHtml}</nav>`;
-const headerBlock = `<h1 class="name">${SITE.name}</h1><p class="role">${SITE.role}</p>`;
+const headerBlock = `<h1 class="name">${SITE.name}</h1><p class="role">${SITE.role}<br>${SITE.location}</p>`;
 
 // ---------- HOME ----------
 const latestPosts = postsDesc.slice(0, 3);
