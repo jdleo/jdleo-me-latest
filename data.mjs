@@ -4,7 +4,7 @@ export const SITE = {
   url: 'https://jdleo.me',
   title: 'John Leonardo - Senior Software Engineer',
   description:
-    'Senior Software Engineer specializing in distributed systems, high-scale architectures, and AI services. Experience at Roblox (OS), Amazon (Search Science) and IBM (iX). Expert in Java, Python, TypeScript, Rust, Go, and AWS.',
+    'Senior Software Engineer at Roblox specializing in distributed systems, high-scale architectures, and AI services. Previously at Amazon and IBM.',
   bio: "Hey! I'm currently a Senior Engineer at Roblox working on people/AI systems. Before that, I was at Amazon working in Search AI and anomaly detection in logistics. Before that, I was working at IBM on infra modernization.",
   role: 'Senior Software Engineer at Roblox.',
   location: 'San Francisco Bay Area.',

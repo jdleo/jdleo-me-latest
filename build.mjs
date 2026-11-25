@@ -37,25 +37,25 @@ nav.nav a{color:#23201a;text-decoration:none;margin-right:24px}
 nav.nav a.on{border-bottom:2px solid #23201a;padding-bottom:2px}
 nav.nav .views{font-weight:400;letter-spacing:.5px;color:#6f6a5c;font-size:13px;white-space:nowrap}
 nav.nav .views b{color:#23201a;font-weight:700}
-h2.sec{font-size:11.5px;letter-spacing:2.5px;color:#97917e;font-weight:600;margin:34px 0 8px}
+h2.sec{font-size:11.5px;letter-spacing:2.5px;color:#6f6a5c;font-weight:600;margin:34px 0 8px}
 p.body{font-size:16px;line-height:1.7;margin:0 0 14px}
 p.body a{color:#23201a}
 .post{padding:11px 0;border-bottom:1px solid #eee8d8}
 .post:last-child{border-bottom:none}
 .post a{color:#23201a;text-decoration:none;font-size:16px;font-weight:550}
-.post .d{display:block;font-size:12px;color:#97917e;margin-top:3px;letter-spacing:1px}
+.post .d{display:block;font-size:12px;color:#6f6a5c;margin-top:3px;letter-spacing:1px}
 .app{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:10px 0;border-bottom:1px solid #eee8d8;font-size:15.5px;white-space:nowrap}
 .app:last-child{border-bottom:none}
 .app .nm{overflow:hidden;text-overflow:ellipsis}
 .app .desc{color:#6f6a5c;font-size:13.5px;white-space:nowrap}
 .app a{color:#23201a;text-decoration:none}
-.foot{margin-top:40px;padding-top:16px;border-top:1px solid #e3ddcc;font-size:12.5px;color:#97917e;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
-.foot a{color:#97917e;text-decoration:none}
+.foot{margin-top:40px;padding-top:16px;border-top:1px solid #e3ddcc;font-size:12.5px;color:#6f6a5c;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.foot a{color:#6f6a5c;text-decoration:none}
 .top{display:flex;justify-content:space-between;font-size:12.5px;letter-spacing:1.5px;font-weight:600;margin-bottom:38px}
 .top a{color:#23201a;text-decoration:none}
-.top .r{color:#97917e;font-weight:400;letter-spacing:.5px}
+.top .r{color:#6f6a5c;font-weight:400;letter-spacing:.5px}
 h1.title{font-size:33px;line-height:1.2;font-weight:700;letter-spacing:-.5px;margin:0 0 10px}
-.meta{font-size:13px;color:#97917e;letter-spacing:1px;padding-bottom:20px;border-bottom:1px solid #e3ddcc;margin-bottom:30px}
+.meta{font-size:13px;color:#6f6a5c;letter-spacing:1px;padding-bottom:20px;border-bottom:1px solid #e3ddcc;margin-bottom:30px}
 .md{font-size:17px;line-height:1.78;color:#2b2822}
 .md p{margin:0 0 22px}
 .md h2{font-size:21.5px;font-weight:700;letter-spacing:-.3px;margin:44px 0 14px;color:#23201a}
@@ -70,11 +70,11 @@ h1.title{font-size:33px;line-height:1.2;font-weight:700;letter-spacing:-.5px;mar
 .md blockquote{margin:0 0 22px;padding:2px 0 2px 18px;border-left:3px solid #23201a;color:#55503f}
 .md blockquote p{margin:0}
 .md table{width:100%;border-collapse:collapse;font-size:14.5px;margin:0 0 24px;display:block;overflow-x:auto}
-.md th{text-align:left;font-size:11.5px;letter-spacing:1.5px;color:#97917e;font-weight:600;padding:8px 10px 8px 0;border-bottom:2px solid #e3ddcc}
+.md th{text-align:left;font-size:11.5px;letter-spacing:1.5px;color:#6f6a5c;font-weight:600;padding:8px 10px 8px 0;border-bottom:2px solid #e3ddcc}
 .md td{padding:9px 10px 9px 0;border-bottom:1px solid #eee8d8}
 .md img{max-width:100%;height:auto;border:1px solid #e3ddcc;border-radius:8px}
 .md hr{border:none;border-top:1px solid #e3ddcc;margin:36px 0}
-.endmark{text-align:center;color:#97917e;margin:36px 0 6px;font-size:13px;letter-spacing:6px}
+.endmark{text-align:center;color:#6f6a5c;margin:36px 0 6px;font-size:13px;letter-spacing:6px}
 @media (max-width:520px){h1.title{font-size:27px}.md{font-size:16px}}
 `.replace(/\n\s*/g, '').trim();
 
@@ -142,9 +142,9 @@ const shell = ({ headHtml, bodyHtml, wide = false }) => `<!DOCTYPE html>
 ${headHtml}
 </head>
 <body>
-<div class="${wide ? 'col-wide' : 'col'}">
+<main class="${wide ? 'col-wide' : 'col'}">
 ${bodyHtml}
-</div>
+</main>
 </body>
 </html>
 `;
@@ -156,7 +156,7 @@ const headerBlock = `<h1 class="name">${SITE.name}</h1><p class="role">${SITE.ro
 // ---------- HOME ----------
 const latestPosts = postsDesc.slice(0, 3);
 const homeBody = `${headerBlock}
-${nav('about', `<span class="views"><b id="vc">${fmtNum(homeViews)}</b> views</span>`)}
+${nav('about', `<span class="views"><b id="vc" data-count="home">${fmtNum(homeViews)}</b> views</span>`)}
 <p class="body">${esc(SITE.bio)}</p>
 <p class="body">I also build free iOS apps. They're all on the App Store, listed below.</p>
 <h2 class="sec">LATEST WRITING</h2>
@@ -164,7 +164,7 @@ ${latestPosts.map((p) => `<div class="post"><a href="/blog/${p.slug}">${esc(p.ti
 <h2 class="sec">APPS</h2>
 ${liveApps.map((a) => `<div class="app"><span class="nm"><a href="${appUrl(a)}">${esc(a.name)}</a></span><span class="desc">${esc(a.tagline)}</span></div>`).join('\n')}
 ${footLinks}
-<script>fetch('/api/view',{method:'POST'}).then(function(r){return r.json()}).then(function(d){if(d&&d.views!=null)document.getElementById('vc').textContent=Number(d.views).toLocaleString('en-US')}).catch(function(){})</script>`;
+<script src="/counter.js" defer></script>`;
 out('index.html', shell({ headHtml: head({ title: SITE.title, description: SITE.description, path: '/' }), bodyHtml: homeBody }));
 
 // ---------- APPS ----------
@@ -182,7 +182,7 @@ ${nav('blog')}
 <h2 class="sec">ALL WRITING</h2>
 ${postsDesc.map((p) => `<div class="post"><a href="/blog/${p.slug}">${esc(p.title)}</a><span class="d">${fmtDate(p.date)}${blogViews[p.slug] ? ` &nbsp;·&nbsp; <span data-bv="${p.slug}">${fmtNum(blogViews[p.slug])}</span> VIEWS` : ''}</span></div>`).join('\n')}
 ${footLinks}
-<script>fetch('/api/blog-views').then(function(r){return r.json()}).then(function(d){if(d&&d.views)d.views.forEach(function(v){var el=document.querySelector('[data-bv="'+v.slug+'"]');if(el)el.textContent=Number(v.view_count).toLocaleString('en-US')})}).catch(function(){})</script>`;
+<script src="/counter.js" defer></script>`;
 out('blog/index.html', shell({ headHtml: head({ title: 'Blog | ' + SITE.title, description: 'Writing by John Leonardo on AI, machine learning experiments, and software engineering.', path: '/blog' }), bodyHtml: blogIndexBody }));
 
 // ---------- POSTS ----------
@@ -203,13 +203,13 @@ for (const p of POSTS) {
   const views = blogViews[p.slug];
   const body = `<div class="top"><a href="/blog">&larr; ALL WRITING</a><span class="r">jdleo.me</span></div>
 <h1 class="title">${esc(p.title)}</h1>
-<div class="meta">${fmtDate(p.date)}${views ? ` &nbsp;·&nbsp; <span id="vc">${fmtNum(views)}</span> VIEWS` : ''}</div>
+<div class="meta">${fmtDate(p.date)}${views ? ` &nbsp;·&nbsp; <span id="vc" data-count="post" data-slug="${p.slug}">${fmtNum(views)}</span> VIEWS` : ''}</div>
 <div class="md">
 ${html}
 </div>
 <div class="endmark">· · ·</div>
 <div class="foot"><span><a href="/blog">&larr; All writing</a></span><span><a href="/">Home</a></span></div>
-<script>fetch('/api/blog-views',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({slug:'${p.slug}'})}).then(function(r){return r.json()}).then(function(d){var el=document.getElementById('vc');if(el&&d&&d.viewCount!=null)el.textContent=Number(d.viewCount).toLocaleString('en-US')}).catch(function(){})</script>`;
+<script src="/counter.js" defer></script>`;
   out(join('blog', p.slug, 'index.html'), shell({
     headHtml: head({ title: p.title + ' | ' + SITE.title, description: p.description, path: '/blog/' + p.slug, type: 'article', image: '/og/blog-' + p.slug + '.png', extraLd: [postLd], published: p.date, tags: p.tags }),
     bodyHtml: body, wide: true,
@@ -245,6 +245,7 @@ out('robots.txt', 'User-Agent: *\nAllow: /\nDisallow: /api/\nDisallow: /private/
 
 // ---------- STATIC ASSETS ----------
 out('favicon.svg', `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect x="7" y="4" width="50" height="56" rx="6" fill="#fbf9f3" stroke="#23201a" stroke-width="3"/><path d="M19 24h26M19 33h26M19 42h16" stroke="#23201a" stroke-width="3.5" stroke-linecap="round"/></svg>\n`);
+if (existsSync(join(ROOT, 'counter.js'))) copyFileSync(join(ROOT, 'counter.js'), join(DIST, 'counter.js'));
 for (const img of ['Clash_Royale_LightGBM_Results.png', 'Clash_Royale_NN_Results.png', 'political-compass.png']) {
   const src = join(ROOT, 'assets', img);
   if (existsSync(src)) copyFileSync(src, join(DIST, img));
