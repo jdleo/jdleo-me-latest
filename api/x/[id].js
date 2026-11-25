@@ -1,6 +1,8 @@
 // Short-link resolver - keeps every existing jdleo.me/x/<id> link working.
 // Same `links` / `link_visits` tables as the old Next.js route.
-import { sql } from '@vercel/postgres';
+import { neon } from '@neondatabase/serverless';
+
+const sql = neon(process.env.POSTGRES_URL);
 
 export default async function handler(req, res) {
   const id = req.query?.id || String(req.url || '').split('/').pop().split('?')[0];
@@ -8,7 +10,7 @@ export default async function handler(req, res) {
     return res.status(404).send('Link not found');
   }
   try {
-    const { rows } = await sql`SELECT url FROM links WHERE id = ${id}`;
+    const rows = await sql`SELECT url FROM links WHERE id = ${id}`;
     if (rows.length === 0) return res.status(404).send('Link not found');
     try {
       await sql`

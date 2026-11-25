@@ -6,7 +6,7 @@
     "build": "node build.mjs"
   },
   "dependencies": {
-    "@vercel/postgres": "^0.10.0"
+    "@neondatabase/serverless": "^1.2.1"
   },
   "devDependencies": {
     "marked": "^12.0.2",
